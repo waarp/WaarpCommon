@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+	<properties>
+		<title>GoldenGate Common</title>
+		<author email="fredbregier@free.fr">Frederic Bregier</author>
+	</properties>
+	<body>
+		<release version="1.0.0" date="2009-08-24" description="First independent Common Package release">
+			<action dev="Frederic Bregier" type="fix">Remove Common out of GoldenGateFtp project to GoldenGate Commons project</action>
+		</release>
+	</body>
+</document>

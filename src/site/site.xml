@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="GoldenGate Common">
+  <publishDate/><version/>
+  <bannerLeft>
+    <name>GoldenGate Project</name>
+    <src>images/goldengatesmall.jpg</src>
+    <href>http://openr66.free.fr/</href>
+  </bannerLeft>
+  <body>
+    <links>
+    	<item name="GoldenGate" href="http://openr66.free.fr/"/>
+    </links>
+  	<menu name="GoldenGate Common">
+  		<item name="Overview of GoldenGate Common" href="index.html"/>
+  		<item name="Main page of GoldenGate Common" href="../GoldenGateCommon.html"/>
+  		<item name="GoldenGate Main Project" href="../"/>
+  	</menu>
+    <menu ref="reports"/>
+  </body>
+</project>
