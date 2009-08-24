@@ -369,7 +369,7 @@
 
 				-group "GoldenGate Common Logging Future Command Authentication Session and File package" "goldengate.common*"
 
-	            -sourceclasspath ${basedir}/common/target/classes
+	            -sourceclasspath ${basedir}/target/classes
 	          </additionalparam>
 	          <encoding>UTF-8</encoding>
 	          <locale>en_US</locale>
