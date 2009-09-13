@@ -230,7 +230,7 @@ public abstract class FilesystemBasedAuthImpl implements AuthInterface {
      *
      * @return the mount point
      */
-    protected abstract String getBaseDirectory();
+    public abstract String getBaseDirectory();
 
     /**
      * Return the full path as a String (with mount point).
