@@ -450,6 +450,9 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
         checkIdentify();
         // First get all base directories
         String newpath = path;
+        if (newpath == null || newpath.length() == 0) {
+            newpath = currentDir;
+        }
         if (newpath.startsWith("-a") || newpath.startsWith("-A")) {
             String[] args = newpath.split(" ");
             if (args.length > 1) {
@@ -488,6 +491,9 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
         checkIdentify();
         boolean listAllFiles = false;
         String newpath = path;
+        if (newpath == null || newpath.length() == 0) {
+            newpath = currentDir;
+        }
         if (newpath.startsWith("-a") || newpath.startsWith("-A")) {
             String[] args = newpath.split(" ");
             if (args.length > 1) {
@@ -581,7 +587,10 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
         builder.append((file.isDirectory()? 'd' : '-'));
         builder.append((file.canRead()? 'r' : '-'));
         builder.append((file.canWrite()? 'w' : '-'));
-        builder.append(filesystemBasedFtpDirJdk.canExecute(file)? 'x' : '-');
+        if (filesystemBasedFtpDirJdk != null)
+            builder.append(filesystemBasedFtpDirJdk.canExecute(file)? 'x' : '-');
+        else
+            builder.append('-');
         // Group and others not supported
         builder.append("---");
         builder.append("---");
@@ -629,9 +638,9 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
      */
     protected String mlsxInfo(File file) {
         // don't have create, unique, lang, media-type, charset
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(" ");
         if (getOptsMLSx().getOptsSize() == 1) {
-            builder.append(" Size=");
+            builder.append("Size=");
             builder.append(file.length());
             builder.append(';');
         }
@@ -702,7 +711,10 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
     public long getFreeSpace() throws CommandAbstractException {
         checkIdentify();
         File directory = getFileFromPath(currentDir);
-        return filesystemBasedFtpDirJdk.getFreeSpace(directory);
+        if (filesystemBasedFtpDirJdk != null)
+            return filesystemBasedFtpDirJdk.getFreeSpace(directory);
+        else
+            return Integer.MAX_VALUE;
     }
 
     public FileInterface setFile(String path,
