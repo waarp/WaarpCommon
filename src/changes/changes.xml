@@ -5,6 +5,10 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.0.1" date="2009-09-14" description="Fix">
+			<action dev="Frederic Bregier" type="fix">Fix some bugs</action>
+			<action dev="Frederic Bregier" type="add">Add passthrough support in Dir and File</action>
+		</release>
 		<release version="1.0.0" date="2009-08-24" description="First independent Common Package release">
 			<action dev="Frederic Bregier" type="fix">Remove Common out of GoldenGateFtp project to GoldenGate Commons project</action>
 		</release>

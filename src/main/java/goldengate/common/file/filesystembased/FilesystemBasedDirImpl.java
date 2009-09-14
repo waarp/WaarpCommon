@@ -397,7 +397,7 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
     }
 
     /**
-     * Return the Modification time for the FileInterface
+     * Return the Modification time for the File
      *
      * @param file
      * @return the Modification time as a String YYYYMMDDHHMMSS.sss
