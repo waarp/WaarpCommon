@@ -103,7 +103,7 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
         this.optsMLSx.setOptsSize((byte) 1);
         this.optsMLSx.setOptsType((byte) 1);
         try {
-            pdir = factory.create(null, ".");
+            pdir = factory.create(null, "/");
         } catch (PassthroughException e) {
         }
     }
