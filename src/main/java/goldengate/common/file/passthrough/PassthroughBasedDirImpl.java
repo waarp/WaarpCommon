@@ -33,7 +33,6 @@ import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -149,6 +148,52 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
     }
 
     /**
+     * Construct the CanonicalPath without taking into account symbolic link
+     * @param dir
+     * @return the canonicalPath
+     */
+    private String getCanonicalPath(File dir) {
+        StringBuilder builder = new StringBuilder();
+        // Get the path in reverse order from end to start
+        List<String> list = new ArrayList<String>();
+        File newdir = dir;
+        String lastdir = newdir.getName();
+        list.add(lastdir);
+        File parent = newdir.getParentFile();
+        while (parent != null) {
+            newdir = parent;
+            lastdir = newdir.getName();
+            list.add(lastdir);
+            parent = newdir.getParentFile();
+        }
+        // Now filter on '..' or '.'
+        for (int i = list.size()-1; i >= 0; i--) {
+            String curdir = list.get(i);
+            if (curdir.equals(".")) {
+                list.remove(i);// removes '.'
+                i++;
+            } else if (curdir.equals("..")) {
+                if (i-1 >= 0) {
+                    list.remove(i);// removes '..'
+                    list.remove(i-1);// and removes parent dir
+                    i++;
+                } else {
+                    list.remove(i);// removes '..' only since root
+                    i++;
+                }
+            }
+        }
+        if (list.isEmpty()) {
+            return "/";
+        }
+        for (int i = list.size()-1; i >= 0; i--) {
+            builder.append('/');
+            builder.append(list.get(i));
+        }
+        return builder.toString();
+    }
+
+    /**
      * Same as validatePath but from a FileInterface
      *
      * @param dir
@@ -158,11 +203,7 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
      */
     protected String validatePath(File dir) throws CommandAbstractException {
         String extDir = null;
-        try {
-            extDir = normalizePath(dir.getCanonicalPath());
-        } catch (IOException e) {
-            throw new Reply550Exception("Internal error with Path name");
-        }
+        extDir = normalizePath(getCanonicalPath(dir));
         // Get the relative business path
         extDir = ((PassthroughBasedAuthImpl) getSession().getAuth())
                 .getRelativePath(extDir);

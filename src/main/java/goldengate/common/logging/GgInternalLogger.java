@@ -36,24 +36,42 @@ import org.jboss.netty.logging.InternalLogger;
  *
  */
 public abstract class GgInternalLogger implements InternalLogger {
+    private static int BASELEVEL = 2;
+    /**
+     * Determine the good level
+     * @return the default base level
+     */
+    private static int detectLoggingBaseLevel() {
+        StackTraceElement []elt = Thread.currentThread().getStackTrace();
+        int i = 0;
+        for (i = 0; i < elt.length ; i++) {
+            if (elt[i].getMethodName().equalsIgnoreCase("detectLoggingBaseLevel")) {
+                break;
+            }
+        }
+        return i;
+    }
+    {
+        BASELEVEL = detectLoggingBaseLevel();
+    }
     /**
      * To be used in message for logger (rank 2) like
      * logger.warn(code,"message:"+getImmediateMethodAndLine(),null);
-     * 
+     *
      * @return "ClassAndMethodName(FileName:LineNumber)"
      */
     public static String getImmediateMethodAndLine() {
-        StackTraceElement elt = Thread.currentThread().getStackTrace()[2];
+        StackTraceElement elt = Thread.currentThread().getStackTrace()[BASELEVEL+1];
         return getMethodAndLine(elt);
     }
-
+//FIXME TODO for JDK6 IBM add 1 (2->3 and 3->4)
     /**
      * To be used only by Logger (rank 5)
-     * 
+     *
      * @return "MethodName(FileName:LineNumber)"
      */
     protected static String getLoggerMethodAndLine() {
-        StackTraceElement elt = Thread.currentThread().getStackTrace()[3];
+        StackTraceElement elt = Thread.currentThread().getStackTrace()[BASELEVEL+2];
         return getMethodAndLine(elt);
     }
 
@@ -67,7 +85,7 @@ public abstract class GgInternalLogger implements InternalLogger {
         return getMethodAndLine(elt);
     }
     /**
-     * 
+     *
      * @param elt
      * @return "MethodName(FileName:LineNumber) " from elt
      */
