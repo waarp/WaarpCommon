@@ -8,6 +8,7 @@
 		<release version="1.0.2" date="2009-10-05" description="Fix">
 			<action dev="Frederic Bregier" type="fix">Fix logger with some JDK</action>
 			<action dev="Frederic Bregier" type="fix">Fix getCanonicalPath which resolves links and should not</action>
+			<action dev="Frederic Bregier" type="fix">Create special constructor for FileImpl for files external of business control</action>
 		</release>
 		<release version="1.0.1" date="2009-09-14" description="Fix">
 			<action dev="Frederic Bregier" type="fix">Fix some bugs</action>
