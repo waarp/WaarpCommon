@@ -122,6 +122,24 @@ public abstract class FilesystemBasedFileImpl implements
         }
     }
 
+    /**
+     * Special constructor for possibly external file
+     * @param session
+     * @param dir
+     *            It is not necessary the directory that owns this file.
+     * @param path
+     */
+    public FilesystemBasedFileImpl(SessionInterface session,
+            FilesystemBasedDirImpl dir, String path) {
+        this.session = session;
+        auth = (FilesystemBasedAuthImpl) session.getAuth();
+        this.dir = dir;
+        currentFile = path;
+        isReady = true;
+        isAppend = false;
+        position = 0;
+    }
+
     public void clear() throws CommandAbstractException {
         closeFile();
         isReady = false;
