@@ -23,6 +23,7 @@ package goldengate.common.file.filesystembased;
 import goldengate.common.command.exception.CommandAbstractException;
 import goldengate.common.command.exception.Reply502Exception;
 import goldengate.common.command.exception.Reply530Exception;
+import goldengate.common.command.exception.Reply550Exception;
 import goldengate.common.exception.FileEndOfTransferException;
 import goldengate.common.exception.FileTransferException;
 import goldengate.common.exception.NoRestartException;
@@ -40,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -105,7 +107,6 @@ public abstract class FilesystemBasedFileImpl implements
         auth = (FilesystemBasedAuthImpl) session.getAuth();
         this.dir = dir;
         currentFile = path;
-        isReady = true;
         isAppend = append;
         File file = getFileFromPath(path);
         if (append) {
@@ -113,6 +114,8 @@ public abstract class FilesystemBasedFileImpl implements
                 setPosition(file.length());
             } catch (IOException e) {
                 logger.error("Error during position:", e);
+                // not ready
+                return;
             }
         } else {
             try {
@@ -120,6 +123,7 @@ public abstract class FilesystemBasedFileImpl implements
             } catch (IOException e) {
             }
         }
+        isReady = true;
     }
 
     /**
@@ -211,12 +215,22 @@ public abstract class FilesystemBasedFileImpl implements
         }
         if (bfileChannelOut != null) {
             try {
-                bfileChannelOut.force(true);
+                bfileChannelOut.force(false);
+            } catch (ClosedChannelException e1) {
+                // ignore
             } catch (IOException e1) {
+                try {
+                    bfileChannelOut.close();
+                } catch (IOException e) {
+                }
+                throw new Reply550Exception("Close in error");
             }
             try {
                 bfileChannelOut.close();
+            } catch (ClosedChannelException e) {
+                // ignore
             } catch (IOException e) {
+                throw new Reply550Exception("Close in error");
             }
             bfileChannelOut = null;
         }
@@ -452,13 +466,11 @@ public abstract class FilesystemBasedFileImpl implements
     }
     /**
      * Try to flush written data if possible
+     * @throws IOException
      */
-    public void flush() {
+    public void flush() throws IOException {
         if (bfileChannelOut != null && isReady) {
-            try {
-                bfileChannelOut.force(false);
-            } catch (IOException e1) {
-            }
+            bfileChannelOut.force(false);
         }
     }
     /**
@@ -495,10 +507,9 @@ public abstract class FilesystemBasedFileImpl implements
             } catch (IOException e) {
                 logger.error("Error during write:", e);
                 try {
-                    bfileChannelOut.close();
-                } catch (IOException e1) {
+                    closeFile();
+                } catch (CommandAbstractException e1) {
                 }
-                bfileChannelOut = null;
                 byteBuffer = null;
                 // NO this.realFile.delete(); NO DELETE SINCE BY BLOCK IT CAN BE
                 // REDO
@@ -509,8 +520,8 @@ public abstract class FilesystemBasedFileImpl implements
         byteBuffer = null;
         if (!result) {
             try {
-                bfileChannelOut.close();
-            } catch (IOException e1) {
+                closeFile();
+            } catch (CommandAbstractException e1) {
             }
             bfileChannelOut = null;
             // NO this.realFile.delete(); NO DELETE SINCE BY BLOCK IT CAN BE
@@ -535,6 +546,7 @@ public abstract class FilesystemBasedFileImpl implements
         try {
             closeFile();
         } catch (CommandAbstractException e) {
+            throw new FileTransferException("Close in error", e);
         }
     }
 
@@ -578,19 +590,17 @@ public abstract class FilesystemBasedFileImpl implements
         } catch (IOException e) {
             logger.error("Error during get:", e);
             try {
-                bfileChannelIn.close();
-            } catch (IOException e1) {
+                closeFile();
+            } catch (CommandAbstractException e1) {
             }
-            bfileChannelIn = null;
             bbyteBuffer.clear();
             throw new FileTransferException("Internal error, file is not ready");
         }
         if (sizeout < sizeblock) {// last block
             try {
-                bfileChannelIn.close();
-            } catch (IOException e) {
+                closeFile();
+            } catch (CommandAbstractException e1) {
             }
-            bfileChannelIn = null;
             isReady = false;
         }
         if (sizeout <= 0) {
@@ -667,16 +677,10 @@ public abstract class FilesystemBasedFileImpl implements
         FileChannel fileChannel;
         try {
             if (isOut) {
-                if (position == 0) {
-                    FileOutputStream fileOutputStream = new FileOutputStream(
-                            trueFile);
-                    fileChannel = fileOutputStream.getChannel();
-                } else {
-                    RandomAccessFile randomAccessFile = new RandomAccessFile(
-                            trueFile, "rw");
-                    fileChannel = randomAccessFile.getChannel();
-                    fileChannel = fileChannel.position(position);
-                }
+                RandomAccessFile randomAccessFile = new RandomAccessFile(
+                        trueFile, "rw");
+                fileChannel = randomAccessFile.getChannel();
+                fileChannel = fileChannel.position(position);
             } else {
                 if (!trueFile.exists()) {
                     return null;
