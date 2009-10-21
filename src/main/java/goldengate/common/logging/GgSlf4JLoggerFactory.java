@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
 
 /**
  * Example of logger factory using SLF4J from LOGBACK
@@ -35,6 +34,7 @@ import ch.qos.logback.classic.LoggerContext;
  */
 public class GgSlf4JLoggerFactory extends
         org.jboss.netty.logging.Slf4JLoggerFactory {
+    static final String ROOT = Logger.ROOT_LOGGER_NAME;// "root"; // LoggerContext.ROOT_NAME; //
     /**
      *
      * @param level
@@ -42,7 +42,7 @@ public class GgSlf4JLoggerFactory extends
     public GgSlf4JLoggerFactory(Level level) {
         super();
         Logger logger = (Logger) LoggerFactory
-                .getLogger(LoggerContext.ROOT_NAME);
+                .getLogger(ROOT);
         logger.setLevel(level);
     }
 

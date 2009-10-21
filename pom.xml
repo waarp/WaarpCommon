@@ -95,21 +95,21 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-access</artifactId>
-      <version>0.9.15</version>
+      <version>0.9.17</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>0.9.15</version>
+      <version>0.9.17</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>0.9.15</version>
+      <version>0.9.17</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
@@ -125,6 +125,11 @@
       <artifactId>GoldenGateDigest</artifactId>
       <version>1.0.0</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-api</artifactId>
+    	<version>1.5.8</version>
     </dependency>
   </dependencies>
   <properties>
