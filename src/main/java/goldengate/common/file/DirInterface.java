@@ -204,11 +204,11 @@ public interface DirInterface {
 
     // **************** Unique FileInterface part **************************
     /**
-     * Create a new FtpFile
+     * Create a new File
      *
      * @param path
      * @param append
-     * @return the new Ftp FileInterface
+     * @return the new FileInterface
      * @throws CommandAbstractException
      */
     public abstract FileInterface newFile(String path, boolean append)
@@ -221,7 +221,7 @@ public interface DirInterface {
      * @param append
      *            True if this file is supposed to be in append mode (APPE),
      *            False in any other cases
-     * @return the Ftp FileInterface if it is correctly initiate
+     * @return the FileInterface if it is correctly initiate
      * @throws CommandAbstractException
      */
     public abstract FileInterface setFile(String path, boolean append)
@@ -231,7 +231,7 @@ public interface DirInterface {
      * Set a new unique path as the current FileInterface from the current
      * Directory (STOU)
      *
-     * @return the Ftp FileInterface if it is correctly initiate
+     * @return the FileInterface if it is correctly initiate
      * @throws CommandAbstractException
      */
     public abstract FileInterface setUniqueFile()

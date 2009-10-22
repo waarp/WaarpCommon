@@ -5,7 +5,10 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
-		<release version="1.0.2" date="2009-10-05" description="Fix">
+		<release version="1.0.3" date="2009-10-21" description="Fix">
+			<action dev="Frederic Bregier" type="fix">Fix Dir support of Windows</action>
+		</release>
+		<release version="1.0.2" date="2009-10-20" description="Fix">
 			<action dev="Frederic Bregier" type="fix">Fix logger with some JDK</action>
 			<action dev="Frederic Bregier" type="fix">Fix getCanonicalPath which resolves links and should not</action>
 			<action dev="Frederic Bregier" type="fix">Create special constructor for FileImpl for files external of business control</action>

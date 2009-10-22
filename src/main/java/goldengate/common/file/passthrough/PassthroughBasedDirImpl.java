@@ -33,6 +33,7 @@ import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +73,10 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
      * Passthrough object
      */
     protected PassthroughFile pdir = null;
+    /**
+     * Hack to say Windows or Unix (root like X:\ or /)
+     */
+    private static Boolean ISUNIX = null;
 
     /**
      * Internal Logger
@@ -141,6 +146,22 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
         String extDir = null;
         if (path.charAt(0) == SEPARATORCHAR) {
             extDir = path;
+        } else if (ISUNIX == null || (!ISUNIX)) {
+            if (ISUNIX == null) {
+                ISUNIX = (!System.getProperty("os.name")
+                    .toLowerCase().startsWith("windows"));
+            }
+            if (ISUNIX) {
+                return currentDir + SEPARATOR + path;
+            }
+            File [] roots = File.listRoots();
+            for (int i = 0; i < roots.length; i++) {
+                if (path.startsWith(normalizePath(
+                        roots[i].getAbsolutePath()))) {
+                    return path;
+                }
+            }
+            extDir = currentDir + SEPARATOR + path;
         } else {
             extDir = currentDir + SEPARATOR + path;
         }
@@ -153,44 +174,57 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
      * @return the canonicalPath
      */
     private String getCanonicalPath(File dir) {
-        StringBuilder builder = new StringBuilder();
-        // Get the path in reverse order from end to start
-        List<String> list = new ArrayList<String>();
-        File newdir = dir;
-        String lastdir = newdir.getName();
-        list.add(lastdir);
-        File parent = newdir.getParentFile();
-        while (parent != null) {
-            newdir = parent;
-            lastdir = newdir.getName();
-            list.add(lastdir);
-            parent = newdir.getParentFile();
+        if (ISUNIX == null) {
+            ISUNIX = (!System.getProperty("os.name")
+                    .toLowerCase().startsWith("windows"));
         }
-        // Now filter on '..' or '.'
-        for (int i = list.size()-1; i >= 0; i--) {
-            String curdir = list.get(i);
-            if (curdir.equals(".")) {
-                list.remove(i);// removes '.'
-                i++;
-            } else if (curdir.equals("..")) {
-                if (i-1 >= 0) {
-                    list.remove(i);// removes '..'
-                    list.remove(i-1);// and removes parent dir
+        if (ISUNIX) {
+            StringBuilder builder = new StringBuilder();
+            // Get the path in reverse order from end to start
+            List<String> list = new ArrayList<String>();
+            File newdir = dir;
+            String lastdir = newdir.getName();
+            list.add(lastdir);
+            File parent = newdir.getParentFile();
+            while (parent != null) {
+                newdir = parent;
+                lastdir = newdir.getName();
+                list.add(lastdir);
+                parent = newdir.getParentFile();
+            }
+            // Now filter on '..' or '.'
+            for (int i = list.size()-1; i >= 0; i--) {
+                String curdir = list.get(i);
+                if (curdir.equals(".")) {
+                    list.remove(i);// removes '.'
                     i++;
-                } else {
-                    list.remove(i);// removes '..' only since root
-                    i++;
+                } else if (curdir.equals("..")) {
+                    if (i-1 >= 0) {
+                        list.remove(i);// removes '..'
+                        list.remove(i-1);// and removes parent dir
+                        i++;
+                    } else {
+                        list.remove(i);// removes '..' only since root
+                        i++;
+                    }
                 }
             }
+            if (list.isEmpty()) {
+                return "/";
+            }
+            for (int i = list.size()-1; i >= 0; i--) {
+                builder.append('/');
+                builder.append(list.get(i));
+            }
+            return builder.toString();
         }
-        if (list.isEmpty()) {
-            return "/";
+      //Windows version
+        // no link so just use the default version of canonical Path
+        try {
+            return dir.getCanonicalPath();
+        } catch (IOException e) {
+            return dir.getAbsolutePath();
         }
-        for (int i = list.size()-1; i >= 0; i--) {
-            builder.append('/');
-            builder.append(list.get(i));
-        }
-        return builder.toString();
     }
 
     /**
