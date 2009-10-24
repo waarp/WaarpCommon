@@ -5,6 +5,10 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.0.4" date="2009-10-24" description="Fix">
+			<action dev="Frederic Bregier" type="fix">Fix relative and absolute path</action>
+			<action dev="Frederic Bregier" type="add">isFailed method in GgFuture</action>
+		</release>
 		<release version="1.0.3" date="2009-10-21" description="Fix">
 			<action dev="Frederic Bregier" type="fix">Fix Dir support of Windows</action>
 		</release>

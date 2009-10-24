@@ -82,11 +82,47 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
     /**
      * Class that handles specifity of one Jdk or another
      */
-    private static FilesystemBasedDirJdkAbstract filesystemBasedFtpDirJdk = null;
+    protected static FilesystemBasedDirJdkAbstract filesystemBasedFtpDirJdk = null;
     /**
      * Hack to say Windows or Unix (root like X:\ or /)
      */
-    private static Boolean ISUNIX = null;
+    protected static Boolean ISUNIX = null;
+    /**
+     * Roots for Windows system
+     */
+    protected static File [] roots = null;
+    /**
+     * Init Windows Support
+     */
+    protected static void initWindowsSupport() {
+        if (ISUNIX == null) {
+            ISUNIX = (!System.getProperty("os.name")
+                    .toLowerCase().startsWith("windows"));
+            if (! ISUNIX) {
+                roots = File.listRoots();
+            }
+        }
+    }
+    /**
+     *
+     * @param file
+     * @return The corresponding Root file
+     */
+    protected File getCorrespondingRoot(File file) {
+        initWindowsSupport();
+        if (ISUNIX) {
+            return new File("/");
+        }
+        String path = file.getAbsolutePath();
+        for (File root : roots) {
+            if (path.startsWith(root.getAbsolutePath())) {
+                return root;
+            }
+        }
+        // hack !
+        logger.warn("No root found for "+file.getAbsolutePath());
+        return roots[0];
+    }
     /**
      * Init the dependant object according to internals of JDK
      *
@@ -95,8 +131,7 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
     public static void initJdkDependent(
             FilesystemBasedDirJdkAbstract filesystemBasedFtpDirJdkChoice) {
         filesystemBasedFtpDirJdk = filesystemBasedFtpDirJdkChoice;
-        ISUNIX = (!System.getProperty("os.name")
-                .toLowerCase().startsWith("windows"));
+        initWindowsSupport();
     }
 
     /**
@@ -132,7 +167,13 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
     }
 
     public String validatePath(String path) throws CommandAbstractException {
-        String extDir = consolidatePath(path);
+        String extDir;
+        if (isAbsoluteWindows(path)) {
+            extDir = path;
+            File newDir = new File(extDir);
+            return validatePath(newDir);
+        }
+        extDir = consolidatePath(path);
         // Get the baseDir (mount point)
         String baseDir = ((FilesystemBasedAuthImpl) getSession().getAuth())
                 .getBaseDirectory();
@@ -140,7 +181,19 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
         File newDir = new File(baseDir, extDir);
         return validatePath(newDir);
     }
-
+    /**
+     *
+     * @param path
+     * @return True if the given Path is an absolute one under Windows System
+     */
+    public boolean isAbsoluteWindows(String path) {
+        initWindowsSupport();
+        if (!ISUNIX) {
+            File file = new File(path);
+            return file.isAbsolute();
+        }
+        return false;
+    }
     /**
      * Consolidate Path as relative or absolute path to an absolute path
      *
@@ -154,25 +207,12 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
             throw new Reply501Exception("Path must not be empty");
         }
         // First check if the path is relative or absolute
+        if (isAbsoluteWindows(path)) {
+            return path;
+        }
         String extDir = null;
         if (path.charAt(0) == SEPARATORCHAR) {
             extDir = path;
-        } else if (ISUNIX == null || (!ISUNIX)) {
-            if (ISUNIX == null) {
-                ISUNIX = (!System.getProperty("os.name")
-                    .toLowerCase().startsWith("windows"));
-            }
-            if (ISUNIX) {
-                return currentDir + SEPARATOR + path;
-            }
-            File [] roots = File.listRoots();
-            for (int i = 0; i < roots.length; i++) {
-                if (path.startsWith(normalizePath(
-                        roots[i].getAbsolutePath()))) {
-                    return path;
-                }
-            }
-            extDir = currentDir + SEPARATOR + path;
         } else {
             extDir = currentDir + SEPARATOR + path;
         }
@@ -184,12 +224,10 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
      * @param dir
      * @return the canonicalPath
      */
-    private String getCanonicalPath(File dir) {
-        if (ISUNIX == null) {
-            ISUNIX = (!System.getProperty("os.name")
-                    .toLowerCase().startsWith("windows"));
-        }
+    protected String getCanonicalPath(File dir) {
+        initWindowsSupport();
         if (ISUNIX) {
+            // resolve it without getting symbolic links
             StringBuilder builder = new StringBuilder();
             // Get the path in reverse order from end to start
             List<String> list = new ArrayList<String>();
@@ -289,9 +327,16 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
         if (!FilesystemBasedDirJdkAbstract.ueApacheCommonsIo) {
             throw new Reply553Exception("Wildcards in pathname is not allowed");
         }
-        File rootFile = new File(((FilesystemBasedAuthImpl) getSession()
-                .getAuth()).getBaseDirectory());
-        File wildcardFile = new File(rootFile, pathWithWildcard);
+        File wildcardFile;
+        File rootFile;
+        if (isAbsoluteWindows(pathWithWildcard)) {
+            wildcardFile = new File(pathWithWildcard);
+            rootFile = getCorrespondingRoot(wildcardFile);
+        } else {
+            rootFile = new File(((FilesystemBasedAuthImpl) getSession()
+                    .getAuth()).getBaseDirectory());
+            wildcardFile = new File(rootFile, pathWithWildcard);
+        }
         // Split wildcard path into subdirectories.
         List<String> subdirs = new ArrayList<String>();
         while (wildcardFile != null) {
@@ -350,6 +395,9 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
      */
     protected File getFileFromPath(String path) throws CommandAbstractException {
         String newdir = validatePath(path);
+        if (isAbsoluteWindows(newdir)) {
+            return new File(newdir);
+        }
         String truedir = ((FilesystemBasedAuthImpl) getSession().getAuth())
                 .getAbsolutePath(newdir);
         return new File(truedir);
@@ -362,7 +410,7 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
      * @return the true File from the path
      * @throws CommandAbstractException
      */
-    private File getTrueFile(String path) throws CommandAbstractException {
+    protected File getTrueFile(String path) throws CommandAbstractException {
         checkIdentify();
         String newpath = consolidatePath(path);
         List<String> paths = wildcardFiles(normalizePath(newpath));

@@ -29,6 +29,7 @@ import goldengate.common.file.DirInterface;
 import goldengate.common.file.FileInterface;
 import goldengate.common.file.OptsMLSxInterface;
 import goldengate.common.file.SessionInterface;
+import goldengate.common.file.filesystembased.FilesystemBasedAuthImpl;
 import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
@@ -76,8 +77,41 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
     /**
      * Hack to say Windows or Unix (root like X:\ or /)
      */
-    private static Boolean ISUNIX = null;
-
+    protected static Boolean ISUNIX = null;
+    /**
+     * Roots for Windows system
+     */
+    protected static File [] roots = null;
+    /**
+     * Init Windows Support
+     */
+    protected static void initWindowsSupport() {
+        ISUNIX = (!System.getProperty("os.name")
+                .toLowerCase().startsWith("windows"));
+        if (! ISUNIX) {
+            roots = File.listRoots();
+        }
+    }
+    /**
+    *
+    * @param file
+    * @return The corresponding Root file
+    */
+    protected File getCorrespondingRoot(File file) {
+       initWindowsSupport();
+       if (ISUNIX) {
+           return new File("/");
+       }
+       String path = file.getAbsolutePath();
+       for (File root : roots) {
+           if (path.startsWith(root.getAbsolutePath())) {
+               return root;
+           }
+       }
+       // hack !
+       logger.warn("No root found for "+file.getAbsolutePath());
+       return roots[0];
+   }
     /**
      * Internal Logger
      */
@@ -121,13 +155,32 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
     }
 
     public String validatePath(String path) throws CommandAbstractException {
-        String extDir = consolidatePath(path);
+        String extDir;
+        if (isAbsoluteWindows(path)) {
+            extDir = path;
+            File newDir = new File(extDir);
+            return validatePath(newDir);
+        }
+        extDir = consolidatePath(path);
         // Get the baseDir (mount point)
-        String baseDir = ((PassthroughBasedAuthImpl) getSession().getAuth())
+        String baseDir = ((FilesystemBasedAuthImpl) getSession().getAuth())
                 .getBaseDirectory();
         // Get the translated real file path (removing '..')
         File newDir = new File(baseDir, extDir);
         return validatePath(newDir);
+    }
+    /**
+     *
+     * @param path
+     * @return True if the given Path is an absolute one under Windows system
+     */
+    public boolean isAbsoluteWindows(String path) {
+        initWindowsSupport();
+        if (!ISUNIX) {
+            File file = new File(path);
+            return file.isAbsolute();
+        }
+        return false;
     }
 
     /**
@@ -143,25 +196,12 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
             throw new Reply501Exception("Path must not be empty");
         }
         // First check if the path is relative or absolute
+        if (isAbsoluteWindows(path)) {
+            return path;
+        }
         String extDir = null;
         if (path.charAt(0) == SEPARATORCHAR) {
             extDir = path;
-        } else if (ISUNIX == null || (!ISUNIX)) {
-            if (ISUNIX == null) {
-                ISUNIX = (!System.getProperty("os.name")
-                    .toLowerCase().startsWith("windows"));
-            }
-            if (ISUNIX) {
-                return currentDir + SEPARATOR + path;
-            }
-            File [] roots = File.listRoots();
-            for (int i = 0; i < roots.length; i++) {
-                if (path.startsWith(normalizePath(
-                        roots[i].getAbsolutePath()))) {
-                    return path;
-                }
-            }
-            extDir = currentDir + SEPARATOR + path;
         } else {
             extDir = currentDir + SEPARATOR + path;
         }
@@ -173,12 +213,10 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
      * @param dir
      * @return the canonicalPath
      */
-    private String getCanonicalPath(File dir) {
-        if (ISUNIX == null) {
-            ISUNIX = (!System.getProperty("os.name")
-                    .toLowerCase().startsWith("windows"));
-        }
+    protected String getCanonicalPath(File dir) {
+        initWindowsSupport();
         if (ISUNIX) {
+            // resolve it without getting symbolic links
             StringBuilder builder = new StringBuilder();
             // Get the path in reverse order from end to start
             List<String> list = new ArrayList<String>();
@@ -299,6 +337,9 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
      */
     protected File getFileFromPath(String path) throws CommandAbstractException {
         String newdir = validatePath(path);
+        if (isAbsoluteWindows(newdir)) {
+            return new File(newdir);
+        }
         String truedir = ((PassthroughBasedAuthImpl) getSession().getAuth())
                 .getAbsolutePath(newdir);
         return new File(truedir);

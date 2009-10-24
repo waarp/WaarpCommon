@@ -82,6 +82,15 @@ public class GgFuture {
     }
 
     /**
+     * Returns {@code true} if and only if the operation was completed
+     * but unsuccessfully.
+     *
+     * @return True if the future is done but unsuccessful
+     */
+    public synchronized boolean isFailed() {
+        return cause != null;
+    }
+    /**
      * Returns the cause of the failed operation if the operation has failed.
      *
      * @return the cause of the failure. {@code null} if succeeded or this
