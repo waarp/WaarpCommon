@@ -5,6 +5,9 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.0.5" date="2009-10-25" description="Fix normalize path">
+			<action dev="Frederic Bregier" type="fix">Fix normalize path</action>
+		</release>
 		<release version="1.0.4" date="2009-10-24" description="Fix">
 			<action dev="Frederic Bregier" type="fix">Fix relative and absolute path</action>
 			<action dev="Frederic Bregier" type="add">isFailed method in GgFuture</action>

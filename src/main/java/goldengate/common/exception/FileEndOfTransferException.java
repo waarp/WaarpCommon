@@ -21,7 +21,7 @@
 package goldengate.common.exception;
 
 /**
- * FileInterface End Of Transfer exception: the end of the transfer is reached
+ * File  End Of Transfer exception: the end of the transfer is reached
  * from file point of view
  *
  * @author Frederic Bregier

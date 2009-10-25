@@ -46,7 +46,7 @@ public enum ReplyCode {
     REPLY_125_DATA_CONNECTION_ALREADY_OPEN(125),
 
     /**
-     * 150 FileInterface status okay), about to open data connection.
+     * 150 File status okay), about to open data connection.
      */
     REPLY_150_FILE_STATUS_OKAY(150),
 
@@ -71,7 +71,7 @@ public enum ReplyCode {
     REPLY_212_DIRECTORY_STATUS(212),
 
     /**
-     * 213 FileInterface status.
+     * 213 File status.
      */
     REPLY_213_FILE_STATUS(213),
 
@@ -167,7 +167,7 @@ public enum ReplyCode {
     REPLY_426_CONNECTION_CLOSED_TRANSFER_ABORTED(426),
 
     /**
-     * 450 Requested file action not taken. FileInterface unavailable (e.g.,
+     * 450 Requested file action not taken. File unavailable (e.g.,
      * file busy).
      */
     REPLY_450_REQUESTED_FILE_ACTION_NOT_TAKEN(450),
@@ -224,7 +224,7 @@ public enum ReplyCode {
     REPLY_532_NEED_ACCOUNT_FOR_STORING_FILES(532),
 
     /**
-     * 550 Requested action not taken. FileInterface unavailable (e.g., file not
+     * 550 Requested action not taken. File unavailable (e.g., file not
      * found, no access).
      */
     REPLY_550_REQUESTED_ACTION_NOT_TAKEN(550),
@@ -241,7 +241,7 @@ public enum ReplyCode {
     REPLY_552_REQUESTED_FILE_ACTION_ABORTED_EXCEEDED_STORAGE(552),
 
     /**
-     * 553 Requested action not taken. FileInterface name not allowed.
+     * 553 Requested action not taken. File name not allowed.
      */
     REPLY_553_REQUESTED_ACTION_NOT_TAKEN_FILE_NAME_NOT_ALLOWED(553);
 

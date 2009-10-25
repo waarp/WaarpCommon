@@ -243,7 +243,8 @@ public abstract class FilesystemBasedAuthImpl implements AuthInterface {
         if (path == null || path.length() == 0) {
             return getBaseDirectory();
         }
-        return getBaseDirectory() + DirInterface.SEPARATOR + path;
+        return FilesystemBasedDirImpl.normalizePath(getBaseDirectory() +
+                DirInterface.SEPARATOR + path);
     }
 
     /**

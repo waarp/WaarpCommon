@@ -125,7 +125,7 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
      * @return the normalized path
      */
     public static String normalizePath(String path) {
-        return path.replace('\\', SEPARATORCHAR);
+        return path.replace('\\', SEPARATORCHAR).replace("//", "/");
     }
 
     /**
@@ -572,7 +572,7 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
         String newpath = consolidatePath(path);
         List<String> paths = wildcardFiles(newpath);
         if (paths.size() != 1) {
-            throw new Reply550Exception("FileInterface not found: " +
+            throw new Reply550Exception("File not found: " +
                     paths.size() + " founds");
         }
         String extDir = paths.get(0);

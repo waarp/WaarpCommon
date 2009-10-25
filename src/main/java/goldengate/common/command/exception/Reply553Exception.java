@@ -23,7 +23,7 @@ package goldengate.common.command.exception;
 import goldengate.common.command.ReplyCode;
 
 /**
- * 553 Requested action not taken. FileInterface name not allowed.
+ * 553 Requested action not taken. File name not allowed.
  *
  * @author Frederic Bregier
  *
@@ -36,7 +36,7 @@ public class Reply553Exception extends CommandAbstractException {
     private static final long serialVersionUID = 553L;
 
     /**
-     * 553 Requested action not taken. FileInterface name not allowed.
+     * 553 Requested action not taken. File name not allowed.
      *
      * @param message
      */

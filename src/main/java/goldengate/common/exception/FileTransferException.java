@@ -21,7 +21,7 @@
 package goldengate.common.exception;
 
 /**
- * FileInterface Transfer exception (error during transfer from file point of
+ * File Transfer exception (error during transfer from file point of
  * view)
  *
  * @author Frederic Bregier

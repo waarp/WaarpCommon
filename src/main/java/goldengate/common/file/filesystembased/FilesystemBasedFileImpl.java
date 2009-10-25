@@ -692,7 +692,7 @@ public abstract class FilesystemBasedFileImpl implements
                 }
             }
         } catch (FileNotFoundException e) {
-            logger.error("FileInterface not found in getFileChannel:", e);
+            logger.error("File not found in getFileChannel:", e);
             return null;
         } catch (IOException e) {
             logger.error("Change position in getFileChannel:", e);

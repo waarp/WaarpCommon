@@ -23,7 +23,7 @@ package goldengate.common.command.exception;
 import goldengate.common.command.ReplyCode;
 
 /**
- * 550 Requested action not taken. FileInterface unavailable (e.g., file not
+ * 550 Requested action not taken. File unavailable (e.g., file not
  * found, no access).
  *
  * @author Frederic Bregier
@@ -37,7 +37,7 @@ public class Reply550Exception extends CommandAbstractException {
     private static final long serialVersionUID = 550L;
 
     /**
-     * 550 Requested action not taken. FileInterface unavailable (e.g., file not
+     * 550 Requested action not taken. File unavailable (e.g., file not
      * found, no access).
      *
      * @param message
