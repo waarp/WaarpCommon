@@ -5,6 +5,9 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.0.6" date="2009-11-02" description="Add new File Support using RandomAccessFile">
+			<action dev="Frederic Bregier" type="add">new File Support using RandomAccessFile</action>
+		</release>
 		<release version="1.0.5" date="2009-10-25" description="Fix normalize path">
 			<action dev="Frederic Bregier" type="fix">Fix normalize path</action>
 		</release>

@@ -40,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.SyncFailedException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
@@ -212,27 +213,22 @@ public abstract class FilesystemBasedFileImpl implements
             } catch (IOException e) {
             }
             bfileChannelIn = null;
+            bbyteBuffer = null;
         }
-        if (bfileChannelOut != null) {
+        if (rafOut != null) {
             try {
-                bfileChannelOut.force(false);
-            } catch (ClosedChannelException e1) {
-                // ignore
+                rafOut.getFD().sync();
+            } catch (SyncFailedException e1) {
             } catch (IOException e1) {
-                try {
-                    bfileChannelOut.close();
-                } catch (IOException e) {
-                }
-                throw new Reply550Exception("Close in error");
             }
             try {
-                bfileChannelOut.close();
+                rafOut.close();
             } catch (ClosedChannelException e) {
                 // ignore
             } catch (IOException e) {
                 throw new Reply550Exception("Close in error");
             }
-            bfileChannelOut = null;
+            rafOut = null;
         }
         position = 0;
         isReady = false;
@@ -272,7 +268,7 @@ public abstract class FilesystemBasedFileImpl implements
         if (!isReady) {
             return false;
         }
-        return bfileChannelOut != null;
+        return rafOut != null;
     }
 
     public boolean canRead() throws CommandAbstractException {
@@ -424,9 +420,9 @@ public abstract class FilesystemBasedFileImpl implements
     private long position = 0;
 
     /**
-     * FileChannel Out
+     * RandomAccessFile Out
      */
-    private FileChannel bfileChannelOut = null;
+    private RandomAccessFile rafOut = null;
 
     /**
      * FileChannel In
@@ -459,19 +455,10 @@ public abstract class FilesystemBasedFileImpl implements
         if (bfileChannelIn != null) {
             bfileChannelIn = bfileChannelIn.position(position);
         }
-        if (bfileChannelOut != null) {
-            bfileChannelOut = bfileChannelOut.position(position);
+        if (rafOut != null) {
+            rafOut.seek(position);
         }
         this.position = position;
-    }
-    /**
-     * Try to flush written data if possible
-     * @throws IOException
-     */
-    public void flush() throws IOException {
-        if (bfileChannelOut != null && isReady) {
-            bfileChannelOut.force(false);
-        }
     }
     /**
      * Write the current FileInterface with the given ChannelBuffer. The file is
@@ -492,43 +479,28 @@ public abstract class FilesystemBasedFileImpl implements
         if (buffer == null) {
             return;// could do FileEndOfTransfer ?
         }
-        if (bfileChannelOut == null) {
-            bfileChannelOut = getFileChannel(true);
+        if (rafOut == null) {
+            rafOut = getRandomFile();
         }
-        if (bfileChannelOut == null) {
+        if (rafOut == null) {
             throw new FileTransferException("Internal error, file is not ready");
         }
         long bufferSize = buffer.readableBytes();
-        ByteBuffer byteBuffer = buffer.toByteBuffer();
-        long size = 0;
-        while (size < bufferSize) {
-            try {
-                size += bfileChannelOut.write(byteBuffer);
-            } catch (IOException e) {
-                logger.error("Error during write:", e);
-                try {
-                    closeFile();
-                } catch (CommandAbstractException e1) {
-                }
-                byteBuffer = null;
-                // NO this.realFile.delete(); NO DELETE SINCE BY BLOCK IT CAN BE
-                // REDO
-                throw new FileTransferException("Internal error, file is not ready");
-            }
-        }
-        boolean result = size == bufferSize;
-        byteBuffer = null;
-        if (!result) {
+        byte []newbuf = new byte[(int)bufferSize];
+        buffer.readBytes(newbuf);
+        try {
+            rafOut.write(newbuf);
+        } catch (IOException e2) {
+            logger.error("Error during write:", e2);
             try {
                 closeFile();
             } catch (CommandAbstractException e1) {
             }
-            bfileChannelOut = null;
             // NO this.realFile.delete(); NO DELETE SINCE BY BLOCK IT CAN BE
             // REDO
             throw new FileTransferException("Internal error, file is not ready");
         }
-        position += size;
+        position += bufferSize;
     }
 
     /**
@@ -569,15 +541,15 @@ public abstract class FilesystemBasedFileImpl implements
             throw new FileTransferException("No file is ready");
         }
         if (bfileChannelIn == null) {
-            bfileChannelIn = getFileChannel(false);
+            bfileChannelIn = getFileChannel();
             if (bfileChannelIn != null) {
                 if (bbyteBuffer != null) {
                     if (bbyteBuffer.capacity() != sizeblock) {
                         bbyteBuffer = null;
-                        bbyteBuffer = ByteBuffer.allocate(sizeblock);
+                        bbyteBuffer = ByteBuffer.allocateDirect(sizeblock);
                     }
                 } else {
-                    bbyteBuffer = ByteBuffer.allocate(sizeblock);
+                    bbyteBuffer = ByteBuffer.allocateDirect(sizeblock);
                 }
             }
         }
@@ -585,17 +557,34 @@ public abstract class FilesystemBasedFileImpl implements
             throw new FileTransferException("Internal error, file is not ready");
         }
         int sizeout = 0;
-        try {
-            sizeout = bfileChannelIn.read(bbyteBuffer);
-        } catch (IOException e) {
-            logger.error("Error during get:", e);
+        while (sizeout < sizeblock) {
+            try {
+                int sizeread = bfileChannelIn.read(bbyteBuffer);
+                if (sizeread <= 0) {
+                    break;
+                }
+                sizeout += sizeread;
+            } catch (IOException e) {
+                logger.error("Error during get:", e);
+                try {
+                    closeFile();
+                } catch (CommandAbstractException e1) {
+                }
+                throw new FileTransferException("Internal error, file is not ready");
+            }
+        }
+        if (sizeout <= 0) {
             try {
                 closeFile();
             } catch (CommandAbstractException e1) {
             }
-            bbyteBuffer.clear();
-            throw new FileTransferException("Internal error, file is not ready");
+            isReady = false;
+            throw new FileEndOfTransferException("End of file");
         }
+        bbyteBuffer.flip();
+        position += sizeout;
+        ChannelBuffer buffer = ChannelBuffers.copiedBuffer(bbyteBuffer);
+        bbyteBuffer.clear();
         if (sizeout < sizeblock) {// last block
             try {
                 closeFile();
@@ -603,14 +592,6 @@ public abstract class FilesystemBasedFileImpl implements
             }
             isReady = false;
         }
-        if (sizeout <= 0) {
-            bbyteBuffer.clear();
-            throw new FileEndOfTransferException("End of file");
-        }
-        bbyteBuffer.flip();
-        position += sizeout;
-        ChannelBuffer buffer = ChannelBuffers.copiedBuffer(bbyteBuffer);
-        bbyteBuffer.clear();
         return buffer;
     }
 
@@ -628,7 +609,7 @@ public abstract class FilesystemBasedFileImpl implements
         if (!isReady) {
             return false;
         }
-        FileChannel fileChannelIn = getFileChannel(false);
+        FileChannel fileChannelIn = getFileChannel();
         if (fileChannelIn == null) {
             return false;
         }
@@ -658,13 +639,11 @@ public abstract class FilesystemBasedFileImpl implements
     }
 
     /**
-     * Returns the FileChannel in Out mode (if isOut is True) or in In mode (if
-     * isOut is False) associated with the current file.
+     * Returns the FileChannel in In mode associated with the current file.
      *
-     * @param isOut
-     * @return the FileChannel (OUT or IN)
+     * @return the FileChannel (IN mode)
      */
-    protected FileChannel getFileChannel(boolean isOut) {
+    protected FileChannel getFileChannel() {
         if (!isReady) {
             return null;
         }
@@ -676,20 +655,10 @@ public abstract class FilesystemBasedFileImpl implements
         }
         FileChannel fileChannel;
         try {
-            if (isOut) {
-                RandomAccessFile randomAccessFile = new RandomAccessFile(
-                        trueFile, "rw");
-                fileChannel = randomAccessFile.getChannel();
+            FileInputStream fileInputStream = new FileInputStream(trueFile);
+            fileChannel = fileInputStream.getChannel();
+            if (position != 0) {
                 fileChannel = fileChannel.position(position);
-            } else {
-                if (!trueFile.exists()) {
-                    return null;
-                }
-                FileInputStream fileInputStream = new FileInputStream(trueFile);
-                fileChannel = fileInputStream.getChannel();
-                if (position != 0) {
-                    fileChannel = fileChannel.position(position);
-                }
             }
         } catch (FileNotFoundException e) {
             logger.error("File not found in getFileChannel:", e);
@@ -699,5 +668,33 @@ public abstract class FilesystemBasedFileImpl implements
             return null;
         }
         return fileChannel;
+    }
+    /**
+     * Returns the RandomAccessFile in Out mode associated with the current file.
+     *
+     * @return the RandomAccessFile (OUT="rw")
+     */
+    protected RandomAccessFile getRandomFile() {
+        if (!isReady) {
+            return null;
+        }
+        File trueFile;
+        try {
+            trueFile = getFileFromPath(currentFile);
+        } catch (CommandAbstractException e1) {
+            return null;
+        }
+        RandomAccessFile raf = null;
+        try {
+            raf = new RandomAccessFile(trueFile, "rw");
+            raf.seek(position);
+        } catch (FileNotFoundException e) {
+            logger.error("File not found in getRandomFile:", e);
+            return null;
+        } catch (IOException e) {
+            logger.error("Change position in getRandomFile:", e);
+            return null;
+        }
+        return raf;
     }
 }
