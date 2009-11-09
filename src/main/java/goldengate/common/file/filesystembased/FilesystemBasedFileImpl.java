@@ -40,7 +40,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.io.SyncFailedException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
@@ -215,20 +214,21 @@ public abstract class FilesystemBasedFileImpl implements
             bfileChannelIn = null;
             bbyteBuffer = null;
         }
-        if (rafOut != null) {
-            try {
+        if (fileOutputStream != null) {
+            /*try {
                 rafOut.getFD().sync();
             } catch (SyncFailedException e1) {
             } catch (IOException e1) {
-            }
+            }*/
             try {
-                rafOut.close();
+                fileOutputStream.flush();
+                fileOutputStream.close();
             } catch (ClosedChannelException e) {
                 // ignore
             } catch (IOException e) {
                 throw new Reply550Exception("Close in error");
             }
-            rafOut = null;
+            fileOutputStream = null;
         }
         position = 0;
         isReady = false;
@@ -268,7 +268,7 @@ public abstract class FilesystemBasedFileImpl implements
         if (!isReady) {
             return false;
         }
-        return rafOut != null;
+        return fileOutputStream != null;
     }
 
     public boolean canRead() throws CommandAbstractException {
@@ -420,10 +420,9 @@ public abstract class FilesystemBasedFileImpl implements
     private long position = 0;
 
     /**
-     * RandomAccessFile Out
+     * FileOutputStream Out
      */
-    private RandomAccessFile rafOut = null;
-
+    private FileOutputStream fileOutputStream = null;
     /**
      * FileChannel In
      */
@@ -455,10 +454,18 @@ public abstract class FilesystemBasedFileImpl implements
         if (bfileChannelIn != null) {
             bfileChannelIn = bfileChannelIn.position(position);
         }
-        if (rafOut != null) {
+        /*if (rafOut != null) {
             rafOut.seek(position);
-        }
+        }*/
         this.position = position;
+        if (fileOutputStream != null) {
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            fileOutputStream = getFileOutputStream(true);
+            if (fileOutputStream == null) {
+                throw new IOException("File cannot changed of Position");
+            }
+        }
     }
     /**
      * Write the current FileInterface with the given ChannelBuffer. The file is
@@ -479,17 +486,18 @@ public abstract class FilesystemBasedFileImpl implements
         if (buffer == null) {
             return;// could do FileEndOfTransfer ?
         }
-        if (rafOut == null) {
-            rafOut = getRandomFile();
+        if (fileOutputStream == null) {
+            //rafOut = getRandomFile();
+            fileOutputStream = getFileOutputStream(position > 0);
         }
-        if (rafOut == null) {
+        if (fileOutputStream == null) {
             throw new FileTransferException("Internal error, file is not ready");
         }
         long bufferSize = buffer.readableBytes();
         byte []newbuf = new byte[(int)bufferSize];
         buffer.readBytes(newbuf);
         try {
-            rafOut.write(newbuf);
+            fileOutputStream.write(newbuf);
         } catch (IOException e2) {
             logger.error("Error during write:", e2);
             try {
@@ -696,5 +704,43 @@ public abstract class FilesystemBasedFileImpl implements
             return null;
         }
         return raf;
+    }
+    /**
+     * Returns the FileOutputStream in Out mode associated with the current file.
+     * @param append True if the FileOutputStream should be in append mode
+     * @return the FileOutputStream (OUT)
+     */
+    protected FileOutputStream getFileOutputStream(boolean append) {
+        if (!isReady) {
+            return null;
+        }
+        File trueFile;
+        try {
+            trueFile = getFileFromPath(currentFile);
+        } catch (CommandAbstractException e1) {
+            return null;
+        }
+        if (position > 0) {
+            if (trueFile.length() < position) {
+                logger.error("Cannot Change position in getFileOutputStream: file is smaller than required position");
+                return null;
+            }
+            RandomAccessFile raf = getRandomFile();
+            try {
+                raf.setLength(position);
+                raf.close();
+            } catch (IOException e) {
+                logger.error("Change position in getFileOutputStream:", e);
+                return null;
+            }
+        }
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(trueFile, append);
+        } catch (FileNotFoundException e) {
+            logger.error("File not found in getRandomFile:", e);
+            return null;
+        }
+        return fos;
     }
 }

@@ -5,6 +5,9 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.0.7" date="2009-11-09" description="Change File Write support">
+			<action dev="Frederic Bregier" type="fix">Change File Write support to FileOutputStream and RandomAccessFile</action>
+		</release>
 		<release version="1.0.6" date="2009-11-02" description="Add new File Support using RandomAccessFile">
 			<action dev="Frederic Bregier" type="add">new File Support using RandomAccessFile</action>
 		</release>
