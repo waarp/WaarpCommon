@@ -5,6 +5,9 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.0.8" date="2009-11-19" description="Fix getCanonicalPath">
+			<action dev="Frederic Bregier" type="fix">Fix getCanonicalPath</action>
+		</release>
 		<release version="1.0.7" date="2009-11-09" description="Change File Write support">
 			<action dev="Frederic Bregier" type="fix">Change File Write support to FileOutputStream and RandomAccessFile</action>
 		</release>

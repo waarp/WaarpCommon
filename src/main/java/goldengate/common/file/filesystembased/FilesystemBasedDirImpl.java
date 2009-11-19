@@ -246,23 +246,19 @@ public abstract class FilesystemBasedDirImpl implements DirInterface {
                 String curdir = list.get(i);
                 if (curdir.equals(".")) {
                     list.remove(i);// removes '.'
-                    i++;
                 } else if (curdir.equals("..")) {
-                    if (i-1 >= 0) {
                         list.remove(i);// removes '..'
-                        list.remove(i-1);// and removes parent dir
-                        i++;
-                    } else {
-                        list.remove(i);// removes '..' only since root
-                        i++;
-                    }
+                        int len = list.size();
+                        if (len > 0 && i < len) {
+                            list.remove(i);// and removes parent dir
+                        }
                 }
             }
             if (list.isEmpty()) {
                 return "/";
             }
-            builder.append(list.get(list.size()-1));
-            for (int i = list.size()-2; i >= 0; i--) {
+
+            for (int i = list.size()-1; i >= 0; i--) {
                 builder.append('/');
                 builder.append(list.get(i));
             }
