@@ -20,8 +20,6 @@
  */
 package goldengate.common.crypto;
 
-import java.math.BigInteger;
-
 /**
  * This class handles methods to crypt and decrypt messages with DES algorithm.<br>
  * <br>
@@ -34,8 +32,8 @@ import java.math.BigInteger;
  * The method key.getSecretKeyInBytes() allow getting the key in Bytes.</li>
  * <li>From an external source: key.setSecretKey(arrayOfBytes);</li>
  * </ul></li>
- * <li>To crypt a String in a BigInteger.toString() format: String myStringCrypt = key.cryptToString(myString);</li>
- * <li>To decrypt one string from BigInteger.toString() format to the original String: String myStringDecrypt = key.decryptStringInString(myStringCrypte);</li>
+ * <li>To crypt a String in a Base64 format: String myStringCrypt = key.cryptToString(myString);</li>
+ * <li>To decrypt one string from Base64 format to the original String: String myStringDecrypt = key.decryptStringInString(myStringCrypte);</li>
  * </ul>
  *
  * @author frederic bregier
@@ -45,7 +43,7 @@ public class Des extends KeyObject {
     /**
      * This value could be between 32 and 128 due to license limitation.
      */
-    public final static int KEY_SIZE = 128; // [32..448]
+    public final static int KEY_SIZE = 56; // [32..448]
     public final static String ALGO = "DES";
     public final static String INSTANCE = "DES/ECB/PKCS5Padding";
 
@@ -89,20 +87,20 @@ public class Des extends KeyObject {
             plaintext = "Ceci est un essai de clef";
         }
         System.out.println("plaintext = " + plaintext);
-        Blowfish bf = new Blowfish();
+        Des des = new Des();
         // Generate a key
-        bf.generateKey();
+        des.generateKey();
         // get the generated key
-        byte[] secretKey = bf.getSecretKeyInBytes();
+        byte[] secretKey = des.getSecretKeyInBytes();
         // crypt one text
-        byte[] ciphertext = bf.crypt(plaintext);
+        byte[] ciphertext = des.crypt(plaintext);
         // print the cipher
-        System.out.println("ciphertext = " + new BigInteger(ciphertext));
+        System.out.println("ciphertext = " + des.encoder.encode(ciphertext));
 
         // Test the set Key
-        bf.setSecretKey(secretKey);
+        des.setSecretKey(secretKey);
         // decrypt the cipher
-        String plaintext2 = bf.decryptInString(ciphertext);
+        String plaintext2 = des.decryptInString(ciphertext);
         // print the result
         System.out.println("plaintext2 = " + plaintext2);
         if (!plaintext2.equals(plaintext))
@@ -112,9 +110,9 @@ public class Des extends KeyObject {
         int nb = 100000;
         long time1 = System.currentTimeMillis();
         for (int i = 0; i < nb ; i++) {
-            String cipherString = bf.cryptToString(plaintext);
+            String cipherString = des.cryptToString(plaintext);
             //System.out.println("cipherString = " + cipherString);
-            String plaintext3 = bf.decryptStringInString(cipherString);
+            String plaintext3 = des.decryptStringInString(cipherString);
             //System.out.println("plaintext3 = " + plaintext3);
             if (!plaintext3.equals(plaintext))
                 System.out.println("Error: plaintext3 != plaintext");

@@ -15,8 +15,6 @@
  */
 package goldengate.common.crypto;
 
-import java.math.BigInteger;
-
 /**
  * This class handles methods to crypt and decrypt messages with Blowfish (efficient).<br>
  * <br>
@@ -29,8 +27,8 @@ import java.math.BigInteger;
  * The method key.getSecretKeyInBytes() allow getting the key in Bytes.</li>
  * <li>From an external source: key.setSecretKey(arrayOfBytes);</li>
  * </ul></li>
- * <li>To crypt a String in a BigInteger.toString() format: String myStringCrypt = key.cryptToString(myString);</li>
- * <li>To decrypt one string from BigInteger.toString() format to the original String: String myStringDecrypt = key.decryptStringInString(myStringCrypte);</li>
+ * <li>To crypt a String in a Base64 format: String myStringCrypt = key.cryptToString(myString);</li>
+ * <li>To decrypt one string from Base64 format to the original String: String myStringDecrypt = key.decryptStringInString(myStringCrypte);</li>
  * </ul>
  *
  *
@@ -93,7 +91,7 @@ public class Blowfish extends KeyObject {
         byte[] ciphertext = bf.crypt(plaintext);
         // print the cipher
         System.out.println(ciphertext.length);
-        System.out.println("ciphertext = " + new BigInteger(ciphertext));
+        System.out.println("ciphertext = " + bf.encoder.encode(ciphertext));
 
         // Test the set Key
         bf.setSecretKey(secretKey);

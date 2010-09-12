@@ -20,12 +20,14 @@
  */
 package goldengate.common.crypto;
 
-import java.math.BigInteger;
 import java.security.Key;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 /**
  * This class handles method to crypt and decrypt using the chosen algorithm.<br>
@@ -40,8 +42,8 @@ import javax.crypto.spec.SecretKeySpec;
  * The method key.getSecretKeyInBytes() allow getting the key in Bytes.</li>
  * <li>From an external source: key.setSecretKey(arrayOfBytes);</li>
  * </ul></li>
- * <li>To crypt a String in a BigInteger.toString() format: String myStringCrypt = key.cryptToString(myString);</li>
- * <li>To decrypt one string from BigInteger.toString() format to the original String: String myStringDecrypt = key.decryptStringInString(myStringCrypte);</li>
+ * <li>To crypt a String in a Base64 format: String myStringCrypt = key.cryptToString(myString);</li>
+ * <li>To decrypt one string from Base64 format to the original String: String myStringDecrypt = key.decryptStringInString(myStringCrypte);</li>
  * </ul>
  *
  * @author frederic bregier
@@ -52,6 +54,14 @@ public abstract class KeyObject {
      * The True Key associated with this object
      */
     Key secretKey;
+    /**
+     * Base64 encoder
+     */
+    BASE64Encoder encoder = new BASE64Encoder();
+    /**
+     * Base64 decoder
+     */
+    BASE64Decoder decoder = new BASE64Decoder();
 
     /**
      * Empty constructor
@@ -111,7 +121,7 @@ public abstract class KeyObject {
      */
     public void generateKey() throws Exception {
         try {
-            KeyGenerator keyGen = KeyGenerator.getInstance(getInstance());
+            KeyGenerator keyGen = KeyGenerator.getInstance(getAlgorithm());
             keyGen.init(getKeySize());
             secretKey = keyGen.generateKey();
         } catch (Exception e) {
@@ -129,7 +139,7 @@ public abstract class KeyObject {
      */
     public byte[] crypt(byte[] plaintext) throws Exception {
         try {
-            Cipher cipher = Cipher.getInstance(getAlgorithm());
+            Cipher cipher = Cipher.getInstance(getInstance());
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             return cipher.doFinal(plaintext);
         } catch (Exception e) {
@@ -150,15 +160,15 @@ public abstract class KeyObject {
     }
 
     /**
-     * Crypt one String and returns the crypted String as Integer format
+     * Crypt one String and returns the crypted String as Base64 format
      *
      * @param plaintext
-     * @return the crypted String as Integer format
+     * @return the crypted String as Base64 format
      * @throws Exception
      */
     public String cryptToString(String plaintext) throws Exception {
         byte []result = crypt(plaintext.getBytes());
-        return new BigInteger(result).toString();
+        return encoder.encode(result);
     }
 
     /**
@@ -191,7 +201,7 @@ public abstract class KeyObject {
     }
 
     /**
-     * Decrypt a String as Integer format representing a crypted array of bytes and
+     * Decrypt a String as Base64 format representing a crypted array of bytes and
      * returns the uncrypted String
      *
      * @param ciphertext
@@ -199,8 +209,7 @@ public abstract class KeyObject {
      * @throws Exception
      */
     public String decryptStringInString(String ciphertext) throws Exception {
-        BigInteger integer = new BigInteger(ciphertext);
-        byte[] arrayBytes = integer.toByteArray();
+        byte[] arrayBytes = decoder.decodeBuffer(ciphertext);
         return new String(decryptInBytes(arrayBytes));
     }
 }

@@ -1,0 +1,497 @@
+To generate the stores for OpenR66 for instance, you need to create 2 JKS keyStore. To generate those files, you can use the "keytool" command from the JDK or using the free tool KeyTool IUI (last known version in 2.4.1).
+For instance: keytool -genkey -alias myalias -keyalg RSA -validity xxx -keystore mystore.store
+
+===================================
+
+From: http://www.ibm.com/developerworks/java/library/j-certgen/
+
+If you're developing Java software that relies on public key infrastructure (PKI) for security, you often need to create digital-certificate chains (also known as certification paths) for testing purposes. This is a relatively simple task but one for which clear documentation is scarce. This article describes how to create arbitrary-length certificate chains using the open source OpenSSL toolkit (see Resources). You'll also learn about some common certificate attributes and examine a sample program that reads certificates into a Java keystore.
+
+Digital certificates: A quick overview
+
+This article assumes that you're familiar with PKI basics, so I'll give you just a quick overview of the purpose and structure of digital certificates to help clarify the concept of a certificate chain.
+
+The primary use for digital certificates is to verify the origin of signed data, such as e-mail and JAR files. Verifying the signed data with a certificate lets the recipient know the origin of the data and if it has been altered in transit.
+
+A digital certificate contains, at a high level, a distinguished name (DN) and a public key. The DN identifies an entity -- a person, for example -- that holds the private key that matches the public key of the certificate. You tie the two together by signing the certificate with a private key and placing the signature in the certificate.
+
+A certificate signed by the private key that matches the public key of the certificate is known as a self-signed certificate. Root certification authority (CA) certificates fall into this category. User certificates are often signed by a different private key, such as a private key of the CA . This constitutes a two-certificate chain. Verifying that a user certificate is genuine involves verifying its signature, which requires the public key of the CA, from its certificate. But before the public key of the CA can be used, the enclosing CA certificate needs to be verified. Because the CA certificate is self signed, the CA public key is used to verify the certificate.
+
+A user certificate need not be signed by the private key of the root CA. It could be signed by the private key of an intermediary whose certificate is signed by the private key of the CA. This is an instance of a three-certificate chain: user certificate, intermediary certificate, and CA certificate. But more than one intermediary can be part of the chain, so certificate chains can be of any length.
+
+Another point worth noting is that a certificate can contain additional information, known as extensions. Extensions can specify the use of the certificate, among other things. Certain extensions can be very important, depending on the use of the certificate.
+
+Back to top
+
+Create certificates with OpenSSL
+
+A number of tools are available for creating certificates. You can use keytool, a command-line tool shipped with the Java SDK, to create self-signed certificates. But certificate chains require more-complex software, such as OpenSSL.
+
+Obtaining OpenSSL
+
+OpenSSL is available as a free download (see Resources). If you use UNIX, you're likely to find that OpenSSL has either been installed with the OS or is an optional install supplied with the OS. Linux users should look in: /usr/share/ssl. The Microsoft MKS toolkit also ships with a version of OpenSSL. (It's in C:\Program Files\MKS Toolkit\etc\openssl on my machine.) If you use Windows but don't have MKS, you can get the necessary binaries from SourceForge (see Resources). Most installations consist of three main files: the OpenSSL binary, a CA.sh shell script, and an openssl.cnf configuration file. (The package available from SourceForge is missing the CA.sh file. You can obtain the missing file by downloading the source bundle.)
+
+After installation, make sure that CA.sh and the OpenSSL executable are on your path. Then you're ready to begin by creating a root certificate.
+
+Back to top
+
+Create a root certificate
+
+The CA shell script makes creating a root certificate a relatively simple job. First, change to the directory where you want to put the CA data store. (I use the temp\OpenSSL directory.) Then type:
+
+CA -newca
+
+
+This results in a dialog like the one in Listing 1, which includes sample information that I entered at the prompts:
+
+Listing 1. Creating a root certificate
+
+$ CA.sh -newca
+CA certificate filename (or enter to create)
+
+Making CA certificate ...
+Using configuration from C:/PROGRA~1/MKSTOO~1/etc/openssl/openssl.cnf
+Loading 'screen' into random state - done
+Generating a 1024 bit RSA private key
+......++++++
+...++++++
+writing new private key to './demoCA/private/./cakey.pem'
+Enter PEM pass phrase:
+Verifying password - Enter PEM pass phrase:
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+You will see a number of fields, but you can leave some blank.
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:UK
+State or Province Name (full name) [Some-State]:Hampshire
+Locality Name (e.g., city) []:Winchester
+Organization Name (e.g., company) [Internet Widgits Pty Ltd]:IBM UK Ltd
+Organizational Unit Name (e.g., section) []:JTC
+Common Name (e.g., YOUR name) []:Pauls Root Certificate
+Email Address []:Paul_Abbott@uk.ibm.com
+$
+
+
+On completion of the dialog, OpenSSL creates the following directory structure:
+
+demoCA/
+   cacert.pem              - root certificate
+   index.txt               - empty
+   serial                  - text file containing "01"
+   certs/                  - empty
+   crl/                    - empty
+   newcerts/               - empty
+   private/cakey.pem       - private key
+
+
+The PEM file format
+
+OpenSSL uses the PEM file format to store certificates and keys. PEM is essentially Base64 encoded binary surrounded by begin and end lines, such as
+-----BEGIN CERTIFICATE-----
+and
+-----END CERTIFICATE-----
+for certificate files. Outside of these markers might be additional information, such as a textual representation of the encoded contents. The files are ASCII, and you can open them with any text editor. Check out this example PEM file.
+
+Here's a quick rundown of what's in the main directory:
+
+    * cacert.pem is the PEM encoded (see the sidebar, The PEM file format) root certificate of this CA. The root certificate verifies the certificates signed by the root private key.
+    * index.txt is a file containing a list of all issued certificates.
+    * serial holds the next available serial number that will be assigned to a certificate issued by this CA. To put it another way, it's the unique serial number assigned to a certificate when a signing request is signed by this root certificate.
+    * cakey.pem is the root private key. This key is used to sign a certificate request. It is also PEM encoded.
+
+You define the directory name (demoCA in this example) and the root certificate's validity period, which defaults to 365 days, in CA.sh. You must edit this file if you want to alter these values.
+
+Back to top
+
+Generate a user certificate
+
+Generating a user certificate takes two steps: generating a request and signing the request. The CA shell script can perform both steps using the -newreq (generate a new request) and -sign (sign a new request) operators.
+
+Generating a new request
+
+Executing the CA -newreq command initiates a dialog similar to the one you went through to generate the new root certificate. One of the key differences is that the dialog prompts you for a PEM pass phrase, which OpenSSL uses to encode the private key before it writes it to the output file.
+
+The output file, named newreq.pem, contains the private key and the signing request, which you can think of as an unsigned certificate. Listing 2 shows an example of a new-request dialog.
+
+Listing 2. Example -newreq dialog
+
+Using configuration from
+C:/PROGRA~1/MKSTOO~1/etc/openssl/openssl.cnf
+Loading 'screen' into random state - done
+Generating a 1024 bit RSA private key
+......................++++++
+...++++++
+writing new private key to 'newreq.pem'
+Enter PEM pass phrase:
+Verifying password - Enter PEM pass phrase:
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+You will see a number of fields, but you can leave some blank.
+For some fields there will be a default value.
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:UK
+State or Province Name (full name) [Some-State]:Hampshire
+Locality Name (e.g., city) []:Winchester
+Organization Name (e.g., company) [Internet Widgits Pty Ltd]:IBM Uk Ltd
+Organizational Unit Name (e.g., section) []:JET
+Common Name (e.g., YOUR name) []:Paul Abbott
+Email Address []:Paul_H_Abbott@uk.ibm.com
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:qwerty
+An optional company name []:
+Request (and private key) is in newreq.pem
+
+
+Signing a request
+
+Executing the CA -sign command signs a request using the private key of the root CA, held in private/cakey.pem. The request needs to be in a file called newreq.pem, and the generated certificate is written to a file called newcert.pem; both files are in the current directory. Listing 3 shows a sample request-signing dialog.
+
+Listing 3. Example -sign dialog
+
+
+$ CA.sh -sign
+Using configuration from C:/PROGRA~1/MKSTOO~1/etc/openssl/openssl.cnf
+Loading 'screen' into random state - done
+Enter PEM pass phrase:
+Check that the request matches the signature
+Signature ok
+The Subjects Distinguished Name is as follows
+countryName           :PRINTABLE:'UK'
+stateOrProvinceName   :PRINTABLE:'Hampshire'
+localityName          :PRINTABLE:'Winchester'
+organizationName      :PRINTABLE:'IBM UK Ltd'
+organizationalUnitName:PRINTABLE:'JET'
+commonName            :PRINTABLE:'Paul Abbott'
+emailAddress          :IA5STRING:'Paul_H_Abbott@uk.ibm.com'
+Certificate is to be certified until Jun 22 20:50:55 2005 GMT (365 days)
+Sign the certificate? [y/n]:y
+
+
+1 out of 1 certificate requests certified, commit? [y/n]y
+Write out database with 1 new entries
+Data Base Updated
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 2 (0x2)
+        Signature Algorithm: md5WithRSAEncryption
+        Issuer: C=UK, ST=Hampshire, L=Winchester, O=IBM UK Ltd,
+          OU=JTC, CN=Paul H Abbott/Email=Paul_H_Abbott@uk.ibm.com
+        Validity
+            Not Before: Jun 22 20:50:55 2004 GMT
+            Not After : Jun 22 20:50:55 2005 GMT
+        Subject: C=UK, ST=Hampshire, L=Winchester, O=IBM Uk Ltd,
+          OU=JET, CN=Paul Abbott/Email=Paul_H_Abbott@uk.ibm.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (1024 bit)
+                Modulus (1024 bit):
+                    00:e2:b5:90:50:e5:dd:7c:79:c3:49:a5:c9:ee:29:
+                    3a:da:1d:8b:6a:b0:0b:a0:a1:cf:79:fc:be:50:db:
+                    cb:37:b7:54:00:bb:6e:74:e6:a4:11:d4:c6:5a:02:
+                    46:3b:b4:33:72:97:5b:cf:9d:9a:32:9b:e6:34:e9:
+                    4b:30:4e:b6:68:55:8a:3f:80:f3:5e:c9:63:cc:4e:
+                    c2:c0:c3:34:2f:93:9f:fa:ca:1b:44:f5:c8:87:ec:
+                    1d:12:a9:8c:3a:b9:28:83:4d:b5:18:ff:34:3a:a9:
+                    e7:7e:4e:c4:21:8e:56:e7:dc:f5:07:46:39:c8:d8:
+                    ff:00:d3:87:20:2e:06:18:19
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints:
+                CA:FALSE
+            Netscape Comment:
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier:
+                FA:65:44:FB:3A:E6:15:1F:C5:40:6C:EB:F4:DA:AB:B9:CD:F2:2D:54
+            X509v3 Authority Key Identifier:
+                keyid:93:8C:B4:F0:30:95:77:59:2E:A1:3B:0C:A5:3A:C6:92:FA:16:31:6D
+                DirName:/C=UK/ST=Hampshire/L=Winchester/O=IBM UK Ltd/
+                  OU=JTC/CN=Paul H Abbott/Email=Paul_H_Abbott@uk.ibm.com
+                serial:00
+
+    Signature Algorithm: md5WithRSAEncryption
+        27:43:6d:89:c3:61:d4:af:3e:dc:55:a3:9a:a7:7d:66:4e:29:
+        2e:43:f0:90:c6:9c:0f:62:24:b2:4c:9e:2c:f7:d7:84:ce:7f:
+        b6:c8:09:3d:b4:80:c8:26:9a:a8:6b:2f:df:8f:e3:8b:80:f5:
+        10:28:80:28:5e:94:55:be:61:e5:18:4e:d4:a8:c2:9e:6d:9b:
+        52:64:94:33:b3:a5:68:79:e2:85:86:01:e6:aa:0f:1e:54:2d:
+        80:b1:37:38:66:cc:09:9a:0e:30:0a:e8:b9:00:7d:da:a2:a1:
+        bb:3c:83:37:2f:16:6a:5d:84:25:66:23:d2:67:a9:02:a4:33:
+        96:56
+-----BEGIN CERTIFICATE-----
+MIID0jCCAzugAwIBAgIBAjANBgkqhkiG9w0BAQQFADCBmjELMAkGA1UEBhMCVUsx
+EjAQBgNVBAgTCUhhbXBzaGlyZTETMBEGA1UEBxMKV2luY2hlc3RlcjETMBEGA1UE
+ChMKSUJNIFVLIEx0ZDEMMAoGA1UECxMDSlRDMRYwFAYDVQQDEw1QYXVsIEggQWJi
+b3R0MScwJQYJKoZIhvcNAQkBFhhQYXVsX0hfQWJib3R0QHVrLmlibS5jb20wHhcN
+MDQwNjIyMjA1MDU1WhcNMDUwNjIyMjA1MDU1WjCBmDELMAkGA1UEBhMCVUsxEjAQ
+BgNVBAgTCUhhbXBzaGlyZTETMBEGA1UEBxMKV2luY2hlc3RlcjETMBEGA1UEChMK
+SUJNIFVrIEx0ZDEMMAoGA1UECxMDSkVUMRQwEgYDVQQDEwtQYXVsIEFiYm90dDEn
+MCUGCSqGSIb3DQEJARYYUGF1bF9IX0FiYm90dEB1ay5pYm0uY29tMIGfMA0GCSqG
+SIb3DQEBAQUAA4GNADCBiQKBgQDitZBQ5d18ecNJpcnuKTraHYtqsAugoc95/L5Q
+28s3t1QAu2505qQR1MZaAkY7tDNyl1vPnZoym+Y06UswTrZoVYo/gPNeyWPMTsLA
+wzQvk5/6yhtE9ciH7B0SqYw6uSiDTbUY/zQ6qed+TsQhjlbn3PUHRjnI2P8A04cg
+LgYYGQIDAQABo4IBJjCCASIwCQYDVR0TBAIwADAsBglghkgBhvhCAQ0EHxYdT3Bl
+blNTTCBHZW5lcmF0ZWQgQ2VydGlmaWNhdGUwHQYDVR0OBBYEFPplRPs65hUfxUBs
+6/Taq7nN8i1UMIHHBgNVHSMEgb8wgbyAFJOMtPAwlXdZLqE7DKU6xpL6FjFtoYGg
+pIGdMIGaMQswCQYDVQQGEwJVSzESMBAGA1UECBMJSGFtcHNoaXJlMRMwEQYDVQQH
+EwpXaW5jaGVzdGVyMRMwEQYDVQQKEwpJQk0gVUsgTHRkMQwwCgYDVQQLEwNKVEMx
+FjAUBgNVBAMTDVBhdWwgSCBBYmJvdHQxJzAlBgkqhkiG9w0BCQEWGFBhdWxfSF9B
+YmJvdHRAdWsuaWJtLmNvbYIBADANBgkqhkiG9w0BAQQFAAOBgQAnQ22Jw2HUrz7c
+VaOap31mTikuQ/CQxpwPYiSyTJ4s99eEzn+2yAk9tIDIJpqoay/fj+OLgPUQKIAo
+XpRVvmHlGE7UqMKebZtSZJQzs6VoeeKFhgHmqg8eVC2AsTc4ZswJmg4wCui5AH3a
+oqG7PIM3LxZqXYQlZiPSZ6kCpDOWVg==
+-----END CERTIFICATE-----
+Signed certificate is in newcert.pem
+
+
+Note that the PEM password requested during the dialog is the password used to encrypt the private key of the root CA -- not the user's private key.
+
+An examination of the demoCA directory, after signing, shows that the index.txt and serial files have been updated. The generated public key has also been placed in demoCA/newcert/ directory under a filename that reflects its serial number -- for example, 01.pem.
+
+At this point, you have a user certificate, a user private key, and a root certificate. If this is all you need, you're done. Read on if you want to find out how to control the contents of the certificate or create a three- (or more) certificate chain.
+
+Back to top
+
+Under the covers of CA.sh
+
+So far, I've shown how to use the CA.sh shell script to simplify the process of certificate generation. But under the covers, CA.sh uses the OpenSSL command to perform all necessary key generation and signing operations. You control OpenSSL through the openssl.cnf configuration file. I'll discuss some of the sections in this file and the CA.sh operations that they affect.
+
+CA -newca
+
+The CA -newca operation, as I mentioned earlier, creates the necessary directory structure for the CA:
+
+dir             = ./demoCA              # Where everything is kept
+certs           = $dir/certs            # Where the issued certs are kept
+crl_dir         = $dir/crl              # Where the issued crl are kept
+database        = $dir/index.txt        # database index file.
+new_certs_dir   = $dir/newcerts         # default place for new certs.
+
+certificate     = $dir/cacert.pem       # The CA certificate
+serial          = $dir/serial           # The current serial number
+crl             = $dir/crl.pem          # The current CRL
+private_key     = $dir/private/cakey.pem# The private key
+
+
+This operation creates the directories defined in the CA_default section of openssl.cnf, although CA.sh does not make direct reference to the configuration file. If you want to use a different structure, you need to modify openssl.cnf and manually create the required directories. Alternatively, you can modify CA.sh to create the directories.
+
+The following call to OpenSSL generates a root certificate:
+
+openssl req -new -x509 -keyout ./demoCA/private/cakey.pem
+  -out ./demoCA/cacert.pem -days 365
+
+
+The -days flag sets the lifespan of the root certificate to 365 days (one year), which overrides any default value specified in openssl.cnf.
+
+CA -newreq
+
+The req section of openssl.cnf controls generation of a new certificate request, as shown in the example below:
+
+[ req ]
+default_bits        = 1024
+default_keyfile     = privkey.pem
+distinguished_name  = req_distinguished_name
+attributes          = req_attributes
+
+
+The first line determines the length of the generated key pair, and the second determines the default destination for the generated private key. The next two lines refer to other sections in the same file.
+
+The req_distinguished_name section defines the components of the DN to be placed in the certificate request, and these components ultimately go into the signed certificate:
+
+[ req_distinguished_name ]
+countryName                 = Country Name (2 letter code)
+countryName_default         = AU
+countryName_min             = 2
+countryName_max             = 2
+
+stateOrProvinceName         = State or Province Name (full name)
+
+localityName                = Locality Name (e.g., city)
+
+organizationName            = Organization Name (e.g., company)
+
+organizationalUnitName      = Organizational Unit Name (e.g., section)
+
+commonName                 = Common Name (e.g., YOUR name)
+
+emailAddress                = Email Address
+
+
+Each part of this section consists of up to four values, as shown in lines two through five of the example:
+
+    * The message prompt printed to the screen
+    * A default value (suffix of _default)
+    * The minimum number of characters the user is allowed to type (suffix of _min)
+    * The maximum number of characters the user is allowed to enter (suffix of _max)
+
+A number of other options are available. They include defining your own object identifier (OID) types and having the distinguished name values defined in the configuration file rather than supplied by the user, which could be useful for batch operation. The req_attributes section lets you define the minimum and maximum lengths of the encryption password, among other things.
+
+The OpenSSL call for the new-request operation is:
+
+openssl req -new -keyout newreq.pem -out newreq.pem -days 365
+
+
+Note that the -keyout option overrides the default_keyfile line in the configuration file. Again, the lifespan of the generatedcertificate is set to 365 days. If you compare this line to the one that generates the root certificate, you'll see only one difference: -x509. This tells OpenSSL that you want a self-signed certificate.
+
+You can find more information on how to use OpenSSL to generate signing requests in the req section (see Resources) of the OpenSSL documentation.
+
+CA -sign
+
+The sign operation, like the request-generation operation, uses a call to OpenSSL to sign the certificate:
+
+openssl ca -policy policy_anything -out newcert.pem
+  -infiles newreq.pem
+
+
+It's interesting to note that the OpenSSL command is ca rather than sign, and that the private key used for signing isn't specified. The openssl.cnf configuration file defines this information. The relevant section is CA_default, although you can use the -name option to override this.
+
+The -policy parameter specifies the policy section in the configuration file. You use this section to specify which fields must be present in the DN request and which are optional. I typically use this configuration:
+
+[ policy_anything ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+
+As you can see, this configuration requires very little by default. It's worth noting that the documentation states that a DN field not listed here will be silently deleted from a signed request.
+
+Back to top
+
+Sign a third certificate
+
+The Create a root certificate and Generate a user certificate sections of this article showed how to use the CA.sh shell script to create root certificates and then sign a user certificate using the root certificate. This process is sufficient if you want to have a two-certificate chain, but what if you need three or more certificates in a chain? The answer is that you use the OpenSSL command directly. Now that you know how the CA.sh script works, you can use this knowledge to create a three-certificate chain. The steps are similar to those for creating a two-certificate chain. For simplicity, you'll reuse the CA certificate/private key and the user request from the earlier example.
+
+Begin by renaming the existing user-request file to userRequest1.pem. Then create a new user certificate, which you'll call userCert1. The existing user certificate is not flagged as a CA certificate and can't be used for signing other certificates. (This becomes apparent only when you try to verify a certificate chain containing such a certificate.)
+
+You need to add the following section, which allows the certificate to be used for certificate signing, to your configuration file:
+
+[ my_v3_ext ]
+basicConstraints = CA:true
+
+
+Use the following command to sign the certificate:
+
+openssl ca -policy policy_anything -extensions my_v3_ext
+  -out userCert1.pem -infiles userRequest1.pem
+
+
+Next, generate a new certificate request for the third certificate. You can either use the CA -newreq command to do this, or you can use the OpenSSL command directly.
+
+Once you have the request file, you need to sign it. As I mentioned earlier, the private key used to sign the request is specified by default in the configuration file, not the openssl ca command line. But the openssl ca command can include a -keyfile option that lets you override this default. The following command signs use your second certificate to sign the third certificate:
+
+openssl ca -policy policy_anything -keyfile userRequest1.pem
+  -cert userCert1.pem -out userCert2.pem -infiles newreq.pem
+
+
+Note that the -cert parameter specifies the signer's certificate, overriding the default in the configuration file. Invoking the command without it will result in an error because OpenSSL checks that the private key and certificate of the signer match.
+
+Assuming that all has gone well, you should have userCert1.pem and userCert2.pem files in the current directory and the root CA certificate file in the demoCA/private directory. These three files constitute the certificate chain. If you're working on Windows, you should be able to install the certificates by simply renaming the files to give them a .cer extension and double-click on them from a file browser.
+
+Additional options
+
+You might find the following OpenSSL command-line options useful:
+
+    * -startdate, -enddate & -days allow you to specify the validity period of the generated certificate. By default, a certificate is valid for one year from the current date.
+    * -notext lets you switch off the textual representation of the generated certificate that appears before the binary-encoded version. The textual version is often not needed.
+    * -key is the password used to encrypt the private key. This is useful if you want to call OpenSSL from a batch file.
+    * -batch tells OpenSSL to work in batch mode, with no user prompts.
+    * -extfile specifies a file containing certificate extensions.
+
+Back to top
+
+Load certificates into a Java keystore
+
+A Java keystore is a repository of private keys and the associated X.509 certificate chains authenticating the corresponding public keys. Getting the certificate chain into a Java keystore requires a simple Java program. The code fragment in Listing 4 reads the three-certificate chain you've created into an existing keystore:
+
+Listing 4. Loading a certificate chain into a Java keystore
+
+ // The keystore to add the certificates to
+ FileInputStream ksis = new FileInputStream(".keystore");
+
+ // The new keystore with the certificates added
+ FileOutputStream ksos = new FileOutputStream(".newkeystore");
+
+ // The certificate files, to be added to keystore
+ FileInputStream certFile1 = new FileInputStream("cacert.cer");
+ FileInputStream certFile2 = new FileInputStream("userCert1.cer");
+ FileInputStream certFile3 = new FileInputStream("userCert2.cer");
+
+ CertificateFactory cf = CertificateFactory.getInstance("X.509");
+
+ // Read the 3 certificates into memory
+ Certificate cert1 = cf.generateCertificate(certFile1);
+ Certificate cert2 = cf.generateCertificate(certFile2);
+ Certificate cert3 = cf.generateCertificate(certFile3);
+
+ // Read the keystore file, type="jks"
+ KeyStore ks = KeyStore.getInstance("jks");
+ char[] password = "password".toCharArray();
+
+ ks.load(ksis, password);
+
+ // Add certificates to keystore
+ ks.setCertificateEntry("MYROOT_ALIAS", cert1);
+ ks.setCertificateEntry("MYUSER1_ALIAS", cert2);
+ ks.setCertificateEntry("MYUSER2_ALIAS", cert3);
+
+ // Write modified keystore to file system
+ ks.store(ksos, password);
+
+ ksos.close();
+
+
+In Listing 4, the password for the keystore is password and the keystore type is jks. Once the certificates are in the keystore, any Java application that's configured to access the keystore can use them. Sun's JDK documentation includes information on how to do this.
+
+Back to top
+
+Conclusion
+
+As you've probably realized by now, OpenSSL can also be used to implement a very simple CA and to issue certificates. You might decide to use it to obtain your certificate chains once your test application goes live. However, this approach carries with it the responsibility for verifying the origin of any certificate request and managing issued certificates. Alternatively, you might decide to use an external CA, such as thawte or VeriSign, to issue certificates -- an approach that has its own pro and cons.
+
+This article has shown how to create a certificate chain for testing Java applications that use PKI-based security. To maintain this tight focus, I haven't touched on related areas that might be of interest, such as using the generated certificate chains in other applications (such as e-mail), how to use a generated certificate chain in other languages, and certificate revocation lists. If you're interested in exploring these and other areas in the complex topic of network security and digital certificates, check out some of the excellent sources of information in the Resources section.
+
+Resources
+
+    * Download the latest version of the OpenSSL source code.
+
+    * The OpenSSL Documentation is the main documentation for the OpenSSL command. It's not complete but is still quite useful.
+
+    * If you use Windows but don't have MKS, you can download the necessary OpenSSL binaries from SourceForge.
+
+    * Introduction to Public Key Infrastructure offers a basic introduction to PKI.
+
+    * Digital Certificates: Applied Internet Security (Addison-Wesley Professional; 1998) by Jalal Feghhi and Peter Williams describes digital certificates and their use, mainly from a Windows point of view.
+
+    * Java 2 Network Security, 2nd Edition (Prentice Hall PTR; 1999} by Marco Pistoia et al., provides useful background on Java 2 security.
+
+    * Security expert Brad Rubin wrote this comprehensive two-part introductory tutorial covering Java security. Part 1, Crypto basics (developerWorks, July 2002) guides you through the basics of cryptography and how it is implemented in the Java programming language, and Part 2, Authentication and authorization (developerWorks, July 2002) introduces the basic concepts of authentication and authorization and provides an architectural overview of JAAS.
+
+    * The Internet Engineering Task Force (IETF) Request for Comment (RFC) 2459 profiles the X.509 v3 certificate and X.509 v2 certificate revocation list (CRL) for use in the Internet.
+
+    * IETF RFC 1617 provides naming and structuring guidelines for X.500 directory pilots.
+
+    * "The evolution of Java security" (developerWorks, June 2002) provides a high-level overview of the development and evolution of Java security.
+
+    * The PKI page contains a long list of certification authorities that issue digital certificates.
+
+    * KeyMan from IBM alphaWorks is a tool for managing keys, certificates, CRLs, and the respective repositories for storing and retrieving these items.
+
+    * Find hundreds more Java technology resources on the developerWorks Java technology zone.
+
+    * Browse for books on these and other technical topics.
+
+About the author
+
+Paul H. Abbott has worked in the IBM Java Technology Centre for more than seven years, porting Sun's JVMs to a range of IBM platforms. He has been responsible for the integration of IBM security code in these JVMs for the last two years. He recently moved to J2EE/JMS development but maintains a strong interest in Java security and moderates the developerWorks Java zone's Java security forum.
