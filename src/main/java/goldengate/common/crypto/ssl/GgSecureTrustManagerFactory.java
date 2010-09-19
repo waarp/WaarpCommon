@@ -36,20 +36,20 @@ import javax.net.ssl.TrustManagerFactorySpi;
  *
  */
 public class GgSecureTrustManagerFactory extends TrustManagerFactorySpi {
-    private static GgX509TrustManager ggTrustManager;
+    private GgX509TrustManager ggTrustManager;
+    private TrustManager[] trustManager;
     /**
      *
      * @param tmf
      * @throws CryptoException
      */
-    public static void engineInit(TrustManagerFactory tmf) throws CryptoException {
+    public GgSecureTrustManagerFactory(TrustManagerFactory tmf) throws CryptoException {
         ggTrustManager = new GgX509TrustManager(tmf);
+        trustManager = new TrustManager[] {ggTrustManager};
     }
 
-    public static TrustManager[] getTrustManagers() {
-        return new TrustManager[] {
-                ggTrustManager
-        };
+    public TrustManager[] getTrustManagers() {
+        return trustManager;
     }
     /* (non-Javadoc)
      * @see javax.net.ssl.TrustManagerFactorySpi#engineGetTrustManagers()

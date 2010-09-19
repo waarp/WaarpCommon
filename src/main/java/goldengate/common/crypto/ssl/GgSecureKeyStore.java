@@ -53,29 +53,30 @@ public class GgSecureKeyStore {
     private static final GgInternalLogger logger = GgInternalLoggerFactory
             .getLogger(GgSecureKeyStore.class);
 
-    public static KeyStore keyStore;
-    public static KeyManagerFactory keyManagerFactory;
-    public static String keyStorePasswd;
-    public static String keyPassword;
-    public static KeyStore keyTrustStore;
-    public static TrustManagerFactory trustManagerFactory;
-    public static GgX509TrustManager ggX509TrustManager;
-    public static String trustStorePasswd;
+    public KeyStore keyStore;
+    public KeyManagerFactory keyManagerFactory;
+    public String keyStorePasswd;
+    public String keyPassword;
+    public GgSecureTrustManagerFactory secureTrustManagerFactory;
+    public KeyStore keyTrustStore;
+    public TrustManagerFactory trustManagerFactory;
+    public GgX509TrustManager ggX509TrustManager;
+    public String trustStorePasswd;
 
     /**
-     *
+     * Initialize empty KeyStore. No TrustStore is internally created.
      * @param _keyStorePasswd
      * @param _keyPassword
-     * @return True if correctly initialized empty
+     * @throws CryptoException
      */
-    public static boolean initEmptySecureKeyStore(String _keyStorePasswd, String _keyPassword) {
+    public GgSecureKeyStore(String _keyStorePasswd, String _keyPassword) throws CryptoException {
         keyStorePasswd = _keyStorePasswd;
         keyPassword = _keyPassword;
         try {
             keyStore = KeyStore.getInstance("JKS");
         } catch (KeyStoreException e) {
             logger.error("Cannot create KeyStore Instance", e);
-            return false;
+            throw new CryptoException("Cannot create KeyStore Instance", e);
         }
         try {
             // Empty keyStore created so null for the InputStream
@@ -83,25 +84,87 @@ public class GgSecureKeyStore {
                     getKeyStorePassword());
         } catch (NoSuchAlgorithmException e) {
             logger.error("Cannot create KeyStore Instance", e);
-            return false;
+            throw new CryptoException("Cannot create KeyStore Instance", e);
         } catch (CertificateException e) {
             logger.error("Cannot create KeyStore Instance", e);
-            return false;
+            throw new CryptoException("Cannot create KeyStore Instance", e);
         } catch (FileNotFoundException e) {
             logger.error("Cannot create KeyStore Instance", e);
-            return false;
+            throw new CryptoException("Cannot create KeyStore Instance", e);
         } catch (IOException e) {
             logger.error("Cannot create KeyStore Instance", e);
-            return false;
+            throw new CryptoException("Cannot create KeyStore Instance", e);
         }
-        return true;
+    }
+    /**
+     * Initialize the SecureKeyStore and TrustStore from files
+     * @param keyStoreFilename
+     * @param _keyStorePasswd
+     * @param _keyPassword
+     * @param trustStoreFilename if Null, no TrustKeyStore will be created
+     * @param _trustStorePasswd
+     * @throws CryptoException
+     */
+    public GgSecureKeyStore(
+            String keyStoreFilename, String _keyStorePasswd, String _keyPassword,
+            String trustStoreFilename, String _trustStorePasswd) throws CryptoException {
+        keyStorePasswd = _keyStorePasswd;
+        keyPassword = _keyPassword;
+        // First keyStore itself
+        try {
+            keyStore = KeyStore.getInstance("JKS");
+        } catch (KeyStoreException e) {
+            logger.error("Cannot create KeyStore Instance", e);
+            throw new CryptoException("Cannot create KeyStore Instance", e);
+        }
+        try {
+            keyStore.load(new FileInputStream(keyStoreFilename),
+                    getKeyStorePassword());
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("Cannot create KeyStore Instance", e);
+            throw new CryptoException("Cannot create KeyStore Instance", e);
+        } catch (CertificateException e) {
+            logger.error("Cannot create KeyStore Instance", e);
+            throw new CryptoException("Cannot create KeyStore Instance", e);
+        } catch (FileNotFoundException e) {
+            logger.error("Cannot create KeyStore Instance", e);
+            throw new CryptoException("Cannot create KeyStore Instance", e);
+        } catch (IOException e) {
+            logger.error("Cannot create KeyStore Instance", e);
+            throw new CryptoException("Cannot create KeyStore Instance", e);
+        }
+        try {
+            keyManagerFactory = KeyManagerFactory.getInstance(
+                    KeyManagerFactory.getDefaultAlgorithm());
+            //"SunX509");
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("Cannot create KeyManagerFactory Instance", e);
+            throw new CryptoException("Cannot create KeyManagerFactory Instance", e);
+        }
+        try {
+            keyManagerFactory.init(keyStore, getCertificatePassword());
+        } catch (UnrecoverableKeyException e) {
+            logger.error("Cannot create KeyManagerFactory Instance", e);
+            throw new CryptoException("Cannot create KeyManagerFactory Instance", e);
+        } catch (KeyStoreException e) {
+            logger.error("Cannot create KeyManagerFactory Instance", e);
+            throw new CryptoException("Cannot create KeyManagerFactory Instance", e);
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("Cannot create KeyManagerFactory Instance", e);
+            throw new CryptoException("Cannot create KeyManagerFactory Instance", e);
+        }
+
+        // Now create the TrustKeyStore
+        if (trustStoreFilename != null) {
+            initTrustStore(trustStoreFilename, _trustStorePasswd);
+        }
     }
     /**
      *
      * @param alias
      * @return True if entry is deleted
      */
-    public static boolean deleteKeyFromKeyStore(String alias) {
+    public boolean deleteKeyFromKeyStore(String alias) {
         try {
             keyStore.deleteEntry(alias);
         } catch (KeyStoreException e) {
@@ -117,7 +180,7 @@ public class GgSecureKeyStore {
      * @param chain
      * @return True if entry is added
      */
-    public static boolean setKeytoKeyStore(String alias, Key key, Certificate[] chain) {
+    public boolean setKeytoKeyStore(String alias, Key key, Certificate[] chain) {
         try {
             keyStore.setKeyEntry(alias, key, getCertificatePassword(), chain);
         } catch (KeyStoreException e) {
@@ -131,7 +194,7 @@ public class GgSecureKeyStore {
      * @param filename
      * @return True if keyStore is saved to file
      */
-    public static boolean saveKeyStore(String filename) {
+    public boolean saveKeyStore(String filename) {
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(filename);
@@ -158,10 +221,60 @@ public class GgSecureKeyStore {
     }
     /**
      *
+     * @param trustStoreFilename
+     * @param _trustStorePasswd
+     * @throws CryptoException
+     */
+    public void initTrustStore(String trustStoreFilename, String _trustStorePasswd) throws CryptoException {
+        trustStorePasswd = _trustStorePasswd;
+        try {
+            keyTrustStore = KeyStore.getInstance("JKS");
+        } catch (KeyStoreException e) {
+            logger.error("Cannot create TrustManagerFactory Instance", e);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
+        }
+        try {
+            keyTrustStore.load(new FileInputStream(trustStoreFilename),
+                    getKeyTrustStorePassword());
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("Cannot create TrustManagerFactory Instance", e);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
+        } catch (CertificateException e) {
+            logger.error("Cannot create TrustManagerFactory Instance", e);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
+        } catch (FileNotFoundException e) {
+            logger.error("Cannot create TrustManagerFactory Instance", e);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
+        } catch (IOException e) {
+            logger.error("Cannot create TrustManagerFactory Instance", e);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
+        }
+        try {
+            trustManagerFactory = TrustManagerFactory.getInstance(
+                    KeyManagerFactory.getDefaultAlgorithm());
+        } catch (NoSuchAlgorithmException e1) {
+            logger.error("Cannot create TrustManagerFactory Instance", e1);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e1);
+        }
+        try {
+            trustManagerFactory.init(keyTrustStore);
+        } catch (KeyStoreException e1) {
+            logger.error("Cannot create TrustManagerFactory Instance", e1);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e1);
+        }
+        try {
+            secureTrustManagerFactory = new GgSecureTrustManagerFactory(trustManagerFactory);
+        } catch (CryptoException e) {
+            logger.error("Cannot create TrustManagerFactory Instance", e);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
+        }
+    }
+    /**
+     *
      * @param _trustStorePasswd
      * @return True if correctly initialized empty
      */
-    public static boolean initEmptyTrustStore(String _trustStorePasswd) {
+    public boolean initEmptyTrustStore(String _trustStorePasswd) {
         trustStorePasswd = _trustStorePasswd;
         try {
             keyTrustStore = KeyStore.getInstance("JKS");
@@ -193,7 +306,7 @@ public class GgSecureKeyStore {
      * @param alias
      * @return True if entry is deleted
      */
-    public static boolean deleteKeyFromTrustStore(String alias) {
+    public boolean deleteKeyFromTrustStore(String alias) {
         try {
             keyStore.deleteEntry(alias);
         } catch (KeyStoreException e) {
@@ -208,7 +321,7 @@ public class GgSecureKeyStore {
      * @param cert
      * @return True if entry is added
      */
-    public static boolean setKeytoTrustStore(String alias, Certificate cert) {
+    public boolean setKeytoTrustStore(String alias, Certificate cert) {
         try {
             keyStore.setCertificateEntry(alias, cert);
         } catch (KeyStoreException e) {
@@ -236,7 +349,7 @@ public class GgSecureKeyStore {
      * @param filename
      * @return True if keyTrustStore is saved to file
      */
-    public static boolean saveTrustStore(String filename) {
+    public boolean saveTrustStore(String filename) {
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(filename);
@@ -262,112 +375,9 @@ public class GgSecureKeyStore {
         return true;
     }
     /**
-     * Initialize the SecureKeyStore and TrustStore from files
-     * @param keyStoreFilename
-     * @param _keyStorePasswd
-     * @param _keyPassword
-     * @param trustStoreFilename
-     * @param _trustStorePasswd
-     * @return
-     */
-    public static boolean initSecureKeyStore(
-            String keyStoreFilename, String _keyStorePasswd, String _keyPassword,
-            String trustStoreFilename, String _trustStorePasswd) {
-        keyStorePasswd = _keyStorePasswd;
-        keyPassword = _keyPassword;
-        // First keyStore itself
-        try {
-            keyStore = KeyStore.getInstance("JKS");
-        } catch (KeyStoreException e) {
-            logger.error("Cannot create KeyStore Instance", e);
-            return false;
-        }
-        try {
-            keyStore.load(new FileInputStream(keyStoreFilename),
-                    getKeyStorePassword());
-        } catch (NoSuchAlgorithmException e) {
-            logger.error("Cannot create KeyStore Instance", e);
-            return false;
-        } catch (CertificateException e) {
-            logger.error("Cannot create KeyStore Instance", e);
-            return false;
-        } catch (FileNotFoundException e) {
-            logger.error("Cannot create KeyStore Instance", e);
-            return false;
-        } catch (IOException e) {
-            logger.error("Cannot create KeyStore Instance", e);
-            return false;
-        }
-        try {
-            keyManagerFactory = KeyManagerFactory.getInstance(
-                    KeyManagerFactory.getDefaultAlgorithm());
-            //"SunX509");
-        } catch (NoSuchAlgorithmException e) {
-            logger.error("Cannot create KeyManagerFactory Instance", e);
-            return false;
-        }
-        try {
-            keyManagerFactory.init(keyStore, getCertificatePassword());
-        } catch (UnrecoverableKeyException e) {
-            logger.error("Cannot create KeyManagerFactory Instance", e);
-            return false;
-        } catch (KeyStoreException e) {
-            logger.error("Cannot create KeyManagerFactory Instance", e);
-            return false;
-        } catch (NoSuchAlgorithmException e) {
-            logger.error("Cannot create KeyManagerFactory Instance", e);
-            return false;
-        }
-
-        // Now create the TrustKeyStore
-        trustStorePasswd = _trustStorePasswd;
-        try {
-            keyTrustStore = KeyStore.getInstance("JKS");
-        } catch (KeyStoreException e) {
-            logger.error("Cannot create TrustManagerFactory Instance", e);
-            return false;
-        }
-        try {
-            keyTrustStore.load(new FileInputStream(trustStoreFilename),
-                    getKeyTrustStorePassword());
-        } catch (NoSuchAlgorithmException e) {
-            logger.error("Cannot create TrustManagerFactory Instance", e);
-            return false;
-        } catch (CertificateException e) {
-            logger.error("Cannot create TrustManagerFactory Instance", e);
-            return false;
-        } catch (FileNotFoundException e) {
-            logger.error("Cannot create TrustManagerFactory Instance", e);
-            return false;
-        } catch (IOException e) {
-            logger.error("Cannot create TrustManagerFactory Instance", e);
-            return false;
-        }
-        try {
-            trustManagerFactory = TrustManagerFactory.getInstance(
-                    KeyManagerFactory.getDefaultAlgorithm());
-        } catch (NoSuchAlgorithmException e1) {
-            logger.error("Cannot create TrustManagerFactory Instance", e1);
-            return false;
-        }
-        try {
-            trustManagerFactory.init(keyTrustStore);
-        } catch (KeyStoreException e1) {
-            logger.error("Cannot create TrustManagerFactory Instance", e1);
-            return false;
-        }
-        try {
-            GgSecureTrustManagerFactory.engineInit(trustManagerFactory);
-        } catch (CryptoException e) {
-            logger.error("Cannot create TrustManagerFactory Instance", e);
-            return false;
-        }
-        return true;
-    }
-    /**
      * @return the certificate Password
      */
-    public static char[] getCertificatePassword() {
+    public char[] getCertificatePassword() {
         if (keyPassword != null) {
             return keyPassword.toCharArray();
         }
@@ -377,7 +387,7 @@ public class GgSecureKeyStore {
     /**
      * @return the KeyStore Password
      */
-    public static char[] getKeyStorePassword() {
+    public char[] getKeyStorePassword() {
         if (keyStorePasswd != null) {
             return keyStorePasswd.toCharArray();
         }
@@ -386,7 +396,7 @@ public class GgSecureKeyStore {
     /**
      * @return the KeyTrustStore Password
      */
-    public static char[] getKeyTrustStorePassword() {
+    public char[] getKeyTrustStorePassword() {
         if (trustStorePasswd != null) {
             return trustStorePasswd.toCharArray();
         }
