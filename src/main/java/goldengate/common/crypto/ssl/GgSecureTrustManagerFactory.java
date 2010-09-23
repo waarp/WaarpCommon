@@ -32,6 +32,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.TrustManagerFactorySpi;
 
 /**
+ * A SecureTrustManagerFactory
  * @author Frederic Bregier
  *
  */

@@ -20,7 +20,6 @@
  */
 package goldengate.common.crypto;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,7 +32,11 @@ public class BlowfishManager extends KeyManager {
     public static final BlowfishManager blowfishManager = new BlowfishManager();
     private static final ReentrantLock lock = new ReentrantLock();
 
-    public static void initialize() {
+    /**
+     * Initialize the DesManager from the list of key names
+     * @param keys
+     */
+    public static void initialize(List<String> keys) {
         if (blowfishManager.isInitialized.get()) {
             return; // already initialized
         }
@@ -43,9 +46,6 @@ public class BlowfishManager extends KeyManager {
             if (blowfishManager.isInitialized.get()) {
                 return; // already initialized
             }
-            // FIXME construct here the list of filename with full path and the extension
-            List<String> keys = new LinkedList<String>();
-            // ...
             String extension = ".blf";
             List<String> wrong = blowfishManager.initFromList(keys, extension);
             // FIXME handle if necessary wrong keys

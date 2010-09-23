@@ -41,7 +41,13 @@ public class GgX509TrustManager implements X509TrustManager {
      * Then delegate decisions to it, and fall back to the logic in this class
      * if the default doesn't trust it.
      */
-    private X509TrustManager defaultX509TrustManager;
+    private X509TrustManager defaultX509TrustManager = null;
+    /**
+     * Create an "always-valid" X509TrustManager
+     */
+    public GgX509TrustManager() {
+        defaultX509TrustManager = null;
+    }
     /**
      * Create a "default" X509TrustManager
      * @param tmf
@@ -71,6 +77,9 @@ public class GgX509TrustManager implements X509TrustManager {
     @Override
     public void checkClientTrusted(X509Certificate[] arg0, String arg1)
             throws CertificateException {
+        if (defaultX509TrustManager == null) {
+            return; // valid
+        }
         defaultX509TrustManager.checkClientTrusted(arg0, arg1);
     }
 
@@ -80,6 +89,9 @@ public class GgX509TrustManager implements X509TrustManager {
     @Override
     public void checkServerTrusted(X509Certificate[] arg0, String arg1)
             throws CertificateException {
+        if (defaultX509TrustManager == null) {
+            return; // valid
+        }
         defaultX509TrustManager.checkServerTrusted(arg0, arg1);
     }
 
@@ -88,6 +100,10 @@ public class GgX509TrustManager implements X509TrustManager {
      */
     @Override
     public X509Certificate[] getAcceptedIssuers() {
+        if (defaultX509TrustManager == null) {
+            X509Certificate []valid = new X509Certificate[0];
+            return valid; // none valid
+        }
         return defaultX509TrustManager.getAcceptedIssuers();
     }
 

@@ -21,7 +21,7 @@
 package goldengate.common.crypto;
 
 /**
- * This class handles methods to crypt and decrypt messages with DES algorithm.<br>
+ * This class handles methods to crypt and decrypt messages with DES algorithm (very efficient: 3020/s).<br>
  * <br>
  * Usage:<br>
  * <ul>
@@ -84,7 +84,7 @@ public class Des extends KeyObject {
             plaintext = args[0];
         }
         if (plaintext == null || plaintext.length() == 0) {
-            plaintext = "Ceci est un essai de clef";
+            plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
         }
         System.out.println("plaintext = " + plaintext);
         Des des = new Des();

@@ -53,15 +53,14 @@ public class GgSecureKeyStore {
     private static final GgInternalLogger logger = GgInternalLoggerFactory
             .getLogger(GgSecureKeyStore.class);
 
-    public KeyStore keyStore;
-    public KeyManagerFactory keyManagerFactory;
-    public String keyStorePasswd;
-    public String keyPassword;
-    public GgSecureTrustManagerFactory secureTrustManagerFactory;
-    public KeyStore keyTrustStore;
-    public TrustManagerFactory trustManagerFactory;
-    public GgX509TrustManager ggX509TrustManager;
-    public String trustStorePasswd;
+    private KeyStore keyStore;
+    private KeyManagerFactory keyManagerFactory;
+    private String keyStorePasswd;
+    private String keyPassword;
+    private GgSecureTrustManagerFactory secureTrustManagerFactory;
+    private KeyStore keyTrustStore;
+    private TrustManagerFactory trustManagerFactory;
+    private String trustStorePasswd;
 
     /**
      * Initialize empty KeyStore. No TrustStore is internally created.
@@ -97,6 +96,17 @@ public class GgSecureKeyStore {
         }
     }
     /**
+     * Initialize the SecureKeyStore with no TrustStore from file
+     * @param keyStoreFilename
+     * @param _keyStorePasswd
+     * @param _keyPassword
+     * @throws CryptoException
+     */
+    public GgSecureKeyStore(
+            String keyStoreFilename, String _keyStorePasswd, String _keyPassword) throws CryptoException {
+        initKeyStore(keyStoreFilename, _keyStorePasswd, _keyPassword);
+    }
+    /**
      * Initialize the SecureKeyStore and TrustStore from files
      * @param keyStoreFilename
      * @param _keyStorePasswd
@@ -108,6 +118,22 @@ public class GgSecureKeyStore {
     public GgSecureKeyStore(
             String keyStoreFilename, String _keyStorePasswd, String _keyPassword,
             String trustStoreFilename, String _trustStorePasswd) throws CryptoException {
+        // Create the KeyStore
+        initKeyStore(keyStoreFilename, _keyStorePasswd, _keyPassword);
+        // Now create the TrustKeyStore
+        if (trustStoreFilename != null) {
+            initTrustStore(trustStoreFilename, _trustStorePasswd);
+        }
+    }
+    /**
+     * Initialize the SecureKeyStore with no TrustStore from file
+     * @param keyStoreFilename
+     * @param _keyStorePasswd
+     * @param _keyPassword
+     * @throws CryptoException
+     */
+    public void initKeyStore(String keyStoreFilename, String _keyStorePasswd, String _keyPassword)
+    throws CryptoException {
         keyStorePasswd = _keyStorePasswd;
         keyPassword = _keyPassword;
         // First keyStore itself
@@ -153,14 +179,9 @@ public class GgSecureKeyStore {
             logger.error("Cannot create KeyManagerFactory Instance", e);
             throw new CryptoException("Cannot create KeyManagerFactory Instance", e);
         }
-
-        // Now create the TrustKeyStore
-        if (trustStoreFilename != null) {
-            initTrustStore(trustStoreFilename, _trustStorePasswd);
-        }
     }
     /**
-     *
+     * Delete a Key from the KeyStore based on its alias
      * @param alias
      * @return True if entry is deleted
      */
@@ -174,7 +195,7 @@ public class GgSecureKeyStore {
         return true;
     }
     /**
-     *
+     * Add a Key and its certificates into the KeyStore based on its alias
      * @param alias
      * @param key
      * @param chain
@@ -190,7 +211,7 @@ public class GgSecureKeyStore {
         return true;
     }
     /**
-     *
+     * Save a KeyStore to a file
      * @param filename
      * @return True if keyStore is saved to file
      */
@@ -220,7 +241,7 @@ public class GgSecureKeyStore {
         return true;
     }
     /**
-     *
+     * Initialize the TrustStore from a filename and its password
      * @param trustStoreFilename
      * @param _trustStorePasswd
      * @throws CryptoException
@@ -270,7 +291,7 @@ public class GgSecureKeyStore {
         }
     }
     /**
-     *
+     * Initialize an empty TrustStore
      * @param _trustStorePasswd
      * @return True if correctly initialized empty
      */
@@ -302,7 +323,7 @@ public class GgSecureKeyStore {
         return true;
     }
     /**
-     *
+     * Delete a Key from the TrustStore based on its alias
      * @param alias
      * @return True if entry is deleted
      */
@@ -316,7 +337,7 @@ public class GgSecureKeyStore {
         return true;
     }
     /**
-     *
+     * Add a Certificate into the TrustStore based on its alias
      * @param alias
      * @param cert
      * @return True if entry is added
@@ -331,21 +352,7 @@ public class GgSecureKeyStore {
         return true;
     }
     /**
-     *
-     * @param filename
-     * @return the X509 Certificate from filename
-     * @throws CertificateException
-     * @throws FileNotFoundException
-     */
-    public static Certificate loadX509Certificate(String filename)
-    throws CertificateException, FileNotFoundException {
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        FileInputStream in = new FileInputStream(filename);
-        Certificate c = cf.generateCertificate(in);
-        return c;
-    }
-    /**
-     *
+     * Save the TrustStore to a file
      * @param filename
      * @return True if keyTrustStore is saved to file
      */
@@ -375,6 +382,20 @@ public class GgSecureKeyStore {
         return true;
     }
     /**
+     * Load a certificate from a filename
+     * @param filename
+     * @return the X509 Certificate from filename
+     * @throws CertificateException
+     * @throws FileNotFoundException
+     */
+    public static Certificate loadX509Certificate(String filename)
+    throws CertificateException, FileNotFoundException {
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        FileInputStream in = new FileInputStream(filename);
+        Certificate c = cf.generateCertificate(in);
+        return c;
+    }
+    /**
      * @return the certificate Password
      */
     public char[] getCertificatePassword() {
@@ -401,6 +422,18 @@ public class GgSecureKeyStore {
             return trustStorePasswd.toCharArray();
         }
         return "secret".toCharArray();
+    }
+    /**
+     * @return the secureTrustManagerFactory
+     */
+    public GgSecureTrustManagerFactory getSecureTrustManagerFactory() {
+        return secureTrustManagerFactory;
+    }
+    /**
+     * @return the keyManagerFactory
+     */
+    public KeyManagerFactory getKeyManagerFactory() {
+        return keyManagerFactory;
     }
 
 }

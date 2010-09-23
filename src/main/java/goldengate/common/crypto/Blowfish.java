@@ -16,7 +16,7 @@
 package goldengate.common.crypto;
 
 /**
- * This class handles methods to crypt and decrypt messages with Blowfish (efficient).<br>
+ * This class handles methods to crypt and decrypt messages with Blowfish (efficient: 1820/s both at 56 and 128 keysize).<br>
  * <br>
  * Usage:<br>
  * <ul>
@@ -38,7 +38,7 @@ public class Blowfish extends KeyObject {
     /**
      * This value could be between 32 and 448. But it seems it is blocked up to 128.
      */
-    public final static int KEY_SIZE = 128; // [32..448]
+    public final static int KEY_SIZE = 56; // [32..448]
     public final static String ALGO = "Blowfish";
     public final static String INSTANCE = "Blowfish";
 
@@ -79,7 +79,7 @@ public class Blowfish extends KeyObject {
             plaintext = args[0];
         }
         if (plaintext == null || plaintext.length() == 0) {
-            plaintext = "This is a try for the String";
+            plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
         }
         System.out.println("plaintext = " + plaintext);
         Blowfish bf = new Blowfish();

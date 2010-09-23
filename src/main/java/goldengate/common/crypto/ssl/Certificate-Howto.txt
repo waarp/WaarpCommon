@@ -1,5 +1,10 @@
 To generate the stores for OpenR66 for instance, you need to create 2 JKS keyStore. To generate those files, you can use the "keytool" command from the JDK or using the free tool KeyTool IUI (last known version in 2.4.1).
 For instance: keytool -genkey -alias myalias -keyalg RSA -validity xxx -keystore mystore.store
+For Certificate:
+openssl genrsa -des3 -out server.key 1024
+openssl req -new -key server.key -out server.csr
+openssl rsa -in server.key -out servernop.key
+openssl x509 -req -days 365 -in server.csr -signkey servernop.key -out server.crt
 
 ===================================
 
