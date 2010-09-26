@@ -39,19 +39,37 @@ import javax.net.ssl.TrustManagerFactorySpi;
 public class GgSecureTrustManagerFactory extends TrustManagerFactorySpi {
     private GgX509TrustManager ggTrustManager;
     private TrustManager[] trustManager;
+    private boolean needAuthentication = false;
     /**
-     *
-     * @param tmf
+     * Accept all connections
      * @throws CryptoException
      */
-    public GgSecureTrustManagerFactory(TrustManagerFactory tmf) throws CryptoException {
-        ggTrustManager = new GgX509TrustManager(tmf);
+    public GgSecureTrustManagerFactory() throws CryptoException {
+        ggTrustManager = new GgX509TrustManager();
         trustManager = new TrustManager[] {ggTrustManager};
+        needAuthentication = false;
     }
+    /**
+    *
+    * @param tmf
+    * @throws CryptoException
+    */
+   public GgSecureTrustManagerFactory(TrustManagerFactory tmf) throws CryptoException {
+       ggTrustManager = new GgX509TrustManager(tmf);
+       trustManager = new TrustManager[] {ggTrustManager};
+       needAuthentication = true;
+   }
 
-    public TrustManager[] getTrustManagers() {
-        return trustManager;
-    }
+   /**
+    *
+    * @return True if this TrustManager really check authentication
+    */
+   public boolean needAuthentication() {
+       return needAuthentication;
+   }
+   public TrustManager[] getTrustManagers() {
+       return trustManager;
+   }
     /* (non-Javadoc)
      * @see javax.net.ssl.TrustManagerFactorySpi#engineGetTrustManagers()
      */

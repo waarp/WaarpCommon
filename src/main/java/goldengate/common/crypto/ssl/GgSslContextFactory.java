@@ -100,15 +100,15 @@ public class GgSslContextFactory {
                 serverContext = SSLContext.getInstance(PROTOCOL);
                 GgSecureTrustManagerFactory secureTrustManagerFactory =
                     ggSecureKeyStore.getSecureTrustManagerFactory();
-                if (secureTrustManagerFactory == null) {
-                    logger.debug("No TrustManager");
-                    serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
-                            null, null);
-                } else {
+                if (secureTrustManagerFactory.needAuthentication()) {
                     logger.debug("Has TrustManager");
                     hasTrustStore = true;
                     serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
                         secureTrustManagerFactory.getTrustManagers(), null);
+                } else {
+                    logger.debug("No TrustManager");
+                    serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
+                            null, null);
                 }
             } catch (Exception e) {
                 logger.error("Failed to initialize the server-side SSLContext", e);
@@ -120,17 +120,15 @@ public class GgSslContextFactory {
                 clientContext = SSLContext.getInstance(PROTOCOL);
                 GgSecureTrustManagerFactory secureTrustManagerFactory =
                     ggSecureKeyStore.getSecureTrustManagerFactory();
-                if (secureTrustManagerFactory == null) {
-                    logger.debug("No TrustManager");
-                    clientContext.init(null,
-                          //ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
-                            null, null);
-                } else {
+                if (secureTrustManagerFactory.needAuthentication()) {
                     logger.debug("Has TrustManager");
                     hasTrustStore = true;
-                    clientContext.init(null,
-                            //ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
+                    clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
                             secureTrustManagerFactory.getTrustManagers(), null);
+                } else {
+                    logger.debug("No TrustManager");
+                    clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
+                            null, null);
                 }
             } catch (Exception e) {
                 logger.error("Failed to initialize the client-side SSLContext", e);

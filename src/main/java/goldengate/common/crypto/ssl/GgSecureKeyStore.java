@@ -124,6 +124,8 @@ public class GgSecureKeyStore {
         // Now create the TrustKeyStore
         if (trustStoreFilename != null) {
             initTrustStore(trustStoreFilename, _trustStorePasswd);
+        } else {
+            initEmptyTrustStore(_trustStorePasswd);
         }
     }
     /**
@@ -302,8 +304,9 @@ public class GgSecureKeyStore {
      * Initialize an empty TrustStore
      * @param _trustStorePasswd
      * @return True if correctly initialized empty
+     * @throws CryptoException
      */
-    public boolean initEmptyTrustStore(String _trustStorePasswd) {
+    public boolean initEmptyTrustStore(String _trustStorePasswd) throws CryptoException {
         trustStorePasswd = _trustStorePasswd;
         try {
             keyTrustStore = KeyStore.getInstance("JKS");
@@ -327,6 +330,12 @@ public class GgSecureKeyStore {
         } catch (IOException e) {
             logger.error("Cannot create keyTrustStore Instance", e);
             return false;
+        }
+        try {
+            secureTrustManagerFactory = new GgSecureTrustManagerFactory();
+        } catch (CryptoException e) {
+            logger.error("Cannot create TrustManagerFactory Instance", e);
+            throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
         }
         return true;
     }
