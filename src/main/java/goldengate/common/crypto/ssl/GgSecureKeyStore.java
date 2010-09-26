@@ -94,6 +94,7 @@ public class GgSecureKeyStore {
             logger.error("Cannot create KeyStore Instance", e);
             throw new CryptoException("Cannot create KeyStore Instance", e);
         }
+        initKeyManagerFactory();
     }
     /**
      * Initialize the SecureKeyStore with no TrustStore from file
@@ -159,6 +160,13 @@ public class GgSecureKeyStore {
             logger.error("Cannot create KeyStore Instance", e);
             throw new CryptoException("Cannot create KeyStore Instance", e);
         }
+        initKeyManagerFactory();
+    }
+    /**
+     * Init KeyManagerFactory
+     * @throws CryptoException
+     */
+    void initKeyManagerFactory() throws CryptoException {
         try {
             keyManagerFactory = KeyManagerFactory.getInstance(
                     KeyManagerFactory.getDefaultAlgorithm());
