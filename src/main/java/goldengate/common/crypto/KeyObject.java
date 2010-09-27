@@ -20,6 +20,11 @@
  */
 package goldengate.common.crypto;
 
+import goldengate.common.exception.CryptoException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.Key;
 
 import javax.crypto.Cipher;
@@ -115,6 +120,38 @@ public abstract class KeyObject {
         secretKey = new SecretKeySpec(keyData, getAlgorithm());
     }
 
+    /**
+     * Create a Key from a File
+     * @param file
+     * @throws CryptoException
+     * @throws IOException
+     */
+    public void setSecretKey(File file) throws CryptoException, IOException {
+        if (file.canRead()) {
+            int len = (int)file.length();
+            byte []key = new byte[len];
+            FileInputStream inputStream = null;
+            inputStream = new FileInputStream(file);
+            int read = 0;
+            int offset = 0;
+            while (read > 0) {
+                read = inputStream.read(key, offset, len);
+                offset += read;
+                if (offset < len) {
+                    len -= read;
+                } else {
+                    break;
+                }
+            }
+            if (read < -1) {
+                // wrong
+                throw new CryptoException("Wrong size when reading crypto file");
+            }
+            this.setSecretKey(key);
+        } else {
+            throw new CryptoException("Cannot read crypto file");
+        }
+    }
     /**
      * Generate a key from nothing
      * @throws Exception

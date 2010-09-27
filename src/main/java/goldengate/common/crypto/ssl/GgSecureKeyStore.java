@@ -114,16 +114,17 @@ public class GgSecureKeyStore {
      * @param _keyPassword
      * @param trustStoreFilename if Null, no TrustKeyStore will be created
      * @param _trustStorePasswd
+     * @param needClientAuthent True if the TrustStore is also used for Client Authentication
      * @throws CryptoException
      */
     public GgSecureKeyStore(
             String keyStoreFilename, String _keyStorePasswd, String _keyPassword,
-            String trustStoreFilename, String _trustStorePasswd) throws CryptoException {
+            String trustStoreFilename, String _trustStorePasswd, boolean needClientAuthent) throws CryptoException {
         // Create the KeyStore
         initKeyStore(keyStoreFilename, _keyStorePasswd, _keyPassword);
         // Now create the TrustKeyStore
         if (trustStoreFilename != null) {
-            initTrustStore(trustStoreFilename, _trustStorePasswd);
+            initTrustStore(trustStoreFilename, _trustStorePasswd, needClientAuthent);
         } else {
             initEmptyTrustStore(_trustStorePasswd);
         }
@@ -254,9 +255,10 @@ public class GgSecureKeyStore {
      * Initialize the TrustStore from a filename and its password
      * @param trustStoreFilename
      * @param _trustStorePasswd
+     * @param needClientAuthent True if the TrustStore is also to authenticate clients
      * @throws CryptoException
      */
-    public void initTrustStore(String trustStoreFilename, String _trustStorePasswd) throws CryptoException {
+    public void initTrustStore(String trustStoreFilename, String _trustStorePasswd, boolean needClientAuthent) throws CryptoException {
         trustStorePasswd = _trustStorePasswd;
         try {
             keyTrustStore = KeyStore.getInstance("JKS");
@@ -294,7 +296,7 @@ public class GgSecureKeyStore {
             throw new CryptoException("Cannot create TrustManagerFactory Instance", e1);
         }
         try {
-            secureTrustManagerFactory = new GgSecureTrustManagerFactory(trustManagerFactory);
+            secureTrustManagerFactory = new GgSecureTrustManagerFactory(trustManagerFactory, needClientAuthent);
         } catch (CryptoException e) {
             logger.error("Cannot create TrustManagerFactory Instance", e);
             throw new CryptoException("Cannot create TrustManagerFactory Instance", e);

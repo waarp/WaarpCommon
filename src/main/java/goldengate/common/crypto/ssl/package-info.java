@@ -21,7 +21,8 @@
  * <b>For Trusting everyone:</b><br>
  * ggSecureKeyStore.initEmptyTrustStore(keyTrustStorePasswd);<br>
  * <b>For Trusting only known Certificates:</b><br>
- * ggSecureKeyStore.initTrustStore(keyTrustStoreFilename, keyTrustStorePasswd);</li>
+ * ggSecureKeyStore.initTrustStore(keyTrustStoreFilename, keyTrustStorePasswd, needClientAuthent);<br>
+ * Note: needClientAuthent is True if the TrustStore is used to authenticate Clients, False if only to authenticate Servers</li>
  * <li>Create the GgSslContextFactory:<br>
  * GgSslContextFactory ggSslContextFactory = new GgSslContextFactory(ggSecureKeyStore, <b>false</b>);</li>
  * <li>Create your own PipelineFactory:<br>
@@ -64,7 +65,8 @@
  * <b>For Trusting everyone:</b><br>
  * ggSecureKeyStore.initEmptyTrustStore(keyTrustStorePasswd);<br>
  * <b>For Trusting only known Certificates:</b><br>
- * ggSecureKeyStore.initTrustStore(keyTrustStoreFilename, keyTrustStorePasswd);</li>
+ * ggSecureKeyStore.initTrustStore(keyTrustStoreFilename, keyTrustStorePasswd, needClientAuthent);<br>
+ * Note: needClientAuthent is True if the TrustStore is used to authenticate Clients, False if only to authenticate Servers<li>
  * <li>Create the GgSslContextFactory:<br>
  * GgSslContextFactory ggSslContextFactory = new GgSslContextFactory(ggSecureKeyStore, <b>true</b>);</li>
  * <li>Create your own PipelineFactory:<br>

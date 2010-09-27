@@ -32,32 +32,8 @@ import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
 /**
- * SSL ContextFactory for Netty.<br>
- * <br>
- * Usage:<br>
- * <ul><li>First create the SecureKeyStore (only once):<br>
- *      new GgSecureKeyStore(
- *      keyStoreFilename, _keyStorePasswd, _keyPassword,
- *      trustStoreFilename, _trustStorePasswd);</li>
- * <li>Create the GgSslContextFactory (only once)<br>
- * new GgSslContextFactory(ggSecureKeyStore);</li>
- * <li>Then once initialized, use it within the PipelineFactory:<br>
- *      pipeline.addLast("ssl",
- *              ggSslContextFactory.initPipelineFactory(serverMode,
- *              true, executorService));</li>
- * </ul>
- * <br>
- * If no authorization is needed, then Usage is:<br>
- * <ul><li>First create the SecureKeyStore (only once):<br>
- *      new GgSecureKeyStore(
- *      keyStoreFilename, _keyStorePasswd, _keyPassword);</li>
- * <li>Create the GgSslContextFactory (only once)<br>
- * new GgSslContextFactory(ggSecureKeyStore);</li>
- * <li>Then once initialized, use it within the PipelineFactory:<br>
- *      pipeline.addLast("ssl",
- *              ggSslContextFactory.initPipelineFactory(serverMode,
- *              false, executorService));</li>
- * </ul>
+ * SSL ContextFactory for Netty.
+ *
  * @author Frederic Bregier
  *
  */
@@ -83,9 +59,39 @@ public class GgSslContextFactory {
     */
     private final SSLContext CLIENT_CONTEXT;
 
-    private boolean hasTrustStore = false;
+    private boolean needClientAuthentication = false;
 
+    /**
+     * Create both CONTEXT
+     * @param ggSecureKeyStore
+     */
+    public GgSslContextFactory(GgSecureKeyStore ggSecureKeyStore) {
+        // Both construct Client and Server mode
+        SERVER_CONTEXT = initSslContextFactory(ggSecureKeyStore, true);
+        CLIENT_CONTEXT = initSslContextFactory(ggSecureKeyStore, false);
+    }
+
+    /**
+     * Create only one of the CONTEXT
+     * @param ggSecureKeyStore
+     * @param serverMode
+     */
     public GgSslContextFactory(GgSecureKeyStore ggSecureKeyStore, boolean serverMode) {
+        if (serverMode) {
+            SERVER_CONTEXT = initSslContextFactory(ggSecureKeyStore, serverMode);
+            CLIENT_CONTEXT = null;
+        } else {
+            CLIENT_CONTEXT = initSslContextFactory(ggSecureKeyStore, serverMode);
+            SERVER_CONTEXT = null;
+        }
+    }
+    /**
+     *
+     * @param ggSecureKeyStore
+     * @param serverMode
+     * @return the SSLContext
+     */
+    private SSLContext initSslContextFactory(GgSecureKeyStore ggSecureKeyStore, boolean serverMode) {
         String algorithm = Security
                 .getProperty("ssl.KeyManagerFactory.algorithm");
         if (algorithm == null) {
@@ -100,9 +106,9 @@ public class GgSslContextFactory {
                 serverContext = SSLContext.getInstance(PROTOCOL);
                 GgSecureTrustManagerFactory secureTrustManagerFactory =
                     ggSecureKeyStore.getSecureTrustManagerFactory();
-                if (secureTrustManagerFactory.needAuthentication()) {
+                needClientAuthentication = secureTrustManagerFactory.needAuthentication();
+                if (secureTrustManagerFactory.hasTrustStore()) {
                     logger.debug("Has TrustManager");
-                    hasTrustStore = true;
                     serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
                         secureTrustManagerFactory.getTrustManagers(), null);
                 } else {
@@ -110,6 +116,7 @@ public class GgSslContextFactory {
                     serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
                             null, null);
                 }
+                return serverContext;
             } catch (Exception e) {
                 logger.error("Failed to initialize the server-side SSLContext", e);
                 throw new Error("Failed to initialize the server-side SSLContext",
@@ -120,9 +127,9 @@ public class GgSslContextFactory {
                 clientContext = SSLContext.getInstance(PROTOCOL);
                 GgSecureTrustManagerFactory secureTrustManagerFactory =
                     ggSecureKeyStore.getSecureTrustManagerFactory();
-                if (secureTrustManagerFactory.needAuthentication()) {
+                needClientAuthentication = secureTrustManagerFactory.needAuthentication();
+                if (secureTrustManagerFactory.hasTrustStore()) {
                     logger.debug("Has TrustManager");
-                    hasTrustStore = true;
                     clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
                             secureTrustManagerFactory.getTrustManagers(), null);
                 } else {
@@ -130,14 +137,13 @@ public class GgSslContextFactory {
                     clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
                             null, null);
                 }
+                return clientContext;
             } catch (Exception e) {
                 logger.error("Failed to initialize the client-side SSLContext", e);
                 throw new Error("Failed to initialize the client-side SSLContext",
                         e);
             }
         }
-        SERVER_CONTEXT = serverContext;
-        CLIENT_CONTEXT = clientContext;
     }
 
     /**
@@ -185,7 +191,7 @@ public class GgSslContextFactory {
      *
      * @return True if the associated KeyStore has a TrustStore
      */
-    public boolean hasTrustStore() {
-        return hasTrustStore;
+    public boolean needClientAuthentication() {
+        return needClientAuthentication;
     }
 }
