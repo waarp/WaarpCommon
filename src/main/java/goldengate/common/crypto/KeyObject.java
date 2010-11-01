@@ -209,6 +209,18 @@ public abstract class KeyObject {
     }
 
     /**
+     * Crypt one array of bytes and returns the crypted String as Base64 format
+     *
+     * @param plaintext
+     * @return the crypted String as Base64 format
+     * @throws Exception
+     */
+    public String cryptToString(byte[] plaintext) throws Exception {
+        byte []result = crypt(plaintext);
+        return encoder.encode(result);
+    }
+
+    /**
      * Crypt one String and returns the crypted array of bytes
      *
      * @param plaintext
@@ -227,8 +239,7 @@ public abstract class KeyObject {
      * @throws Exception
      */
     public String cryptToString(String plaintext) throws Exception {
-        byte []result = crypt(plaintext.getBytes());
-        return encoder.encode(result);
+        return cryptToString(plaintext.getBytes());
     }
 
     /**
@@ -285,5 +296,27 @@ public abstract class KeyObject {
      */
     public String decryptStringInString(String ciphertext) throws Exception {
         return new String(decryptStringInBytes(ciphertext));
+    }
+
+    /**
+     *
+     * @param encoded
+     * @return the array of bytes from encoded STring (BASE64)
+     */
+    public byte[] decode(String encoded) {
+        try {
+            return decoder.decodeBuffer(encoded);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param bytes
+     * @return The encoded array of bytes in BASE64
+     */
+    public String encode(byte[] bytes) {
+        return encoder.encode(bytes);
     }
 }
