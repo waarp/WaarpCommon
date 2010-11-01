@@ -265,14 +265,25 @@ public abstract class KeyObject {
 
     /**
      * Decrypt a String as Base64 format representing a crypted array of bytes and
-     * returns the uncrypted String
+     * returns the uncrypted array of bytes
      *
      * @param ciphertext
      * @return the uncrypted array of bytes
      * @throws Exception
      */
-    public String decryptStringInString(String ciphertext) throws Exception {
+    public byte[] decryptStringInBytes(String ciphertext) throws Exception {
         byte[] arrayBytes = decoder.decodeBuffer(ciphertext);
-        return new String(decryptInBytes(arrayBytes));
+        return decryptInBytes(arrayBytes);
+    }
+    /**
+     * Decrypt a String as Base64 format representing a crypted array of bytes and
+     * returns the uncrypted String
+     *
+     * @param ciphertext
+     * @return the uncrypted String
+     * @throws Exception
+     */
+    public String decryptStringInString(String ciphertext) throws Exception {
+        return new String(decryptStringInBytes(ciphertext));
     }
 }
