@@ -46,7 +46,7 @@ public class BlowfishManager extends KeyManager {
             if (blowfishManager.isInitialized.get()) {
                 return; // already initialized
             }
-            String extension = ".blf";
+            String extension = Blowfish.EXTENSION;
             List<String> wrong = blowfishManager.initFromList(keys, extension);
             // FIXME handle if necessary wrong keys
             // ...

@@ -20,11 +20,14 @@
  */
 package goldengate.common.crypto;
 
+import goldengate.common.exception.CryptoException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -102,6 +105,14 @@ public abstract class KeyManager {
         return wrong;
     }
 
+    public void saveToFiles(String extension) throws CryptoException, IOException {
+        Enumeration<String> names = keysConcurrentHashMap.keys();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            KeyObject key = keysConcurrentHashMap.get(name);
+            key.saveSecretKey(new File(name+"."+extension));
+        }
+    }
     /**
      * Add or set a new key associated to the given name
      *

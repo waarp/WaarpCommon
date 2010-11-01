@@ -46,7 +46,7 @@ public class DesManager extends KeyManager {
             if (desManager.isInitialized.get()) {
                 return; // already initialized
             }
-            String extension = ".des";
+            String extension = Des.EXTENSION;
             List<String> wrong = desManager.initFromList(keys, extension);
             // FIXME handle if necessary wrong keys
             // ...

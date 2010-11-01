@@ -22,8 +22,10 @@ package goldengate.common.crypto;
 
 import goldengate.common.exception.CryptoException;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.Key;
 
@@ -58,7 +60,7 @@ public abstract class KeyObject {
     /**
      * The True Key associated with this object
      */
-    Key secretKey;
+    Key secretKey = null;
     /**
      * Base64 encoder
      */
@@ -97,11 +99,23 @@ public abstract class KeyObject {
     }
 
     /**
+     *
+     * @return True if this key is ready to be used
+     */
+    public boolean keyReady() {
+        return secretKey != null;
+    }
+    /**
      * Returns the key as an array of bytes in order to be stored somewhere else
      * and retrieved using the setSecretKey(byte[] keyData) method.
+     * @return the key as an array of bytes (or null if not ready)
      */
     public byte[] getSecretKeyInBytes() {
-        return secretKey.getEncoded();
+        if (keyReady()) {
+            return secretKey.getEncoded();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -132,26 +146,32 @@ public abstract class KeyObject {
             byte []key = new byte[len];
             FileInputStream inputStream = null;
             inputStream = new FileInputStream(file);
-            int read = 0;
-            int offset = 0;
-            while (read > 0) {
-                read = inputStream.read(key, offset, len);
-                offset += read;
-                if (offset < len) {
-                    len -= read;
-                } else {
-                    break;
-                }
-            }
-            if (read < -1) {
-                // wrong
-                throw new CryptoException("Wrong size when reading crypto file");
-            }
+            DataInputStream dis = new DataInputStream(inputStream);
+            dis.readFully(key);
+            dis.close();
             this.setSecretKey(key);
         } else {
             throw new CryptoException("Cannot read crypto file");
         }
     }
+    /**
+     * Save a Key to a File
+     * @param file
+     * @throws CryptoException
+     * @throws IOException
+     */
+    public void saveSecretKey(File file) throws CryptoException, IOException {
+        if (keyReady() && ((!file.exists()) || file.canWrite())) {
+            byte []key = getSecretKeyInBytes();
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(key);
+            outputStream.flush();
+            outputStream.close();
+        } else {
+            throw new CryptoException("Cannot read crypto file");
+        }
+    }
+
     /**
      * Generate a key from nothing
      * @throws Exception
@@ -175,6 +195,9 @@ public abstract class KeyObject {
      * @throws Exception
      */
     public byte[] crypt(byte[] plaintext) throws Exception {
+        if (! keyReady()) {
+            throw new CryptoException("Key not Ready");
+        }
         try {
             Cipher cipher = Cipher.getInstance(getInstance());
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -216,6 +239,9 @@ public abstract class KeyObject {
      * @throws Exception
      */
     public byte[] decryptInBytes(byte[] ciphertext) throws Exception {
+        if (! keyReady()) {
+            throw new CryptoException("Key not Ready");
+        }
         try {
             Cipher cipher = Cipher.getInstance(getAlgorithm());
             cipher.init(Cipher.DECRYPT_MODE, secretKey);

@@ -41,6 +41,7 @@ public class Blowfish extends KeyObject {
     public final static int KEY_SIZE = 56; // [32..448]
     public final static String ALGO = "Blowfish";
     public final static String INSTANCE = "Blowfish";
+    public final static String EXTENSION = "blf";
 
 
     /* (non-Javadoc)

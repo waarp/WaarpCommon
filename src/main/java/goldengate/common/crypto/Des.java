@@ -46,7 +46,7 @@ public class Des extends KeyObject {
     public final static int KEY_SIZE = 56; // [32..448]
     public final static String ALGO = "DES";
     public final static String INSTANCE = "DES/ECB/PKCS5Padding";
-
+    public final static String EXTENSION = "des";
 
     /* (non-Javadoc)
      * @see atlas.cryptage.KeyObject#getAlgorithm()
