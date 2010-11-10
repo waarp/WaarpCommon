@@ -215,7 +215,7 @@ public abstract class KeyObject {
      * @return the crypted String as Base64 format
      * @throws Exception
      */
-    public String cryptToString(byte[] plaintext) throws Exception {
+    public String cryptToBase64(byte[] plaintext) throws Exception {
         byte []result = crypt(plaintext);
         return encoder.encode(result);
     }
@@ -238,8 +238,8 @@ public abstract class KeyObject {
      * @return the crypted String as Base64 format
      * @throws Exception
      */
-    public String cryptToString(String plaintext) throws Exception {
-        return cryptToString(plaintext.getBytes());
+    public String cryptToBase64(String plaintext) throws Exception {
+        return cryptToBase64(plaintext.getBytes());
     }
 
     /**
@@ -249,7 +249,7 @@ public abstract class KeyObject {
      * @return the uncrypted array of bytes
      * @throws Exception
      */
-    public byte[] decryptInBytes(byte[] ciphertext) throws Exception {
+    public byte[] decrypt(byte[] ciphertext) throws Exception {
         if (! keyReady()) {
             throw new CryptoException("Key not Ready");
         }
@@ -271,7 +271,7 @@ public abstract class KeyObject {
      * @throws Exception
      */
     public String decryptInString(byte[] ciphertext) throws Exception {
-        return new String(decryptInBytes(ciphertext));
+        return new String(decrypt(ciphertext));
     }
 
     /**
@@ -282,9 +282,21 @@ public abstract class KeyObject {
      * @return the uncrypted array of bytes
      * @throws Exception
      */
-    public byte[] decryptStringInBytes(String ciphertext) throws Exception {
+    public byte[] decryptBase64InBytes(String ciphertext) throws Exception {
         byte[] arrayBytes = decoder.decodeBuffer(ciphertext);
-        return decryptInBytes(arrayBytes);
+        return decrypt(arrayBytes);
+    }
+    /**
+     * Decrypt an array of bytes as Base64 format representing a crypted array of bytes and
+     * returns the uncrypted array of bytes
+     *
+     * @param ciphertext
+     * @return the uncrypted array of bytes
+     * @throws Exception
+     */
+    public byte[] decryptBase64InBytes(byte[] ciphertext) throws Exception {
+        byte[] arrayBytes = decoder.decodeBuffer(new String(ciphertext));
+        return decrypt(arrayBytes);
     }
     /**
      * Decrypt a String as Base64 format representing a crypted array of bytes and
@@ -294,29 +306,60 @@ public abstract class KeyObject {
      * @return the uncrypted String
      * @throws Exception
      */
-    public String decryptStringInString(String ciphertext) throws Exception {
-        return new String(decryptStringInBytes(ciphertext));
+    public String decryptBase64InString(String ciphertext) throws Exception {
+        return new String(decryptBase64InBytes(ciphertext));
     }
 
     /**
-     *
-     * @param encoded
-     * @return the array of bytes from encoded STring (BASE64)
+     * Decode from a file containing a BASE64 crypted string
+     * @param file
+     * @return the decoded uncrypted content of the file
+     * @throws Exception
      */
-    public byte[] decode(String encoded) {
+    public byte[] decryptBase64File(File file) throws Exception {
+        byte [] byteKeys = new byte[(int) file.length()];
+        FileInputStream inputStream = null;
+        DataInputStream dis = null;
         try {
-            return decoder.decodeBuffer(encoded);
+            inputStream = new FileInputStream(file);
+            dis = new DataInputStream(inputStream);
+            dis.readFully(byteKeys);
+            dis.close();
+            String skey = new String(byteKeys);
+            // decrypt it
+            byteKeys = decryptBase64InBytes(skey);
+            return byteKeys;
         } catch (IOException e) {
-            return null;
+            try {
+                if (dis != null) {
+                    dis.close();
+                } else if (inputStream != null)
+                    inputStream.close();
+            } catch (IOException e1) {
+            }
+            throw e;
         }
     }
+
+    /**
+    *
+    * @param encoded
+    * @return the array of bytes from encoded String (BASE64)
+    */
+   public byte[] decodeBase64(String encoded) {
+       try {
+           return decoder.decodeBuffer(encoded);
+       } catch (IOException e) {
+           return null;
+       }
+   }
 
     /**
      *
      * @param bytes
      * @return The encoded array of bytes in BASE64
      */
-    public String encode(byte[] bytes) {
+    public String encodeBase64(byte[] bytes) {
         return encoder.encode(bytes);
     }
 }

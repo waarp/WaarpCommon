@@ -142,7 +142,7 @@ public abstract class KeyManager {
         if (keyName == null) {
             throw new NoSuchAlgorithmException("Key does not exist: "+keyName);
         }
-        return keyObject.cryptToString(toBeCrypted);
+        return keyObject.cryptToBase64(toBeCrypted);
     }
     /**
      * One method to get the uncrypted String from the given crypted string and key
@@ -156,7 +156,7 @@ public abstract class KeyManager {
         if (keyName == null) {
             throw new NoSuchAlgorithmException("Key does not exist: "+keyName);
         }
-        return keyObject.decryptStringInString(toBeDecrypted);
+        return keyObject.decryptBase64InString(toBeDecrypted);
     }
 
 }

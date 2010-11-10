@@ -15,7 +15,7 @@ To do that, suing KeyTool IUI:
 - Client side:
 Create one jks TrustStore (clientTrust.jks) with the Certificate Chain of the Server Key from the Server as a Regular Certificate.
 Use this KeyStore as Trustore for the Client.
-To do that, suing KeyTool IUI:
+To do that, using KeyTool IUI:
 1) From the Server Keytore, export Private Key (2 files with one Certificate Chain)
 2) Create one jks TrustStore (Empty KeyStore)
 3) Import the Trusted Certificate as Regular Certificate (Certificate Chain as .der file)
@@ -37,7 +37,7 @@ To do that, suing KeyTool IUI:
 - Server side:
 Create one jks TrustStore (serverTrust.jks) with the Certificate Chain of the Client Key from the Client as a Regular Certificate.
 Use this KeyStore as Trustore for the Server.
-To do that, suing KeyTool IUI:
+To do that, using KeyTool IUI:
 1) Create one jks TrustStore (Empty KeyStore)
 2) From the Client Keytore, export Private Key (2 files with one Certificate Chain)
 3) Import the Trusted Certificate as Regular Certificate (Certificate Chain as .der file)

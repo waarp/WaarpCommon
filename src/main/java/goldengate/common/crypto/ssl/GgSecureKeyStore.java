@@ -126,7 +126,7 @@ public class GgSecureKeyStore {
         if (trustStoreFilename != null) {
             initTrustStore(trustStoreFilename, _trustStorePasswd, needClientAuthent);
         } else {
-            initEmptyTrustStore(_trustStorePasswd);
+            initEmptyTrustStore();
         }
     }
     /**
@@ -308,8 +308,8 @@ public class GgSecureKeyStore {
      * @return True if correctly initialized empty
      * @throws CryptoException
      */
-    public boolean initEmptyTrustStore(String _trustStorePasswd) throws CryptoException {
-        trustStorePasswd = _trustStorePasswd;
+    public boolean initEmptyTrustStore() throws CryptoException {
+        trustStorePasswd = "secret";
         try {
             keyTrustStore = KeyStore.getInstance("JKS");
         } catch (KeyStoreException e) {

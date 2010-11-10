@@ -165,11 +165,13 @@ public class GgSslContextFactory {
      *
      * @param serverMode True if in Server Mode, else False in Client mode
      * @param needClientAuth True if the client needs to be authenticated (only if serverMode is True)
+     * @param renegotiationEnable True if you want to enable renegotiation (security issue CVE-2009-3555)
      * @param executorService if not Null, gives a specific executorService
      * @return the sslhandler
      */
     public SslHandler initPipelineFactory(boolean serverMode,
-            boolean needClientAuth, ExecutorService executorService) {
+            boolean needClientAuth, boolean renegotiationEnable,
+            ExecutorService executorService) {
         // Add SSL handler first to encrypt and decrypt everything.
         SSLEngine engine;
         logger.debug("Has TrustManager? "+needClientAuth+" Is ServerMode? "+serverMode);
@@ -181,11 +183,15 @@ public class GgSslContextFactory {
             engine = getClientContext().createSSLEngine();
             engine.setUseClientMode(true);
         }
+        SslHandler handler = null;
         if (executorService != null) {
-            return new SslHandler(engine, executorService);
+            handler = new SslHandler(engine, executorService);
         } else {
-            return new SslHandler(engine);
+            handler = new SslHandler(engine);
         }
+        // Set the RenegotiationEnable or not
+        handler.setEnableRenegotiation(renegotiationEnable);
+        return handler;
     }
     /**
      *

@@ -107,9 +107,9 @@ public class Blowfish extends KeyObject {
         int nb = 100000;
         long time1 = System.currentTimeMillis();
         for (int i = 0; i < nb ; i++) {
-            String cipherString = bf.cryptToString(plaintext);
+            String cipherString = bf.cryptToBase64(plaintext);
             //System.out.println("cipherString = " + cipherString);
-            String plaintext3 = bf.decryptStringInString(cipherString);
+            String plaintext3 = bf.decryptBase64InString(cipherString);
             //System.out.println("plaintext3 = " + plaintext3);
             if (!plaintext3.equals(plaintext))
                 System.out.println("Error: plaintext3 != plaintext");
