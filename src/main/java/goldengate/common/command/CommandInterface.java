@@ -39,7 +39,6 @@ public interface CommandInterface {
      * @param arg
      * @param code
      */
-    @SuppressWarnings("unchecked")
     public void setArgs(SessionInterface session, String command, String arg,
             Enum code);
 
@@ -59,7 +58,6 @@ public interface CommandInterface {
      * @param extraNextCommand
      *            the extraNextCommand to set
      */
-    @SuppressWarnings("unchecked")
     public void setExtraNextCommand(Enum extraNextCommand);
 
     /**

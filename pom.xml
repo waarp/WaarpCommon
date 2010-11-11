@@ -100,29 +100,25 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-access</artifactId>
-      <version>0.9.24</version>
-      <scope>compile</scope>
+      <version>0.9.26</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>0.9.24</version>
-      <scope>compile</scope>
+      <version>0.9.26</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>0.9.24</version>
-      <scope>compile</scope>
+      <version>0.9.26</version>
       <optional>true</optional>
     </dependency>
     <dependency>
     	<groupId>commons-io</groupId>
     	<artifactId>commons-io</artifactId>
-    	<version>1.4</version>
-      <scope>compile</scope>
+    	<version>2.0</version>
       <optional>true</optional>
     </dependency>
     <dependency>

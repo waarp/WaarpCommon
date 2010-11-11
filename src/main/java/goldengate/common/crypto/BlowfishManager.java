@@ -33,9 +33,11 @@ public class BlowfishManager extends KeyManager {
     private static final ReentrantLock lock = new ReentrantLock();
 
     /**
+     * FIXME Method is not finished!
      * Initialize the DesManager from the list of key names
      * @param keys
      */
+    @Deprecated
     public static void initialize(List<String> keys) {
         if (blowfishManager.isInitialized.get()) {
             return; // already initialized
