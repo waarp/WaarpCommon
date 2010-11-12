@@ -95,7 +95,7 @@ public class Des extends KeyObject {
         // crypt one text
         byte[] ciphertext = des.crypt(plaintext);
         // print the cipher
-        System.out.println("ciphertext = " + des.encoder.encode(ciphertext));
+        System.out.println("ciphertext = " + des.encodeHex(ciphertext));
 
         // Test the set Key
         des.setSecretKey(secretKey);
@@ -110,9 +110,9 @@ public class Des extends KeyObject {
         int nb = 100000;
         long time1 = System.currentTimeMillis();
         for (int i = 0; i < nb ; i++) {
-            String cipherString = des.cryptToBase64(plaintext);
+            String cipherString = des.cryptToHex(plaintext);
             //System.out.println("cipherString = " + cipherString);
-            String plaintext3 = des.decryptBase64InString(cipherString);
+            String plaintext3 = des.decryptHexInString(cipherString);
             //System.out.println("plaintext3 = " + plaintext3);
             if (!plaintext3.equals(plaintext))
                 System.out.println("Error: plaintext3 != plaintext");

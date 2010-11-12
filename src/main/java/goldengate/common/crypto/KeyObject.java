@@ -20,6 +20,7 @@
  */
 package goldengate.common.crypto;
 
+import goldengate.common.digest.MD5;
 import goldengate.common.exception.CryptoException;
 
 import java.io.DataInputStream;
@@ -33,8 +34,6 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 /**
  * This class handles method to crypt and decrypt using the chosen algorithm.<br>
@@ -49,8 +48,8 @@ import sun.misc.BASE64Encoder;
  * The method key.getSecretKeyInBytes() allow getting the key in Bytes.</li>
  * <li>From an external source: key.setSecretKey(arrayOfBytes);</li>
  * </ul></li>
- * <li>To crypt a String in a Base64 format: String myStringCrypt = key.cryptToString(myString);</li>
- * <li>To decrypt one string from Base64 format to the original String: String myStringDecrypt = key.decryptStringInString(myStringCrypte);</li>
+ * <li>To crypt a String in a Hex format: String myStringCrypt = key.cryptToHex(myString);</li>
+ * <li>To decrypt one string from Hex format to the original String: String myStringDecrypt = key.decryptHexInString(myStringCrypte);</li>
  * </ul>
  *
  * @author frederic bregier
@@ -61,14 +60,6 @@ public abstract class KeyObject {
      * The True Key associated with this object
      */
     Key secretKey = null;
-    /**
-     * Base64 encoder
-     */
-    BASE64Encoder encoder = new BASE64Encoder();
-    /**
-     * Base64 decoder
-     */
-    BASE64Decoder decoder = new BASE64Decoder();
 
     /**
      * Empty constructor
@@ -209,15 +200,15 @@ public abstract class KeyObject {
     }
 
     /**
-     * Crypt one array of bytes and returns the crypted String as Base64 format
+     * Crypt one array of bytes and returns the crypted String as HEX format
      *
      * @param plaintext
-     * @return the crypted String as Base64 format
+     * @return the crypted String as HEX format
      * @throws Exception
      */
-    public String cryptToBase64(byte[] plaintext) throws Exception {
+    public String cryptToHex(byte[] plaintext) throws Exception {
         byte []result = crypt(plaintext);
-        return encoder.encode(result);
+        return encodeHex(result);
     }
 
     /**
@@ -232,14 +223,14 @@ public abstract class KeyObject {
     }
 
     /**
-     * Crypt one String and returns the crypted String as Base64 format
+     * Crypt one String and returns the crypted String as HEX format
      *
      * @param plaintext
-     * @return the crypted String as Base64 format
+     * @return the crypted String as HEX format
      * @throws Exception
      */
-    public String cryptToBase64(String plaintext) throws Exception {
-        return cryptToBase64(plaintext.getBytes());
+    public String cryptToHex(String plaintext) throws Exception {
+        return cryptToHex(plaintext.getBytes());
     }
 
     /**
@@ -275,48 +266,48 @@ public abstract class KeyObject {
     }
 
     /**
-     * Decrypt a String as Base64 format representing a crypted array of bytes and
+     * Decrypt a String as HEX format representing a crypted array of bytes and
      * returns the uncrypted array of bytes
      *
      * @param ciphertext
      * @return the uncrypted array of bytes
      * @throws Exception
      */
-    public byte[] decryptBase64InBytes(String ciphertext) throws Exception {
-        byte[] arrayBytes = decoder.decodeBuffer(ciphertext);
+    public byte[] decryptHexInBytes(String ciphertext) throws Exception {
+        byte[] arrayBytes = decodeHex(ciphertext);
         return decrypt(arrayBytes);
     }
     /**
-     * Decrypt an array of bytes as Base64 format representing a crypted array of bytes and
+     * Decrypt an array of bytes as HEX format representing a crypted array of bytes and
      * returns the uncrypted array of bytes
      *
      * @param ciphertext
      * @return the uncrypted array of bytes
      * @throws Exception
      */
-    public byte[] decryptBase64InBytes(byte[] ciphertext) throws Exception {
-        byte[] arrayBytes = decoder.decodeBuffer(new String(ciphertext));
+    public byte[] decryptHexInBytes(byte[] ciphertext) throws Exception {
+        byte[] arrayBytes = decodeHex(new String(ciphertext));
         return decrypt(arrayBytes);
     }
     /**
-     * Decrypt a String as Base64 format representing a crypted array of bytes and
+     * Decrypt a String as HEX format representing a crypted array of bytes and
      * returns the uncrypted String
      *
      * @param ciphertext
      * @return the uncrypted String
      * @throws Exception
      */
-    public String decryptBase64InString(String ciphertext) throws Exception {
-        return new String(decryptBase64InBytes(ciphertext));
+    public String decryptHexInString(String ciphertext) throws Exception {
+        return new String(decryptHexInBytes(ciphertext));
     }
 
     /**
-     * Decode from a file containing a BASE64 crypted string
+     * Decode from a file containing a HEX crypted string
      * @param file
      * @return the decoded uncrypted content of the file
      * @throws Exception
      */
-    public byte[] decryptBase64File(File file) throws Exception {
+    public byte[] decryptHexFile(File file) throws Exception {
         byte [] byteKeys = new byte[(int) file.length()];
         FileInputStream inputStream = null;
         DataInputStream dis = null;
@@ -327,7 +318,7 @@ public abstract class KeyObject {
             dis.close();
             String skey = new String(byteKeys);
             // decrypt it
-            byteKeys = decryptBase64InBytes(skey);
+            byteKeys = decryptHexInBytes(skey);
             return byteKeys;
         } catch (IOException e) {
             try {
@@ -344,22 +335,18 @@ public abstract class KeyObject {
     /**
     *
     * @param encoded
-    * @return the array of bytes from encoded String (BASE64)
+    * @return the array of bytes from encoded String (HEX)
     */
-   public byte[] decodeBase64(String encoded) {
-       try {
-           return decoder.decodeBuffer(encoded);
-       } catch (IOException e) {
-           return null;
-       }
+   public byte[] decodeHex(String encoded) {
+       return MD5.asByte(encoded);
    }
 
     /**
      *
      * @param bytes
-     * @return The encoded array of bytes in BASE64
+     * @return The encoded array of bytes in HEX
      */
-    public String encodeBase64(byte[] bytes) {
-        return encoder.encode(bytes);
+    public String encodeHex(byte[] bytes) {
+        return MD5.asHex(bytes);
     }
 }

@@ -92,7 +92,7 @@ public class Blowfish extends KeyObject {
         byte[] ciphertext = bf.crypt(plaintext);
         // print the cipher
         System.out.println(ciphertext.length);
-        System.out.println("ciphertext = " + bf.encoder.encode(ciphertext));
+        System.out.println("ciphertext = " + bf.encodeHex(ciphertext));
 
         // Test the set Key
         bf.setSecretKey(secretKey);
@@ -107,9 +107,9 @@ public class Blowfish extends KeyObject {
         int nb = 100000;
         long time1 = System.currentTimeMillis();
         for (int i = 0; i < nb ; i++) {
-            String cipherString = bf.cryptToBase64(plaintext);
+            String cipherString = bf.cryptToHex(plaintext);
             //System.out.println("cipherString = " + cipherString);
-            String plaintext3 = bf.decryptBase64InString(cipherString);
+            String plaintext3 = bf.decryptHexInString(cipherString);
             //System.out.println("plaintext3 = " + plaintext3);
             if (!plaintext3.equals(plaintext))
                 System.out.println("Error: plaintext3 != plaintext");
