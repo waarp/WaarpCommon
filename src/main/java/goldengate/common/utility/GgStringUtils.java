@@ -30,6 +30,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.dom4j.Node;
+
 import goldengate.common.exception.FileTransferException;
 import goldengate.common.exception.InvalidArgumentException;
 import goldengate.common.logging.GgInternalLogger;
@@ -153,5 +155,40 @@ public class GgStringUtils {
             }
         }
         return tdate;
+    }
+    
+    /**
+     * Read a boolean value (0,1,true,false) from a node
+     * @param node
+     * @return the corresponding value
+     */
+    public static boolean getBoolean(Node node) {
+        String val = node.getText();
+        boolean bval;
+        try {
+            int ival = Integer.parseInt(val);
+            bval = (ival == 1) ? true : false;
+        } catch (NumberFormatException e) {
+            bval = Boolean.parseBoolean(val);
+        }
+        return bval;
+    }
+    /**
+     * Read an integer value from a node
+     * @param node
+     * @return the corresponding value
+     * @throws InvalidArgumentException 
+     */
+    public static int getInteger(Node node) throws InvalidArgumentException {
+        if (node == null)
+            throw new InvalidArgumentException("Node empty");
+        String val = node.getText();
+        int ival;
+        try {
+            ival = Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            throw new InvalidArgumentException("Incorrect value");
+        }
+        return ival;
     }
 }
