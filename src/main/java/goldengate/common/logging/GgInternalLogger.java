@@ -91,11 +91,11 @@ public abstract class GgInternalLogger implements InternalLogger {
      */
     private static String getMethodAndLine(StackTraceElement elt) {
         StringBuilder builder = new StringBuilder(elt.getClassName());
-        builder.append(".");
+        builder.append('.');
         builder.append(elt.getMethodName());
-        builder.append("(");
+        builder.append('(');
         builder.append(elt.getFileName());
-        builder.append(":");
+        builder.append(':');
         builder.append(elt.getLineNumber());
         builder.append(") : ");
         return builder.toString();

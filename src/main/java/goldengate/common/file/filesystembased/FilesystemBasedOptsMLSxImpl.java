@@ -256,7 +256,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsSize > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         if (optsModify >= 0) {
@@ -264,7 +264,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsModify > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         if (optsType >= 0) {
@@ -272,7 +272,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsType > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         if (optsPerm >= 0) {
@@ -280,7 +280,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsPerm > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         if (optsCreate >= 0) {
@@ -288,7 +288,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsCreate > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         if (optsUnique >= 0) {
@@ -296,7 +296,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsUnique > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         if (optsLang >= 0) {
@@ -304,7 +304,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsLang > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         if (optsMediaType >= 0) {
@@ -312,7 +312,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsMediaType > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         if (optsCharset >= 0) {
@@ -320,7 +320,7 @@ public class FilesystemBasedOptsMLSxImpl implements OptsMLSxInterface {
             if (optsCharset > 0) {
                 builder.append("*;");
             } else {
-                builder.append(";");
+                builder.append(';');
             }
         }
         builder.append("UNIX.mode;");
