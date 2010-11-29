@@ -113,7 +113,6 @@ public abstract class FilesystemBasedFileImpl implements
             try {
                 setPosition(file.length());
             } catch (IOException e) {
-                logger.error("Error during position:", e);
                 // not ready
                 return;
             }
@@ -451,13 +450,13 @@ public abstract class FilesystemBasedFileImpl implements
      * @throws IOException
      */
     public void setPosition(long position) throws IOException {
+        this.position = position;
         if (bfileChannelIn != null) {
             bfileChannelIn = bfileChannelIn.position(position);
         }
         /*if (rafOut != null) {
             rafOut.seek(position);
         }*/
-        this.position = position;
         if (fileOutputStream != null) {
             fileOutputStream.flush();
             fileOutputStream.close();
@@ -733,6 +732,7 @@ public abstract class FilesystemBasedFileImpl implements
                 logger.error("Change position in getFileOutputStream:", e);
                 return null;
             }
+            logger.info("New size: "+trueFile.length()+" : "+position);
         }
         FileOutputStream fos = null;
         try {
