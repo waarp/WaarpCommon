@@ -5,6 +5,12 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.0.9" date="2009-11-19" description="Various improvements">
+			<action dev="Frederic Bregier" type="add">Add new SSL Support</action>
+			<action dev="Frederic Bregier" type="add">Add new Crypto Support</action>
+			<action dev="Frederic Bregier" type="add">Add Various String Utilities</action>
+			<action dev="Frederic Bregier" type="fix">Fix restart File operation</action>
+		</release>
 		<release version="1.0.8" date="2009-11-19" description="Fix getCanonicalPath">
 			<action dev="Frederic Bregier" type="fix">Fix getCanonicalPath</action>
 		</release>
