@@ -38,6 +38,14 @@ public class XmlDecl {
 
     private boolean isMultiple;
 
+    public XmlDecl(String name, XmlType type, String xmlPath) {
+        this.name = name;
+        this.type = type;
+        this.xmlPath = xmlPath;
+        this.isMultiple = false;
+        this.subXml = null;
+    }
+
     public XmlDecl(String name, XmlType type, String xmlPath, boolean isMultiple) {
         this.name = name;
         this.type = type;
