@@ -33,7 +33,8 @@ public enum XmlType {
     BOOLEAN(Boolean.TYPE), INTEGER(Integer.TYPE), FLOAT(Float.TYPE), CHARACTER(
             Character.TYPE), BYTE(Byte.TYPE), LONG(Long.TYPE), DOUBLE(
             Double.TYPE), SHORT(Short.TYPE), SQLDATE(Date.class), TIMESTAMP(
-            Timestamp.class), STRING(String.class), XVAL(XmlValue.class);
+            Timestamp.class), STRING(String.class), XVAL(XmlValue.class),
+            EMPTY(XmlType.class);
 
     public Class<?> classType;
 
@@ -146,5 +147,9 @@ public enum XmlType {
 
     public boolean isXmlValue() {
         return this == XVAL;
+    }
+    
+    public boolean isEmpty() {
+        return this == EMPTY;
     }
 }

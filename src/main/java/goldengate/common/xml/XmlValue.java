@@ -289,6 +289,9 @@ public class XmlValue {
                 throw new InvalidObjectException(
                         "XVAL cannot be assigned from String directly");
                 // ((List<XmlValue>) this.values).add((XmlValue) value);
+            case EMPTY:
+                throw new InvalidObjectException(
+                        "EMPTY cannot be assigned");
         }
     }
 
@@ -371,6 +374,10 @@ public class XmlValue {
      * @throws InvalidObjectException
      */
     public static Object getCloneValue(XmlType type, Object value) throws InvalidObjectException {
+        if (value == null) {
+            throw new InvalidObjectException(
+                    "Can not convert value from null to type " + type.classType);
+        }
         switch (type) {
             case BOOLEAN:
                 return new Boolean((Boolean) value);
@@ -396,6 +403,7 @@ public class XmlValue {
                 return new String((String) value);
             case XVAL:
                 return new XmlValue((XmlValue) value);
+            case EMPTY:
             default:
                 throw new InvalidObjectException(
                         "Can not convert value from " + value.getClass() +
@@ -407,6 +415,9 @@ public class XmlValue {
      * @throws InvalidObjectException 
      */
     public Object getCloneValue() throws InvalidObjectException {
+        if (getType() == XmlType.EMPTY) {
+            return new XmlValue(this.decl);
+        }
         return getCloneValue(getType(), value);
     }
 
@@ -550,7 +561,24 @@ public class XmlValue {
     public void setFromString(String value) {
         this.value = convert(this.getClassType(), value);
     }
-
+    /**
+     * Test if the Value is empty. If it is a SubXml or isMultiple, check if subnodes are present
+     * but not if those nodes are empty.
+     * @return True if the Value is Empty
+     */
+    public boolean isEmpty() {
+        if (isSubXml()) {
+            if (isMultiple()) {
+                return (this.values.isEmpty());
+            } else {
+                return (this.subXml.length == 0);
+            }
+        } if (isMultiple()) {
+            return (this.values.isEmpty());
+        } else {
+            return (this.value == null);
+        }
+    }
     /**
      * Get a value into a String
      * 

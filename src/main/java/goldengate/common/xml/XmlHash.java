@@ -25,7 +25,8 @@ import java.util.Hashtable;
 import java.util.Set;
 
 /**
- * XmlHash Hashtable for XmlValue utility
+ * XmlHash Hashtable for XmlValue utility.
+ * Hash all values (including subXml) but only root for Multiple
  * 
  * @author Frederic Bregier
  * 
@@ -36,16 +37,36 @@ public class XmlHash {
     public XmlHash(XmlValue[] values) {
         hashtable = new Hashtable<String, XmlValue>();
         for (XmlValue xmlValue: values) {
-            hashtable.put(xmlValue.getName(), xmlValue);
+            if (xmlValue.isMultiple()) {
+                hashtable.put(xmlValue.getName(), xmlValue);
+            } else if (xmlValue.isSubXml()) {
+                this.put(xmlValue);
+            } else {
+                hashtable.put(xmlValue.getName(), xmlValue);
+            }
         }
     }
-
+    
     public XmlValue get(String name) {
         return hashtable.get(name);
     }
 
     public XmlValue put(XmlValue value) {
-        return hashtable.put(value.getName(), value);
+        if (value.isMultiple()) {
+            return hashtable.put(value.getName(), value);
+        } else if (value.isSubXml()) {
+            XmlValue ret = hashtable.put(value.getName(), value);
+            if (! value.isEmpty()) {
+                for (XmlValue subvalue: value.getSubXml()) {
+                    if (subvalue != null) {
+                        this.put(subvalue);
+                    }
+                }
+            }
+            return ret;
+        } else {
+            return hashtable.put(value.getName(), value);
+        }
     }
 
     public int size() {

@@ -38,6 +38,22 @@ public class XmlDecl {
 
     private boolean isMultiple;
 
+    public XmlDecl(String name, String xmlPath) {
+        this.name = name;
+        this.type = XmlType.EMPTY;
+        this.xmlPath = xmlPath;
+        this.isMultiple = false;
+        this.subXml = null;
+    }
+
+    public XmlDecl(XmlType type, String xmlPath) {
+        this.name = xmlPath;
+        this.type = type;
+        this.xmlPath = xmlPath;
+        this.isMultiple = false;
+        this.subXml = null;
+    }
+
     public XmlDecl(String name, XmlType type, String xmlPath) {
         this.name = name;
         this.type = type;
@@ -131,8 +147,8 @@ public class XmlDecl {
      */
     public boolean isCompatible(XmlDecl xmlDecl) {
         if (((isMultiple && xmlDecl.isMultiple) || ((!isMultiple) && (!xmlDecl.isMultiple))) &&
-                ((isSubXml() && xmlDecl.isSubXml()) || ((!isSubXml()) && (!xmlDecl
-                        .isSubXml())))) {
+                ((isSubXml() && xmlDecl.isSubXml()) || 
+                        ((!isSubXml()) && (!xmlDecl.isSubXml())))) {
             if (!isSubXml()) {
                 return type == xmlDecl.type;
             }
