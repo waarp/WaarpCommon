@@ -18,30 +18,18 @@
    You should have received a copy of the GNU General Public License
    along with GoldenGate .  If not, see <http://www.gnu.org/licenses/>.
  */
-package goldengate.common.command.exception;
-
-import goldengate.common.command.ReplyCode;
+package goldengate.cpu;
 
 /**
- * 425 Can't open data connection.
- *
- * @author Frederic Bregier
- *
+ * Interface to get LoadAverage
+ * 
+ * @author bregier
+ * 
  */
-public class Reply425Exception extends CommandAbstractException {
-
+public interface CpuManagementInterface {
     /**
-     * serialVersionUID of long:
+     * 
+     * @return the load average
      */
-    private static final long serialVersionUID = 425L;
-
-    /**
-     * 425 Can't open data connection.
-     *
-     * @param message
-     */
-    public Reply425Exception(String message) {
-        super(ReplyCode.REPLY_425_CANT_OPEN_DATA_CONNECTION, message);
-    }
-
+    public double getLoadAverage();
 }

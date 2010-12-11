@@ -1,5 +1,5 @@
 The GoldenGate Project - Copyright (C) 2009, Frederic Bregier, and individual
-contributors, and is licensed under the GNU LGPL (Lesser General Public License)
+contributors, and is licensed under the GNU GPL V (General Public License)
 as published by the Free Software Foundation; either version 3.0 of the License,
 or (at your option) any later version.
 
