@@ -304,7 +304,6 @@ public class GgSecureKeyStore {
     }
     /**
      * Initialize an empty TrustStore
-     * @param _trustStorePasswd
      * @return True if correctly initialized empty
      * @throws CryptoException
      */

@@ -171,7 +171,7 @@ public class XmlUtil {
     /**
      * Save the branch from element into the file
      * 
-     * @param filename
+     * @param file
      * @param element
      * @throws IOException
      */
@@ -410,7 +410,7 @@ public class XmlUtil {
     /**
      * Add an element given by the path relative to the document
      * 
-     * @param ref
+     * @param doc
      * @param path
      * @return the new added element
      */

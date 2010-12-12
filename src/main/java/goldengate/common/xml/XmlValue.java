@@ -298,7 +298,7 @@ public class XmlValue {
     /**
      * Add a value into the Multiple values from the Object
      * 
-     * @param object
+     * @param value
      * @throws InvalidObjectException
      */
     @SuppressWarnings("unchecked")

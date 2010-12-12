@@ -34,7 +34,6 @@
  * localExecClientPipelineFactory = new LocalExecSslClientPipelineFactory(ggSslContextFactory);<br>
  * bootstrap.setPipelineFactory(localExecClientPipelineFactory);</li>
  * <li>In the final Handler, you need to add the handshake:<br>
- * @Override<br>
  * public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)<br>
  * throws Exception {<br>
  *      ...<br>
@@ -77,7 +76,6 @@
  * For example, see GoldenGate Local Exec module using SSL:<br>
  * bootstrap.setPipelineFactory(new LocalExecSslServerPipelineFactory(ggSslContextFactory, delay));</li>
  * <li>In the final Handler, you need to add the handshake:<br>
- * @Override<br>
  * public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)<br>
  * throws Exception {<br>
  *      ...<br>
