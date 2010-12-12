@@ -18,22 +18,18 @@
    You should have received a copy of the GNU General Public License
    along with GoldenGate .  If not, see <http://www.gnu.org/licenses/>.
  */
-package goldengate.common.crypto;
+package goldengate.common.cpu;
 
 /**
- * This class implements a simple Key Manager for DES class from name
- *
- * @author frederic bregier
+ * Interface to get LoadAverage
+ * 
+ * @author bregier
+ * 
  */
-public class DesManager extends KeyManager {
-    public static final DesManager desManager = new DesManager();
-
-
-    /* (non-Javadoc)
-     * @see atlas.cryptage.KeyManager#createKeyObject()
+public interface CpuManagementInterface {
+    /**
+     * 
+     * @return the load average
      */
-    @Override
-    public KeyObject createKeyObject() {
-        return new Des();
-    }
+    public double getLoadAverage();
 }

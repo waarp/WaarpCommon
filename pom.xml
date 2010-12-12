@@ -138,11 +138,17 @@
     	<version>1.1.1</version>
     </dependency>
     <dependency>
-    	<groupId>JavaSysMon</groupId>
-    	<artifactId>JavaSysMon</artifactId>
+    	<groupId>javasysmon</groupId>
+    	<artifactId>javasysmon</artifactId>
     	<version>0.3.3</version>
-    	<scope>system</scope>
-    	<systemPath>D:\NEWJARS\javasysmon-0.3.3.jar</systemPath>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.commons</groupId>
+    	<artifactId>commons-compress</artifactId>
+    	<version>1.1</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
     </dependency>
   </dependencies>
   <properties>

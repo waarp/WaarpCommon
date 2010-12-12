@@ -40,7 +40,7 @@ public interface CommandInterface {
      * @param code
      */
     public void setArgs(SessionInterface session, String command, String arg,
-            Enum code);
+            @SuppressWarnings("rawtypes") Enum code);
 
     /**
      * Execute the command. This execution must set the replyCode in the session
@@ -58,7 +58,7 @@ public interface CommandInterface {
      * @param extraNextCommand
      *            the extraNextCommand to set
      */
-    public void setExtraNextCommand(Enum extraNextCommand);
+    public void setExtraNextCommand(@SuppressWarnings("rawtypes") Enum extraNextCommand);
 
     /**
      * This function is called when a new command is received to check if this

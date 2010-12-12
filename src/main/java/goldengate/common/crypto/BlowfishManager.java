@@ -20,8 +20,6 @@
  */
 package goldengate.common.crypto;
 
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class implements a simple Key Manager for Blowfish class from name
@@ -30,32 +28,6 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class BlowfishManager extends KeyManager {
     public static final BlowfishManager blowfishManager = new BlowfishManager();
-    private static final ReentrantLock lock = new ReentrantLock();
-
-    /**
-     * FIXME Method is not finished!
-     * Initialize the DesManager from the list of key names
-     * @param keys
-     */
-    @Deprecated
-    public static void initialize(List<String> keys) {
-        if (blowfishManager.isInitialized.get()) {
-            return; // already initialized
-        }
-        lock.lock();
-        try {
-            // Double check in case between first and second check another thread make the init
-            if (blowfishManager.isInitialized.get()) {
-                return; // already initialized
-            }
-            String extension = Blowfish.EXTENSION;
-            List<String> wrong = blowfishManager.initFromList(keys, extension);
-            // FIXME handle if necessary wrong keys
-            // ...
-        } finally {
-            lock.unlock();
-        }
-    }
 
     /* (non-Javadoc)
      * @see atlas.cryptage.KeyManager#createKeyObject()

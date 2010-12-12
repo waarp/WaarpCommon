@@ -22,6 +22,9 @@ package goldengate.common.role;
 
 /**
  * Role to be used in GoldenGate projects
+ * 
+ * FIXME not functional for the moment: early stage development
+ * 
  * @author Frederic Bregier
  *
  */
