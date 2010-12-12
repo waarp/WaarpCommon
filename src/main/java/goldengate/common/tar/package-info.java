@@ -1,5 +1,5 @@
 /**
- * Classes implementing Tar facility
+ * Classes implementing Tar and Zip facility
  *
  * @apiviz.landmark
  */
