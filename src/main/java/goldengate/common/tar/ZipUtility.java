@@ -25,9 +25,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -211,5 +215,27 @@ public class ZipUtility {
         FileInputStream fis = new FileInputStream(file);
         IOUtils.copy(fis, zaos);
         zaos.closeArchiveEntry();
+    }
+    /**
+     * Extract all files from Tar into the specified directory
+     * @param tarFile
+     * @param directory
+     * @return the list of extracted filenames
+     * @throws IOException
+     */
+    public static List<String> unZip(File tarFile, File directory) throws IOException {
+        List<String> result = new ArrayList<String>();
+        InputStream inputStream = new FileInputStream(tarFile);
+        ZipArchiveInputStream in = new ZipArchiveInputStream(inputStream);
+        ZipArchiveEntry entry = in.getNextZipEntry();
+        while (entry != null) {
+            OutputStream out = new FileOutputStream(new File(directory, entry.getName()));
+            IOUtils.copy(in, out);
+            out.close();
+            result.add(entry.getName());
+            entry = in.getNextZipEntry();
+        }
+        in.close();
+        return result;
     }
 }

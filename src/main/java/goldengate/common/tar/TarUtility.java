@@ -25,9 +25,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -216,5 +220,27 @@ public class TarUtility {
         FileInputStream fis = new FileInputStream(file);
         IOUtils.copy(fis, taos);
         taos.closeArchiveEntry();
+    }
+    /**
+     * Extract all files from Tar into the specified directory
+     * @param tarFile
+     * @param directory
+     * @return the list of extracted filenames
+     * @throws IOException
+     */
+    public static List<String> unTar(File tarFile, File directory) throws IOException {
+        List<String> result = new ArrayList<String>();
+        InputStream inputStream = new FileInputStream(tarFile);
+        TarArchiveInputStream in = new TarArchiveInputStream(inputStream);
+        TarArchiveEntry entry = in.getNextTarEntry();
+        while (entry != null) {
+            OutputStream out = new FileOutputStream(new File(directory, entry.getName()));
+            IOUtils.copy(in, out);
+            out.close();
+            result.add(entry.getName());
+            entry = in.getNextTarEntry();
+        }
+        in.close();
+        return result;
     }
 }
