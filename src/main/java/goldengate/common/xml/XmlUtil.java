@@ -983,4 +983,27 @@ public class XmlUtil {
             return;
         }
     }
+
+    /**
+     * Write the given XML document to filename using the encoding
+     * @param filename
+     * @param encoding if null, default encoding ISO-8859-1 will be used
+     * @param document
+     * @throws IOException 
+     */
+    public static void writeXML(String filename, String encoding, Document document) throws IOException {
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        if (encoding != null) {
+            format.setEncoding(encoding);
+        } else {
+            format.setEncoding("ISO-8859-1");
+        }
+        XMLWriter writer = null;
+        writer = new XMLWriter(new FileWriter(filename), format);
+        writer.write(document);
+        try {
+            writer.close();
+        } catch (IOException e) {
+        }
+    }
 }
