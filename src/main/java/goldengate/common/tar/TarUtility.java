@@ -36,6 +36,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
 /**
+ * TAR support
  * @author Frederic Bregier
  *
  */
@@ -242,5 +243,56 @@ public class TarUtility {
         }
         in.close();
         return result;
+    }
+    
+    public static void main(String []args) {
+        if (args.length < 3) {
+            System.err.println("You need to provide 3 arguments:\n"+
+                    "   option filedest.tar \"source\"\n"+
+                    "   where option=1 means untar and source is a directory\n"+
+                    "   option=2 means tar and source is a directory\n"+
+                    "   option=3 means tar and source is a list of files comma separated");
+            System.exit(1);
+        }
+        int option = Integer.parseInt(args[0]);
+        String tarfile = args[1];
+        String tarsource = args[2];
+        String []tarfiles = null;
+        if (option == 3) {
+            tarfiles = args[2].split(",");
+            File []files = new File[tarfiles.length];
+            for (int i = 0; i < tarfiles.length; i++) {
+                files[i] = new File(tarfiles[i]);
+            }
+            if (createTarFromFiles(files, tarfile)) {
+                System.out.println("TAR OK from multiple files");
+            } else {
+                System.err.println("TAR KO from multiple files");
+            }
+        } else if (option == 2) {
+            if (createTarFromDirectory(tarsource, tarfile, false)) {
+                System.out.println("TAR OK from directory");
+            } else {
+                System.err.println("TAR KO from directory");
+            }
+        } else if (option == 1) {
+            File tarFile = new File(tarfile);
+            File directory = new File(tarsource);
+            List<String> result = null;
+            try {
+                result = unTar(tarFile, directory);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            if (result == null || result.isEmpty()) {
+                System.err.println("UNTAR KO from directory");
+            } else {
+                for (String string: result) {
+                    System.out.println("File: "+string);
+                }
+            }
+        }
+        
     }
 }

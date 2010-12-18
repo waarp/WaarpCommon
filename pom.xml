@@ -4,7 +4,7 @@
   <groupId>GoldenGate</groupId>
   <artifactId>GoldenGateCommon</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.9</version>
+  <version>1.1.0</version>
   <name>GoldenGateCommon</name>
   <description>
 	  The GoldenGate Common project contains several classes that are common with different
@@ -167,6 +167,32 @@
     	<version>1.1</version>
     	<type>jar</type>
     	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>Oracle</groupId>
+    	<artifactId>ojdbc5</artifactId>
+    	<version>5</version>
+    	<scope>system</scope>
+    	<systemPath>D:/NEWJARS/ojdbc5.jar</systemPath>
+	    <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.2.145</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+    	<groupId>postgresql</groupId>
+    	<artifactId>postgresql</artifactId>
+    	<version>8.4-702.jdbc4</version>
+    	<optional>true</optional>
+    </dependency>
+    <dependency>
+    	<groupId>mysql</groupId>
+    	<artifactId>mysql-connector-java</artifactId>
+    	<version>5.1.13</version>
+    	<optional>true</optional>
     </dependency>
   </dependencies>
   <properties>
