@@ -28,6 +28,10 @@ package goldengate.common.command;
  */
 public enum ReplyCode {
     /**
+     * unofficial reply code for no value
+     */
+    REPLY_000_SPECIAL_NOSTATUS(0),
+    /**
      * 110 Restart marker reply. In this case, the text is exact and not left to
      * the particular implementation), it must read: MARK yyyy (mmmm Where yyyy
      * is User-process data stream marker, and mmmm server's equivalent marker

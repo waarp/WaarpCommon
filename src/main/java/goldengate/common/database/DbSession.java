@@ -36,7 +36,7 @@ import goldengate.common.database.model.DbModelFactory;
 // or you will have problems!
 
 /**
- * Class to handle session with the SGBD of R66
+ * Class to handle session with the SGBD
  *
  * @author Frederic Bregier
  *
