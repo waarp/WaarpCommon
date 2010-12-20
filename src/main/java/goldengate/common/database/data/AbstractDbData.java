@@ -29,9 +29,9 @@ import java.sql.Types;
 
 import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbSession;
-import goldengate.common.database.exception.OpenR66DatabaseException;
-import goldengate.common.database.exception.OpenR66DatabaseNoConnectionError;
-import goldengate.common.database.exception.OpenR66DatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseException;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
 /**
  * Abstract database table implementation
@@ -89,29 +89,29 @@ public abstract class AbstractDbData {
     /**
      * Test the existence of the current object
      * @return True if the object exists
-     * @throws OpenR66DatabaseException
+     * @throws GoldenGateDatabaseException
      */
-    public abstract boolean exist() throws OpenR66DatabaseException;
+    public abstract boolean exist() throws GoldenGateDatabaseException;
     /**
      * Select object from table
-     * @throws OpenR66DatabaseException
+     * @throws GoldenGateDatabaseException
      */
-    public abstract void select() throws OpenR66DatabaseException;
+    public abstract void select() throws GoldenGateDatabaseException;
     /**
      * Insert object into table
-     * @throws OpenR66DatabaseException
+     * @throws GoldenGateDatabaseException
      */
-    public abstract void insert() throws OpenR66DatabaseException;
+    public abstract void insert() throws GoldenGateDatabaseException;
     /**
      * Update object to table
-     * @throws OpenR66DatabaseException
+     * @throws GoldenGateDatabaseException
      */
-    public abstract void update() throws OpenR66DatabaseException;
+    public abstract void update() throws GoldenGateDatabaseException;
     /**
      * Delete object from table
-     * @throws OpenR66DatabaseException
+     * @throws GoldenGateDatabaseException
      */
-    public abstract void delete() throws OpenR66DatabaseException;
+    public abstract void delete() throws GoldenGateDatabaseException;
     /**
      * Change UpdatedInfo status
      * @param info
@@ -123,18 +123,18 @@ public abstract class AbstractDbData {
     protected abstract void setToArray();
     /**
      * Internal function to retrieve data from Array to pull data from databasre
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseSqlError
      */
-    protected abstract void setFromArray() throws OpenR66DatabaseSqlError;
+    protected abstract void setFromArray() throws GoldenGateDatabaseSqlError;
     /**
      * Set Value into PreparedStatement
      * @param ps
      * @param value
      * @param rank
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseSqlError
      */
     static public void setTrueValue(PreparedStatement ps, DbValue value, int rank)
-            throws OpenR66DatabaseSqlError {
+            throws GoldenGateDatabaseSqlError {
         try {
             switch (value.type) {
                 case Types.VARCHAR:
@@ -222,15 +222,15 @@ public abstract class AbstractDbData {
                     ps.setTimestamp(rank, (Timestamp) value.value);
                     break;
                 default:
-                    throw new OpenR66DatabaseSqlError("Type not supported: " +
+                    throw new GoldenGateDatabaseSqlError("Type not supported: " +
                             value.type + " at " + rank);
             }
         } catch (ClassCastException e) {
-            throw new OpenR66DatabaseSqlError("Setting values casting error: " +
+            throw new GoldenGateDatabaseSqlError("Setting values casting error: " +
                     value.type + " at " + rank, e);
         } catch (SQLException e) {
             DbSession.error(e);
-            throw new OpenR66DatabaseSqlError("Setting values in error: " +
+            throw new GoldenGateDatabaseSqlError("Setting values in error: " +
                     value.type + " at " + rank, e);
         }
     }
@@ -238,11 +238,11 @@ public abstract class AbstractDbData {
      * Set one value to a DbPreparedStatement
      * @param preparedStatement
      * @param value
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
     protected void setValue(DbPreparedStatement preparedStatement, DbValue value)
-            throws OpenR66DatabaseNoConnectionError, OpenR66DatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
         PreparedStatement ps = preparedStatement.getPreparedStatement();
         setTrueValue(ps, value, 1);
     }
@@ -250,12 +250,12 @@ public abstract class AbstractDbData {
      * Set several values to a DbPreparedStatement
      * @param preparedStatement
      * @param values
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
     protected void setValues(DbPreparedStatement preparedStatement,
-            DbValue[] values) throws OpenR66DatabaseNoConnectionError,
-            OpenR66DatabaseSqlError {
+            DbValue[] values) throws GoldenGateDatabaseNoConnectionError,
+            GoldenGateDatabaseSqlError {
         PreparedStatement ps = preparedStatement.getPreparedStatement();
         for (int i = 0; i < values.length; i ++) {
             DbValue value = values[i];
@@ -266,10 +266,10 @@ public abstract class AbstractDbData {
      * Get one value into DbValue from ResultSet
      * @param rs
      * @param value
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseSqlError
      */
     static public void getTrueValue(ResultSet rs, DbValue value)
-            throws OpenR66DatabaseSqlError {
+            throws GoldenGateDatabaseSqlError {
         try {
             switch (value.type) {
                 case Types.VARCHAR:
@@ -309,12 +309,12 @@ public abstract class AbstractDbData {
                     value.value = rs.getTimestamp(value.column);
                     break;
                 default:
-                    throw new OpenR66DatabaseSqlError("Type not supported: " +
+                    throw new GoldenGateDatabaseSqlError("Type not supported: " +
                             value.type + " for " + value.column);
             }
         } catch (SQLException e) {
             DbSession.error(e);
-            throw new OpenR66DatabaseSqlError("Getting values in error: " +
+            throw new GoldenGateDatabaseSqlError("Getting values in error: " +
                     value.type + " for " + value.column, e);
         }
     }
@@ -322,11 +322,11 @@ public abstract class AbstractDbData {
      * Get one value into DbValue from DbPreparedStatement
      * @param preparedStatement
      * @param value
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
     protected void getValue(DbPreparedStatement preparedStatement, DbValue value)
-            throws OpenR66DatabaseNoConnectionError, OpenR66DatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
         ResultSet rs = preparedStatement.getResultSet();
         getTrueValue(rs, value);
     }
@@ -334,12 +334,12 @@ public abstract class AbstractDbData {
      * Get several values into DbValue from DbPreparedStatement
      * @param preparedStatement
      * @param values
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
     protected void getValues(DbPreparedStatement preparedStatement,
-            DbValue[] values) throws OpenR66DatabaseNoConnectionError,
-            OpenR66DatabaseSqlError {
+            DbValue[] values) throws GoldenGateDatabaseNoConnectionError,
+            GoldenGateDatabaseSqlError {
         ResultSet rs = preparedStatement.getResultSet();
         for (DbValue value: values) {
             getTrueValue(rs, value);

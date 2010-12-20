@@ -28,8 +28,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
-import goldengate.common.database.exception.OpenR66DatabaseNoConnectionError;
-import goldengate.common.database.exception.OpenR66DatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 import goldengate.common.database.model.DbModelFactory;
 
 // Notice, do not import com.mysql.jdbc.*
@@ -93,13 +93,13 @@ public class DbSession {
      *
      * @param connext
      * @param isReadOnly
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
     public DbSession(Connection connext, boolean isReadOnly)
-            throws OpenR66DatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionError {
         if (connext == null) {
             logger.error("Cannot set a null connection");
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot set a null Connection");
         }
         conn = connext;
@@ -113,7 +113,7 @@ public class DbSession {
             logger.error("Cannot set properties on connection!");
             error(ex);
             conn = null;
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot set properties on connection", ex);
         }
     }
@@ -136,17 +136,17 @@ public class DbSession {
      * @param user
      * @param passwd
      * @param isReadOnly
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseSqlError
      */
     public DbSession(String server, String user, String passwd,
-            boolean isReadOnly) throws OpenR66DatabaseNoConnectionError {
+            boolean isReadOnly) throws GoldenGateDatabaseNoConnectionError {
         if (!DbModelFactory.classLoaded) {
-            throw new OpenR66DatabaseNoConnectionError("DbAdmin not initialzed");
+            throw new GoldenGateDatabaseNoConnectionError("DbAdmin not initialzed");
         }
         if (server == null) {
             conn = null;
             logger.error("Cannot set a null Server");
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot set a null Server");
         }
         try {
@@ -161,7 +161,7 @@ public class DbSession {
             logger.error("Cannot create Connection");
             error(ex);
             conn = null;
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot create Connection", ex);
         }
     }
@@ -175,12 +175,12 @@ public class DbSession {
      *
      * @param admin
      * @param isReadOnly
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseSqlError
      */
     public DbSession(DbAdmin admin,
-            boolean isReadOnly) throws OpenR66DatabaseNoConnectionError {
+            boolean isReadOnly) throws GoldenGateDatabaseNoConnectionError {
         if (!DbModelFactory.classLoaded) {
-            throw new OpenR66DatabaseNoConnectionError("DbAdmin not initialzed");
+            throw new GoldenGateDatabaseNoConnectionError("DbAdmin not initialzed");
         }
         try {
             conn = DriverManager.getConnection(admin.getServer(),
@@ -196,7 +196,7 @@ public class DbSession {
             logger.error("Cannot create Connection");
             error(ex);
             conn = null;
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot create Connection", ex);
         }
     }
@@ -273,14 +273,14 @@ public class DbSession {
     /**
      * Commit everything
      *
-     * @throws OpenR66DatabaseSqlError
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public void commit() throws OpenR66DatabaseSqlError,
-            OpenR66DatabaseNoConnectionError {
+    public void commit() throws GoldenGateDatabaseSqlError,
+            GoldenGateDatabaseNoConnectionError {
         if (conn == null) {
             logger.warn("Cannot commit since connection is null");
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot commit since connection is null");
         }
         try {
@@ -288,7 +288,7 @@ public class DbSession {
         } catch (SQLException e) {
             logger.error("Cannot Commit");
             error(e);
-            throw new OpenR66DatabaseSqlError("Cannot commit", e);
+            throw new GoldenGateDatabaseSqlError("Cannot commit", e);
         }
     }
 
@@ -296,14 +296,14 @@ public class DbSession {
      * Rollback from the savepoint or the last set if null
      *
      * @param savepoint
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
     public void rollback(Savepoint savepoint)
-            throws OpenR66DatabaseNoConnectionError, OpenR66DatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
         if (conn == null) {
             logger.warn("Cannot rollback since connection is null");
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot rollback since connection is null");
         }
         try {
@@ -315,7 +315,7 @@ public class DbSession {
         } catch (SQLException e) {
             logger.error("Cannot rollback");
             error(e);
-            throw new OpenR66DatabaseSqlError("Cannot rollback", e);
+            throw new GoldenGateDatabaseSqlError("Cannot rollback", e);
         }
     }
 
@@ -323,14 +323,14 @@ public class DbSession {
      * Make a savepoint
      *
      * @return the new savepoint
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
-    public Savepoint savepoint() throws OpenR66DatabaseNoConnectionError,
-            OpenR66DatabaseSqlError {
+    public Savepoint savepoint() throws GoldenGateDatabaseNoConnectionError,
+            GoldenGateDatabaseSqlError {
         if (conn == null) {
             logger.warn("Cannot savepoint since connection is null");
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot savepoint since connection is null");
         }
         try {
@@ -338,7 +338,7 @@ public class DbSession {
         } catch (SQLException e) {
             logger.error("Cannot savepoint");
             error(e);
-            throw new OpenR66DatabaseSqlError("Cannot savepoint", e);
+            throw new GoldenGateDatabaseSqlError("Cannot savepoint", e);
         }
     }
 
@@ -346,14 +346,14 @@ public class DbSession {
      * Release the savepoint
      *
      * @param savepoint
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
     public void releaseSavepoint(Savepoint savepoint)
-            throws OpenR66DatabaseNoConnectionError, OpenR66DatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
         if (conn == null) {
             logger.warn("Cannot release savepoint since connection is null");
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot release savepoint since connection is null");
         }
         try {
@@ -361,7 +361,7 @@ public class DbSession {
         } catch (SQLException e) {
             logger.error("Cannot release savepoint");
             error(e);
-            throw new OpenR66DatabaseSqlError("Cannot release savepoint", e);
+            throw new GoldenGateDatabaseSqlError("Cannot release savepoint", e);
         }
     }
 }

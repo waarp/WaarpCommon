@@ -25,10 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbSession;
-import goldengate.common.database.exception.OpenR66DatabaseException;
-import goldengate.common.database.exception.OpenR66DatabaseNoConnectionError;
-import goldengate.common.database.exception.OpenR66DatabaseNoDataException;
-import goldengate.common.database.exception.OpenR66DatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseException;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
 /**
  * Example of Table object
@@ -139,7 +139,7 @@ public class DbDataModel extends AbstractDbData {
     }
 
     @Override
-    protected void setFromArray() throws OpenR66DatabaseSqlError {
+    protected void setFromArray() throws GoldenGateDatabaseSqlError {
         hostid = (String) allFields[Columns.HOSTID.ordinal()].getValue();
         readgloballimit = (Long) allFields[Columns.READGLOBALLIMIT.ordinal()]
                 .getValue();
@@ -184,9 +184,9 @@ public class DbDataModel extends AbstractDbData {
     /**
      * @param dbSession
      * @param hostid
-     * @throws OpenR66DatabaseException
+     * @throws GoldenGateDatabaseException
      */
-    public DbDataModel(DbSession dbSession, String hostid) throws OpenR66DatabaseException {
+    public DbDataModel(DbSession dbSession, String hostid) throws GoldenGateDatabaseException {
         super(dbSession);
         this.hostid = hostid;
         // load from DB
@@ -199,7 +199,7 @@ public class DbDataModel extends AbstractDbData {
      * @see openr66.database.data.AbstractDbData#delete()
      */
     @Override
-    public void delete() throws OpenR66DatabaseException {
+    public void delete() throws GoldenGateDatabaseException {
         if (dbSession == null) {
             dbR66ConfigurationHashMap.remove(this.hostid);
             isSaved = false;
@@ -214,7 +214,7 @@ public class DbDataModel extends AbstractDbData {
             setValue(preparedStatement, primaryKey);
             int count = preparedStatement.executeUpdate();
             if (count <= 0) {
-                throw new OpenR66DatabaseNoDataException("No row found");
+                throw new GoldenGateDatabaseNoDataException("No row found");
             }
             isSaved = false;
         } finally {
@@ -228,7 +228,7 @@ public class DbDataModel extends AbstractDbData {
      * @see openr66.database.data.AbstractDbData#insert()
      */
     @Override
-    public void insert() throws OpenR66DatabaseException {
+    public void insert() throws GoldenGateDatabaseException {
         if (isSaved) {
             return;
         }
@@ -245,7 +245,7 @@ public class DbDataModel extends AbstractDbData {
             setValues(preparedStatement, allFields);
             int count = preparedStatement.executeUpdate();
             if (count <= 0) {
-                throw new OpenR66DatabaseNoDataException("No row found");
+                throw new GoldenGateDatabaseNoDataException("No row found");
             }
             isSaved = true;
         } finally {
@@ -257,7 +257,7 @@ public class DbDataModel extends AbstractDbData {
      * @see openr66.database.data.AbstractDbData#exist()
      */
     @Override
-    public boolean exist() throws OpenR66DatabaseException {
+    public boolean exist() throws GoldenGateDatabaseException {
         if (dbSession == null) {
             return dbR66ConfigurationHashMap.containsKey(hostid);
         }
@@ -281,11 +281,11 @@ public class DbDataModel extends AbstractDbData {
      * @see openr66.database.data.AbstractDbData#select()
      */
     @Override
-    public void select() throws OpenR66DatabaseException {
+    public void select() throws GoldenGateDatabaseException {
         if (dbSession == null) {
             DbDataModel conf = dbR66ConfigurationHashMap.get(this.hostid);
             if (conf == null) {
-                throw new OpenR66DatabaseNoDataException("No row found");
+                throw new GoldenGateDatabaseNoDataException("No row found");
             } else {
                 // copy info
                 for (int i = 0; i < allFields.length; i++){
@@ -310,7 +310,7 @@ public class DbDataModel extends AbstractDbData {
                 setFromArray();
                 isSaved = true;
             } else {
-                throw new OpenR66DatabaseNoDataException("No row found");
+                throw new GoldenGateDatabaseNoDataException("No row found");
             }
         } finally {
             preparedStatement.realClose();
@@ -322,7 +322,7 @@ public class DbDataModel extends AbstractDbData {
      * @see openr66.database.data.AbstractDbData#update()
      */
     @Override
-    public void update() throws OpenR66DatabaseException {
+    public void update() throws GoldenGateDatabaseException {
         if (isSaved) {
             return;
         }
@@ -340,7 +340,7 @@ public class DbDataModel extends AbstractDbData {
             setValues(preparedStatement, allFields);
             int count = preparedStatement.executeUpdate();
             if (count <= 0) {
-                throw new OpenR66DatabaseNoDataException("No row found");
+                throw new GoldenGateDatabaseNoDataException("No row found");
             }
             isSaved = true;
         } finally {
@@ -357,10 +357,10 @@ public class DbDataModel extends AbstractDbData {
      * For instance from Commander when getting updated information
      * @param preparedStatement
      * @return the next updated Configuration
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
-    public static DbDataModel getFromStatement(DbPreparedStatement preparedStatement) throws OpenR66DatabaseNoConnectionError, OpenR66DatabaseSqlError {
+    public static DbDataModel getFromStatement(DbPreparedStatement preparedStatement) throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
         DbDataModel dbDataModel = new DbDataModel(preparedStatement.getDbSession());
         dbDataModel.getValues(preparedStatement, dbDataModel.allFields);
         dbDataModel.setFromArray();
@@ -370,10 +370,10 @@ public class DbDataModel extends AbstractDbData {
     /**
      *
      * @return the DbPreparedStatement for getting Updated Object
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
-    public static DbPreparedStatement getUpdatedPrepareStament(DbSession session) throws OpenR66DatabaseNoConnectionError, OpenR66DatabaseSqlError {
+    public static DbPreparedStatement getUpdatedPrepareStament(DbSession session) throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
         String request = "SELECT " +selectAllFields;
         request += " FROM "+table+
             " WHERE "+Columns.UPDATEDINFO.name()+" = "+

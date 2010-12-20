@@ -26,7 +26,7 @@ import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 
-import goldengate.common.database.exception.OpenR66DatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
 /**
  * Database Value to help getting and setting value from and to database
@@ -238,7 +238,7 @@ public class DbValue {
         this.value = new Timestamp(value.getTime());
     }
 
-    public Object getValue() throws OpenR66DatabaseSqlError {
+    public Object getValue() throws GoldenGateDatabaseSqlError {
         switch (type) {
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
@@ -254,11 +254,11 @@ public class DbValue {
             case Types.TIMESTAMP:
                 return value;
             default:
-                throw new OpenR66DatabaseSqlError("Type unknown: " + type);
+                throw new GoldenGateDatabaseSqlError("Type unknown: " + type);
         }
     }
 
-    public String getValueAsString() throws OpenR66DatabaseSqlError {
+    public String getValueAsString() throws GoldenGateDatabaseSqlError {
         switch (type) {
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
@@ -284,11 +284,11 @@ public class DbValue {
             case Types.TIMESTAMP:
                 return ((Timestamp) value).toString();
             default:
-                throw new OpenR66DatabaseSqlError("Type unknown: " + type);
+                throw new GoldenGateDatabaseSqlError("Type unknown: " + type);
         }
     }
     
-    public void setValueFromString(String svalue) throws OpenR66DatabaseSqlError {
+    public void setValueFromString(String svalue) throws GoldenGateDatabaseSqlError {
         switch (type) {
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
@@ -322,18 +322,18 @@ public class DbValue {
                 try {
                     value = DateFormat.getDateTimeInstance().parse(svalue);
                 } catch (ParseException e) {
-                    throw new OpenR66DatabaseSqlError("Error in Date: " + svalue);
+                    throw new GoldenGateDatabaseSqlError("Error in Date: " + svalue);
                 }
                 break;
             case Types.TIMESTAMP:
                 try {
                     value = DateFormat.getDateTimeInstance().parse(svalue);
                 } catch (ParseException e) {
-                    throw new OpenR66DatabaseSqlError("Error in Timestamp: " + svalue);
+                    throw new GoldenGateDatabaseSqlError("Error in Timestamp: " + svalue);
                 }
                 break;
             default:
-                throw new OpenR66DatabaseSqlError("Type unknown: " + type);
+                throw new GoldenGateDatabaseSqlError("Type unknown: " + type);
         }
     }
 }

@@ -21,9 +21,9 @@
 package goldengate.common.database.model;
 
 import goldengate.common.database.DbSession;
-import goldengate.common.database.exception.OpenR66DatabaseNoConnectionError;
-import goldengate.common.database.exception.OpenR66DatabaseNoDataException;
-import goldengate.common.database.exception.OpenR66DatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
 /**
  * Interface for Database Model
@@ -38,31 +38,31 @@ public interface DbModel {
     /**
      * Create all necessary tables into the database
      * @param session SQL session
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public void createTables(DbSession session) throws OpenR66DatabaseNoConnectionError;
+    public void createTables(DbSession session) throws GoldenGateDatabaseNoConnectionError;
 
     /**
      * Reset the sequence (example)
      * @param session SQL session
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public void resetSequence(DbSession session, long newvalue) throws OpenR66DatabaseNoConnectionError;
+    public void resetSequence(DbSession session, long newvalue) throws GoldenGateDatabaseNoConnectionError;
 
     /**
      * @param dbSession
      * @return The next unique specialId
      */
     public long nextSequence(DbSession dbSession)
-            throws OpenR66DatabaseNoConnectionError, OpenR66DatabaseSqlError,
-            OpenR66DatabaseNoDataException;
+            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError,
+            GoldenGateDatabaseNoDataException;
 
     /**
      * Validate connection
      * @param dbSession
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public void validConnection(DbSession dbSession) throws OpenR66DatabaseNoConnectionError;
+    public void validConnection(DbSession dbSession) throws GoldenGateDatabaseNoConnectionError;
 
     /**
      * Add a limit on the request to get the "limit" first rows. Note that

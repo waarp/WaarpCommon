@@ -21,21 +21,21 @@
 package goldengate.common.database.exception;
 
 /**
- * Database Sql Error
+ * Database No connection error
  * @author Frederic Bregier
  *
  */
-public class OpenR66DatabaseSqlError extends OpenR66DatabaseException {
+public class GoldenGateDatabaseNoConnectionError extends GoldenGateDatabaseException {
 
     /**
      *
      */
-    private static final long serialVersionUID = -4081996057795490036L;
+    private static final long serialVersionUID = -408789088492387727L;
 
     /**
      *
      */
-    public OpenR66DatabaseSqlError() {
+    public GoldenGateDatabaseNoConnectionError() {
         super();
     }
 
@@ -43,21 +43,21 @@ public class OpenR66DatabaseSqlError extends OpenR66DatabaseException {
      * @param arg0
      * @param arg1
      */
-    public OpenR66DatabaseSqlError(String arg0, Throwable arg1) {
+    public GoldenGateDatabaseNoConnectionError(String arg0, Throwable arg1) {
         super(arg0, arg1);
     }
 
     /**
      * @param arg0
      */
-    public OpenR66DatabaseSqlError(String arg0) {
+    public GoldenGateDatabaseNoConnectionError(String arg0) {
         super(arg0);
     }
 
     /**
      * @param arg0
      */
-    public OpenR66DatabaseSqlError(Throwable arg0) {
+    public GoldenGateDatabaseNoConnectionError(Throwable arg0) {
         super(arg0);
     }
 

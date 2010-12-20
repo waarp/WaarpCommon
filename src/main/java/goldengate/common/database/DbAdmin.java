@@ -27,8 +27,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import goldengate.common.database.exception.OpenR66DatabaseNoConnectionError;
-import goldengate.common.database.exception.OpenR66DatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 import goldengate.common.database.model.DbType;
 import goldengate.common.database.model.DbModelFactory;
 
@@ -92,12 +92,12 @@ public class DbAdmin {
     /**
      * Validate connection
      *
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public void validConnection() throws OpenR66DatabaseNoConnectionError {
+    public void validConnection() throws GoldenGateDatabaseNoConnectionError {
         try {
             DbModelFactory.dbModel.validConnection(session);
-        } catch (OpenR66DatabaseNoConnectionError e) {
+        } catch (GoldenGateDatabaseNoConnectionError e) {
             isConnected = false;
             throw e;
         }
@@ -120,17 +120,17 @@ public class DbAdmin {
      * @param server
      * @param user
      * @param passwd
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
     public DbAdmin(DbType driver, String server, String user, String passwd)
-            throws OpenR66DatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionError {
         this.server = server;
         this.user = user;
         this.passwd = passwd;
         this.typeDriver = driver;
         if (typeDriver == null) {
             logger.error("Cannot find TypeDriver:" + driver.name());
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot find database drive:" + driver.name());
         }
         session = new DbSession(this.server, this.user, this.passwd, false);
@@ -155,18 +155,18 @@ public class DbAdmin {
      * @param user
      * @param passwd
      * @param write
-     * @throws OpenR66DatabaseSqlError
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
     public DbAdmin(DbType driver, String server, String user, String passwd,
-            boolean write) throws OpenR66DatabaseNoConnectionError {
+            boolean write) throws GoldenGateDatabaseNoConnectionError {
         this.server = server;
         this.user = user;
         this.passwd = passwd;
         this.typeDriver = driver;
         if (typeDriver == null) {
             logger.error("Cannot find TypeDriver:" + driver.name());
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot find database drive:" + driver.name());
         }
         if (write) {
@@ -174,7 +174,7 @@ public class DbAdmin {
                 try {
                     session = new DbSession(this.server, this.user,
                             this.passwd, false);
-                } catch (OpenR66DatabaseNoConnectionError e) {
+                } catch (GoldenGateDatabaseNoConnectionError e) {
                     logger.warn("Attempt of connection in error: " + i);
                     continue;
                 }
@@ -187,7 +187,7 @@ public class DbAdmin {
                 try {
                     session = new DbSession(this.server, this.user,
                             this.passwd, true);
-                } catch (OpenR66DatabaseNoConnectionError e) {
+                } catch (GoldenGateDatabaseNoConnectionError e) {
                     logger.warn("Attempt of connection in error: " + i);
                     continue;
                 }
@@ -199,7 +199,7 @@ public class DbAdmin {
         session = null;
         isConnected = false;
         logger.error("Cannot connect to Database!");
-        throw new OpenR66DatabaseNoConnectionError("Cannot connect to database");
+        throw new GoldenGateDatabaseNoConnectionError("Cannot connect to database");
     }
 
     /**
@@ -218,16 +218,16 @@ public class DbAdmin {
      *
      * @param conn
      * @param isread
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
     public DbAdmin(Connection conn, boolean isread)
-            throws OpenR66DatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionError {
         server = null;
         if (conn == null) {
             session = null;
             isConnected = false;
             logger.error("Cannot Get a Connection from Datasource");
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot Get a Connection from Datasource");
         }
         session = new DbSession(conn, isread);
@@ -258,12 +258,12 @@ public class DbAdmin {
     /**
      * Commit on connection (since in autocommit, should not be used)
      *
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      *
      */
-    public void commit() throws OpenR66DatabaseSqlError,
-            OpenR66DatabaseNoConnectionError {
+    public void commit() throws GoldenGateDatabaseSqlError,
+            GoldenGateDatabaseNoConnectionError {
         if (session != null) {
             session.commit();
         }

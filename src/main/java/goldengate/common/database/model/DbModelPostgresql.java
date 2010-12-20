@@ -33,10 +33,10 @@ import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbRequest;
 import goldengate.common.database.DbSession;
 import goldengate.common.database.data.DbDataModel;
-import goldengate.common.database.exception.OpenR66DatabaseException;
-import goldengate.common.database.exception.OpenR66DatabaseNoConnectionError;
-import goldengate.common.database.exception.OpenR66DatabaseNoDataException;
-import goldengate.common.database.exception.OpenR66DatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseException;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
 /**
  * PostGreSQL Database Model implementation
@@ -53,9 +53,9 @@ public abstract class DbModelPostgresql implements DbModel {
     public static DbType type = DbType.PostGreSQL;
     /**
      * Create the object and initialize if necessary the driver
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public DbModelPostgresql() throws OpenR66DatabaseNoConnectionError {
+    public DbModelPostgresql() throws GoldenGateDatabaseNoConnectionError {
         if (DbModelFactory.classLoaded) {
             return;
         }
@@ -66,7 +66,7 @@ public abstract class DbModelPostgresql implements DbModel {
          // SQLException
             logger.error("Cannot register Driver " + type.name()+ "\n"+e.getMessage());
             DbSession.error(e);
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot load database drive:" + type.name(), e);
         }
     }
@@ -130,7 +130,7 @@ public abstract class DbModelPostgresql implements DbModel {
     }
 
     @Override
-    public void createTables(DbSession session) throws OpenR66DatabaseNoConnectionError {
+    public void createTables(DbSession session) throws GoldenGateDatabaseNoConnectionError {
         // Create tables: configuration, hosts, rules, runner, cptrunner
         String createTableH2 = "CREATE TABLE ";
         String primaryKey = " PRIMARY KEY ";
@@ -152,10 +152,10 @@ public abstract class DbModelPostgresql implements DbModel {
         DbRequest request = new DbRequest(session);
         try {
             request.query(action);
-        } catch (OpenR66DatabaseNoConnectionError e) {
+        } catch (GoldenGateDatabaseNoConnectionError e) {
             e.printStackTrace();
             return;
-        } catch (OpenR66DatabaseSqlError e) {
+        } catch (GoldenGateDatabaseSqlError e) {
             e.printStackTrace();
             return;
         } finally {
@@ -171,10 +171,10 @@ public abstract class DbModelPostgresql implements DbModel {
         System.out.println(action);
         try {
             request.query(action);
-        } catch (OpenR66DatabaseNoConnectionError e) {
+        } catch (GoldenGateDatabaseNoConnectionError e) {
             e.printStackTrace();
             return;
-        } catch (OpenR66DatabaseSqlError e) {
+        } catch (GoldenGateDatabaseSqlError e) {
             return;
         } finally {
             request.close();
@@ -186,10 +186,10 @@ public abstract class DbModelPostgresql implements DbModel {
         System.out.println(action);
         try {
             request.query(action);
-        } catch (OpenR66DatabaseNoConnectionError e) {
+        } catch (GoldenGateDatabaseNoConnectionError e) {
             e.printStackTrace();
             return;
-        } catch (OpenR66DatabaseSqlError e) {
+        } catch (GoldenGateDatabaseSqlError e) {
             e.printStackTrace();
             return;
         } finally {
@@ -203,16 +203,16 @@ public abstract class DbModelPostgresql implements DbModel {
      * @see openr66.database.model.DbModel#resetSequence()
      */
     @Override
-    public void resetSequence(DbSession session, long newvalue) throws OpenR66DatabaseNoConnectionError {
+    public void resetSequence(DbSession session, long newvalue) throws GoldenGateDatabaseNoConnectionError {
         String action = "ALTER SEQUENCE " + DbDataModel.fieldseq +
                 " RESTART WITH " + newvalue;
         DbRequest request = new DbRequest(session);
         try {
             request.query(action);
-        } catch (OpenR66DatabaseNoConnectionError e) {
+        } catch (GoldenGateDatabaseNoConnectionError e) {
             e.printStackTrace();
             return;
-        } catch (OpenR66DatabaseSqlError e) {
+        } catch (GoldenGateDatabaseSqlError e) {
             e.printStackTrace();
             return;
         } finally {
@@ -228,8 +228,8 @@ public abstract class DbModelPostgresql implements DbModel {
      */
     @Override
     public long nextSequence(DbSession dbSession)
-        throws OpenR66DatabaseNoConnectionError,
-            OpenR66DatabaseSqlError, OpenR66DatabaseNoDataException {
+        throws GoldenGateDatabaseNoConnectionError,
+            GoldenGateDatabaseSqlError, GoldenGateDatabaseNoDataException {
         long result = DbConstant.ILLEGALVALUE;
         String action = "SELECT NEXTVAL('" + DbDataModel.fieldseq + "')";
         DbPreparedStatement preparedStatement = new DbPreparedStatement(
@@ -242,11 +242,11 @@ public abstract class DbModelPostgresql implements DbModel {
                 try {
                     result = preparedStatement.getResultSet().getLong(1);
                 } catch (SQLException e) {
-                    throw new OpenR66DatabaseSqlError(e);
+                    throw new GoldenGateDatabaseSqlError(e);
                 }
                 return result;
             } else {
-                throw new OpenR66DatabaseNoDataException(
+                throw new GoldenGateDatabaseNoDataException(
                         "No sequence found. Must be initialized first");
             }
         } finally {
@@ -258,15 +258,15 @@ public abstract class DbModelPostgresql implements DbModel {
      * @see openr66.database.model.DbModel#validConnection(DbSession)
      */
     @Override
-    public void validConnection(DbSession dbSession) throws OpenR66DatabaseNoConnectionError {
+    public void validConnection(DbSession dbSession) throws GoldenGateDatabaseNoConnectionError {
         DbRequest request = new DbRequest(dbSession, true);
         try {
             request.select("select 1");
             if (!request.getNext()) {
-                throw new OpenR66DatabaseNoConnectionError(
+                throw new GoldenGateDatabaseNoConnectionError(
                         "Cannot connect to database");
             }
-        } catch (OpenR66DatabaseSqlError e) {
+        } catch (GoldenGateDatabaseSqlError e) {
             try {
                 DbSession newdbSession = new DbSession(dbSession.getAdmin(), false);
                 try {
@@ -288,11 +288,11 @@ public abstract class DbModelPostgresql implements DbModel {
                     } catch (SQLException e1) {
                     }
                     DbAdmin.removeConnection(dbSession.internalId);
-                    throw new OpenR66DatabaseNoConnectionError(
+                    throw new GoldenGateDatabaseNoConnectionError(
                             "Cannot connect to database");
                 }
                 return;
-            } catch (OpenR66DatabaseException e1) {
+            } catch (GoldenGateDatabaseException e1) {
             }
             try {
                 if (dbSession.conn != null) {
@@ -301,7 +301,7 @@ public abstract class DbModelPostgresql implements DbModel {
             } catch (SQLException e1) {
             }
             DbAdmin.removeConnection(dbSession.internalId);
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot connect to database", e);
         } finally {
             request.close();

@@ -27,9 +27,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import goldengate.common.database.exception.OpenR66DatabaseNoConnectionError;
-import goldengate.common.database.exception.OpenR66DatabaseNoDataException;
-import goldengate.common.database.exception.OpenR66DatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 import goldengate.common.database.model.DbModelFactory;
 
 /**
@@ -64,9 +64,9 @@ public class DbRequest {
      * Create a new request from the DbSession
      *
      * @param ls
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public DbRequest(DbSession ls) throws OpenR66DatabaseNoConnectionError {
+    public DbRequest(DbSession ls) throws GoldenGateDatabaseNoConnectionError {
         DbModelFactory.dbModel.validConnection(ls);
         this.ls = ls;
     }
@@ -76,9 +76,9 @@ public class DbRequest {
      *
      * @param ls
      * @param ignored ignored param
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public DbRequest(DbSession ls, boolean ignored) throws OpenR66DatabaseNoConnectionError {
+    public DbRequest(DbSession ls, boolean ignored) throws GoldenGateDatabaseNoConnectionError {
         this.ls = ls;
     }
 
@@ -86,21 +86,21 @@ public class DbRequest {
      * Create a statement with some particular options
      *
      * @return the new Statement
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
     private Statement createStatement()
-            throws OpenR66DatabaseNoConnectionError, OpenR66DatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
         if (ls == null) {
-            throw new OpenR66DatabaseNoConnectionError("No connection");
+            throw new GoldenGateDatabaseNoConnectionError("No connection");
         }
         if (ls.conn == null) {
-            throw new OpenR66DatabaseNoConnectionError("No connection");
+            throw new GoldenGateDatabaseNoConnectionError("No connection");
         }
         try {
             return ls.conn.createStatement();
         } catch (SQLException e) {
-            throw new OpenR66DatabaseSqlError("Error while Create Statement", e);
+            throw new GoldenGateDatabaseSqlError("Error while Create Statement", e);
         }
     }
 
@@ -109,11 +109,11 @@ public class DbRequest {
      * an update/insert/delete. The previous statement and resultSet are closed.
      *
      * @param select
-     * @throws OpenR66DatabaseSqlError
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public void select(String select) throws OpenR66DatabaseNoConnectionError,
-            OpenR66DatabaseSqlError {
+    public void select(String select) throws GoldenGateDatabaseNoConnectionError,
+            GoldenGateDatabaseSqlError {
         close();
         stmt = createStatement();
         // rs = stmt.executeQuery(select);
@@ -127,7 +127,7 @@ public class DbRequest {
             logger.error("SQL Exception Request:" + select+
                     "\n"+e.getMessage());
             DbSession.error(e);
-            throw new OpenR66DatabaseSqlError(
+            throw new GoldenGateDatabaseSqlError(
                     "SQL Exception Request:" + select, e);
         }
     }
@@ -138,11 +138,11 @@ public class DbRequest {
      *
      * @param query
      * @return the number of row in the query
-     * @throws OpenR66DatabaseSqlError
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public int query(String query) throws OpenR66DatabaseNoConnectionError,
-            OpenR66DatabaseSqlError {
+    public int query(String query) throws GoldenGateDatabaseNoConnectionError,
+            GoldenGateDatabaseSqlError {
         close();
         stmt = createStatement();
         try {
@@ -153,7 +153,7 @@ public class DbRequest {
             logger.error("SQL Exception Request:" + query+
                     "\n"+e.getMessage());
             DbSession.error(e);
-            throw new OpenR66DatabaseSqlError("SQL Exception Request:" + query,
+            throw new GoldenGateDatabaseSqlError("SQL Exception Request:" + query,
                     e);
         }
     }
@@ -187,9 +187,9 @@ public class DbRequest {
      *
      * @return the long Id or DbConstant.ILLEGALVALUE (Long.MIN_VALUE) if an
      *         error occurs.
-     * @throws OpenR66DatabaseNoDataException
+     * @throws GoldenGateDatabaseNoDataException
      */
-    public long getLastId() throws OpenR66DatabaseNoDataException {
+    public long getLastId() throws GoldenGateDatabaseNoDataException {
         ResultSet rstmp;
         long result = DbConstant.ILLEGALVALUE;
         try {
@@ -201,7 +201,7 @@ public class DbRequest {
             rstmp = null;
         } catch (SQLException e) {
             DbSession.error(e);
-            throw new OpenR66DatabaseNoDataException("No data found", e);
+            throw new GoldenGateDatabaseNoDataException("No data found", e);
         }
         return result;
     }
@@ -210,14 +210,14 @@ public class DbRequest {
      * Move the cursor to the next result
      *
      * @return True if there is a next result, else False
-     * @throws OpenR66DatabaseNoConnectionError
-     * @throws OpenR66DatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
      */
-    public boolean getNext() throws OpenR66DatabaseNoConnectionError,
-            OpenR66DatabaseSqlError {
+    public boolean getNext() throws GoldenGateDatabaseNoConnectionError,
+            GoldenGateDatabaseSqlError {
         if (rs == null) {
             logger.error("SQL ResultSet is Null into getNext");
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "SQL ResultSet is Null into getNext");
         }
         try {
@@ -226,18 +226,18 @@ public class DbRequest {
             logger.warn("SQL Exception to getNextRow"+
                     "\n"+e.getMessage());
             DbSession.error(e);
-            throw new OpenR66DatabaseSqlError("SQL Exception to getNextRow", e);
+            throw new GoldenGateDatabaseSqlError("SQL Exception to getNextRow", e);
         }
     }
 
     /**
      *
      * @return The resultSet (can be used in conjunction of getNext())
-     * @throws OpenR66DatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionError
      */
-    public ResultSet getResultSet() throws OpenR66DatabaseNoConnectionError {
+    public ResultSet getResultSet() throws GoldenGateDatabaseNoConnectionError {
         if (rs == null) {
-            throw new OpenR66DatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionError(
                     "SQL ResultSet is Null into getResultSet");
         }
         return rs;
