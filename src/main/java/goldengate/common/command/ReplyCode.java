@@ -20,6 +20,8 @@
  */
 package goldengate.common.command;
 
+import goldengate.common.exception.InvalidArgumentException;
+
 /**
  * Reply code references by different RFC.
  *
@@ -360,5 +362,101 @@ public enum ReplyCode {
      */
     public String getMesg() {
         return mesg;
+    }
+    /**
+     * 
+     * @param code
+     * @return the associated ReplyCode from the given numerical code
+     * @throws InvalidArgumentException 
+     */
+    public static ReplyCode getReplyCode(int code) throws InvalidArgumentException {
+        switch (code) {
+            case 0:
+                return REPLY_000_SPECIAL_NOSTATUS;
+            case 110:
+                return REPLY_110_RESTART_MARKER_REPLY;
+            case 120:
+                return REPLY_120_SERVICE_READY_IN_NNN_MINUTES;
+            case 125:
+                return REPLY_125_DATA_CONNECTION_ALREADY_OPEN;
+            case 150:
+                return REPLY_150_FILE_STATUS_OKAY;
+            case 200:
+                return REPLY_200_COMMAND_OKAY;
+            case 202:
+                return REPLY_202_COMMAND_NOT_IMPLEMENTED;
+            case 211:
+                return REPLY_211_SYSTEM_STATUS_REPLY;
+            case 212:
+                return REPLY_212_DIRECTORY_STATUS;
+            case 213:
+                return REPLY_213_FILE_STATUS;
+            case 214:
+                return REPLY_214_HELP_MESSAGE;
+            case 215:
+                return REPLY_215_NAME_SYSTEM_TYPE;
+            case 220:
+                return REPLY_220_SERVICE_READY;
+            case 221:
+                return REPLY_221_CLOSING_CONTROL_CONNECTION;
+            case 225:
+                return REPLY_225_DATA_CONNECTION_OPEN_NO_TRANSFER_IN_PROGRESS;
+            case 226:
+                return REPLY_226_CLOSING_DATA_CONNECTION;
+            case 227:
+                return REPLY_227_ENTERING_PASSIVE_MODE;
+            case 229:
+                return REPLY_229_ENTERING_PASSIVE_MODE;
+            case 230:
+                return REPLY_230_USER_LOGGED_IN;
+            case 250:
+                return REPLY_250_REQUESTED_FILE_ACTION_OKAY;
+            case 257:
+                return REPLY_257_PATHNAME_CREATED;
+            case 331:
+                return REPLY_331_USER_NAME_OKAY_NEED_PASSWORD;
+            case 332:
+                return REPLY_332_NEED_ACCOUNT_FOR_LOGIN;
+            case 350:
+                return REPLY_350_REQUESTED_FILE_ACTION_PENDING_FURTHER_INFORMATION;
+            case 421:
+                return REPLY_421_SERVICE_NOT_AVAILABLE_CLOSING_CONTROL_CONNECTION;
+            case 425:
+                return REPLY_425_CANT_OPEN_DATA_CONNECTION;
+            case 426:
+                return REPLY_426_CONNECTION_CLOSED_TRANSFER_ABORTED;
+            case 450:
+                return REPLY_450_REQUESTED_FILE_ACTION_NOT_TAKEN;
+            case 451:
+                return REPLY_451_REQUESTED_ACTION_ABORTED;
+            case 452:
+                return REPLY_452_REQUESTED_ACTION_NOT_TAKEN;
+            case 500:
+                return REPLY_500_SYNTAX_ERROR_COMMAND_UNRECOGNIZED;
+            case 501:
+                return REPLY_501_SYNTAX_ERROR_IN_PARAMETERS_OR_ARGUMENTS;
+            case 502:
+                return REPLY_502_COMMAND_NOT_IMPLEMENTED;
+            case 503:
+                return REPLY_503_BAD_SEQUENCE_OF_COMMANDS;
+            case 504:
+                return REPLY_504_COMMAND_NOT_IMPLEMENTED_FOR_THAT_PARAMETER;
+            case 522:
+                return REPLY_522_EXTENDED_PORT_FAILURE_UNKNOWN_NETWORK_PROTOCOL;
+            case 530:
+                return REPLY_530_NOT_LOGGED_IN;
+            case 532:
+                return REPLY_532_NEED_ACCOUNT_FOR_STORING_FILES;
+            case 550:
+                return REPLY_550_REQUESTED_ACTION_NOT_TAKEN;
+            case 551:
+                return REPLY_551_REQUESTED_ACTION_ABORTED_PAGE_TYPE_UNKNOWN;
+            case 552:
+                return REPLY_552_REQUESTED_FILE_ACTION_ABORTED_EXCEEDED_STORAGE;
+            case 553:
+                return REPLY_553_REQUESTED_ACTION_NOT_TAKEN_FILE_NAME_NOT_ALLOWED;
+            default:
+                throw new InvalidArgumentException("Unknown ReplyCode "+code);
+        }
     }
 }
