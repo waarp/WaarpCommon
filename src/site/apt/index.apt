@@ -2,7 +2,7 @@ GoldenGate Common
 
   The GoldenGate Common project contains several classes that are common with different
   sub projects of GoldenGate (FTP, OpenR66, ...). Mainly there are classes for virtual
-  Directory and File implementations, Logger interface and Common exceptions....
+  Directory and File implementations, Logger interface, XML and Database support and Common exceptions....
 
 Dependency
 

@@ -430,7 +430,12 @@
 	            -link http://www.jboss.org/file-access/default/members/netty/freezone/api/3.1/index.html
 	            -link http://www.slf4j.org/apidocs/
 
-				-group "GoldenGate Common Logging Future Command Authentication Session and File package" "goldengate.common*"
+				-group "GoldenGate Common Command Authentication Session and File package" "goldengate.common.command*:goldengate.common.file*"
+				-group "GoldenGate Common Crypto package" "goldengate.common.crypto*"
+				-group "GoldenGate Common Database package" "goldengate.common.database*"
+				-group "GoldenGate Common CPU package" "goldengate.common.cpu*"
+				-group "GoldenGate Common Utility package" "goldengate.common.tar*:goldengate.common.utility*:goldengate.common.xml*"
+				-group "GoldenGate Common Logging and Future package" "goldengate.common.exception*:goldengate.common.future*:goldengate.common.logging*"
 
 	            -sourceclasspath ${basedir}/target/classes
 	          </additionalparam>
