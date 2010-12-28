@@ -20,7 +20,7 @@
  */
 package goldengate.common.crypto;
 
-import goldengate.common.digest.MD5;
+import goldengate.common.digest.FilesystemBasedDigest;
 import goldengate.common.exception.CryptoException;
 
 import java.io.DataInputStream;
@@ -338,7 +338,7 @@ public abstract class KeyObject {
     * @return the array of bytes from encoded String (HEX)
     */
    public byte[] decodeHex(String encoded) {
-       return MD5.asByte(encoded);
+       return FilesystemBasedDigest.getFromHex(encoded);
    }
 
     /**
@@ -347,6 +347,6 @@ public abstract class KeyObject {
      * @return The encoded array of bytes in HEX
      */
     public String encodeHex(byte[] bytes) {
-        return MD5.asHex(bytes);
+        return FilesystemBasedDigest.getHex(bytes);
     }
 }
