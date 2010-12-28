@@ -177,7 +177,22 @@ public abstract class KeyObject {
             throw e;
         }
     }
-
+    /**
+     * Returns a cipher for encryption associated with the key
+     * 
+     * @return the cipher for encryption or null if it fails
+     * in case Encryption method or key is incorrect
+     */
+    public Cipher toCrypt() {
+        Cipher cipher;
+        try {
+            cipher = Cipher.getInstance(getInstance());
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        } catch (Exception e) {
+            return null;
+        }
+        return cipher;
+    }
     /**
      * Crypt one array of bytes and returns the crypted array of bytes
      *
@@ -232,7 +247,22 @@ public abstract class KeyObject {
     public String cryptToHex(String plaintext) throws Exception {
         return cryptToHex(plaintext.getBytes());
     }
-
+    /**
+     * Returns a cipher for decryption associated with the key
+     * 
+     * @return the cipher for decryption or null if it fails
+     * in case Encryption method or key is incorrect
+     */
+    public Cipher toDecrypt() {
+        Cipher cipher;
+        try {
+            cipher = Cipher.getInstance(getAlgorithm());
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        } catch (Exception e) {
+            return null;
+        }
+        return cipher;
+    }
     /**
      * Decrypt an array of bytes and returns the uncrypted array of bytes
      *
