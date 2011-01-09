@@ -31,6 +31,7 @@ import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbSession;
 import goldengate.common.database.exception.GoldenGateDatabaseException;
 import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
 import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
 /**
@@ -76,6 +77,19 @@ public abstract class AbstractDbData {
         DONE;
     }
     /**
+     *  To be implemented
+     */
+    //public static String table;
+    //public static final int NBPRKEY;
+    //protected static String selectAllFields;
+    //protected static String updateAllFields;
+    //protected static String insertAllValues;
+    protected DbValue[] primaryKey;
+    protected DbValue[] otherFields;
+    protected DbValue[] allFields;
+    
+    protected boolean isSaved = false;
+    /**
      * The DbSession to use
      */
     protected final DbSession dbSession;
@@ -85,33 +99,160 @@ public abstract class AbstractDbData {
      */
     public AbstractDbData(DbSession dbSession) {
         this.dbSession = dbSession;
+        initObject();
     }
+    /**
+     * To setup primaryKey, otherFields, allFields.
+     * Note this initObject is called within constructor of AbstractDbData.
+     * Be careful that no data is actually initialized at this stage.
+     */
+    protected abstract void initObject();
+    /**
+    *
+    * @return The Where condition on Primary Key
+    */
+   protected abstract String getWherePrimaryKey();
+   /**
+    * Set the primary Key as current value
+    */
+   protected abstract void setPrimaryKey();
+   protected abstract String getSelectAllFields();
+   protected abstract String getTable();
+   protected abstract String getInsertAllValues();
+   protected abstract String getUpdateAllFields();
+   
     /**
      * Test the existence of the current object
      * @return True if the object exists
      * @throws GoldenGateDatabaseException
      */
-    public abstract boolean exist() throws GoldenGateDatabaseException;
+    public boolean exist() throws GoldenGateDatabaseException {
+        if (dbSession == null) {
+            return false;
+        }
+        DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                dbSession);
+        try {
+            preparedStatement.createPrepareStatement("SELECT " +
+                    primaryKey[0].column + " FROM " + getTable() + " WHERE " +
+                    getWherePrimaryKey());
+            setPrimaryKey();
+            setValues(preparedStatement, primaryKey);
+            preparedStatement.executeQuery();
+            return preparedStatement.getNext();
+        } finally {
+            preparedStatement.realClose();
+        }
+    }
     /**
      * Select object from table
      * @throws GoldenGateDatabaseException
      */
-    public abstract void select() throws GoldenGateDatabaseException;
+    public void select() throws GoldenGateDatabaseException {
+        if (dbSession == null) {
+            throw new GoldenGateDatabaseNoDataException("No row found");
+        }
+        DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                dbSession);
+        try {
+            preparedStatement.createPrepareStatement("SELECT " + getSelectAllFields() +
+                    " FROM " + getTable() + " WHERE " +
+                    getWherePrimaryKey());
+            setPrimaryKey();
+            setValues(preparedStatement, primaryKey);
+            preparedStatement.executeQuery();
+            if (preparedStatement.getNext()) {
+                getValues(preparedStatement, allFields);
+                setFromArray();
+                isSaved = true;
+            } else {
+                throw new GoldenGateDatabaseNoDataException("No row found");
+            }
+        } finally {
+            preparedStatement.realClose();
+        }
+    }
     /**
      * Insert object into table
      * @throws GoldenGateDatabaseException
      */
-    public abstract void insert() throws GoldenGateDatabaseException;
+    public void insert() throws GoldenGateDatabaseException {
+        if (isSaved) {
+            return;
+        }
+        if (dbSession == null) {
+            isSaved = true;
+            return;
+        }
+        setToArray();
+        DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                dbSession);
+        try {
+            preparedStatement.createPrepareStatement("INSERT INTO " + getTable() +
+                    " (" + getSelectAllFields() + ") VALUES " + getInsertAllValues());
+            setValues(preparedStatement, allFields);
+            int count = preparedStatement.executeUpdate();
+            if (count <= 0) {
+                throw new GoldenGateDatabaseNoDataException("No row found");
+            }
+            isSaved = true;
+        } finally {
+            preparedStatement.realClose();
+        }
+    }
     /**
      * Update object to table
      * @throws GoldenGateDatabaseException
      */
-    public abstract void update() throws GoldenGateDatabaseException;
+    public void update() throws GoldenGateDatabaseException {
+        if (isSaved) {
+            return;
+        }
+        if (dbSession == null) {
+            isSaved = true;
+            return;
+        }
+        setToArray();
+        DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                dbSession);
+        try {
+            preparedStatement.createPrepareStatement("UPDATE " + getTable() +
+                    " SET " + getUpdateAllFields() + " WHERE " +
+                    getWherePrimaryKey());
+            setValues(preparedStatement, allFields);
+            int count = preparedStatement.executeUpdate();
+            if (count <= 0) {
+                throw new GoldenGateDatabaseNoDataException("No row found");
+            }
+            isSaved = true;
+        } finally {
+            preparedStatement.realClose();
+        }
+    }
     /**
      * Delete object from table
      * @throws GoldenGateDatabaseException
      */
-    public abstract void delete() throws GoldenGateDatabaseException;
+    public void delete() throws GoldenGateDatabaseException {
+        if (dbSession == null) {
+            return;
+        }
+        DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                dbSession);
+        try {
+            preparedStatement.createPrepareStatement("DELETE FROM " + getTable() +
+                    " WHERE " + getWherePrimaryKey());
+            setPrimaryKey();
+            setValues(preparedStatement, primaryKey);
+            int count = preparedStatement.executeUpdate();
+            if (count <= 0) {
+                throw new GoldenGateDatabaseNoDataException("No row found");
+            }
+            isSaved = false;
+        } finally {
+            preparedStatement.realClose();
+        }
+    }
     /**
      * Change UpdatedInfo status
      * @param info
