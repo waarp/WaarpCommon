@@ -60,7 +60,11 @@ public class DbSession {
      * Is this connection Read Only
      */
     public boolean isReadOnly = true;
-
+    /**
+     * Is this session using AutoCommit (true by default)
+     */
+    public boolean autoCommit = true;
+    
     /**
      * Internal Id
      */
@@ -200,6 +204,93 @@ public class DbSession {
                     "Cannot create Connection", ex);
         }
     }
+
+
+    /**
+     * Create a session and connect the current object to the server using the
+     * string with the form for mysql for instance
+     * jdbc:type://[host:port],[failoverhost:port]
+     * .../[database][?propertyName1][
+     * =propertyValue1][&propertyName2][=propertyValue2]...
+     *
+     * By default (if server = null) :
+     * "jdbc:mysql://localhost/r66 user=r66 password=r66"
+     *
+     *
+     * If the initialize is not call before, call it with the default value.
+     *
+     * @param server
+     * @param user
+     * @param passwd
+     * @param isReadOnly
+     * @param autoCommit
+     * @throws GoldenGateDatabaseSqlError
+     */
+    public DbSession(String server, String user, String passwd,
+            boolean isReadOnly, boolean autoCommit) throws GoldenGateDatabaseNoConnectionError {
+        if (!DbModelFactory.classLoaded) {
+            throw new GoldenGateDatabaseNoConnectionError("DbAdmin not initialzed");
+        }
+        if (server == null) {
+            conn = null;
+            logger.error("Cannot set a null Server");
+            throw new GoldenGateDatabaseNoConnectionError(
+                    "Cannot set a null Server");
+        }
+        try {
+            this.autoCommit = autoCommit;
+            conn = DriverManager.getConnection(server, user, passwd);
+            conn.setAutoCommit(this.autoCommit);
+            this.isReadOnly = isReadOnly;
+            conn.setReadOnly(this.isReadOnly);
+            setInternalId(this);
+            DbAdmin.addConnection(internalId, conn);
+        } catch (SQLException ex) {
+            // handle any errors
+            logger.error("Cannot create Connection");
+            error(ex);
+            conn = null;
+            throw new GoldenGateDatabaseNoConnectionError(
+                    "Cannot create Connection", ex);
+        }
+    }
+
+    /**
+     * Create a session and connect the current object to the server using the
+     * DbAdmin object.
+     *
+     * If the initialize is not call before, call it with the default value.
+     *
+     * @param admin
+     * @param isReadOnly
+     * @param autoCommit
+     * @throws GoldenGateDatabaseSqlError
+     */
+    public DbSession(DbAdmin admin,
+            boolean isReadOnly, boolean autoCommit) throws GoldenGateDatabaseNoConnectionError {
+        if (!DbModelFactory.classLoaded) {
+            throw new GoldenGateDatabaseNoConnectionError("DbAdmin not initialzed");
+        }
+        try {
+            this.autoCommit = autoCommit;
+            conn = DriverManager.getConnection(admin.getServer(),
+                    admin.getUser(), admin.getPasswd());
+            conn.setAutoCommit(this.autoCommit);
+            this.isReadOnly = isReadOnly;
+            conn.setReadOnly(this.isReadOnly);
+            setInternalId(this);
+            DbAdmin.addConnection(internalId, conn);
+            this.admin = admin;
+        } catch (SQLException ex) {
+            // handle any errors
+            logger.error("Cannot create Connection");
+            error(ex);
+            conn = null;
+            throw new GoldenGateDatabaseNoConnectionError(
+                    "Cannot create Connection", ex);
+        }
+    }
+
 
     /**
      * @return the admin

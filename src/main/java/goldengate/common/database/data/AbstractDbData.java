@@ -271,7 +271,7 @@ public abstract class AbstractDbData {
      * Set Value into PreparedStatement
      * @param ps
      * @param value
-     * @param rank
+     * @param rank >= 1
      * @throws GoldenGateDatabaseSqlError
      */
     static public void setTrueValue(PreparedStatement ps, DbValue value, int rank)

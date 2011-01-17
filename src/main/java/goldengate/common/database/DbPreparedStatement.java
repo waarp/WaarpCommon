@@ -127,6 +127,46 @@ public class DbPreparedStatement {
                     "SQL Exception PreparedStatement", e);
         }
     }
+    /**
+     * Create a DbPreparedStatement from DbSession object and a request
+     *
+     * @param ls
+     * @param request
+     * @param nbFetch the number of pre fetch rows
+     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlError
+     */
+    public DbPreparedStatement(DbSession ls, String request, int nbFetch)
+            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
+        if (ls == null) {
+            logger.error("SQL Exception PreparedStatement no session");
+            throw new GoldenGateDatabaseNoConnectionError(
+                    "PreparedStatement no session");
+        }
+        DbModelFactory.dbModel.validConnection(ls);
+        this.ls = ls;
+        rs = null;
+        isReady = false;
+        preparedStatement = null;
+        if (request == null) {
+            logger.error("SQL Exception PreparedStatement no request");
+            throw new GoldenGateDatabaseNoConnectionError(
+                    "PreparedStatement no request");
+        }
+        try {
+            preparedStatement = this.ls.conn.prepareStatement(request);
+            this.request = request;
+            this.preparedStatement.setFetchSize(nbFetch);
+            isReady = true;
+        } catch (SQLException e) {
+            logger.error("SQL Exception PreparedStatement: " + request+"\n"+ e.getMessage());
+            DbSession.error(e);
+            preparedStatement = null;
+            isReady = false;
+            throw new GoldenGateDatabaseSqlError(
+                    "SQL Exception PreparedStatement", e);
+        }
+    }
 
     /**
      * Create a preparedStatement from request
