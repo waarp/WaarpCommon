@@ -732,7 +732,7 @@ public abstract class FilesystemBasedFileImpl implements
                 logger.error("Change position in getFileOutputStream:", e);
                 return null;
             }
-            logger.info("New size: "+trueFile.length()+" : "+position);
+            logger.debug("New size: "+trueFile.length()+" : "+position);
         }
         FileOutputStream fos = null;
         try {

@@ -119,7 +119,7 @@ public class GgStringUtils {
                 Date ddate = format.parse(date);
                 tdate = new Timestamp(ddate.getTime());
             } catch (ParseException e) {
-                logger.info("start",e);
+                logger.debug("start",e);
             }
         }
         return tdate;
@@ -151,7 +151,7 @@ public class GgStringUtils {
                 }
                 tdate = new Timestamp(ddate.getTime());
             } catch (ParseException e) {
-                logger.info("start",e);
+                logger.debug("start",e);
             }
         }
         return tdate;
