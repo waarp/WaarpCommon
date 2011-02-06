@@ -45,7 +45,11 @@ public class GgJdkLoggerFactory extends JdkLoggerFactory {
         super();
 
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-        logger.setLevel(level);
+        if (level == null) {
+            logger.info("Default level: "+logger.getLevel());
+        } else {
+            logger.setLevel(level);
+        }
     }
 
     @Override

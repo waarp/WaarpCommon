@@ -5,6 +5,11 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.1.1" date="2011-02-15" description="Various improvements">
+			<action dev="Frederic Bregier" type="fix">Fix Database support</action>
+			<action dev="Frederic Bregier" type="fix">Fix Logger support</action>
+			<action dev="Frederic Bregier" type="add">Fix Crypto and Digest support</action>
+		</release>
 		<release version="1.1.0" date="2010-12-25" description="Various improvements">
 			<action dev="Frederic Bregier" type="add">Add XML support</action>
 			<action dev="Frederic Bregier" type="add">Add Database support</action>

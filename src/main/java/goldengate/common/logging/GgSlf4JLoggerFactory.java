@@ -43,7 +43,11 @@ public class GgSlf4JLoggerFactory extends
         super();
         Logger logger = (Logger) LoggerFactory
                 .getLogger(ROOT);
-        logger.setLevel(level);
+        if (level == null) {
+            logger.info("Default level: "+logger.getLevel());
+        } else {
+            logger.setLevel(level);
+        }
     }
 
     @Override
