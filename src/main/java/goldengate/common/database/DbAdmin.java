@@ -295,6 +295,10 @@ public class DbAdmin {
      */
     private static ConcurrentHashMap<Long, Connection> listConnection = new ConcurrentHashMap<Long, Connection>();
     /**
+     * Number of HttpSession
+     */
+    public static int nbHttpSession = 0;
+    /**
      * Add a Connection into the list
      *
      * @param conn
