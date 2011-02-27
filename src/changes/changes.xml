@@ -5,6 +5,9 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.1.2" date="2011-03-15" description="Upgrade process">
+			<action dev="Frederic Bregier" type="fix">Netty version upgrade</action>
+		</release>
 		<release version="1.1.1" date="2011-02-15" description="Various improvements">
 			<action dev="Frederic Bregier" type="fix">Fix Database support</action>
 			<action dev="Frederic Bregier" type="fix">Fix Logger support</action>
