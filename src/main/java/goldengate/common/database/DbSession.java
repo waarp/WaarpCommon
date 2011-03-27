@@ -202,6 +202,12 @@ public class DbSession {
             conn = null;
             throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot create Connection", ex);
+        } catch (NullPointerException ex) {
+            // handle any errors
+            logger.error("Cannot create Connection");
+            conn = null;
+            throw new GoldenGateDatabaseNoConnectionError(
+                    "Cannot create Connection", ex);
         }
     }
 
