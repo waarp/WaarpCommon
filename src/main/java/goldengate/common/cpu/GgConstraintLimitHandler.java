@@ -46,23 +46,23 @@ public abstract class GgConstraintLimitHandler implements Runnable {
     
     private static final String NOALERT = "noAlert";
     public String lastAlert = NOALERT;
-    private static boolean constraintInactive = true;
-    private static boolean useCpuLimits = false;
+    private boolean constraintInactive = true;
+    private boolean useCpuLimits = false;
     
-    private static Random random = new Random();
-    private static CpuManagementInterface cpuManagement;
-    private static double cpuLimit = 0.8;
-    private static int channelLimit = 1000;
+    private Random random = new Random();
+    private CpuManagementInterface cpuManagement;
+    private double cpuLimit = 0.8;
+    private int channelLimit = 1000;
     private boolean isServer = false;
     private double lastLA = 0.0;
     private long lastTime;
     
     // Dynamic throttling
-    private static long WAITFORNETOP = 1000;
-    private static long TIMEOUTCON = 10000;
-    private static double highCpuLimit = 0.8;
-    private static double lowCpuLimit = 0.5;
-    private static double percentageDecreaseRatio = 0.25;
+    private long WAITFORNETOP = 1000;
+    private long TIMEOUTCON = 10000;
+    private double highCpuLimit = 0.8;
+    private double lowCpuLimit = 0.5;
+    private double percentageDecreaseRatio = 0.25;
     private long delay = 1000;
     private long limitLowBandwidth = 10000;
     private GlobalTrafficShapingHandler handler;
@@ -306,35 +306,35 @@ public abstract class GgConstraintLimitHandler implements Runnable {
      * 
      * @return a time below TIMEOUTCON with a random
      */
-    public static long getSleepTime() {
+    public long getSleepTime() {
         return (long) (TIMEOUTCON*random.nextFloat())+5000;
     }
     /**
      * @return the cpuLimit
      */
-    public static double getCpuLimit() {
+    public double getCpuLimit() {
         return cpuLimit;
     }
 
     /**
      * @param cpuLimit the cpuLimit to set
      */
-    public static void setCpuLimit(double cpuLimit) {
-        GgConstraintLimitHandler.cpuLimit = cpuLimit;
+    public void setCpuLimit(double cpuLimit) {
+        this.cpuLimit = cpuLimit;
     }
 
     /**
      * @return the channelLimit
      */
-    public static int getChannelLimit() {
+    public int getChannelLimit() {
         return channelLimit;
     }
 
     /**
      * @param channelLimit the channelLimit to set
      */
-    public static void setChannelLimit(int channelLimit) {
-        GgConstraintLimitHandler.channelLimit = channelLimit;
+    public void setChannelLimit(int channelLimit) {
+        this.channelLimit = channelLimit;
     }
     /**
      * Get the current setting on Read Limit (supposed to be not the value in the handler but in the configuration)
@@ -414,7 +414,6 @@ public abstract class GgConstraintLimitHandler implements Runnable {
         } else if (curLA < lowCpuLimit) {
             if (curLimits.isEmpty()) {
                 // nothing to do
-                logger.debug("No more relax limit action with CPU = "+curLA);
                 return;
             }
             if (nbSinceLastDecrease > 0) {
@@ -442,6 +441,5 @@ public abstract class GgConstraintLimitHandler implements Runnable {
                 nbSinceLastDecrease = payload;
             }
         }
-        logger.debug("No throttle action with CPU = "+curLA);
     }
 }
