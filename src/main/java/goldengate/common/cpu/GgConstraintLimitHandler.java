@@ -382,14 +382,14 @@ public abstract class GgConstraintLimitHandler implements Runnable {
                     // take the current bandwidth
                     curlimit.read = handler.getTrafficCounter().getLastReadThroughput();
                     if (curlimit.read < limitLowBandwidth){
-                        curlimit.read = limitLowBandwidth*1000;
+                        curlimit.read = 0;
                     }
                 }
                 if (curlimit.write == 0) {
                     // take the current bandwidth
                     curlimit.write = handler.getTrafficCounter().getLastWriteThroughput();
                     if (curlimit.write < limitLowBandwidth){
-                        curlimit.write = limitLowBandwidth*1000;
+                        curlimit.write = 0;
                     }
                 }
             } else {
