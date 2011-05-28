@@ -272,12 +272,12 @@ public abstract class DbModelMysql implements DbModel {
             long result = DbConstant.ILLEGALVALUE;
             String action = "SELECT seq FROM Sequences WHERE name = '" +
             DbDataModel.fieldseq + "' FOR UPDATE";
+            DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                    dbSession);
             try {
                 dbSession.conn.setAutoCommit(false);
             } catch (SQLException e1) {
             }
-            DbPreparedStatement preparedStatement = new DbPreparedStatement(
-                    dbSession);
             try {
                 preparedStatement.createPrepareStatement(action);
                 // Limit the search
@@ -336,7 +336,7 @@ public abstract class DbModelMysql implements DbModel {
                 } catch (SQLException e1) {
                 }
                 dbSession.conn = newdbSession.conn;
-                DbAdmin.addConnection(dbSession.internalId, dbSession.conn);
+                DbAdmin.addConnection(dbSession.internalId, dbSession);
                 DbAdmin.removeConnection(newdbSession.internalId);
                 request.close();
                 request.select("select 1 from dual");

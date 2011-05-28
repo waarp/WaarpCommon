@@ -29,7 +29,6 @@ import java.sql.SQLException;
 
 import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
 import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
-import goldengate.common.database.model.DbModelFactory;
 
 /**
  * Class to handle PrepareStatement
@@ -82,7 +81,7 @@ public class DbPreparedStatement {
             throw new GoldenGateDatabaseNoConnectionError(
                     "PreparedStatement no session");
         }
-        DbModelFactory.dbModel.validConnection(ls);
+        ls.checkConnection();
         this.ls = ls;
         rs = null;
         preparedStatement = null;
@@ -104,7 +103,7 @@ public class DbPreparedStatement {
             throw new GoldenGateDatabaseNoConnectionError(
                     "PreparedStatement no session");
         }
-        DbModelFactory.dbModel.validConnection(ls);
+        ls.checkConnection();
         this.ls = ls;
         rs = null;
         isReady = false;
@@ -143,7 +142,7 @@ public class DbPreparedStatement {
             throw new GoldenGateDatabaseNoConnectionError(
                     "PreparedStatement no session");
         }
-        DbModelFactory.dbModel.validConnection(ls);
+        ls.checkConnection();
         this.ls = ls;
         rs = null;
         isReady = false;

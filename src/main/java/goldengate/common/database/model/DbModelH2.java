@@ -278,7 +278,7 @@ public abstract class DbModelH2 implements DbModel {
                 } catch (SQLException e1) {
                 }
                 dbSession.conn = newdbSession.conn;
-                DbAdmin.addConnection(dbSession.internalId, dbSession.conn);
+                DbAdmin.addConnection(dbSession.internalId, dbSession);
                 DbAdmin.removeConnection(newdbSession.internalId);
                 request.close();
                 request.select("select 1");

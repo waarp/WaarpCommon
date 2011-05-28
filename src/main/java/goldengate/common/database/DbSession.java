@@ -159,7 +159,7 @@ public class DbSession {
             this.isReadOnly = isReadOnly;
             conn.setReadOnly(this.isReadOnly);
             setInternalId(this);
-            DbAdmin.addConnection(internalId, conn);
+            DbAdmin.addConnection(internalId, this);
         } catch (SQLException ex) {
             // handle any errors
             logger.error("Cannot create Connection");
@@ -193,7 +193,7 @@ public class DbSession {
             this.isReadOnly = isReadOnly;
             conn.setReadOnly(this.isReadOnly);
             setInternalId(this);
-            DbAdmin.addConnection(internalId, conn);
+            DbAdmin.addConnection(internalId, this);
             this.admin = admin;
         } catch (SQLException ex) {
             // handle any errors
@@ -250,7 +250,7 @@ public class DbSession {
             this.isReadOnly = isReadOnly;
             conn.setReadOnly(this.isReadOnly);
             setInternalId(this);
-            DbAdmin.addConnection(internalId, conn);
+            DbAdmin.addConnection(internalId, this);
         } catch (SQLException ex) {
             // handle any errors
             logger.error("Cannot create Connection");
@@ -285,7 +285,7 @@ public class DbSession {
             this.isReadOnly = isReadOnly;
             conn.setReadOnly(this.isReadOnly);
             setInternalId(this);
-            DbAdmin.addConnection(internalId, conn);
+            DbAdmin.addConnection(internalId, this);
             this.admin = admin;
         } catch (SQLException ex) {
             // handle any errors
@@ -460,5 +460,12 @@ public class DbSession {
             error(e);
             throw new GoldenGateDatabaseSqlError("Cannot release savepoint", e);
         }
+    }
+    /**
+     * Check the connection to the Database and try to reopen it if possible
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    public void checkConnection() throws GoldenGateDatabaseNoConnectionError {
+        DbModelFactory.dbModel.validConnection(this);
     }
 }

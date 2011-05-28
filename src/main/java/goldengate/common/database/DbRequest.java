@@ -30,7 +30,7 @@ import java.sql.Statement;
 import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
 import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
 import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
-import goldengate.common.database.model.DbModelFactory;
+
 
 /**
  * Class to handle request
@@ -67,7 +67,7 @@ public class DbRequest {
      * @throws GoldenGateDatabaseNoConnectionError
      */
     public DbRequest(DbSession ls) throws GoldenGateDatabaseNoConnectionError {
-        DbModelFactory.dbModel.validConnection(ls);
+        ls.checkConnection();
         this.ls = ls;
     }
 
@@ -97,6 +97,7 @@ public class DbRequest {
         if (ls.conn == null) {
             throw new GoldenGateDatabaseNoConnectionError("No connection");
         }
+        ls.checkConnection();
         try {
             return ls.conn.createStatement();
         } catch (SQLException e) {

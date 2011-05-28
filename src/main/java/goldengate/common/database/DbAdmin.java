@@ -293,7 +293,7 @@ public class DbAdmin {
     /**
      * List all Connection to enable the close call on them
      */
-    private static ConcurrentHashMap<Long, Connection> listConnection = new ConcurrentHashMap<Long, Connection>();
+    private static ConcurrentHashMap<Long, DbSession> listConnection = new ConcurrentHashMap<Long, DbSession>();
     /**
      * Number of HttpSession
      */
@@ -303,8 +303,8 @@ public class DbAdmin {
      *
      * @param conn
      */
-    public static void addConnection(long id, Connection conn) {
-        listConnection.put(Long.valueOf(id), conn);
+    public static void addConnection(long id, DbSession session) {
+        listConnection.put(Long.valueOf(id), session);
     }
 
     /**
@@ -326,12 +326,24 @@ public class DbAdmin {
      * Close all database connections
      */
     public static void closeAllConnection() {
-        for (Connection con : listConnection.values()) {
+        for (DbSession session : listConnection.values()) {
             try {
-                con.close();
+                session.conn.close();
             } catch (SQLException e) {
             }
         }
         listConnection.clear();
+    }
+    /**
+     * Check all database connections and try to reopen them if disconnected
+     */
+    public static void checkAllConnections() {
+        for (DbSession session : listConnection.values()) {
+            try {
+                session.checkConnection();
+            } catch (GoldenGateDatabaseNoConnectionError e) {
+                logger.error("Database Connection cannot be reinitialized");
+            }
+        }
     }
 }
