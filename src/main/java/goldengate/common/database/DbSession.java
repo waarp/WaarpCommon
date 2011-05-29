@@ -27,6 +27,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.LinkedList;
+import java.util.List;
 
 import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
 import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
@@ -77,6 +79,12 @@ public class DbSession {
      * To be used when a local Channel is over
      */
     public boolean isDisconnected = false;
+    /**
+     * List all DbPrepareStatement with long term usage to enable the recreation when the associated
+     * connection is reopened
+     */
+    private List<DbPreparedStatement> listPreparedStatement = new LinkedList<DbPreparedStatement>();
+
 
     static synchronized void setInternalId(DbSession session) {
         session.internalId = System.currentTimeMillis();
@@ -328,9 +336,13 @@ public class DbSession {
     public void useConnection() {
         nbThread ++;
     }
+    /**
+     * To be called when a client will stop to use this DbSession (once by client)
+     */
     public void endUseConnection() {
         nbThread --;
         if (isDisconnected) {
+            removeLongTermPreparedStatements();
             DbAdmin.removeConnection(internalId);
             try {
                 conn.close();
@@ -358,6 +370,7 @@ public class DbSession {
             logger.info("Still some clients could use this Database Session: "+nbThread);
         }
         isDisconnected = true;
+        removeLongTermPreparedStatements();
         DbAdmin.removeConnection(internalId);
         try {
             conn.close();
@@ -367,6 +380,60 @@ public class DbSession {
         }
     }
 
+    /**
+     * Check the connection to the Database and try to reopen it if possible
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    public void checkConnection() throws GoldenGateDatabaseNoConnectionError {
+        try {
+            DbModelFactory.dbModel.validConnection(this);
+        } catch (GoldenGateDatabaseNoConnectionError e) {
+            removeLongTermPreparedStatements();
+            throw e;
+        }
+    }
+    /**
+     * Add a Long Term PreparedStatement
+     * @param longterm
+     */
+    public void addLongTermPreparedStatement(DbPreparedStatement longterm) {
+        this.listPreparedStatement.add(longterm);
+    }
+    /**
+     * Due to a reconnection, recreate all associated long term PreparedStatements
+     * @throws GoldenGateDatabaseNoConnectionError 
+     * @throws GoldenGateDatabaseSqlError 
+     */
+    public void recreateLongTermPreparedStatements() throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
+        GoldenGateDatabaseNoConnectionError elast = null;
+        GoldenGateDatabaseSqlError e2last = null;
+        for (DbPreparedStatement longterm : listPreparedStatement) {
+            try {
+                longterm.recreatePreparedStatement();
+            } catch (GoldenGateDatabaseNoConnectionError e) {
+                logger.warn("Error while recreation of Long Term PreparedStatement", e);
+                elast = e;
+            } catch (GoldenGateDatabaseSqlError e) {
+                logger.warn("Error while recreation of Long Term PreparedStatement", e);
+                e2last = e;
+            }
+        }
+        if (elast != null) {
+            throw elast;
+        }
+        if (e2last != null) {
+            throw e2last;
+        }
+    }
+    /**
+     * Remove all Long Term PreparedStatements (closing connection)
+     */
+    public void removeLongTermPreparedStatements() {
+        for (DbPreparedStatement longterm : listPreparedStatement) {
+            longterm.realClose();
+        }
+        listPreparedStatement.clear();
+    }
     /**
      * Commit everything
      *
@@ -460,12 +527,5 @@ public class DbSession {
             error(e);
             throw new GoldenGateDatabaseSqlError("Cannot release savepoint", e);
         }
-    }
-    /**
-     * Check the connection to the Database and try to reopen it if possible
-     * @throws GoldenGateDatabaseNoConnectionError
-     */
-    public void checkConnection() throws GoldenGateDatabaseNoConnectionError {
-        DbModelFactory.dbModel.validConnection(this);
     }
 }

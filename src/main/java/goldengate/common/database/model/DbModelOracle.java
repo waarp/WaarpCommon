@@ -27,13 +27,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import goldengate.common.database.DbAdmin;
 import goldengate.common.database.DbConstant;
 import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbRequest;
 import goldengate.common.database.DbSession;
 import goldengate.common.database.data.DbDataModel;
-import goldengate.common.database.exception.GoldenGateDatabaseException;
 import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
 import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
 import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
@@ -43,7 +41,7 @@ import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
  * @author Frederic Bregier
  *
  */
-public abstract class DbModelOracle implements DbModel {
+public abstract class DbModelOracle extends DbModelAbstract {
     /**
      * Internal Logger
      */
@@ -261,57 +259,11 @@ public abstract class DbModelOracle implements DbModel {
     }
 
     /* (non-Javadoc)
-     * @see openr66.database.model.DbModel#validConnection(DbSession)
+     * @see goldengate.common.database.model.DbModelAbstract#validConnectionString()
      */
     @Override
-    public void validConnection(DbSession dbSession) throws GoldenGateDatabaseNoConnectionError {
-        DbRequest request = new DbRequest(dbSession, true);
-        try {
-            request.select("select 1 from dual");
-            if (!request.getNext()) {
-                throw new GoldenGateDatabaseNoConnectionError(
-                        "Cannot connect to database");
-            }
-        } catch (GoldenGateDatabaseSqlError e) {
-            try {
-                DbSession newdbSession = new DbSession(dbSession.getAdmin(), false);
-                try {
-                    if (dbSession.conn != null) {
-                        dbSession.conn.close();
-                    }
-                } catch (SQLException e1) {
-                }
-                dbSession.conn = newdbSession.conn;
-                DbAdmin.addConnection(dbSession.internalId, dbSession);
-                DbAdmin.removeConnection(newdbSession.internalId);
-                request.close();
-                request.select("select 1 from dual");
-                if (!request.getNext()) {
-                    try {
-                        if (dbSession.conn != null) {
-                            dbSession.conn.close();
-                        }
-                    } catch (SQLException e1) {
-                    }
-                    DbAdmin.removeConnection(dbSession.internalId);
-                    throw new GoldenGateDatabaseNoConnectionError(
-                            "Cannot connect to database");
-                }
-                return;
-            } catch (GoldenGateDatabaseException e1) {
-            }
-            try {
-                if (dbSession.conn != null) {
-                    dbSession.conn.close();
-                }
-            } catch (SQLException e1) {
-            }
-            DbAdmin.removeConnection(dbSession.internalId);
-            throw new GoldenGateDatabaseNoConnectionError(
-                    "Cannot connect to database", e);
-        } finally {
-            request.close();
-        }
+    protected String validConnectionString() {
+        return "select 1 from dual";
     }
 
     /* (non-Javadoc)

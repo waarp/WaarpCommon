@@ -20,6 +20,7 @@
  */
 package goldengate.common.database.model;
 
+
 import goldengate.common.database.DbAdmin;
 import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
 

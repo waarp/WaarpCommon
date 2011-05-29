@@ -202,6 +202,15 @@ public class DbPreparedStatement {
                     "SQL Exception createPreparedStatement: " + requestarg, e);
         }
     }
+    /**
+     * In case of closing database connection, it is possible to reopen a long term
+     * preparedStatement as it was at creation.
+     * @throws GoldenGateDatabaseSqlError 
+     * @throws GoldenGateDatabaseNoConnectionError 
+     */
+    public void recreatePreparedStatement() throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
+        this.createPrepareStatement(request);
+    }
 
     /**
      * Execute a Select preparedStatement
