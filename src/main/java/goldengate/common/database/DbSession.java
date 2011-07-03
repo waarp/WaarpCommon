@@ -304,8 +304,26 @@ public class DbSession {
                     "Cannot create Connection", ex);
         }
     }
-
-
+    /**
+     * Change the autocommit feature
+     * @param autoCommit
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    public void setAutoCommit(boolean autoCommit) throws GoldenGateDatabaseNoConnectionError {
+        if (conn != null) {
+            this.autoCommit = autoCommit;
+            try {
+                conn.setAutoCommit(autoCommit);
+            } catch (SQLException e) {
+                // handle any errors
+                logger.error("Cannot create Connection");
+                error(e);
+                conn = null;
+                throw new GoldenGateDatabaseNoConnectionError(
+                        "Cannot create Connection", e);
+            }
+        }
+    }
     /**
      * @return the admin
      */
