@@ -121,6 +121,9 @@ public class MachineState<EnumState> {
      * @return True if the desiredState is valid from currentState
      */
     private boolean isReachable(EnumState desiredState) {
+        if (currentState == null) {
+            return false;
+        }
         EnumSet<?> set = statemap.get(currentState);
         if (set != null) {
             return set.contains(desiredState);
