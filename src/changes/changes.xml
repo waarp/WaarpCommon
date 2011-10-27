@@ -5,6 +5,9 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+		<release version="1.1.6" date="2011-11-01" description="Add Finite State support">
+			<action dev="Frederic Bregier" type="add">Add Basic Finite State Machine support</action>
+		</release>
 		<release version="1.1.5" date="2011-10-01" description="Jar upgrade">
 			<action dev="Frederic Bregier" type="fix">Update to new dependent Jars</action>
 		</release>
