@@ -138,4 +138,11 @@ public class MachineState<EnumState> {
         currentState = desiredState;
         return currentState;
     }
+    /**
+     * Release the Machine State
+     */
+    public void release() {
+        this.currentState = null;
+        this.statemap = null;
+    }
 }
