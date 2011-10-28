@@ -301,7 +301,8 @@ public class DbAdmin {
     /**
      * Add a Connection into the list
      *
-     * @param conn
+     * @param id
+     * @param session
      */
     public static void addConnection(long id, DbSession session) {
         listConnection.put(Long.valueOf(id), session);
