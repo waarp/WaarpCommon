@@ -511,6 +511,7 @@
       <plugin>
       	<groupId>org.apache.maven.plugins</groupId>
       	<artifactId>maven-changelog-plugin</artifactId>
+      	<configuration><range>90</range></configuration>
       </plugin>
       <plugin>
       	<groupId>org.codehaus.mojo</groupId>
