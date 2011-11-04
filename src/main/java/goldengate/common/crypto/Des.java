@@ -21,7 +21,7 @@
 package goldengate.common.crypto;
 
 /**
- * This class handles methods to crypt and decrypt messages with DES algorithm (very efficient: 3020/s).<br>
+ * This class handles methods to crypt and decrypt messages with DES algorithm (very efficient: 8600/s).<br>
  * <br>
  * Usage:<br>
  * <ul>

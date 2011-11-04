@@ -21,11 +21,11 @@
 package goldengate.common.crypto;
 
 /**
- * This class handles methods to crypt and decrypt messages with Blowfish (efficient: 4000/s both at 56 and 128 keysize).<br>
+ * This class handles methods to crypt and decrypt messages with AES algorithm (very efficient: 11000/s).<br>
  * <br>
  * Usage:<br>
  * <ul>
- * <li>Create a Blowfish object: Blowfish key = new Blowfish();</li>
+ * <li>Create a Aes object: Aes key = new Aes();</li>
  * <li>Create a key:
  * <ul>
  * <li>Generate: key.generateKey();<br>
@@ -36,25 +36,24 @@ package goldengate.common.crypto;
  * <li>To decrypt one string from Base64 format to the original String: String myStringDecrypt = key.decryptStringInString(myStringCrypte);</li>
  * </ul>
  *
- *
  * @author frederic bregier
+ *
  */
-public class Blowfish extends KeyObject {
+public class Aes extends KeyObject {
     /**
-     * This value could be between 32 and 448. But it seems it is blocked up to 128.
+     * This value could be between 32 and 128 due to license limitation.
      */
-    public final static int KEY_SIZE = 56; // [32..448]
-    public final static String ALGO = "Blowfish";
-    public final static String INSTANCE = "Blowfish";
-    public final static String EXTENSION = "blf";
-
+    public final static int KEY_SIZE = 128; // [32..448]
+    public final static String ALGO = "AES";
+    public final static String INSTANCE = "AES/ECB/PKCS5Padding";
+    public final static String EXTENSION = "aes";
 
     /* (non-Javadoc)
      * @see atlas.cryptage.KeyObject#getAlgorithm()
      */
     @Override
     public String getAlgorithm() {
-        return "Blowfish";
+        return ALGO;
     }
 
     /* (non-Javadoc)
@@ -62,7 +61,7 @@ public class Blowfish extends KeyObject {
      */
     @Override
     public String getInstance() {
-        return "Blowfish";
+        return INSTANCE;
     }
 
     /* (non-Javadoc)
@@ -88,21 +87,20 @@ public class Blowfish extends KeyObject {
             plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
         }
         System.out.println("plaintext = " + plaintext);
-        Blowfish bf = new Blowfish();
+        Aes aes = new Aes();
         // Generate a key
-        bf.generateKey();
+        aes.generateKey();
         // get the generated key
-        byte[] secretKey = bf.getSecretKeyInBytes();
+        byte[] secretKey = aes.getSecretKeyInBytes();
         // crypt one text
-        byte[] ciphertext = bf.crypt(plaintext);
+        byte[] ciphertext = aes.crypt(plaintext);
         // print the cipher
-        System.out.println(ciphertext.length);
-        System.out.println("ciphertext = " + bf.encodeHex(ciphertext));
+        System.out.println("ciphertext = " + aes.encodeHex(ciphertext));
 
         // Test the set Key
-        bf.setSecretKey(secretKey);
+        aes.setSecretKey(secretKey);
         // decrypt the cipher
-        String plaintext2 = bf.decryptInString(ciphertext);
+        String plaintext2 = aes.decryptInString(ciphertext);
         // print the result
         System.out.println("plaintext2 = " + plaintext2);
         if (!plaintext2.equals(plaintext))
@@ -112,9 +110,9 @@ public class Blowfish extends KeyObject {
         int nb = 100000;
         long time1 = System.currentTimeMillis();
         for (int i = 0; i < nb ; i++) {
-            String cipherString = bf.cryptToHex(plaintext);
+            String cipherString = aes.cryptToHex(plaintext);
             //System.out.println("cipherString = " + cipherString);
-            String plaintext3 = bf.decryptHexInString(cipherString);
+            String plaintext3 = aes.decryptHexInString(cipherString);
             //System.out.println("plaintext3 = " + plaintext3);
             if (!plaintext3.equals(plaintext))
                 System.out.println("Error: plaintext3 != plaintext");

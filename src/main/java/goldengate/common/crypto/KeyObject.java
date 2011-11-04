@@ -138,8 +138,11 @@ public abstract class KeyObject {
             FileInputStream inputStream = null;
             inputStream = new FileInputStream(file);
             DataInputStream dis = new DataInputStream(inputStream);
-            dis.readFully(key);
-            dis.close();
+            try {
+            	dis.readFully(key);
+            } finally {
+            	dis.close();
+            }
             this.setSecretKey(key);
         } else {
             throw new CryptoException("Cannot read crypto file");
@@ -155,9 +158,12 @@ public abstract class KeyObject {
         if (keyReady() && ((!file.exists()) || file.canWrite())) {
             byte []key = getSecretKeyInBytes();
             FileOutputStream outputStream = new FileOutputStream(file);
-            outputStream.write(key);
-            outputStream.flush();
-            outputStream.close();
+            try {
+	            outputStream.write(key);
+	            outputStream.flush();
+            } finally {
+            	outputStream.close();
+            }
         } else {
             throw new CryptoException("Cannot read crypto file");
         }
