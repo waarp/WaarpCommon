@@ -20,6 +20,8 @@
  */
 package goldengate.common.logging;
 
+import org.jboss.netty.logging.InternalLoggerFactory;
+
 /**
  * Based on the Netty InternalLoggerFactory Based on The Netty Project
  * (netty-dev@lists.jboss.org)
@@ -36,8 +38,15 @@ public abstract class GgInternalLoggerFactory extends
      * @return the GgInternalLogger
      */
     public static GgInternalLogger getLogger(Class<?> clazz) {
-        return (GgInternalLogger) getDefaultFactory().newInstance(
+        InternalLoggerFactory factory = getDefaultFactory();
+        if (factory instanceof GgInternalLoggerFactory) {
+            return (GgInternalLogger) factory.newInstance(clazz.getName());
+        } else {
+            // Should be set first so default = JDK support
+            InternalLoggerFactory.setDefaultFactory(new GgJdkLoggerFactory(null));
+            return (GgInternalLogger) getDefaultFactory().newInstance(
                 clazz.getName());
+        }
     }
 
 }

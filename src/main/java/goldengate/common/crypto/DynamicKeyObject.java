@@ -228,14 +228,14 @@ public class DynamicKeyObject extends KeyObject {
         // crypt one text
         byte[] ciphertext = dyn.crypt(plaintext);
         // print the cipher
-        System.out.println("ciphertext = " + dyn.encodeHex(ciphertext));
+        //System.out.println("ciphertext = " + dyn.encodeHex(ciphertext));
 
         // Test the set Key
         dyn.setSecretKey(secretKey);
         // decrypt the cipher
         String plaintext2 = dyn.decryptInString(ciphertext);
         // print the result
-        System.out.println("plaintext2 = " + plaintext2);
+        //System.out.println("plaintext2 = " + plaintext2);
         if (!plaintext2.equals(plaintext))
             System.out.println("Error: plaintext2 != plaintext");
 

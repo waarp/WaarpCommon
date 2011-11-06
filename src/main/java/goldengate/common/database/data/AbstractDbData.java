@@ -486,4 +486,22 @@ public abstract class AbstractDbData {
             getTrueValue(rs, value);
         }
     }
+    /**
+     * Get Values from PreparedStatement
+     * 
+     * @param preparedStatement
+     * @return True if OK, else False
+     */
+    public boolean get(DbPreparedStatement preparedStatement) {
+        try {
+            getValues(preparedStatement, allFields);
+            setFromArray();
+        } catch (GoldenGateDatabaseNoConnectionError e1) {
+            return false;
+        } catch (GoldenGateDatabaseSqlError e1) {
+            return false;
+        }
+        isSaved = true;
+        return true;
+    }
 }

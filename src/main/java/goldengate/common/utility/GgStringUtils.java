@@ -216,4 +216,17 @@ public class GgStringUtils {
         while (replace(builder, find, replace)) {
         }
     }
+    /**
+     * Build a String with count chars using fillChar
+     * @param fillChar
+     * @param count
+     * @return the String of length count filled with fillChar
+     */
+    public static String fillString(char fillChar, int count) {
+        char []chars = new char[count];
+        while (count > 0) {
+            chars[--count] = fillChar;
+        }
+        return new String(chars);
+    }
 }
