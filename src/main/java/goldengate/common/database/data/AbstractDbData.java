@@ -35,7 +35,11 @@ import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
 import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
 /**
- * Abstract database table implementation
+ * Abstract database table implementation without explicit COMMIT.<br><br>
+ * 
+ * If the connection is in autocommit, this is the right abstract to extend.<br>
+ * If the connection is not in autocommit, one could use this implementation to explicitly 
+ * commit when needed.
  *
  * @author Frederic Bregier
  *
