@@ -5,12 +5,12 @@
 		<author email="fredbregier@free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
-		<release version="1.1.7" date="2011-11-05" description="Update Jars and Extend Crypto">
+		<release version="1.1.7" date="2012-02-12" description="Update Jars and Extend Crypto">
 			<action dev="Frederic Bregier" type="add">Extend Encryption support to dynamic Algorithm types</action>
 			<action dev="Frederic Bregier" type="add">Add fillString in GgStringUtils</action>
 			<action dev="Frederic Bregier" type="add">Add get for DbData from PreparedStatement</action>
 			<action dev="Frederic Bregier" type="fix">Fix InternalLoggerFactory with default to JdkLogger</action>
-			<action dev="Frederic Bregier" type="fix">Update to new dependent Jars</action>
+			<action dev="Frederic Bregier" type="fix">Update Dependencies</action>
 		</release>
 		<release version="1.1.6" date="2011-11-01" description="Add Finite State support">
 			<action dev="Frederic Bregier" type="add">Add Basic Finite State Machine support</action>
