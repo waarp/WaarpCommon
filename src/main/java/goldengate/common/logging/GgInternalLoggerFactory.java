@@ -31,7 +31,7 @@ import org.jboss.netty.logging.InternalLoggerFactory;
  *
  */
 public abstract class GgInternalLoggerFactory extends
-        org.jboss.netty.logging.InternalLoggerFactory {
+        org.jboss.netty.logging.InternalLoggerFactory implements GgInternalLoggerInterface {
     /**
      *
      * @param clazz
@@ -39,7 +39,7 @@ public abstract class GgInternalLoggerFactory extends
      */
     public static GgInternalLogger getLogger(Class<?> clazz) {
         InternalLoggerFactory factory = getDefaultFactory();
-        if (factory instanceof GgInternalLoggerFactory) {
+        if (factory instanceof GgInternalLoggerInterface) {
             return (GgInternalLogger) factory.newInstance(clazz.getName());
         } else {
             // Should be set first so default = JDK support

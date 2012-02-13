@@ -36,7 +36,7 @@ import org.jboss.netty.logging.JdkLoggerFactory;
  * @author Trustin Lee (tlee@redhat.com)
  * @author Frederic Bregier
  */
-public class GgJdkLoggerFactory extends JdkLoggerFactory {
+public class GgJdkLoggerFactory extends JdkLoggerFactory implements GgInternalLoggerInterface {
     /**
      *
      * @param level

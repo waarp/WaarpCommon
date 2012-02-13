@@ -33,7 +33,7 @@ import ch.qos.logback.classic.Logger;
  *
  */
 public class GgSlf4JLoggerFactory extends
-        org.jboss.netty.logging.Slf4JLoggerFactory {
+        org.jboss.netty.logging.Slf4JLoggerFactory implements GgInternalLoggerInterface {
     static final String ROOT = Logger.ROOT_LOGGER_NAME;// "root"; // LoggerContext.ROOT_NAME; //
     /**
      *
