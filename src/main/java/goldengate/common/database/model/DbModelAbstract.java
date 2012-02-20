@@ -86,7 +86,7 @@ public abstract class DbModelAbstract implements DbModel {
                     }
                     DbAdmin.removeConnection(dbSession.internalId);
                     throw new GoldenGateDatabaseNoConnectionError(
-                    "Cannot connect to database");
+                    "Cannot connect to database", e);
                 }
                 try {
                     if (stmt.execute(validConnectionString())) {
@@ -118,7 +118,7 @@ public abstract class DbModelAbstract implements DbModel {
                     } catch (SQLException e1) {
                     }
                     throw new GoldenGateDatabaseNoConnectionError(
-                    "Cannot connect to database");
+                    "Cannot connect to database", e);
                 }
                 dbSession.recreateLongTermPreparedStatements();
                 return;

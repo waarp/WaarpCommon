@@ -21,20 +21,16 @@
 package goldengate.common.file.passthrough;
 
 import goldengate.common.command.exception.CommandAbstractException;
-import goldengate.common.command.exception.Reply501Exception;
-import goldengate.common.command.exception.Reply530Exception;
 import goldengate.common.command.exception.Reply550Exception;
 import goldengate.common.command.exception.Reply553Exception;
-import goldengate.common.file.DirInterface;
+import goldengate.common.file.AbstractDir;
 import goldengate.common.file.FileInterface;
 import goldengate.common.file.OptsMLSxInterface;
 import goldengate.common.file.SessionInterface;
-import goldengate.common.file.filesystembased.FilesystemBasedAuthImpl;
 import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,23 +44,7 @@ import java.util.List;
  * @author Frederic Bregier
  *
  */
-public abstract class PassthroughBasedDirImpl implements DirInterface {
-    /**
-     * Current Directory
-     */
-    protected String currentDir = null;
-
-    /**
-     * SessionInterface
-     */
-    protected final SessionInterface session;
-
-    /**
-     * Opts command for MLSx. (-1) means not supported, 0 supported but not
-     * active, 1 supported and active
-     */
-    protected final OptsMLSxInterface optsMLSx;
-
+public abstract class PassthroughBasedDirImpl extends AbstractDir {
     /**
      * Factory for PassthroughFile
      */
@@ -75,58 +55,10 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
      */
     protected PassthroughFile pdir = null;
     /**
-     * Hack to say Windows or Unix (root like X:\ or /)
-     */
-    protected static Boolean ISUNIX = null;
-    /**
-     * Roots for Windows system
-     */
-    protected static File [] roots = null;
-    /**
-     * Init Windows Support
-     */
-    protected static void initWindowsSupport() {
-        ISUNIX = (!System.getProperty("os.name")
-                .toLowerCase().startsWith("windows"));
-        if (! ISUNIX) {
-            roots = File.listRoots();
-        }
-    }
-    /**
-    *
-    * @param file
-    * @return The corresponding Root file
-    */
-    protected File getCorrespondingRoot(File file) {
-       initWindowsSupport();
-       if (ISUNIX) {
-           return new File("/");
-       }
-       String path = file.getAbsolutePath();
-       for (File root : roots) {
-           if (path.startsWith(root.getAbsolutePath())) {
-               return root;
-           }
-       }
-       // hack !
-       logger.warn("No root found for "+file.getAbsolutePath());
-       return roots[0];
-   }
-    /**
      * Internal Logger
      */
     private static final GgInternalLogger logger = GgInternalLoggerFactory
             .getLogger(PassthroughBasedDirImpl.class);
-
-    /**
-     * Normalize Path to Internal unique representation
-     *
-     * @param path
-     * @return the normalized path
-     */
-    public static String normalizePath(String path) {
-        return path.replace('\\', SEPARATORCHAR).replace("//", "/");
-    }
 
     /**
      * @param session
@@ -144,143 +76,6 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
             pdir = factory.create(null, "/");
         } catch (PassthroughException e) {
         }
-    }
-
-    /**
-     *
-     * @return the SessionInterface
-     */
-    public SessionInterface getSession() {
-        return session;
-    }
-
-    public String validatePath(String path) throws CommandAbstractException {
-        String extDir;
-        if (isAbsoluteWindows(path)) {
-            extDir = path;
-            File newDir = new File(extDir);
-            return validatePath(newDir);
-        }
-        extDir = consolidatePath(path);
-        // Get the baseDir (mount point)
-        String baseDir = ((FilesystemBasedAuthImpl) getSession().getAuth())
-                .getBaseDirectory();
-        // Get the translated real file path (removing '..')
-        File newDir = new File(baseDir, extDir);
-        return validatePath(newDir);
-    }
-    /**
-     *
-     * @param path
-     * @return True if the given Path is an absolute one under Windows system
-     */
-    public boolean isAbsoluteWindows(String path) {
-        initWindowsSupport();
-        if (!ISUNIX) {
-            File file = new File(path);
-            return file.isAbsolute();
-        }
-        return false;
-    }
-
-    /**
-     * Consolidate Path as relative or absolute path to an absolute path
-     *
-     * @param path
-     * @return the consolidated path
-     * @throws CommandAbstractException
-     */
-    protected String consolidatePath(String path)
-            throws CommandAbstractException {
-        if (path == null || path.length() == 0) {
-            throw new Reply501Exception("Path must not be empty");
-        }
-        // First check if the path is relative or absolute
-        if (isAbsoluteWindows(path)) {
-            return path;
-        }
-        String extDir = null;
-        if (path.charAt(0) == SEPARATORCHAR) {
-            extDir = path;
-        } else {
-            extDir = currentDir + SEPARATOR + path;
-        }
-        return extDir;
-    }
-
-    /**
-     * Construct the CanonicalPath without taking into account symbolic link
-     * @param dir
-     * @return the canonicalPath
-     */
-    protected String getCanonicalPath(File dir) {
-        initWindowsSupport();
-        if (ISUNIX) {
-            // resolve it without getting symbolic links
-            StringBuilder builder = new StringBuilder();
-            // Get the path in reverse order from end to start
-            List<String> list = new ArrayList<String>();
-            File newdir = dir;
-            String lastdir = newdir.getName();
-            list.add(lastdir);
-            File parent = newdir.getParentFile();
-            while (parent != null) {
-                newdir = parent;
-                lastdir = newdir.getName();
-                list.add(lastdir);
-                parent = newdir.getParentFile();
-            }
-            // Now filter on '..' or '.'
-            for (int i = list.size()-1; i >= 0; i--) {
-                String curdir = list.get(i);
-                if (curdir.equals(".")) {
-                    list.remove(i);// removes '.'
-                } else if (curdir.equals("..")) {
-                        list.remove(i);// removes '..'
-                        int len = list.size();
-                        if (len > 0 && i < len) {
-                            list.remove(i);// and removes parent dir
-                        }
-                }
-            }
-            if (list.isEmpty()) {
-                return "/";
-            }
-
-            for (int i = list.size()-1; i >= 0; i--) {
-                builder.append('/');
-                builder.append(list.get(i));
-            }
-            return builder.toString();
-        }
-      //Windows version
-        // no link so just use the default version of canonical Path
-        try {
-            return dir.getCanonicalPath();
-        } catch (IOException e) {
-            return dir.getAbsolutePath();
-        }
-    }
-
-    /**
-     * Same as validatePath but from a FileInterface
-     *
-     * @param dir
-     * @return the construct and validated path (could be different than the one
-     *         given as argument, example: '..' are removed)
-     * @throws CommandAbstractException
-     */
-    protected String validatePath(File dir) throws CommandAbstractException {
-        String extDir = null;
-        extDir = normalizePath(getCanonicalPath(dir));
-        // Get the relative business path
-        extDir = ((PassthroughBasedAuthImpl) getSession().getAuth())
-                .getRelativePath(extDir);
-        // Check if this business path is valid
-        if (getSession().getAuth().isBusinessPathValid(extDir)) {
-            return extDir;
-        }
-        throw new Reply553Exception("Pathname not allowed");
     }
 
     /**
@@ -374,10 +169,6 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
                 .getRelativePath(normalizePath(file.getAbsolutePath()));
     }
 
-    public String getPwd() throws CommandAbstractException {
-        return currentDir;
-    }
-
     public boolean changeDirectory(String path) throws CommandAbstractException {
         checkIdentify();
         String newpath = consolidatePath(path);
@@ -399,10 +190,6 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
             return true;
         }
         throw new Reply550Exception("Directory not found");
-    }
-
-    public boolean changeParentDirectory() throws CommandAbstractException {
-        return changeDirectory("..");
     }
 
     public String mkdir(String directory) throws CommandAbstractException {
@@ -563,19 +350,6 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
         }
     }
 
-    public FileInterface setFile(String path,
-            boolean append) throws CommandAbstractException {
-        checkIdentify();
-        String newpath = consolidatePath(path);
-        List<String> paths = wildcardFiles(newpath);
-        if (paths.size() != 1) {
-            throw new Reply550Exception("File not found: " +
-                    paths.size() + " founds");
-        }
-        String extDir = paths.get(0);
-        return newFile(extDir, append);
-    }
-
     public FileInterface setUniqueFile()
             throws CommandAbstractException {
         checkIdentify();
@@ -645,23 +419,5 @@ public abstract class PassthroughBasedDirImpl implements DirInterface {
         } catch (PassthroughException e) {
             throw new Reply550Exception("CRC error "+e.getMessage());
         }
-    }
-
-    public void checkIdentify() throws Reply530Exception {
-        if (!getSession().getAuth().isIdentified()) {
-            throw new Reply530Exception("User not authentified");
-        }
-    }
-
-    public void clear() {
-        currentDir = null;
-    }
-
-    public void initAfterIdentification() {
-        currentDir = getSession().getAuth().getBusinessPath();
-    }
-
-    public OptsMLSxInterface getOptsMLSx() {
-        return optsMLSx;
     }
 }

@@ -20,6 +20,7 @@
  */
 package goldengate.common.future;
 
+
 /**
  * Future in success
  *
@@ -29,13 +30,15 @@ package goldengate.common.future;
 public class GgSucceededFuture extends GgCompletedFuture {
 
     @Override
-    public Throwable getCause() {
+    public synchronized Throwable getCause() {
         return null;
     }
 
     @Override
-    public boolean isSuccess() {
+    public synchronized boolean isSuccess() {
         return true;
     }
-
+    public GgFuture rethrowIfFailed() throws Exception {
+        return this;
+    }
 }

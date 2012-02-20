@@ -78,7 +78,7 @@ public class GgFuture {
      * @return True if the future is successful
      */
     public synchronized boolean isSuccess() {
-        return cause == null;
+        return done && cause == null;
     }
 
     /**
@@ -112,6 +112,30 @@ public class GgFuture {
     public synchronized boolean isCancelled() {
         return cause == CANCELLED;
     }
+    /**
+     * Rethrows the exception that caused this future fail if this future is
+     * complete and failed.
+     */
+    public GgFuture rethrowIfFailed() throws Exception {
+        if (!isDone()) {
+            return this;
+        }
+
+        Throwable cause = getCause();
+        if (cause == null) {
+            return this;
+        }
+
+        if (cause instanceof Exception) {
+            throw (Exception) cause;
+        }
+
+        if (cause instanceof Error) {
+            throw (Error) cause;
+        }
+
+        throw new RuntimeException(cause);
+    }
 
     /**
      * Waits for this future to be completed.
@@ -122,6 +146,10 @@ public class GgFuture {
      *             if the current thread was interrupted
      */
     public GgFuture await() throws InterruptedException {
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+
         synchronized (this) {
             while (!done) {
                 waiters ++;
@@ -174,17 +202,22 @@ public class GgFuture {
      * @return The GgFuture
      */
     public GgFuture awaitUninterruptibly() {
+        boolean interrupted = false;
         synchronized (this) {
             while (!done) {
-                waiters ++;
+                waiters++;
                 try {
                     this.wait();
                 } catch (InterruptedException e) {
-                    // Ignore.
+                    interrupted = true;
                 } finally {
-                    waiters --;
+                    waiters--;
                 }
             }
+        }
+
+        if (interrupted) {
+            Thread.currentThread().interrupt();
         }
 
         return this;
@@ -229,38 +262,51 @@ public class GgFuture {
 
     private boolean await0(long timeoutNanos, boolean interruptable)
             throws InterruptedException {
+        if (interruptable && Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+
         long startTime = timeoutNanos <= 0? 0 : System.nanoTime();
         long waitTime = timeoutNanos;
+        boolean interrupted = false;
 
-        synchronized (this) {
-            if (done) {
-                return done;
-            } else if (waitTime <= 0) {
-                return done;
-            }
-
-            waiters ++;
-            try {
-                for (;;) {
-                    try {
-                        this.wait(waitTime / 1000000,
-                                (int) (waitTime % 1000000));
-                    } catch (InterruptedException e) {
-                        if (interruptable) {
-                            throw e;
+        try {
+            synchronized (this) {
+                if (done) {
+                    return done;
+                } else if (waitTime <= 0) {
+                    return done;
+                }
+    
+                waiters ++;
+                try {
+                    for (;;) {
+                        try {
+                            this.wait(waitTime / 1000000,
+                                    (int) (waitTime % 1000000));
+                        } catch (InterruptedException e) {
+                            if (interruptable) {
+                                throw e;
+                            } else {
+                                interrupted = true;
+                            }
+                        }
+    
+                        if (done) {
+                            return true;
+                        }
+                        waitTime = timeoutNanos - (System.nanoTime() - startTime);
+                        if (waitTime <= 0) {
+                            return done;
                         }
                     }
-
-                    if (done) {
-                        return true;
-                    }
-                    waitTime = timeoutNanos - (System.nanoTime() - startTime);
-                    if (waitTime <= 0) {
-                        return done;
-                    }
+                } finally {
+                    waiters --;
                 }
-            } finally {
-                waiters --;
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
             }
         }
     }

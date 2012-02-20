@@ -38,12 +38,12 @@ import javax.net.ssl.TrustManagerFactorySpi;
  *
  */
 public class GgSecureTrustManagerFactory extends TrustManagerFactorySpi {
-    private GgX509TrustManager ggTrustManager;
+    private final GgX509TrustManager ggTrustManager;
 
-    private TrustManager[] trustManager;
+    private final TrustManager[] trustManager;
 
-    private boolean needAuthentication = false;
-    private boolean hasTrustStore = false;
+    private final boolean needAuthentication;
+    private final boolean hasTrustStore;
 
     /**
      * Accept all connections

@@ -28,6 +28,7 @@ import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.dom4j.Node;
@@ -101,7 +102,7 @@ public class GgStringUtils {
     /**
      * Simple Date format
      */
-    private static SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private static final SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     /**
      * Get a date in String and return the corresponding Timestamp
      * @param date
@@ -109,14 +110,14 @@ public class GgStringUtils {
      */
     public static Timestamp fixDate(String date) {
         Timestamp tdate = null;
-        date = date.replaceAll("/|:|\\.| |-", "");
-        if (date.length() > 0) {
-            if (date.length() < 15) {
-                int len = date.length();
-                date += "000000000000000".substring(len);
+        String ndate = date.replaceAll("/|:|\\.| |-", "");
+        if (ndate.length() > 0) {
+            if (ndate.length() < 15) {
+                int len = ndate.length();
+                ndate += "000000000000000".substring(len);
             }
             try {
-                Date ddate = format.parse(date);
+                Date ddate = format.parse(ndate);
                 tdate = new Timestamp(ddate.getTime());
             } catch (ParseException e) {
                 logger.debug("start",e);
@@ -135,14 +136,14 @@ public class GgStringUtils {
      */
     public static Timestamp fixDate(String date, Timestamp before) {
         Timestamp tdate = null;
-        date = date.replaceAll("/|:|\\.| |-", "");
-        if (date.length() > 0) {
-            if (date.length() < 15) {
-                int len = date.length();
-                date += "000000000000000".substring(len);
+        String ndate = date.replaceAll("/|:|\\.| |-", "");
+        if (ndate.length() > 0) {
+            if (ndate.length() < 15) {
+                int len = ndate.length();
+                ndate += "000000000000000".substring(len);
             }
             try {
-                Date ddate = format.parse(date);
+                Date ddate = format.parse(ndate);
                 if (before != null) {
                     Date bef = new Date(before.getTime());
                     if (bef.compareTo(ddate) >= 0) {
@@ -224,9 +225,7 @@ public class GgStringUtils {
      */
     public static String fillString(char fillChar, int count) {
         char []chars = new char[count];
-        while (count > 0) {
-            chars[--count] = fillChar;
-        }
+        Arrays.fill(chars, fillChar);
         return new String(chars);
     }
 }

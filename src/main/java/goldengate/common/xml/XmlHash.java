@@ -32,7 +32,7 @@ import java.util.Set;
  * 
  */
 public class XmlHash {
-    private Hashtable<String, XmlValue> hashtable;
+    private final Hashtable<String, XmlValue> hashtable;
 
     public XmlHash(XmlValue[] values) {
         hashtable = new Hashtable<String, XmlValue>();

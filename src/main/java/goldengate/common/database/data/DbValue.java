@@ -322,14 +322,14 @@ public class DbValue {
                 try {
                     value = DateFormat.getDateTimeInstance().parse(svalue);
                 } catch (ParseException e) {
-                    throw new GoldenGateDatabaseSqlError("Error in Date: " + svalue);
+                    throw new GoldenGateDatabaseSqlError("Error in Date: " + svalue, e);
                 }
                 break;
             case Types.TIMESTAMP:
                 try {
                     value = DateFormat.getDateTimeInstance().parse(svalue);
                 } catch (ParseException e) {
-                    throw new GoldenGateDatabaseSqlError("Error in Timestamp: " + svalue);
+                    throw new GoldenGateDatabaseSqlError("Error in Timestamp: " + svalue, e);
                 }
                 break;
             default:

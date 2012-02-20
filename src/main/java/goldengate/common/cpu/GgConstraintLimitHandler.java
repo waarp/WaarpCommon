@@ -49,7 +49,7 @@ public abstract class GgConstraintLimitHandler implements Runnable {
     private boolean constraintInactive = true;
     private boolean useCpuLimits = false;
     
-    private Random random = new Random();
+    private final Random random = new Random();
     private CpuManagementInterface cpuManagement;
     private double cpuLimit = 0.8;
     private int channelLimit = 1000;
@@ -75,7 +75,7 @@ public abstract class GgConstraintLimitHandler implements Runnable {
             this.write = write;
         }
     }
-    private LinkedList<CurLimits> curLimits = new LinkedList<GgConstraintLimitHandler.CurLimits>();
+    private final LinkedList<CurLimits> curLimits = new LinkedList<GgConstraintLimitHandler.CurLimits>();
     private int nbSinceLastDecrease = 0;
     private static final int payload = 5; // 5 seconds of payload when new high cpu
     /**

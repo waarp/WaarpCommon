@@ -83,7 +83,7 @@ public class DbSession {
      * List all DbPrepareStatement with long term usage to enable the recreation when the associated
      * connection is reopened
      */
-    private List<DbPreparedStatement> listPreparedStatement = new LinkedList<DbPreparedStatement>();
+    private final List<DbPreparedStatement> listPreparedStatement = new LinkedList<DbPreparedStatement>();
 
 
     static synchronized void setInternalId(DbSession session) {

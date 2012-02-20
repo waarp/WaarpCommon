@@ -80,8 +80,7 @@ public class XmlUtil {
             throw new IOException("File is not readable: " + file.getPath());
         }
         SAXReader reader = new SAXReader();
-        Document document = reader.read(file);
-        return document;
+        return reader.read(file);
     }
 
     /**
@@ -288,10 +287,11 @@ public class XmlUtil {
      */
     static public Element getParentElement(Element ref, String path)
             throws DocumentException {
-        while (path.startsWith("/")) {
-            path = path.substring(1);
+        String npath = path;
+        while (npath.charAt(0) == '/') {//startsWith("/")) {
+            npath = npath.substring(1);
         }
-        Element current = (Element) ref.selectSingleNode(path);
+        Element current = (Element) ref.selectSingleNode(npath);
         if (current == null) {
             throw new DocumentException("Node not found: " + path);
         }
@@ -308,10 +308,11 @@ public class XmlUtil {
      */
     static public Element getElement(Element ref, String path)
             throws DocumentException {
-        while (path.startsWith("/")) {
-            path = path.substring(1);
+        String npath = path;
+        while (npath.charAt(0) == '/') {//.startsWith("/")) {
+            npath = npath.substring(1);
         }
-        Element current = (Element) ref.selectSingleNode(path);
+        Element current = (Element) ref.selectSingleNode(npath);
         if (current == null) {
             throw new DocumentException("Node not found: " + path);
         }
@@ -329,10 +330,11 @@ public class XmlUtil {
     @SuppressWarnings("unchecked")
     static public List<Element> getElementMultiple(Element ref, String path)
             throws DocumentException {
-        while (path.startsWith("/")) {
-            path = path.substring(1);
+        String npath = path;
+        while (npath.charAt(0) == '/') {//.startsWith("/")) {
+            npath = npath.substring(1);
         }
-        List<Element> list = ref.selectNodes(path);
+        List<Element> list = ref.selectNodes(npath);
         if (list == null || list.isEmpty()) {
             throw new DocumentException("Nodes not found: " + path);
         }

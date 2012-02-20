@@ -101,8 +101,7 @@ public class GgX509TrustManager implements X509TrustManager {
     @Override
     public X509Certificate[] getAcceptedIssuers() {
         if (defaultX509TrustManager == null) {
-            X509Certificate []valid = new X509Certificate[0];
-            return valid; // none valid
+            return new X509Certificate[0]; // none valid
         }
         return defaultX509TrustManager.getAcceptedIssuers();
     }

@@ -105,6 +105,20 @@ public interface AuthInterface {
     public abstract String getBusinessPath();
 
     /**
+     * Return the mount point
+     *
+     * @return the mount point
+     */
+    public abstract String getBaseDirectory();
+    /**
+     * Return the relative path from a file (without mount point)
+     *
+     * @param file
+     *            (full path with mount point)
+     * @return the relative path from a file
+     */
+    public abstract String getRelativePath(String file);
+    /**
      * Clean object
      *
      */

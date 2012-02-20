@@ -59,7 +59,6 @@ public class GgSecureKeyStore {
     private String keyPassword;
     private GgSecureTrustManagerFactory secureTrustManagerFactory;
     private KeyStore keyTrustStore;
-    private TrustManagerFactory trustManagerFactory;
     private String trustStorePasswd;
 
     /**
@@ -282,6 +281,7 @@ public class GgSecureKeyStore {
             logger.error("Cannot create TrustManagerFactory Instance", e);
             throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
         }
+        TrustManagerFactory trustManagerFactory = null;
         try {
             trustManagerFactory = TrustManagerFactory.getInstance(
                     KeyManagerFactory.getDefaultAlgorithm());
@@ -410,8 +410,7 @@ public class GgSecureKeyStore {
     throws CertificateException, FileNotFoundException {
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         FileInputStream in = new FileInputStream(filename);
-        Certificate c = cf.generateCertificate(in);
-        return c;
+        return cf.generateCertificate(in);
     }
     /**
      * @return the certificate Password

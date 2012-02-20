@@ -37,17 +37,26 @@ public abstract class GgCompletedFuture extends GgFuture {
 
     @Override
     public GgFuture await() throws InterruptedException {
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         return this;
     }
 
     @Override
     public boolean await(long timeout, TimeUnit unit)
             throws InterruptedException {
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         return true;
     }
 
     @Override
     public boolean await(long timeoutMillis) throws InterruptedException {
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
         return true;
     }
 

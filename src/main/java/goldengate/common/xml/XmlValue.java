@@ -25,12 +25,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * XmlValue base element
@@ -39,24 +36,6 @@ import java.util.TimeZone;
  * 
  */
 public class XmlValue {
-    protected static TimeZone z = TimeZone.getTimeZone("GMT");
-
-    /** parser for Date */
-    protected static DateFormat timeFormat = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss z");
-
-    /** parser for SQL Date */
-    protected static DateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd z");
-
-    /** parser for Timestamp */
-    protected static DateFormat timestampFormat = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss");
-    {
-        timeFormat.setTimeZone(z);
-        dateFormat.setTimeZone(z);
-        timestampFormat.setTimeZone(z);
-    }
 
     private XmlDecl decl;
 
@@ -761,7 +740,7 @@ public class XmlValue {
             // java.sql.Date.toString() and java.sql.Timestamp.toString().
             //
             else if (java.sql.Date.class.isAssignableFrom(type)) {
-                return new java.sql.Date(dateFormat.parse(value).getTime());
+                return new java.sql.Date(XmlStaticShared.dateFormat.parse(value).getTime());
             } else if (Timestamp.class.isAssignableFrom(type)) {
                 int dotIndex = value.indexOf(".");
                 int spaceIndex = value.indexOf(" ", dotIndex);
@@ -770,7 +749,7 @@ public class XmlValue {
                             "Can not convert value " + value + " to type " +
                                     type);
                 }
-                Timestamp ts = new Timestamp(timestampFormat.parse(
+                Timestamp ts = new Timestamp(XmlStaticShared.timestampFormat.parse(
                         value.substring(0, dotIndex)).getTime());
                 int nanos = Integer.parseInt(value.substring(dotIndex + 1,
                         spaceIndex));
@@ -779,7 +758,7 @@ public class XmlValue {
                 return ts;
             } else if (java.util.Date.class.isAssignableFrom(type)) {
                 // Should not be
-                return new java.sql.Date(timeFormat.parse(value).getTime());
+                return new java.sql.Date(XmlStaticShared.timeFormat.parse(value).getTime());
             } else {
                 throw new IllegalArgumentException("Can not convert value " +
                         value + " to type " + type);

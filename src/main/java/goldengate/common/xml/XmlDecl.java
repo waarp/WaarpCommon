@@ -28,15 +28,15 @@ package goldengate.common.xml;
  * 
  */
 public class XmlDecl {
-    private String name;
+    private final String name;
 
-    private XmlType type;
+    private final XmlType type;
 
-    private String xmlPath;
+    private final String xmlPath;
 
-    private XmlDecl[] subXml;
+    private final XmlDecl[] subXml;
 
-    private boolean isMultiple;
+    private final boolean isMultiple;
 
     public XmlDecl(String name, String xmlPath) {
         this.name = name;
