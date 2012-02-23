@@ -115,6 +115,14 @@ public class MachineState<EnumState> {
         return setAsFinal(desiredState);
     }
     /**
+     * Sets the current application state, but no exception if not compatible.
+     * @param desiredState
+     * @return the requested state, even if it was not reachable
+     */
+    public EnumState setDryCurrent(EnumState desiredState) {
+        return setAsFinal(desiredState);
+    }
+    /**
      * Determine if the given state is allowed to be next.
      * 
      * @param desiredState desired MachineState
