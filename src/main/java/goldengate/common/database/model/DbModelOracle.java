@@ -49,6 +49,15 @@ public abstract class DbModelOracle extends DbModelAbstract {
             .getLogger(DbModelOracle.class);
 
     public static DbType type = DbType.Oracle;
+    
+    /* (non-Javadoc)
+     * @see goldengate.common.database.model.DbModel#getDbType()
+     */
+    @Override
+    public DbType getDbType() {
+        return type;
+    }
+
     /**
      * Create the object and initialize if necessary the driver
      * @throws GoldenGateDatabaseNoConnectionError

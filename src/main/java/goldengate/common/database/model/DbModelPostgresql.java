@@ -49,6 +49,15 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
             .getLogger(DbModelPostgresql.class);
 
     public static DbType type = DbType.PostGreSQL;
+    
+    /* (non-Javadoc)
+     * @see goldengate.common.database.model.DbModel#getDbType()
+     */
+    @Override
+    public DbType getDbType() {
+        return type;
+    }
+
     /**
      * Create the object and initialize if necessary the driver
      * @throws GoldenGateDatabaseNoConnectionError

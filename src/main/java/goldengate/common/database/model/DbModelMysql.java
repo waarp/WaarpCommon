@@ -50,6 +50,15 @@ public abstract class DbModelMysql extends DbModelAbstract {
             .getLogger(DbModelMysql.class);
 
     public static DbType type = DbType.MySQL;
+    
+    /* (non-Javadoc)
+     * @see goldengate.common.database.model.DbModel#getDbType()
+     */
+    @Override
+    public DbType getDbType() {
+        return type;
+    }
+
     /**
      * Create the object and initialize if necessary the driver
      * @throws GoldenGateDatabaseNoConnectionError

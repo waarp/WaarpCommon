@@ -165,9 +165,9 @@ public class DbAdmin {
         this.passwd = passwd;
         this.typeDriver = driver;
         if (typeDriver == null) {
-            logger.error("Cannot find TypeDriver:" + driver.name());
+            logger.error("Cannot find TypeDriver");
             throw new GoldenGateDatabaseNoConnectionError(
-                    "Cannot find database drive:" + driver.name());
+                    "Cannot find database driver");
         }
         if (write) {
             for (int i = 0; i < RETRYNB; i ++) {

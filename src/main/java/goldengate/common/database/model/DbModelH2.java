@@ -49,6 +49,15 @@ public abstract class DbModelH2 extends DbModelAbstract {
             .getLogger(DbModelH2.class);
 
     public static DbType type = DbType.H2;
+    
+    /* (non-Javadoc)
+     * @see goldengate.common.database.model.DbModel#getDbType()
+     */
+    @Override
+    public DbType getDbType() {
+        return type;
+    }
+    
     /**
      * Create the object and initialize if necessary the driver
      * @throws GoldenGateDatabaseNoConnectionError
@@ -83,7 +92,9 @@ public abstract class DbModelH2 extends DbModelAbstract {
         DOUBLE(Types.DOUBLE, " DOUBLE "),
         VARBINARY(Types.VARBINARY, " BINARY "),
         DATE(Types.DATE, " DATE "),
-        TIMESTAMP(Types.TIMESTAMP, " TIMESTAMP ");
+        TIMESTAMP(Types.TIMESTAMP, " TIMESTAMP "),
+        CLOB(Types.CLOB, " CLOB "),
+        BLOB(Types.BLOB, " BLOB ");
 
         public int type;
 
@@ -122,6 +133,10 @@ public abstract class DbModelH2 extends DbModelAbstract {
                     return DATE.constructor;
                 case Types.TIMESTAMP:
                     return TIMESTAMP.constructor;
+                case Types.CLOB:
+                    return CLOB.constructor;
+                case Types.BLOB:
+                    return BLOB.constructor;
                 default:
                     return null;
             }

@@ -20,6 +20,8 @@
  */
 package goldengate.common.database.data;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -267,7 +269,7 @@ public abstract class AbstractDbData {
      */
     protected abstract void setToArray();
     /**
-     * Internal function to retrieve data from Array to pull data from databasre
+     * Internal function to retrieve data from Array to pull data from database
      * @throws GoldenGateDatabaseSqlError
      */
     protected abstract void setFromArray() throws GoldenGateDatabaseSqlError;
@@ -366,6 +368,20 @@ public abstract class AbstractDbData {
                     }
                     ps.setTimestamp(rank, (Timestamp) value.value);
                     break;
+                case Types.CLOB:
+                    if (value.value == null) {
+                        ps.setNull(rank, Types.CLOB);
+                        break;
+                    }
+                    ps.setClob(rank, (Reader) value.value);
+                    break;
+                case Types.BLOB:
+                    if (value.value == null) {
+                        ps.setNull(rank, Types.BLOB);
+                        break;
+                    }
+                    ps.setBlob(rank, (InputStream) value.value);
+                    break;
                 default:
                     throw new GoldenGateDatabaseSqlError("Type not supported: " +
                             value.type + " at " + rank);
@@ -452,6 +468,12 @@ public abstract class AbstractDbData {
                     break;
                 case Types.TIMESTAMP:
                     value.value = rs.getTimestamp(value.column);
+                    break;
+                case Types.CLOB:
+                    value.value = rs.getClob(value.column).getCharacterStream();
+                    break;
+                case Types.BLOB:
+                    value.value = rs.getBlob(value.column).getBinaryStream();
                     break;
                 default:
                     throw new GoldenGateDatabaseSqlError("Type not supported: " +

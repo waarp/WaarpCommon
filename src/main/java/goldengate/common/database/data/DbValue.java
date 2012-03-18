@@ -20,11 +20,20 @@
  */
 package goldengate.common.database.data;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
+
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 
 import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
@@ -190,6 +199,18 @@ public class DbValue {
         column = name;
     }
 
+    public DbValue(Reader value, String name) {
+        this.value = value;
+        type = Types.CLOB;
+        column = name;
+    }
+
+    public DbValue(InputStream value, String name) {
+        this.value = value;
+        type = Types.BLOB;
+        column = name;
+    }
+
     public void setValue(String value) {
         this.value = value;
     }
@@ -238,6 +259,14 @@ public class DbValue {
         this.value = new Timestamp(value.getTime());
     }
 
+    public void setValue(Reader value) {
+        this.value = value;
+    }
+
+    public void setValue(InputStream value) {
+        this.value = value;
+    }
+
     public Object getValue() throws GoldenGateDatabaseSqlError {
         switch (type) {
             case Types.VARCHAR:
@@ -252,6 +281,8 @@ public class DbValue {
             case Types.VARBINARY:
             case Types.DATE:
             case Types.TIMESTAMP:
+            case Types.CLOB:
+            case Types.BLOB:
                 return value;
             default:
                 throw new GoldenGateDatabaseSqlError("Type unknown: " + type);
@@ -283,6 +314,41 @@ public class DbValue {
                 return ((Date) value).toString();
             case Types.TIMESTAMP:
                 return ((Timestamp) value).toString();
+            case Types.CLOB:
+            {
+                StringBuilder sBuilder = new StringBuilder();
+                Reader reader = ((Reader) value);
+                char []cbuf = new char[4096];
+                int len;
+                try {
+                    len = reader.read(cbuf);
+                    while (len > 0) {
+                        sBuilder.append(cbuf, 0, len);
+                        len = reader.read(cbuf);
+                    }
+                } catch (IOException e) {
+                    throw new GoldenGateDatabaseSqlError("Error while reading Clob as String", e);
+                }
+                return sBuilder.toString();
+            }
+            case Types.BLOB:
+            {
+                InputStream reader = ((InputStream) value);
+                int len;
+                ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
+                try {
+                    len = reader.available();
+                    while (len > 0) {
+                        buffer.writeBytes(reader, len);
+                    }
+                } catch (IOException e) {
+                    throw new GoldenGateDatabaseSqlError("Error while reading Clob as String", e);
+                }
+                len = buffer.readableBytes();
+                byte []dst = new byte[len];
+                buffer.readBytes(dst);
+                return new String((byte[]) dst);
+            }
             default:
                 throw new GoldenGateDatabaseSqlError("Type unknown: " + type);
         }
@@ -330,6 +396,20 @@ public class DbValue {
                     value = DateFormat.getDateTimeInstance().parse(svalue);
                 } catch (ParseException e) {
                     throw new GoldenGateDatabaseSqlError("Error in Timestamp: " + svalue, e);
+                }
+                break;
+            case Types.CLOB:
+                try {
+                    value = new InputStreamReader(new FileInputStream(svalue));
+                } catch (FileNotFoundException e) {
+                    throw new GoldenGateDatabaseSqlError("Error in CLOB: " + svalue, e);
+                }
+                break;
+            case Types.BLOB:
+                try {
+                    value = new FileInputStream(svalue);
+                } catch (FileNotFoundException e) {
+                    throw new GoldenGateDatabaseSqlError("Error in BLOB: " + svalue, e);
                 }
                 break;
             default:

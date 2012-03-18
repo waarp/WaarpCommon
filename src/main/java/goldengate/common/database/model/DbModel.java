@@ -36,6 +36,11 @@ import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
  */
 public interface DbModel {
     /**
+     * 
+     * @return the current DbType used
+     */
+    public DbType getDbType();
+    /**
      * Create all necessary tables into the database
      * @param session SQL session
      * @throws GoldenGateDatabaseNoConnectionError

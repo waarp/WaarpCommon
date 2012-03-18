@@ -39,7 +39,7 @@ public class DbModelFactory {
     /**
      * Database Model Object
      */
-    public static DbModel dbModel;
+    public static DbModel dbModel = null;
     /**
      * Initialize the Database Model according to arguments.
      * @param dbdriver
@@ -69,6 +69,10 @@ public class DbModelFactory {
             default:
                 throw new GoldenGateDatabaseNoConnectionError(
                         "TypeDriver unknown: " + type);
+        }
+        if (dbModel == null) {
+            throw new GoldenGateDatabaseNoConnectionError(
+                    "TypeDriver not allocated: " + type);            
         }
         return new DbAdmin(type, dbserver, dbuser, dbpasswd,
                 write);
