@@ -81,7 +81,6 @@ public class DbPreparedStatement {
             throw new GoldenGateDatabaseNoConnectionError(
                     "PreparedStatement no session");
         }
-        ls.checkConnection();
         this.ls = ls;
         rs = null;
         preparedStatement = null;
@@ -103,7 +102,6 @@ public class DbPreparedStatement {
             throw new GoldenGateDatabaseNoConnectionError(
                     "PreparedStatement no session");
         }
-        ls.checkConnection();
         this.ls = ls;
         rs = null;
         isReady = false;
@@ -118,12 +116,19 @@ public class DbPreparedStatement {
             this.request = request;
             isReady = true;
         } catch (SQLException e) {
-            logger.error("SQL Exception PreparedStatement: " + request+"\n"+ e.getMessage());
-            DbSession.error(e);
-            preparedStatement = null;
-            isReady = false;
-            throw new GoldenGateDatabaseSqlError(
-                    "SQL Exception PreparedStatement", e);
+            ls.checkConnection();
+            try {
+                preparedStatement = this.ls.conn.prepareStatement(request);
+                this.request = request;
+                isReady = true;
+            } catch (SQLException e1) {
+                logger.error("SQL Exception PreparedStatement: " + request+"\n"+ e.getMessage());
+                DbSession.error(e);
+                preparedStatement = null;
+                isReady = false;
+                throw new GoldenGateDatabaseSqlError(
+                        "SQL Exception PreparedStatement", e);
+            }
         }
     }
     /**
@@ -142,7 +147,6 @@ public class DbPreparedStatement {
             throw new GoldenGateDatabaseNoConnectionError(
                     "PreparedStatement no session");
         }
-        ls.checkConnection();
         this.ls = ls;
         rs = null;
         isReady = false;
@@ -158,12 +162,20 @@ public class DbPreparedStatement {
             this.preparedStatement.setFetchSize(nbFetch);
             isReady = true;
         } catch (SQLException e) {
-            logger.error("SQL Exception PreparedStatement: " + request+"\n"+ e.getMessage());
-            DbSession.error(e);
-            preparedStatement = null;
-            isReady = false;
-            throw new GoldenGateDatabaseSqlError(
-                    "SQL Exception PreparedStatement", e);
+            ls.checkConnection();
+            try {
+                preparedStatement = this.ls.conn.prepareStatement(request);
+                this.request = request;
+                this.preparedStatement.setFetchSize(nbFetch);
+                isReady = true;
+            } catch (SQLException e1) {
+                logger.error("SQL Exception PreparedStatement: " + request+"\n"+ e.getMessage());
+                DbSession.error(e);
+                preparedStatement = null;
+                isReady = false;
+                throw new GoldenGateDatabaseSqlError(
+                        "SQL Exception PreparedStatement", e);
+            }
         }
     }
 
@@ -192,14 +204,21 @@ public class DbPreparedStatement {
             request = requestarg;
             isReady = true;
         } catch (SQLException e) {
-            logger.error("SQL Exception createPreparedStatement:" + requestarg+
-                    "\n"+e.getMessage());
-            DbSession.error(e);
-            realClose();
-            preparedStatement = null;
-            isReady = false;
-            throw new GoldenGateDatabaseSqlError(
-                    "SQL Exception createPreparedStatement: " + requestarg, e);
+            ls.checkConnection();
+            try {
+                preparedStatement = ls.conn.prepareStatement(requestarg);
+                request = requestarg;
+                isReady = true;
+            } catch (SQLException e1) {
+                logger.error("SQL Exception createPreparedStatement:" + requestarg+
+                        "\n"+e.getMessage());
+                DbSession.error(e);
+                realClose();
+                preparedStatement = null;
+                isReady = false;
+                throw new GoldenGateDatabaseSqlError(
+                        "SQL Exception createPreparedStatement: " + requestarg, e);
+            }
         }
     }
     /**
@@ -238,6 +257,7 @@ public class DbPreparedStatement {
             close();
             rs = null;
             this.realClose();
+            ls.checkConnectionNoException();
             throw new GoldenGateDatabaseSqlError("SQL Exception executeQuery: " +
                     request, e);
         }
@@ -268,6 +288,7 @@ public class DbPreparedStatement {
                     "\n"+e.getMessage());
             DbSession.error(e);
             this.realClose();
+            ls.checkConnectionNoException();
             throw new GoldenGateDatabaseSqlError("SQL Exception executeUpdate: " +
                     request, e);
         }
@@ -298,6 +319,7 @@ public class DbPreparedStatement {
             try {
                 preparedStatement.close();
             } catch (SQLException e) {
+                ls.checkConnectionNoException();
             }
             preparedStatement = null;
         }
@@ -324,6 +346,7 @@ public class DbPreparedStatement {
             logger.error("SQL Exception to getNextRow"+
                     "\n"+e.getMessage());
             DbSession.error(e);
+            ls.checkConnectionNoException();
             throw new GoldenGateDatabaseSqlError("SQL Exception to getNextRow: " +
                     request, e);
         }

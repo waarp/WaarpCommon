@@ -233,6 +233,7 @@ public class DbAdmin {
         session = new DbSession(conn, isread);
         isReadOnly = isread;
         isConnected = true;
+        validConnection();
     }
     /**
      * Empty constructor for no Database support (very thin client)

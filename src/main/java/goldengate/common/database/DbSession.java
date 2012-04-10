@@ -410,6 +410,13 @@ public class DbSession {
             throw e;
         }
     }
+    public void checkConnectionNoException() {
+        try {
+            checkConnection();
+        } catch (GoldenGateDatabaseNoConnectionError e) {
+            // ignore
+        }
+    }
     /**
      * Add a Long Term PreparedStatement
      * @param longterm

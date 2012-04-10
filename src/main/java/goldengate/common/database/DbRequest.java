@@ -67,18 +67,6 @@ public class DbRequest {
      * @throws GoldenGateDatabaseNoConnectionError
      */
     public DbRequest(DbSession ls) throws GoldenGateDatabaseNoConnectionError {
-        ls.checkConnection();
-        this.ls = ls;
-    }
-
-    /**
-     * Create a new request from the DbSession but without validating it
-     *
-     * @param ls
-     * @param ignored ignored param
-     * @throws GoldenGateDatabaseNoConnectionError
-     */
-    public DbRequest(DbSession ls, boolean ignored) throws GoldenGateDatabaseNoConnectionError {
         this.ls = ls;
     }
 
@@ -97,11 +85,15 @@ public class DbRequest {
         if (ls.conn == null) {
             throw new GoldenGateDatabaseNoConnectionError("No connection");
         }
-        ls.checkConnection();
         try {
             return ls.conn.createStatement();
         } catch (SQLException e) {
-            throw new GoldenGateDatabaseSqlError("Error while Create Statement", e);
+            ls.checkConnection();
+            try {
+                return ls.conn.createStatement();
+            } catch (SQLException e1) {
+                throw new GoldenGateDatabaseSqlError("Error while Create Statement", e);
+            }
         }
     }
 
@@ -128,6 +120,7 @@ public class DbRequest {
             logger.error("SQL Exception Request:" + select+
                     "\n"+e.getMessage());
             DbSession.error(e);
+            ls.checkConnectionNoException();
             throw new GoldenGateDatabaseSqlError(
                     "SQL Exception Request:" + select, e);
         }
@@ -154,6 +147,7 @@ public class DbRequest {
             logger.error("SQL Exception Request:" + query+
                     "\n"+e.getMessage());
             DbSession.error(e);
+            ls.checkConnectionNoException();
             throw new GoldenGateDatabaseSqlError("SQL Exception Request:" + query,
                     e);
         }
@@ -171,6 +165,7 @@ public class DbRequest {
             try {
                 rs.close();
             } catch (SQLException sqlEx) {
+                ls.checkConnectionNoException();
             } // ignore
             rs = null;
         }
@@ -178,6 +173,7 @@ public class DbRequest {
             try {
                 stmt.close();
             } catch (SQLException sqlEx) {
+                ls.checkConnectionNoException();
             } // ignore
             stmt = null;
         }
@@ -202,6 +198,7 @@ public class DbRequest {
             rstmp = null;
         } catch (SQLException e) {
             DbSession.error(e);
+            ls.checkConnectionNoException();
             throw new GoldenGateDatabaseNoDataException("No data found", e);
         }
         return result;
@@ -227,6 +224,7 @@ public class DbRequest {
             logger.warn("SQL Exception to getNextRow"+
                     "\n"+e.getMessage());
             DbSession.error(e);
+            ls.checkConnectionNoException();
             throw new GoldenGateDatabaseSqlError("SQL Exception to getNextRow", e);
         }
     }

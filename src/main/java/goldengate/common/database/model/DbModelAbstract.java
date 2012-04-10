@@ -37,7 +37,24 @@ import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
  */
 public abstract class DbModelAbstract implements DbModel {
 
-
+    /**
+     * Recreate the disconnected session
+     * @param dbSession
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    private void recreateSession(DbSession dbSession) throws GoldenGateDatabaseNoConnectionError {
+        DbSession newdbSession = new DbSession(dbSession.getAdmin(), dbSession.isReadOnly);
+        try {
+            if (dbSession.conn != null) {
+                dbSession.conn.close();
+            }
+        } catch (SQLException e1) {
+        }
+        dbSession.conn = newdbSession.conn;
+        DbAdmin.addConnection(dbSession.internalId, dbSession);
+        DbAdmin.removeConnection(newdbSession.internalId);
+    }
+    
     /* (non-Javadoc)
      * @see goldengate.common.database.model.DbModel#validConnection(goldengate.common.database.DbSession)
      */
@@ -51,25 +68,29 @@ public abstract class DbModelAbstract implements DbModel {
                 ResultSet set = stmt.getResultSet();
                 if (! set.next()) {
                     stmt.close();
-                    throw new GoldenGateDatabaseNoConnectionError(
-                    "Cannot connect to database");
+                    stmt = null;
+                    // Give a try by closing the current connection
+                    throw new SQLException("Cannot connect to database");
                 }
             }
         } catch (SQLException e2) {
             try {
-                DbSession newdbSession = new DbSession(dbSession.getAdmin(), false);
                 try {
-                    if (dbSession.conn != null) {
-                        dbSession.conn.close();
+                    recreateSession(dbSession);
+                } catch (GoldenGateDatabaseNoConnectionError e) {
+                    try {
+                        if (dbSession.conn != null) {
+                            dbSession.conn.close();
+                        }
+                    } catch (SQLException e1) {
                     }
-                } catch (SQLException e1) {
+                    DbAdmin.removeConnection(dbSession.internalId);
+                    throw e;
                 }
-                dbSession.conn = newdbSession.conn;
-                DbAdmin.addConnection(dbSession.internalId, dbSession);
-                DbAdmin.removeConnection(newdbSession.internalId);
                 try {
                     if (stmt != null) {
                         stmt.close();
+                        stmt = null;
                     }
                 } catch (SQLException e) {
                     // ignore
@@ -99,7 +120,10 @@ public abstract class DbModelAbstract implements DbModel {
                             } catch (SQLException e1) {
                             }
                             DbAdmin.removeConnection(dbSession.internalId);
-                            stmt.close();
+                            if (stmt != null) {
+                                stmt.close();
+                                stmt = null;
+                            }
                             throw new GoldenGateDatabaseNoConnectionError(
                             "Cannot connect to database");
                         }
@@ -114,7 +138,10 @@ public abstract class DbModelAbstract implements DbModel {
                     }
                     DbAdmin.removeConnection(dbSession.internalId);
                     try {
-                        stmt.close();
+                        if (stmt != null) {
+                            stmt.close();
+                            stmt = null;
+                        }
                     } catch (SQLException e1) {
                     }
                     throw new GoldenGateDatabaseNoConnectionError(
