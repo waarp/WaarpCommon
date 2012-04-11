@@ -1,22 +1,21 @@
 /**
-   This file is part of GoldenGate Project (named also GoldenGate or GG).
-
-   Copyright 2009, Frederic Bregier, and individual contributors by the @author
-   tags. See the COPYRIGHT.txt in the distribution for a full listing of
-   individual contributors.
-
-   All GoldenGate Project is free software: you can redistribute it and/or 
-   modify it under the terms of the GNU General Public License as published 
-   by the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   GoldenGate is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with GoldenGate .  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of GoldenGate Project (named also GoldenGate or GG).
+ * 
+ * Copyright 2009, Frederic Bregier, and individual contributors by the @author
+ * tags. See the COPYRIGHT.txt in the distribution for a full listing of
+ * individual contributors.
+ * 
+ * All GoldenGate Project is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * GoldenGate is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * GoldenGate . If not, see <http://www.gnu.org/licenses/>.
  */
 package goldengate.common.database;
 
@@ -31,12 +30,11 @@ import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
 import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
 import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
 
-
 /**
  * Class to handle request
- *
+ * 
  * @author Frederic Bregier
- *
+ * 
  */
 public class DbRequest {
     /**
@@ -62,28 +60,35 @@ public class DbRequest {
 
     /**
      * Create a new request from the DbSession
-     *
+     * 
      * @param ls
      * @throws GoldenGateDatabaseNoConnectionError
      */
     public DbRequest(DbSession ls) throws GoldenGateDatabaseNoConnectionError {
+        if (ls.isDisconnected) {
+            ls.checkConnection();
+        }
         this.ls = ls;
     }
 
     /**
      * Create a statement with some particular options
-     *
+     * 
      * @return the new Statement
      * @throws GoldenGateDatabaseNoConnectionError
      * @throws GoldenGateDatabaseSqlError
      */
     private Statement createStatement()
-            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionError,
+            GoldenGateDatabaseSqlError {
         if (ls == null) {
             throw new GoldenGateDatabaseNoConnectionError("No connection");
         }
         if (ls.conn == null) {
             throw new GoldenGateDatabaseNoConnectionError("No connection");
+        }
+        if (ls.isDisconnected) {
+            ls.checkConnection();
         }
         try {
             return ls.conn.createStatement();
@@ -92,7 +97,8 @@ public class DbRequest {
             try {
                 return ls.conn.createStatement();
             } catch (SQLException e1) {
-                throw new GoldenGateDatabaseSqlError("Error while Create Statement", e);
+                throw new GoldenGateDatabaseSqlError(
+                        "Error while Create Statement", e);
             }
         }
     }
@@ -100,12 +106,13 @@ public class DbRequest {
     /**
      * Execute a SELECT statement and set of Result. The statement must not be
      * an update/insert/delete. The previous statement and resultSet are closed.
-     *
+     * 
      * @param select
      * @throws GoldenGateDatabaseSqlError
      * @throws GoldenGateDatabaseNoConnectionError
      */
-    public void select(String select) throws GoldenGateDatabaseNoConnectionError,
+    public void select(String select)
+            throws GoldenGateDatabaseNoConnectionError,
             GoldenGateDatabaseSqlError {
         close();
         stmt = createStatement();
@@ -117,19 +124,19 @@ public class DbRequest {
                 rs = stmt.getResultSet();
             }
         } catch (SQLException e) {
-            logger.error("SQL Exception Request:" + select+
-                    "\n"+e.getMessage());
+            logger.error("SQL Exception Request:" + select + "\n" +
+                    e.getMessage());
             DbSession.error(e);
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError(
-                    "SQL Exception Request:" + select, e);
+            throw new GoldenGateDatabaseSqlError("SQL Exception Request:" +
+                    select, e);
         }
     }
 
     /**
      * Execute a UPDATE/INSERT/DELETE statement and returns the number of row.
      * The previous statement and resultSet are closed.
-     *
+     * 
      * @param query
      * @return the number of row in the query
      * @throws GoldenGateDatabaseSqlError
@@ -144,12 +151,12 @@ public class DbRequest {
             logger.debug("QUERY(" + rowcount + "): {}", query);
             return rowcount;
         } catch (SQLException e) {
-            logger.error("SQL Exception Request:" + query+
-                    "\n"+e.getMessage());
+            logger.error("SQL Exception Request:" + query + "\n" +
+                    e.getMessage());
             DbSession.error(e);
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError("SQL Exception Request:" + query,
-                    e);
+            throw new GoldenGateDatabaseSqlError("SQL Exception Request:" +
+                    query, e);
         }
     }
 
@@ -181,7 +188,7 @@ public class DbRequest {
 
     /**
      * Get the last ID autoincrement from the last request
-     *
+     * 
      * @return the long Id or DbConstant.ILLEGALVALUE (Long.MIN_VALUE) if an
      *         error occurs.
      * @throws GoldenGateDatabaseNoDataException
@@ -206,7 +213,7 @@ public class DbRequest {
 
     /**
      * Move the cursor to the next result
-     *
+     * 
      * @return True if there is a next result, else False
      * @throws GoldenGateDatabaseNoConnectionError
      * @throws GoldenGateDatabaseSqlError
@@ -218,19 +225,24 @@ public class DbRequest {
             throw new GoldenGateDatabaseNoConnectionError(
                     "SQL ResultSet is Null into getNext");
         }
+        if (ls.isDisconnected) {
+            ls.checkConnection();
+            throw new GoldenGateDatabaseSqlError(
+                    "Request cannot be executed since connection was recreated between");
+        }
         try {
             return rs.next();
         } catch (SQLException e) {
-            logger.warn("SQL Exception to getNextRow"+
-                    "\n"+e.getMessage());
+            logger.warn("SQL Exception to getNextRow" + "\n" + e.getMessage());
             DbSession.error(e);
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError("SQL Exception to getNextRow", e);
+            throw new GoldenGateDatabaseSqlError("SQL Exception to getNextRow",
+                    e);
         }
     }
 
     /**
-     *
+     * 
      * @return The resultSet (can be used in conjunction of getNext())
      * @throws GoldenGateDatabaseNoConnectionError
      */
@@ -244,7 +256,7 @@ public class DbRequest {
 
     /**
      * Test if value is null and create the string for insert/update
-     *
+     * 
      * @param value
      * @return the string as result
      */
