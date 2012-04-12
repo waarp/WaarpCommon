@@ -506,6 +506,14 @@ public class DbSession {
         }
         listPreparedStatement.clear();
     }
+    
+    /**
+     * Remove one Long Term PreparedStatement
+     * @param longterm
+     */
+    public void removeLongTermPreparedStatements(DbPreparedStatement longterm) {
+        listPreparedStatement.remove(longterm);
+    }
 
     /**
      * Commit everything
