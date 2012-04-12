@@ -84,123 +84,129 @@ public abstract class DbModelAbstract implements DbModel {
     @Override
     public void validConnection(DbSession dbSession)
             throws GoldenGateDatabaseNoConnectionError {
-        Statement stmt = null;
-        try {
-            stmt = dbSession.conn.createStatement();
-            if (stmt.execute(validConnectionString())) {
-                ResultSet set = stmt.getResultSet();
-                if (!set.next()) {
-                    stmt.close();
-                    stmt = null;
-                    // Give a try by closing the current connection
-                    throw new SQLException("Cannot connect to database");
-                }
-            }
-            dbSession.isDisconnected = false;
-            if (dbSession.admin != null)
-                dbSession.admin.isConnected = true;
-        } catch (SQLException e2) {
-            dbSession.isDisconnected = true;
-            if (dbSession.admin != null)
-                dbSession.admin.isConnected = false;
-            try {
-                try {
-                    recreateSession(dbSession);
-                } catch (GoldenGateDatabaseNoConnectionError e) {
-                    try {
-                        if (dbSession.conn != null) {
-                            dbSession.conn.close();
-                        }
-                    } catch (SQLException e1) {
-                    }
-                    DbAdmin.removeConnection(dbSession.internalId);
-                    throw e;
-                }
-                try {
-                    if (stmt != null) {
-                        stmt.close();
-                        stmt = null;
-                    }
-                } catch (SQLException e) {
-                    // ignore
-                }
-                try {
-                    stmt = dbSession.conn.createStatement();
-                } catch (SQLException e) {
-                    // Not ignored
-                    try {
-                        if (dbSession.conn != null) {
-                            dbSession.conn.close();
-                        }
-                    } catch (SQLException e1) {
-                    }
-                    DbAdmin.removeConnection(dbSession.internalId);
-                    throw new GoldenGateDatabaseNoConnectionError(
-                            "Cannot connect to database", e);
-                }
-                try {
-                    if (stmt.execute(validConnectionString())) {
-                        ResultSet set = stmt.getResultSet();
-                        if (!set.next()) {
-                            try {
-                                if (dbSession.conn != null) {
-                                    dbSession.conn.close();
-                                }
-                            } catch (SQLException e1) {
-                            }
-                            DbAdmin.removeConnection(dbSession.internalId);
-                            if (stmt != null) {
-                                stmt.close();
-                                stmt = null;
-                            }
-                            throw new GoldenGateDatabaseNoConnectionError(
-                                    "Cannot connect to database");
-                        }
-                    }
-                } catch (SQLException e) {
-                    // not ignored
-                    try {
-                        if (dbSession.conn != null) {
-                            dbSession.conn.close();
-                        }
-                    } catch (SQLException e1) {
-                    }
-                    DbAdmin.removeConnection(dbSession.internalId);
-                    try {
-                        if (stmt != null) {
-                            stmt.close();
-                            stmt = null;
-                        }
-                    } catch (SQLException e1) {
-                    }
-                    throw new GoldenGateDatabaseNoConnectionError(
-                            "Cannot connect to database", e);
-                }
-                dbSession.isDisconnected = false;
-                if (dbSession.admin != null)
-                    dbSession.admin.isConnected = true;
-                dbSession.recreateLongTermPreparedStatements();
-                return;
-            } catch (GoldenGateDatabaseSqlError e1) {
-                // ignore and will send a No Connection error
-            }
-            try {
-                if (dbSession.conn != null) {
-                    dbSession.conn.close();
-                }
-            } catch (SQLException e1) {
-            }
-            DbAdmin.removeConnection(dbSession.internalId);
-            throw new GoldenGateDatabaseNoConnectionError(
-                    "Cannot connect to database", e2);
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+    	// try to limit the number of check!
+    	synchronized (dbSession) {
+	        Statement stmt = null;
+	        try {
+	            stmt = dbSession.conn.createStatement();
+	            if (stmt.execute(validConnectionString())) {
+	                ResultSet set = stmt.getResultSet();
+	                if (!set.next()) {
+	                    stmt.close();
+	                    stmt = null;
+	                    // Give a try by closing the current connection
+	                    throw new SQLException("Cannot connect to database");
+	                }
+	            }
+	            dbSession.isDisconnected = false;
+	            if (dbSession.admin != null)
+	                dbSession.admin.isConnected = true;
+	        } catch (SQLException e2) {
+	            dbSession.isDisconnected = true;
+	            if (dbSession.admin != null)
+	                dbSession.admin.isConnected = false;
+	            try {
+	                try {
+	                    recreateSession(dbSession);
+	                } catch (GoldenGateDatabaseNoConnectionError e) {
+	                    try {
+	                        if (dbSession.conn != null) {
+	                            dbSession.conn.close();
+	                        }
+	                    } catch (SQLException e1) {
+	                    }
+	                    DbAdmin.removeConnection(dbSession.internalId);
+	                    throw e;
+	                }
+	                try {
+	                    if (stmt != null) {
+	                        stmt.close();
+	                        stmt = null;
+	                    }
+	                } catch (SQLException e) {
+	                    // ignore
+	                }
+	                try {
+	                    stmt = dbSession.conn.createStatement();
+	                } catch (SQLException e) {
+	                    // Not ignored
+	                    try {
+	                        if (dbSession.conn != null) {
+	                            dbSession.conn.close();
+	                        }
+	                    } catch (SQLException e1) {
+	                    }
+	                    DbAdmin.removeConnection(dbSession.internalId);
+	                    throw new GoldenGateDatabaseNoConnectionError(
+	                            "Cannot connect to database", e);
+	                }
+	                try {
+	                    if (stmt.execute(validConnectionString())) {
+	                        ResultSet set = stmt.getResultSet();
+	                        if (!set.next()) {
+	                            try {
+	                                if (dbSession.conn != null) {
+	                                    dbSession.conn.close();
+	                                }
+	                            } catch (SQLException e1) {
+	                            }
+	                            DbAdmin.removeConnection(dbSession.internalId);
+	                            if (stmt != null) {
+	                                stmt.close();
+	                                stmt = null;
+	                            }
+	                            throw new GoldenGateDatabaseNoConnectionError(
+	                                    "Cannot connect to database");
+	                        }
+	                    }
+	                } catch (SQLException e) {
+	                    // not ignored
+	                    try {
+	                        if (dbSession.conn != null) {
+	                            dbSession.conn.close();
+	                        }
+	                    } catch (SQLException e1) {
+	                    }
+	                    DbAdmin.removeConnection(dbSession.internalId);
+	                    try {
+	                        if (stmt != null) {
+	                            stmt.close();
+	                            stmt = null;
+	                        }
+	                    } catch (SQLException e1) {
+	                    }
+	                    throw new GoldenGateDatabaseNoConnectionError(
+	                            "Cannot connect to database", e);
+	                }
+	                dbSession.isDisconnected = false;
+	                if (dbSession.admin != null)
+	                    dbSession.admin.isConnected = true;
+	                dbSession.recreateLongTermPreparedStatements();
+	                return;
+	            } catch (GoldenGateDatabaseSqlError e1) {
+	                // ignore and will send a No Connection error
+	            }
+	            try {
+	                if (dbSession.conn != null) {
+	                    dbSession.conn.close();
+	                }
+	            } catch (SQLException e1) {
+	            }
+	            dbSession.isDisconnected = true;
+	            if (dbSession.admin != null)
+	                dbSession.admin.isConnected = false;
+	            DbAdmin.removeConnection(dbSession.internalId);
+	            throw new GoldenGateDatabaseNoConnectionError(
+	                    "Cannot connect to database", e2);
+	        } finally {
+	            if (stmt != null) {
+	                try {
+	                    stmt.close();
+	                } catch (SQLException e) {
+	                }
+	            }
+	        }
+    	}
     }
 
     /**

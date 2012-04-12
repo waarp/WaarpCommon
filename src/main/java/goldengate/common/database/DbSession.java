@@ -432,7 +432,6 @@ public class DbSession {
             if (admin != null)
                 admin.isConnected = true;
         } catch (GoldenGateDatabaseNoConnectionError e) {
-            //removeLongTermPreparedStatements();
             isDisconnected = true;
             if (admin != null)
                 admin.isConnected = false;
@@ -474,9 +473,6 @@ public class DbSession {
             GoldenGateDatabaseSqlError {
         GoldenGateDatabaseNoConnectionError elast = null;
         GoldenGateDatabaseSqlError e2last = null;
-        if (isDisconnected) {
-            checkConnection();
-        }
         logger.info("RecreateLongTermPreparedStatements: "+listPreparedStatement.size());
         for (DbPreparedStatement longterm: listPreparedStatement) {
             try {
