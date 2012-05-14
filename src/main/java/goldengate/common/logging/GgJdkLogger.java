@@ -46,11 +46,13 @@ public class GgJdkLogger extends GgInternalLogger {
     }
 
     public void debug(String msg) {
-        logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()+msg);
+        if (logger.isLoggable(Level.FINE))
+            logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()+msg);
     }
 
     public void debug(String msg, Throwable cause) {
-        logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()+msg, cause);
+        if (logger.isLoggable(Level.FINE))
+            logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()+msg, cause);
     }
 
     public void error(String msg) {
@@ -62,11 +64,13 @@ public class GgJdkLogger extends GgInternalLogger {
     }
 
     public void info(String msg) {
-        logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()+msg);
+        if (logger.isLoggable(Level.INFO))
+            logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()+msg);
     }
 
     public void info(String msg, Throwable cause) {
-        logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()+msg, cause);
+        if (logger.isLoggable(Level.INFO))
+            logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()+msg, cause);
     }
 
     public boolean isDebugEnabled() {

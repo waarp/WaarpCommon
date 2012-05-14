@@ -51,7 +51,8 @@ public class GgSlf4JLogger extends GgInternalLogger {
      */
     @Override
     public void debug(String format, String arg1, String arg2) {
-        logger.debug(getLoggerMethodAndLine()+format, arg1, arg2);
+        if (logger.isDebugEnabled())
+            logger.debug(getLoggerMethodAndLine()+format, arg1, arg2);
     }
 
     /*
@@ -62,7 +63,8 @@ public class GgSlf4JLogger extends GgInternalLogger {
      */
     @Override
     public void debug(String format, String arg1) {
-        logger.debug(getLoggerMethodAndLine()+format, arg1);
+        if (logger.isDebugEnabled())
+            logger.debug(getLoggerMethodAndLine()+format, arg1);
     }
 
     /*
@@ -95,7 +97,8 @@ public class GgSlf4JLogger extends GgInternalLogger {
      */
     @Override
     public void info(String format, String arg1, String arg2) {
-        logger.info(getLoggerMethodAndLine()+format, arg1, arg2);
+        if (logger.isInfoEnabled())
+            logger.info(getLoggerMethodAndLine()+format, arg1, arg2);
     }
 
     /*
@@ -106,7 +109,8 @@ public class GgSlf4JLogger extends GgInternalLogger {
      */
     @Override
     public void info(String format, String arg1) {
-        logger.info(getLoggerMethodAndLine()+format, arg1);
+        if (logger.isInfoEnabled())
+            logger.info(getLoggerMethodAndLine()+format, arg1);
     }
 
     /*
@@ -133,11 +137,13 @@ public class GgSlf4JLogger extends GgInternalLogger {
 
     // original form
     public void debug(String msg) {
-        logger.debug(getLoggerMethodAndLine()+msg);
+        if (logger.isDebugEnabled())
+            logger.debug(getLoggerMethodAndLine()+msg);
     }
 
     public void debug(String msg, Throwable cause) {
-        logger.debug(getLoggerMethodAndLine()+msg, cause);
+        if (logger.isDebugEnabled())
+            logger.debug(getLoggerMethodAndLine()+msg, cause);
     }
 
     public void error(String msg) {
@@ -149,11 +155,13 @@ public class GgSlf4JLogger extends GgInternalLogger {
     }
 
     public void info(String msg) {
-        logger.info(getLoggerMethodAndLine()+msg);
+        if (logger.isInfoEnabled())
+            logger.info(getLoggerMethodAndLine()+msg);
     }
 
     public void info(String msg, Throwable cause) {
-        logger.info(getLoggerMethodAndLine()+msg, cause);
+        if (logger.isInfoEnabled())
+            logger.info(getLoggerMethodAndLine()+msg, cause);
     }
 
     public boolean isDebugEnabled() {
@@ -187,12 +195,14 @@ public class GgSlf4JLogger extends GgInternalLogger {
 
     @Override
     public void debug(String format, Object arg1, Object arg2) {
-        logger.debug(getLoggerMethodAndLine()+format, arg1, arg2);
+        if (logger.isDebugEnabled())
+            logger.debug(getLoggerMethodAndLine()+format, arg1, arg2);
     }
 
     @Override
     public void debug(String format, Object arg1) {
-        logger.debug(getLoggerMethodAndLine()+format, arg1);
+        if (logger.isDebugEnabled())
+            logger.debug(getLoggerMethodAndLine()+format, arg1);
     }
 
     @Override
@@ -207,12 +217,14 @@ public class GgSlf4JLogger extends GgInternalLogger {
 
     @Override
     public void info(String format, Object arg1, Object arg2) {
-        logger.info(getLoggerMethodAndLine()+format, arg1, arg2);
+        if (logger.isInfoEnabled())
+            logger.info(getLoggerMethodAndLine()+format, arg1, arg2);
     }
 
     @Override
     public void info(String format, Object arg1) {
-        logger.info(getLoggerMethodAndLine()+format, arg1);
+        if (logger.isInfoEnabled())
+            logger.info(getLoggerMethodAndLine()+format, arg1);
     }
 
     @Override
