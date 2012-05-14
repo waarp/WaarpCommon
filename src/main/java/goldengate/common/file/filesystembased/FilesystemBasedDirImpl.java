@@ -249,6 +249,20 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
         throw new Reply550Exception("Directory not found: "+extDir);
     }
 
+    public boolean changeDirectoryNotChecked(String path) throws CommandAbstractException {
+        checkIdentify();
+        String newpath = consolidatePath(path);
+        List<String> paths = wildcardFiles(newpath);
+        if (paths.size() != 1) {
+            logger.warn("CD error: {}", newpath);
+            throw new Reply550Exception("Directory not found: " + paths.size() +
+                    " founds");
+        }
+        String extDir = paths.get(0);
+        extDir = this.validatePath(extDir);
+        return true;
+    }
+
     public String mkdir(String directory) throws CommandAbstractException {
         checkIdentify();
         String newdirectory = consolidatePath(directory);

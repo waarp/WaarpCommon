@@ -102,6 +102,16 @@ public interface DirInterface {
             throws CommandAbstractException;
 
     /**
+     * Change directory with the one given as argument without checking existence
+     *
+     * @param path
+     * @return True if the change is valid
+     * @throws CommandAbstractException
+     */
+    public abstract boolean changeDirectoryNotChecked(String path)
+            throws CommandAbstractException;
+
+    /**
      * Change for parent directory
      *
      * @return True if the change is valid

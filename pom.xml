@@ -4,7 +4,7 @@
   <groupId>GoldenGate</groupId>
   <artifactId>GoldenGateCommon</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.10</version>
+  <version>1.1.11</version>
   <name>GoldenGateCommon</name>
   <description>
 	  The GoldenGate Common project contains several classes that are common with different
@@ -46,38 +46,31 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-access</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.3</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.3</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.3</version>
       <optional>true</optional>
     </dependency>
     <dependency>
     	<groupId>commons-io</groupId>
     	<artifactId>commons-io</artifactId>
-    	<version>2.2</version>
-      <optional>true</optional>
+    	<version>2.3</version>
     </dependency>
     <dependency>
       <groupId>GoldenGate</groupId>
       <artifactId>GoldenGateDigest</artifactId>
-      <version>1.0.5</version>
-      <scope>compile</scope>
+      <version>1.0.6</version>
     </dependency>
-  	<dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty</artifactId>
-      <version>3.3.1.Final</version>
-  	</dependency>
     <dependency>
     	<groupId>org.slf4j</groupId>
     	<artifactId>slf4j-api</artifactId>
@@ -144,8 +137,7 @@
     <dependency>
     	<groupId>NettyExtension</groupId>
     	<artifactId>NettyExtension</artifactId>
-    	<version>1.1.12</version>
-    	<scope>compile</scope>
+    	<version>1.1.13</version>
     </dependency>
   </dependencies>
   <properties>
