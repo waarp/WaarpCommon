@@ -277,7 +277,7 @@ public abstract class GgConstraintLimitHandler implements Runnable {
                 // If last test was wrong, then wait a bit then redo the test
                 if (lastLA > cpuLimit) {
                     double sleep = lastLA * delay * (step+1) * random.nextFloat();
-                    long shorttime = (long) sleep;
+                    long shorttime = (((long) sleep)/10)*10;
                     try {
                         Thread.sleep(shorttime);
                     } catch (InterruptedException e) {
@@ -307,7 +307,7 @@ public abstract class GgConstraintLimitHandler implements Runnable {
      * @return a time below TIMEOUTCON with a random
      */
     public long getSleepTime() {
-        return (long) (TIMEOUTCON*random.nextFloat())+5000;
+        return (((long) (TIMEOUTCON*random.nextFloat())+5000)/10)*10;
     }
     /**
      * @return the cpuLimit
