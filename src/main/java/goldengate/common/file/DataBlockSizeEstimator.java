@@ -20,6 +20,7 @@
  */
 package goldengate.common.file;
 
+import org.jboss.netty.util.DefaultObjectSizeEstimator;
 import org.jboss.netty.util.ObjectSizeEstimator;
 
 /**
@@ -30,6 +31,7 @@ import org.jboss.netty.util.ObjectSizeEstimator;
  */
 public class DataBlockSizeEstimator implements ObjectSizeEstimator {
 
+    private DefaultObjectSizeEstimator internal = new DefaultObjectSizeEstimator();
     /*
      * (non-Javadoc)
      *
@@ -40,7 +42,7 @@ public class DataBlockSizeEstimator implements ObjectSizeEstimator {
     public int estimateSize(Object o) {
         if (!(o instanceof DataBlock)) {
             // Type unimplemented
-            return 8;
+            return internal.estimateSize(o);
         }
         DataBlock dataBlock = (DataBlock) o;
         return dataBlock.getByteCount();
