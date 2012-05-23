@@ -492,11 +492,27 @@ public abstract class FilesystemBasedFileImpl implements
         if (fileOutputStream == null) {
             throw new FileTransferException("Internal error, file is not ready");
         }
-        long bufferSize = buffer.readableBytes();
-        byte []newbuf = new byte[(int)bufferSize];
-        buffer.readBytes(newbuf);
+        int bufferSize = buffer.readableBytes();
+        int start = 0;
+        byte []newbuf;
+        if (buffer.hasArray()) {
+            start = buffer.arrayOffset();
+            newbuf = buffer.array();
+            if (newbuf.length > start+bufferSize) {
+                byte[] temp = new byte[bufferSize];
+                System.arraycopy(newbuf, start, temp, 0, bufferSize);
+                start = 0;
+                newbuf = temp;
+                buffer.readerIndex(start+bufferSize);
+            } else {
+                buffer.readerIndex(start+bufferSize);
+            }
+        } else {
+            newbuf = new byte[bufferSize];
+            buffer.readBytes(newbuf);
+        }
         try {
-            fileOutputStream.write(newbuf);
+            fileOutputStream.write(newbuf, start, bufferSize);
         } catch (IOException e2) {
             logger.error("Error during write:", e2);
             try {

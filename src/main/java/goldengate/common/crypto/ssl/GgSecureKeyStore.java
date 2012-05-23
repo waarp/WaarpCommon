@@ -146,9 +146,10 @@ public class GgSecureKeyStore {
             logger.error("Cannot create KeyStore Instance", e);
             throw new CryptoException("Cannot create KeyStore Instance", e);
         }
+        FileInputStream inputStream;
         try {
-            keyStore.load(new FileInputStream(keyStoreFilename),
-                    getKeyStorePassword());
+            inputStream = new FileInputStream(keyStoreFilename);
+            keyStore.load(inputStream, getKeyStorePassword());
         } catch (NoSuchAlgorithmException e) {
             logger.error("Cannot create KeyStore Instance", e);
             throw new CryptoException("Cannot create KeyStore Instance", e);
@@ -161,6 +162,10 @@ public class GgSecureKeyStore {
         } catch (IOException e) {
             logger.error("Cannot create KeyStore Instance", e);
             throw new CryptoException("Cannot create KeyStore Instance", e);
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e) {
         }
         initKeyManagerFactory();
     }
@@ -248,6 +253,10 @@ public class GgSecureKeyStore {
             logger.error("Cannot save to file KeyStore Instance", e);
             return false;
         }
+        try {
+            fos.close();
+        } catch (IOException e) {
+        }
         return true;
     }
     /**
@@ -265,9 +274,10 @@ public class GgSecureKeyStore {
             logger.error("Cannot create TrustManagerFactory Instance", e);
             throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
         }
+        FileInputStream inputStream;
         try {
-            keyTrustStore.load(new FileInputStream(trustStoreFilename),
-                    getKeyTrustStorePassword());
+            inputStream = new FileInputStream(trustStoreFilename);
+            keyTrustStore.load(inputStream, getKeyTrustStorePassword());
         } catch (NoSuchAlgorithmException e) {
             logger.error("Cannot create TrustManagerFactory Instance", e);
             throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
@@ -280,6 +290,10 @@ public class GgSecureKeyStore {
         } catch (IOException e) {
             logger.error("Cannot create TrustManagerFactory Instance", e);
             throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
+        }
+        try {
+            inputStream.close();
+        } catch (IOException e2) {
         }
         TrustManagerFactory trustManagerFactory = null;
         try {
@@ -396,6 +410,10 @@ public class GgSecureKeyStore {
         } catch (IOException e) {
             logger.error("Cannot save to file keyTrustStore Instance", e);
             return false;
+        }
+        try {
+            fos.close();
+        } catch (IOException e) {
         }
         return true;
     }
