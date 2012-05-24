@@ -23,10 +23,17 @@ package goldengate.common.database.model;
 import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.jboss.netty.util.Timer;
+
+import oracle.jdbc.pool.OracleConnectionPoolDataSource;
+
+import goldengate.common.database.DbAdmin;
+import goldengate.common.database.DbConnectionPool;
 import goldengate.common.database.DbConstant;
 import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbRequest;
@@ -50,6 +57,9 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
     public static DbType type = DbType.Oracle;
     
+    protected static OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
+    protected static DbConnectionPool pool;
+    
     /* (non-Javadoc)
      * @see goldengate.common.database.model.DbModel#getDbType()
      */
@@ -60,9 +70,63 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
     /**
      * Create the object and initialize if necessary the driver
+     * @param dbserver
+     * @param dbuser
+     * @param dbpasswd
+     * @param timer
+     * @param delay
      * @throws GoldenGateDatabaseNoConnectionError
      */
-    public DbModelOracle() throws GoldenGateDatabaseNoConnectionError {
+    public DbModelOracle(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay) throws GoldenGateDatabaseNoConnectionError {
+        this();
+        
+        try {
+            oracleConnectionPoolDataSource = new OracleConnectionPoolDataSource();
+        } catch (SQLException e) {
+            // then no pool
+            oracleConnectionPoolDataSource = null;
+            return;
+        }
+        oracleConnectionPoolDataSource.setURL(dbserver);
+        oracleConnectionPoolDataSource.setUser(dbuser);
+        oracleConnectionPoolDataSource.setPassword(dbpasswd);
+        pool = new DbConnectionPool(oracleConnectionPoolDataSource, timer, delay); 
+        logger.warn("Some info: MaxConn: "+pool.getMaxConnections()+" LogTimeout: "+pool.getLoginTimeout()
+                + " ForceClose: "+pool.getTimeoutForceClose());
+    }
+
+
+    /**
+     * Create the object and initialize if necessary the driver
+     * @param dbserver
+     * @param dbuser
+     * @param dbpasswd
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    public DbModelOracle(String dbserver, String dbuser, String dbpasswd) throws GoldenGateDatabaseNoConnectionError {
+        this();
+
+        try {
+            oracleConnectionPoolDataSource = new OracleConnectionPoolDataSource();
+        } catch (SQLException e) {
+            // then no pool
+            oracleConnectionPoolDataSource = null;
+            return;
+        }
+        oracleConnectionPoolDataSource.setURL(dbserver);
+        oracleConnectionPoolDataSource.setUser(dbuser);
+        oracleConnectionPoolDataSource.setPassword(dbpasswd);
+        pool = new DbConnectionPool(oracleConnectionPoolDataSource); 
+        logger.warn("Some info: MaxConn: "+pool.getMaxConnections()+" LogTimeout: "+pool.getLoginTimeout()
+                + " ForceClose: "+pool.getTimeoutForceClose());
+    }
+
+
+    /**
+     * Create the object and initialize if necessary the driver
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    protected DbModelOracle() throws GoldenGateDatabaseNoConnectionError {
         if (DbModelFactory.classLoaded) {
             return;
         }
@@ -79,6 +143,33 @@ public abstract class DbModelOracle extends DbModelAbstract {
         }
     }
 
+    @Override
+    public void releaseResources() {
+        try {
+            if (pool != null) {
+                pool.dispose();
+                pool = null;
+            }
+        } catch (SQLException e) {
+        }
+    }
+
+    @Override
+    public int currentNumberOfPooledConnections() {
+        if (pool != null)
+            return pool.getActiveConnections();
+        return DbAdmin.getNbConnection();
+    }
+
+    @Override
+    public Connection getDbConnection(String server, String user, String passwd)
+            throws SQLException {
+        if (pool == null) {
+            return super.getDbConnection(server, user, passwd);
+        }
+        return pool.getConnection();
+    }
+    
     protected static enum DBType {
         CHAR(Types.CHAR, " CHAR(3) "),
         VARCHAR(Types.VARCHAR, " VARCHAR2(254) "),

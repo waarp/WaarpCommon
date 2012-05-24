@@ -23,11 +23,18 @@ package goldengate.common.database.model;
 import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.jboss.netty.util.Timer;
+
+import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
+
+import goldengate.common.database.DbAdmin;
+import goldengate.common.database.DbConnectionPool;
 import goldengate.common.database.DbConstant;
 import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbRequest;
@@ -51,6 +58,9 @@ public abstract class DbModelMysql extends DbModelAbstract {
 
     public static DbType type = DbType.MySQL;
     
+    protected static MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
+    protected static DbConnectionPool pool;
+    
     /* (non-Javadoc)
      * @see goldengate.common.database.model.DbModel#getDbType()
      */
@@ -58,12 +68,50 @@ public abstract class DbModelMysql extends DbModelAbstract {
     public DbType getDbType() {
         return type;
     }
-
+    
+    /**
+     * Create the object and initialize if necessary the driver
+     * @param dbserver
+     * @param dbuser
+     * @param dbpasswd
+     * @param timer
+     * @param delay
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    public DbModelMysql(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay) throws GoldenGateDatabaseNoConnectionError {
+        this();
+        mysqlConnectionPoolDataSource = new MysqlConnectionPoolDataSource();
+        mysqlConnectionPoolDataSource.setUrl(dbserver);
+        mysqlConnectionPoolDataSource.setUser(dbuser);
+        mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+        // Create a pool with no limit
+        pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay); 
+        logger.warn("Some info: MaxConn: "+pool.getMaxConnections()+" LogTimeout: "+pool.getLoginTimeout()
+                + " ForceClose: "+pool.getTimeoutForceClose());
+    }    
+    /**
+     * Create the object and initialize if necessary the driver
+     * @param dbserver
+     * @param dbuser
+     * @param dbpasswd
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    public DbModelMysql(String dbserver, String dbuser, String dbpasswd) throws GoldenGateDatabaseNoConnectionError {
+        this();
+        mysqlConnectionPoolDataSource = new MysqlConnectionPoolDataSource();
+        mysqlConnectionPoolDataSource.setUrl(dbserver);
+        mysqlConnectionPoolDataSource.setUser(dbuser);
+        mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+        // Create a pool with no limit
+        pool = new DbConnectionPool(mysqlConnectionPoolDataSource); 
+        logger.warn("Some info: MaxConn: "+pool.getMaxConnections()+" LogTimeout: "+pool.getLoginTimeout()
+                + " ForceClose: "+pool.getTimeoutForceClose());
+    }
     /**
      * Create the object and initialize if necessary the driver
      * @throws GoldenGateDatabaseNoConnectionError
      */
-    public DbModelMysql() throws GoldenGateDatabaseNoConnectionError {
+    protected DbModelMysql() throws GoldenGateDatabaseNoConnectionError {
         if (DbModelFactory.classLoaded) {
             return;
         }
@@ -77,8 +125,33 @@ public abstract class DbModelMysql extends DbModelAbstract {
             throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot load database drive:" + type.name(), e);
         }
-
     }
+    
+    @Override
+    public void releaseResources() {
+        try {
+            if (pool != null)
+                pool.dispose();
+        } catch (SQLException e) {
+        }
+    }
+
+    @Override
+    public int currentNumberOfPooledConnections() {
+        if (pool != null)
+            return pool.getActiveConnections();
+        return DbAdmin.getNbConnection();
+    }
+    
+    @Override
+    public Connection getDbConnection(String server, String user, String passwd)
+            throws SQLException {
+        if (pool != null)
+            return pool.getConnection();
+        return super.getDbConnection(server, user, passwd);
+    }
+
+
 
     protected static enum DBType {
         CHAR(Types.CHAR, " CHAR(3) "),

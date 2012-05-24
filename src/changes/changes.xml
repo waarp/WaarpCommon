@@ -6,6 +6,8 @@
 	</properties>
 	<body>
 		<release version="1.1.10" date="2012-04-01" description="Fix release">
+			<action dev="Frederic Bregier" type="add">Add Pooling connection support for H2, MySQL and Oracle (PostgreSql not ready)</action>
+			<action dev="Frederic Bregier" type="add">Add GgThreadFactory</action>
 			<action dev="Frederic Bregier" type="add">Add Cache LRU support</action>
 			<action dev="Frederic Bregier" type="fix">Logger optimization</action>
 			<action dev="Frederic Bregier" type="fix">Change Directory optimization when unchecked</action>

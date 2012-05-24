@@ -362,6 +362,9 @@ public class DbAdmin {
             }
         }
         listConnection.clear();
+        if (DbModelFactory.dbModel != null) {
+            DbModelFactory.dbModel.releaseResources();
+        }
     }
 
     /**

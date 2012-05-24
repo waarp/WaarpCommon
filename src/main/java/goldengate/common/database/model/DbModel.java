@@ -20,6 +20,9 @@
  */
 package goldengate.common.database.model;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import goldengate.common.database.DbSession;
 import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
 import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
@@ -35,6 +38,26 @@ import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
  *
  */
 public interface DbModel {
+    /**
+     * 
+     * @param server
+     * @param user
+     * @param passwd
+     * @return a connection according to the underlying Database Model
+     * @throws SQLException
+     */
+    public Connection getDbConnection(String server, String user, String passwd) throws SQLException;
+    
+    /**
+     * Release any internal resources if needed
+     */
+    public void releaseResources();
+    
+    /**
+     * 
+     * @return the number of Pooled Connections if any
+     */
+    public int currentNumberOfPooledConnections();
     /**
      * 
      * @return the current DbType used

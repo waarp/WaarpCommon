@@ -76,7 +76,26 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
             throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot load database drive:" + type.name(), e);
         }
+        // No pooling connection yet available through URL and not for production purpose
+        /*
+        PGPoolingDataSource source = new PGPoolingDataSource();
+        source.setDataSourceName("A Data Source");
+        source.setServerName("localhost");
+        source.setDatabaseName("test");
+        source.setUser("testuser");
+        source.setPassword("testpassword");
+        source.setMaxConnections(10);
+        */
     }
+    
+    @Override
+    public void validConnection(DbSession dbSession)
+            throws GoldenGateDatabaseNoConnectionError {
+        // to prevent bug with isValid() not yet implemented in release 901 April 2012
+        validConnectionSelect(dbSession);
+    }
+
+
 
     protected static enum DBType {
         CHAR(Types.CHAR, " CHAR(3) "),

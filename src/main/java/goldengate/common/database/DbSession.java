@@ -23,7 +23,6 @@ import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.LinkedList;
@@ -169,7 +168,7 @@ public class DbSession {
                     "Cannot set a null Server");
         }
         try {
-            conn = DriverManager.getConnection(server, user, passwd);
+            conn = DbModelFactory.dbModel.getDbConnection(server, user, passwd);
             conn.setAutoCommit(true);
             this.isReadOnly = isReadOnly;
             conn.setReadOnly(this.isReadOnly);
@@ -204,7 +203,7 @@ public class DbSession {
                     "DbAdmin not initialzed");
         }
         try {
-            conn = DriverManager.getConnection(admin.getServer(),
+            conn = DbModelFactory.dbModel.getDbConnection(admin.getServer(),
                     admin.getUser(), admin.getPasswd());
             conn.setAutoCommit(true);
             this.isReadOnly = isReadOnly;
@@ -265,7 +264,7 @@ public class DbSession {
         }
         try {
             this.autoCommit = autoCommit;
-            conn = DriverManager.getConnection(server, user, passwd);
+            conn = DbModelFactory.dbModel.getDbConnection(server, user, passwd);
             conn.setAutoCommit(this.autoCommit);
             this.isReadOnly = isReadOnly;
             conn.setReadOnly(this.isReadOnly);
@@ -302,7 +301,7 @@ public class DbSession {
         }
         try {
             this.autoCommit = autoCommit;
-            conn = DriverManager.getConnection(admin.getServer(),
+            conn = DbModelFactory.dbModel.getDbConnection(admin.getServer(),
                     admin.getUser(), admin.getPasswd());
             conn.setAutoCommit(this.autoCommit);
             this.isReadOnly = isReadOnly;
@@ -418,6 +417,7 @@ public class DbSession {
             logger.warn("Disconnection not OK");
             error(e);
         }
+        logger.info("Current cached connection: "+DbModelFactory.dbModel.currentNumberOfPooledConnections());
     }
 
     /**

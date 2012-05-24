@@ -23,10 +23,14 @@ package goldengate.common.database.model;
 import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.h2.jdbcx.JdbcConnectionPool;
+
+import goldengate.common.database.DbAdmin;
 import goldengate.common.database.DbConstant;
 import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbRequest;
@@ -50,6 +54,8 @@ public abstract class DbModelH2 extends DbModelAbstract {
 
     public static DbType type = DbType.H2;
     
+    protected static JdbcConnectionPool pool;
+    
     /* (non-Javadoc)
      * @see goldengate.common.database.model.DbModel#getDbType()
      */
@@ -60,9 +66,24 @@ public abstract class DbModelH2 extends DbModelAbstract {
     
     /**
      * Create the object and initialize if necessary the driver
+     * @param dbserver
+     * @param dbuser
+     * @param dbpasswd
      * @throws GoldenGateDatabaseNoConnectionError
      */
-    public DbModelH2() throws GoldenGateDatabaseNoConnectionError {
+    public DbModelH2(String dbserver, String dbuser, String dbpasswd) throws GoldenGateDatabaseNoConnectionError {
+        this();
+        pool = JdbcConnectionPool.create(dbserver, dbuser, dbpasswd);
+        pool.setMaxConnections(DbConstant.MAXCONNECTION);
+        pool.setLoginTimeout(DbConstant.DELAYMAXCONNECTION);
+        logger.warn("Some info: MaxConn: "+pool.getMaxConnections()+" LogTimeout: "+pool.getLoginTimeout());
+    }
+
+    /**
+     * Create the object and initialize if necessary the driver
+     * @throws GoldenGateDatabaseNoConnectionError
+     */
+    protected DbModelH2() throws GoldenGateDatabaseNoConnectionError {
         if (DbModelFactory.classLoaded) {
             return;
         }
@@ -76,8 +97,30 @@ public abstract class DbModelH2 extends DbModelAbstract {
             throw new GoldenGateDatabaseNoConnectionError(
                     "Cannot load database drive:" + type.name(), e);
         }
-
     }
+
+    @Override
+    public void releaseResources() {
+        if (pool != null)
+            pool.dispose();
+    }
+
+    @Override
+    public int currentNumberOfPooledConnections() {
+        if (pool != null)
+            return pool.getActiveConnections();
+        return DbAdmin.getNbConnection();
+    }
+
+    @Override
+    public Connection getDbConnection(String server, String user, String passwd)
+            throws SQLException {
+        if (pool != null)
+            return pool.getConnection();
+        return super.getDbConnection(server, user, passwd);
+    }
+
+
 
     protected static enum DBType {
         CHAR(Types.CHAR, " CHAR(3) "),
