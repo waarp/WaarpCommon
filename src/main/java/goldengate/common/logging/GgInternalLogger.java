@@ -36,7 +36,7 @@ import org.jboss.netty.logging.InternalLogger;
  *
  */
 public abstract class GgInternalLogger implements InternalLogger {
-    private static int BASELEVEL = 2;
+    private static int BASELEVEL;
     /**
      * Determine the good level
      * @return the default base level

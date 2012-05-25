@@ -123,7 +123,6 @@ public abstract class PassthroughBasedFileImpl implements
         } catch (PassthroughException e1) {
             throw new Reply450Exception(e1.getMessage());
         }
-        // FIXME
         if (append) {
             try {
                 setPosition(file.length());

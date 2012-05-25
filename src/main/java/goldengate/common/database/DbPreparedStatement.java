@@ -285,7 +285,6 @@ public class DbPreparedStatement {
             DbSession.error(e);
             close();
             rs = null;
-            // FIXME this.realClose();
             ls.checkConnectionNoException();
             throw new GoldenGateDatabaseSqlError(
                     "SQL Exception executeQuery: " + request, e);
@@ -322,7 +321,6 @@ public class DbPreparedStatement {
             logger.error("SQL Exception executeUpdate:" + request + "\n" +
                     e.getMessage());
             DbSession.error(e);
-            // FIXME this.realClose();
             ls.checkConnectionNoException();
             throw new GoldenGateDatabaseSqlError(
                     "SQL Exception executeUpdate: " + request, e);
