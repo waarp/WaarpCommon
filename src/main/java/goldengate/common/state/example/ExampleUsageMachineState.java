@@ -23,7 +23,6 @@ package goldengate.common.state.example;
 import goldengate.common.exception.IllegalFiniteStateException;
 import goldengate.common.logging.GgSlf4JLoggerFactory;
 import goldengate.common.state.MachineState;
-import goldengate.common.state.example.ExampleEnumState;
 import goldengate.common.state.example.ExampleEnumState.ExampleTransition;
 
 import java.util.EnumSet;

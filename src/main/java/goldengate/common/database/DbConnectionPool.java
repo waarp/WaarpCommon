@@ -85,7 +85,7 @@ public class DbConnectionPool {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || ! (o instanceof Con)) return false;
 
             Con con = (Con) o;
 
@@ -114,7 +114,7 @@ public class DbConnectionPool {
          * @param delay
          * @param pool
          */
-        public TimerTaskCheckConnections(Timer timer, long delay, DbConnectionPool pool) {
+        private TimerTaskCheckConnections(Timer timer, long delay, DbConnectionPool pool) {
             if (pool == null || timer == null || delay < 1000) {
                 throw new IllegalArgumentException("Invalid values. Need pool, timer and delay >= 1000");
             }

@@ -54,7 +54,7 @@ public class GgX509TrustManager implements X509TrustManager {
      * @throws CryptoException
      */
     public GgX509TrustManager(TrustManagerFactory tmf) throws CryptoException {
-        TrustManager tms[] = tmf.getTrustManagers();
+        TrustManager []tms = tmf.getTrustManagers();
         /**
          * Iterate over the returned trustmanagers, look for an instance
          * of X509TrustManager and use it as the default

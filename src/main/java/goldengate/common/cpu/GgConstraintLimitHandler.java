@@ -67,10 +67,10 @@ public abstract class GgConstraintLimitHandler implements Runnable {
     private long limitLowBandwidth = 10000;
     private GlobalTrafficShapingHandler handler;
     private ScheduledThreadPoolExecutor executor = null;
-    private class CurLimits {
+    private static class CurLimits {
         long read;
         long write;
-        public CurLimits(long read, long write) {
+        private CurLimits(long read, long write) {
             this.read = read;
             this.write = write;
         }
@@ -161,7 +161,7 @@ public abstract class GgConstraintLimitHandler implements Runnable {
         } else if (percentageDecreaseRatio >= 1) {
             percentageDecreaseRatio /= 100;
         }
-        if (delay < WAITFORNETOP/2) {
+        if (delay < WAITFORNETOP >> 1) {
             this.delay = WAITFORNETOP;
         }
         this.handler = handler;
@@ -207,7 +207,7 @@ public abstract class GgConstraintLimitHandler implements Runnable {
     private double getLastLA() {
         long newTime = System.currentTimeMillis();
         // first check if last test was done too shortly
-        if ((newTime - lastTime) < (WAITFORNETOP/2)) {
+        if ((newTime - lastTime) < (WAITFORNETOP >> 1)) {
             // If last test was wrong, then redo the test
             if (lastLA <= cpuLimit) {
                 // last test was OK, so Continue
@@ -269,7 +269,7 @@ public abstract class GgConstraintLimitHandler implements Runnable {
     public boolean checkConstraintsSleep(int step) {
         if (! isServer)
             return false;
-        long delay = WAITFORNETOP/2;
+        long delay = WAITFORNETOP >> 1;
         if ((useCpuLimits) && cpuLimit < 1 && cpuLimit > 0) {
             long newTime = System.currentTimeMillis();
             // first check if last test was done too shortly

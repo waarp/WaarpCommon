@@ -26,9 +26,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
 import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
-import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlException;
 
 /**
  * Class to handle request
@@ -62,9 +62,9 @@ public class DbRequest {
      * Create a new request from the DbSession
      * 
      * @param ls
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public DbRequest(DbSession ls) throws GoldenGateDatabaseNoConnectionError {
+    public DbRequest(DbSession ls) throws GoldenGateDatabaseNoConnectionException {
         if (ls.isDisconnected) {
             ls.checkConnection();
         }
@@ -75,17 +75,17 @@ public class DbRequest {
      * Create a statement with some particular options
      * 
      * @return the new Statement
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     private Statement createStatement()
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (ls == null) {
-            throw new GoldenGateDatabaseNoConnectionError("No connection");
+            throw new GoldenGateDatabaseNoConnectionException("No connection");
         }
         if (ls.conn == null) {
-            throw new GoldenGateDatabaseNoConnectionError("No connection");
+            throw new GoldenGateDatabaseNoConnectionException("No connection");
         }
         if (ls.isDisconnected) {
             ls.checkConnection();
@@ -97,7 +97,7 @@ public class DbRequest {
             try {
                 return ls.conn.createStatement();
             } catch (SQLException e1) {
-                throw new GoldenGateDatabaseSqlError(
+                throw new GoldenGateDatabaseSqlException(
                         "Error while Create Statement", e);
             }
         }
@@ -108,12 +108,12 @@ public class DbRequest {
      * an update/insert/delete. The previous statement and resultSet are closed.
      * 
      * @param select
-     * @throws GoldenGateDatabaseSqlError
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlException
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public void select(String select)
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         close();
         stmt = createStatement();
         // rs = stmt.executeQuery(select);
@@ -128,7 +128,7 @@ public class DbRequest {
                     e.getMessage());
             DbSession.error(e);
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError("SQL Exception Request:" +
+            throw new GoldenGateDatabaseSqlException("SQL Exception Request:" +
                     select, e);
         }
     }
@@ -139,11 +139,11 @@ public class DbRequest {
      * 
      * @param query
      * @return the number of row in the query
-     * @throws GoldenGateDatabaseSqlError
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlException
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public int query(String query) throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+    public int query(String query) throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         close();
         stmt = createStatement();
         try {
@@ -155,7 +155,7 @@ public class DbRequest {
                     e.getMessage());
             DbSession.error(e);
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError("SQL Exception Request:" +
+            throw new GoldenGateDatabaseSqlException("SQL Exception Request:" +
                     query, e);
         }
     }
@@ -215,19 +215,19 @@ public class DbRequest {
      * Move the cursor to the next result
      * 
      * @return True if there is a next result, else False
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
-    public boolean getNext() throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+    public boolean getNext() throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (rs == null) {
             logger.error("SQL ResultSet is Null into getNext");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "SQL ResultSet is Null into getNext");
         }
         if (ls.isDisconnected) {
             ls.checkConnection();
-            throw new GoldenGateDatabaseSqlError(
+            throw new GoldenGateDatabaseSqlException(
                     "Request cannot be executed since connection was recreated between");
         }
         try {
@@ -236,7 +236,7 @@ public class DbRequest {
             logger.warn("SQL Exception to getNextRow" + "\n" + e.getMessage());
             DbSession.error(e);
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError("SQL Exception to getNextRow",
+            throw new GoldenGateDatabaseSqlException("SQL Exception to getNextRow",
                     e);
         }
     }
@@ -244,11 +244,11 @@ public class DbRequest {
     /**
      * 
      * @return The resultSet (can be used in conjunction of getNext())
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public ResultSet getResultSet() throws GoldenGateDatabaseNoConnectionError {
+    public ResultSet getResultSet() throws GoldenGateDatabaseNoConnectionException {
         if (rs == null) {
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "SQL ResultSet is Null into getResultSet");
         }
         return rs;

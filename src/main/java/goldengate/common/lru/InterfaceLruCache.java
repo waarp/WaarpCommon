@@ -63,7 +63,7 @@ public interface InterfaceLruCache<K, V> {
      * 
      * @param key
      * @param callback
-     * @return
+     * @return Value
      * @throws Exception
      *             if callback throws exception
      */
@@ -77,7 +77,7 @@ public interface InterfaceLruCache<K, V> {
      * @param callback
      * @param ttl
      *            time to live in milliseconds
-     * @return
+     * @return Value
      * @throws Exception
      *             if callback throws exception
      */

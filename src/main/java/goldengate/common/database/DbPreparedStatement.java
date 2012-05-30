@@ -26,8 +26,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
-import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlException;
 
 /**
  * Class to handle PrepareStatement
@@ -71,13 +71,13 @@ public class DbPreparedStatement {
      * Create a DbPreparedStatement from DbSession object
      * 
      * @param ls
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public DbPreparedStatement(DbSession ls)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         if (ls == null) {
             logger.error("SQL Exception PreparedStatement no session");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "PreparedStatement no session");
         }
         if (ls.isDisconnected) {
@@ -94,15 +94,15 @@ public class DbPreparedStatement {
      * 
      * @param ls
      * @param request
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     public DbPreparedStatement(DbSession ls, String request)
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (ls == null) {
             logger.error("SQL Exception PreparedStatement no session");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "PreparedStatement no session");
         }
         if (ls.isDisconnected) {
@@ -114,7 +114,7 @@ public class DbPreparedStatement {
         preparedStatement = null;
         if (request == null) {
             logger.error("SQL Exception PreparedStatement no request");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "PreparedStatement no request");
         }
         try {
@@ -133,7 +133,7 @@ public class DbPreparedStatement {
                 DbSession.error(e);
                 preparedStatement = null;
                 isReady = false;
-                throw new GoldenGateDatabaseSqlError(
+                throw new GoldenGateDatabaseSqlException(
                         "SQL Exception PreparedStatement", e);
             }
         }
@@ -146,15 +146,15 @@ public class DbPreparedStatement {
      * @param request
      * @param nbFetch
      *            the number of pre fetch rows
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     public DbPreparedStatement(DbSession ls, String request, int nbFetch)
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (ls == null) {
             logger.error("SQL Exception PreparedStatement no session");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "PreparedStatement no session");
         }
         if (ls.isDisconnected) {
@@ -166,7 +166,7 @@ public class DbPreparedStatement {
         preparedStatement = null;
         if (request == null) {
             logger.error("SQL Exception PreparedStatement no request");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "PreparedStatement no request");
         }
         try {
@@ -187,7 +187,7 @@ public class DbPreparedStatement {
                 DbSession.error(e);
                 preparedStatement = null;
                 isReady = false;
-                throw new GoldenGateDatabaseSqlError(
+                throw new GoldenGateDatabaseSqlException(
                         "SQL Exception PreparedStatement", e);
             }
         }
@@ -197,15 +197,15 @@ public class DbPreparedStatement {
      * Create a preparedStatement from request
      * 
      * @param requestarg
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     public void createPrepareStatement(String requestarg)
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (requestarg == null) {
             logger.error("createPreparedStatement no request");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "PreparedStatement no request");
         }
         if (preparedStatement != null) {
@@ -234,7 +234,7 @@ public class DbPreparedStatement {
                 realClose();
                 preparedStatement = null;
                 isReady = false;
-                throw new GoldenGateDatabaseSqlError(
+                throw new GoldenGateDatabaseSqlException(
                         "SQL Exception createPreparedStatement: " + requestarg,
                         e);
             }
@@ -245,27 +245,27 @@ public class DbPreparedStatement {
      * In case of closing database connection, it is possible to reopen a long
      * term preparedStatement as it was at creation.
      * 
-     * @throws GoldenGateDatabaseSqlError
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlException
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public void recreatePreparedStatement()
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         this.createPrepareStatement(request);
     }
 
     /**
      * Execute a Select preparedStatement
      * 
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      * 
      */
-    public void executeQuery() throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+    public void executeQuery() throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (preparedStatement == null) {
             logger.error("executeQuery no request");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "executeQuery no request");
         }
         if (rs != null) {
@@ -273,7 +273,7 @@ public class DbPreparedStatement {
         }
         if (ls.isDisconnected) {
             ls.checkConnection();
-            throw new GoldenGateDatabaseSqlError(
+            throw new GoldenGateDatabaseSqlException(
                     "Request cannot be executed since connection was recreated between: " +
                             request);
         }
@@ -286,7 +286,7 @@ public class DbPreparedStatement {
             close();
             rs = null;
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError(
+            throw new GoldenGateDatabaseSqlException(
                     "SQL Exception executeQuery: " + request, e);
         }
     }
@@ -295,14 +295,14 @@ public class DbPreparedStatement {
      * Execute the Update/Insert/Delete preparedStatement
      * 
      * @return the number of row
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
-    public int executeUpdate() throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+    public int executeUpdate() throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (preparedStatement == null) {
             logger.error("executeUpdate no request");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "executeUpdate no request");
         }
         if (rs != null) {
@@ -310,7 +310,7 @@ public class DbPreparedStatement {
         }
         if (ls.isDisconnected) {
             ls.checkConnection();
-            throw new GoldenGateDatabaseSqlError(
+            throw new GoldenGateDatabaseSqlException(
                     "Request cannot be executed since connection was recreated between:" +
                             request);
         }
@@ -322,7 +322,7 @@ public class DbPreparedStatement {
                     e.getMessage());
             DbSession.error(e);
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError(
+            throw new GoldenGateDatabaseSqlException(
                     "SQL Exception executeUpdate: " + request, e);
         }
         return retour;
@@ -366,19 +366,19 @@ public class DbPreparedStatement {
      * Move the cursor to the next result
      * 
      * @return True if there is a next result, else False
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
-    public boolean getNext() throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+    public boolean getNext() throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (rs == null) {
             logger.error("SQL ResultSet is Null into getNext");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "SQL ResultSet is Null into getNext");
         }
         if (ls.isDisconnected) {
             ls.checkConnection();
-            throw new GoldenGateDatabaseSqlError(
+            throw new GoldenGateDatabaseSqlException(
                     "Request cannot be executed since connection was recreated between");
         }
         try {
@@ -387,7 +387,7 @@ public class DbPreparedStatement {
             logger.error("SQL Exception to getNextRow" + "\n" + e.getMessage());
             DbSession.error(e);
             ls.checkConnectionNoException();
-            throw new GoldenGateDatabaseSqlError(
+            throw new GoldenGateDatabaseSqlException(
                     "SQL Exception to getNextRow: " + request, e);
         }
     }
@@ -395,11 +395,11 @@ public class DbPreparedStatement {
     /**
      * 
      * @return The resultSet (can be used in conjunction of getNext())
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public ResultSet getResultSet() throws GoldenGateDatabaseNoConnectionError {
+    public ResultSet getResultSet() throws GoldenGateDatabaseNoConnectionException {
         if (rs == null) {
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "SQL ResultSet is Null into getResultSet");
         }
         return rs;
@@ -409,12 +409,12 @@ public class DbPreparedStatement {
      * 
      * @return The preparedStatement (should be used in conjunction of
      *         createPreparedStatement)
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public PreparedStatement getPreparedStatement()
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         if (preparedStatement == null) {
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "SQL PreparedStatement is Null into getPreparedStatement");
         }
         return preparedStatement;

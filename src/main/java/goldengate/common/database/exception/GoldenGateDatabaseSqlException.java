@@ -25,7 +25,7 @@ package goldengate.common.database.exception;
  * @author Frederic Bregier
  *
  */
-public class GoldenGateDatabaseSqlError extends GoldenGateDatabaseException {
+public class GoldenGateDatabaseSqlException extends GoldenGateDatabaseException {
 
     /**
      *
@@ -35,7 +35,7 @@ public class GoldenGateDatabaseSqlError extends GoldenGateDatabaseException {
     /**
      *
      */
-    public GoldenGateDatabaseSqlError() {
+    public GoldenGateDatabaseSqlException() {
         super();
     }
 
@@ -43,21 +43,21 @@ public class GoldenGateDatabaseSqlError extends GoldenGateDatabaseException {
      * @param arg0
      * @param arg1
      */
-    public GoldenGateDatabaseSqlError(String arg0, Throwable arg1) {
+    public GoldenGateDatabaseSqlException(String arg0, Throwable arg1) {
         super(arg0, arg1);
     }
 
     /**
      * @param arg0
      */
-    public GoldenGateDatabaseSqlError(String arg0) {
+    public GoldenGateDatabaseSqlException(String arg0) {
         super(arg0);
     }
 
     /**
      * @param arg0
      */
-    public GoldenGateDatabaseSqlError(Throwable arg0) {
+    public GoldenGateDatabaseSqlException(Throwable arg0) {
         super(arg0);
     }
 

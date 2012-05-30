@@ -109,7 +109,6 @@ public class SynchronizedLruCache<K, V> extends AbstractLruCache<K, V> {
         return cacheMap.size();
     }
 
-    @Override
     synchronized public void put(K key, V value, long ttl) {
         super.put(key, value, ttl);
     }

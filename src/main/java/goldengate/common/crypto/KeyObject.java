@@ -22,6 +22,8 @@ package goldengate.common.crypto;
 
 import goldengate.common.digest.FilesystemBasedDigest;
 import goldengate.common.exception.CryptoException;
+import goldengate.common.logging.GgInternalLogger;
+import goldengate.common.logging.GgInternalLoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -56,6 +58,12 @@ import javax.crypto.spec.SecretKeySpec;
  *
  */
 public abstract class KeyObject {
+    /**
+     * Internal Logger
+     */
+    private static final GgInternalLogger logger = GgInternalLoggerFactory
+            .getLogger(KeyObject.class);
+    
     /**
      * The True Key associated with this object
      */
@@ -179,7 +187,7 @@ public abstract class KeyObject {
             keyGen.init(getKeySize());
             secretKey = keyGen.generateKey();
         } catch (Exception e) {
-            System.out.println(e);
+            logger.warn("GenerateKey Error", e);
             throw e;
         }
     }
@@ -215,7 +223,7 @@ public abstract class KeyObject {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             return cipher.doFinal(plaintext);
         } catch (Exception e) {
-            System.out.println(e);
+            logger.warn("Crypt Error", e);
             throw e;
         }
     }
@@ -285,7 +293,7 @@ public abstract class KeyObject {
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return cipher.doFinal(ciphertext);
         } catch (Exception e) {
-            System.out.println(e);
+            logger.warn("Decrypt Error", e);
             throw e;
         }
     }

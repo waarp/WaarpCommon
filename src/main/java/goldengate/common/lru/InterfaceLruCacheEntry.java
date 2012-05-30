@@ -30,7 +30,7 @@ public interface InterfaceLruCacheEntry<V> {
     /**
      * Returns value stored in entry or null if entry is not valid
      * 
-     * @return
+     * @return Value
      */
     public V getValue();
 

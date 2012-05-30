@@ -60,7 +60,7 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
      * 
      * @param value
      * @param ttl
-     * @return
+     * @return LruCacheEntry<V>
      */
     protected InterfaceLruCacheEntry<V> createEntry(V value, long ttl) {
         return new StrongReferenceCacheEntry<V>(value, ttl);
@@ -98,7 +98,7 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
      * Returns LruCacheEntry mapped by key or null if it does not exist
      * 
      * @param key
-     * @return
+     * @return LruCacheEntry<V>
      */
     abstract protected InterfaceLruCacheEntry<V> getEntry(K key);
 
@@ -107,7 +107,7 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
      * not valid (LruCacheEntry.getValue() returns null)
      * 
      * @param key
-     * @return
+     * @return Value
      */
     protected V getValue(K key) {
         V value = null;

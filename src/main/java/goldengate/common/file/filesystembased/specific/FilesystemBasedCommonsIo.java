@@ -42,7 +42,7 @@ public class FilesystemBasedCommonsIo {
      */
     public static long freeSpace(String pathname) {
         try {
-            return FileSystemUtils.freeSpaceKb(pathname) * 1024;
+            return FileSystemUtils.freeSpaceKb(pathname) << 10;
         } catch (IOException e) {
             return -1;
         }

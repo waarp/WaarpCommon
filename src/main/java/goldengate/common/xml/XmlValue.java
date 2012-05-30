@@ -742,8 +742,8 @@ public class XmlValue {
             else if (java.sql.Date.class.isAssignableFrom(type)) {
                 return new java.sql.Date(XmlStaticShared.dateFormat.parse(value).getTime());
             } else if (Timestamp.class.isAssignableFrom(type)) {
-                int dotIndex = value.indexOf(".");
-                int spaceIndex = value.indexOf(" ", dotIndex);
+                int dotIndex = value.indexOf('.');
+                int spaceIndex = value.indexOf(' ', dotIndex);
                 if (dotIndex < 0 || spaceIndex < 0) {
                     throw new IllegalArgumentException(
                             "Can not convert value " + value + " to type " +

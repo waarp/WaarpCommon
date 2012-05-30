@@ -32,9 +32,9 @@ import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbRequest;
 import goldengate.common.database.DbSession;
 import goldengate.common.database.data.DbDataModel;
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
 import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
-import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlException;
 
 /**
  * PostGreSQL Database Model implementation
@@ -60,9 +60,9 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 
     /**
      * Create the object and initialize if necessary the driver
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public DbModelPostgresql() throws GoldenGateDatabaseNoConnectionError {
+    public DbModelPostgresql() throws GoldenGateDatabaseNoConnectionException {
         if (DbModelFactory.classLoaded) {
             return;
         }
@@ -73,7 +73,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
          // SQLException
             logger.error("Cannot register Driver " + type.name()+ "\n"+e.getMessage());
             DbSession.error(e);
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot load database drive:" + type.name(), e);
         }
         // No pooling connection yet available through URL and not for production purpose
@@ -90,7 +90,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
     
     @Override
     public void validConnection(DbSession dbSession)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         // to prevent bug with isValid() not yet implemented in release 901 April 2012
         validConnectionSelect(dbSession);
     }
@@ -156,7 +156,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
     }
 
     @Override
-    public void createTables(DbSession session) throws GoldenGateDatabaseNoConnectionError {
+    public void createTables(DbSession session) throws GoldenGateDatabaseNoConnectionException {
         // Create tables: configuration, hosts, rules, runner, cptrunner
         String createTableH2 = "CREATE TABLE ";
         String primaryKey = " PRIMARY KEY ";
@@ -174,15 +174,15 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
         action += ccolumns[ccolumns.length - 1].name() +
                 DBType.getType(DbDataModel.dbTypes[ccolumns.length - 1]) +
                 primaryKey + ")";
-        System.out.println(action);
+        logger.warn(action);
         DbRequest request = new DbRequest(session);
         try {
             request.query(action);
-        } catch (GoldenGateDatabaseNoConnectionError e) {
-            e.printStackTrace();
+        } catch (GoldenGateDatabaseNoConnectionException e) {
+            logger.warn("CreateTables Error", e);
             return;
-        } catch (GoldenGateDatabaseSqlError e) {
-            e.printStackTrace();
+        } catch (GoldenGateDatabaseSqlException e) {
+            logger.warn("CreateTables Error", e);
             return;
         } finally {
             request.close();
@@ -194,13 +194,13 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
             action += icolumns[i].name()+ ", ";
         }
         action += icolumns[icolumns.length-1].name()+ ")";
-        System.out.println(action);
+        logger.warn(action);
         try {
             request.query(action);
-        } catch (GoldenGateDatabaseNoConnectionError e) {
-            e.printStackTrace();
+        } catch (GoldenGateDatabaseNoConnectionException e) {
+            logger.warn("CreateTables Error", e);
             return;
-        } catch (GoldenGateDatabaseSqlError e) {
+        } catch (GoldenGateDatabaseSqlException e) {
             return;
         } finally {
             request.close();
@@ -209,14 +209,14 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
         // example of sequence
         action = "CREATE SEQUENCE " + DbDataModel.fieldseq +
                 " MINVALUE " + (DbConstant.ILLEGALVALUE + 1);
-        System.out.println(action);
+        logger.warn(action);
         try {
             request.query(action);
-        } catch (GoldenGateDatabaseNoConnectionError e) {
-            e.printStackTrace();
+        } catch (GoldenGateDatabaseNoConnectionException e) {
+            logger.warn("CreateTables Error", e);
             return;
-        } catch (GoldenGateDatabaseSqlError e) {
-            e.printStackTrace();
+        } catch (GoldenGateDatabaseSqlException e) {
+            logger.warn("CreateTables Error", e);
             return;
         } finally {
             request.close();
@@ -229,22 +229,22 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
      * @see openr66.database.model.DbModel#resetSequence()
      */
     @Override
-    public void resetSequence(DbSession session, long newvalue) throws GoldenGateDatabaseNoConnectionError {
+    public void resetSequence(DbSession session, long newvalue) throws GoldenGateDatabaseNoConnectionException {
         String action = "ALTER SEQUENCE " + DbDataModel.fieldseq +
                 " RESTART WITH " + newvalue;
         DbRequest request = new DbRequest(session);
         try {
             request.query(action);
-        } catch (GoldenGateDatabaseNoConnectionError e) {
-            e.printStackTrace();
+        } catch (GoldenGateDatabaseNoConnectionException e) {
+            logger.warn("ResetSequence Error", e);
             return;
-        } catch (GoldenGateDatabaseSqlError e) {
-            e.printStackTrace();
+        } catch (GoldenGateDatabaseSqlException e) {
+            logger.warn("ResetSequence Error", e);
             return;
         } finally {
             request.close();
         }
-        System.out.println(action);
+        logger.warn(action);
     }
 
     /*
@@ -254,8 +254,8 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
      */
     @Override
     public long nextSequence(DbSession dbSession)
-        throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError, GoldenGateDatabaseNoDataException {
+        throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException, GoldenGateDatabaseNoDataException {
         long result = DbConstant.ILLEGALVALUE;
         String action = "SELECT NEXTVAL('" + DbDataModel.fieldseq + "')";
         DbPreparedStatement preparedStatement = new DbPreparedStatement(
@@ -268,7 +268,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
                 try {
                     result = preparedStatement.getResultSet().getLong(1);
                 } catch (SQLException e) {
-                    throw new GoldenGateDatabaseSqlError(e);
+                    throw new GoldenGateDatabaseSqlException(e);
                 }
                 return result;
             } else {

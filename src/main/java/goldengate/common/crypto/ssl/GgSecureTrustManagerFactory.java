@@ -22,9 +22,7 @@ package goldengate.common.crypto.ssl;
 
 import goldengate.common.exception.CryptoException;
 
-import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
 
 import javax.net.ssl.ManagerFactoryParameters;
 import javax.net.ssl.TrustManager;
@@ -48,9 +46,8 @@ public class GgSecureTrustManagerFactory extends TrustManagerFactorySpi {
     /**
      * Accept all connections
      *
-     * @throws CryptoException
      */
-    public GgSecureTrustManagerFactory() throws CryptoException {
+    public GgSecureTrustManagerFactory() {
         ggTrustManager = new GgX509TrustManager();
         trustManager = new TrustManager[] {
             ggTrustManager };
@@ -114,7 +111,7 @@ public class GgSecureTrustManagerFactory extends TrustManagerFactorySpi {
      * javax.net.ssl.TrustManagerFactorySpi#engineInit(java.security.KeyStore)
      */
     @Override
-    protected void engineInit(KeyStore arg0) throws KeyStoreException {
+    protected void engineInit(KeyStore arg0) {
         // Unused
     }
 
@@ -125,8 +122,7 @@ public class GgSecureTrustManagerFactory extends TrustManagerFactorySpi {
      * ManagerFactoryParameters)
      */
     @Override
-    protected void engineInit(ManagerFactoryParameters arg0)
-            throws InvalidAlgorithmParameterException {
+    protected void engineInit(ManagerFactoryParameters arg0) {
         // Unused
     }
 

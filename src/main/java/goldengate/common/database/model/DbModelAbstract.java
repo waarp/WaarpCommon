@@ -28,8 +28,8 @@ import java.sql.Statement;
 import goldengate.common.database.DbAdmin;
 import goldengate.common.database.DbConstant;
 import goldengate.common.database.DbSession;
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
-import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlException;
 import goldengate.common.logging.GgInternalLogger;
 import goldengate.common.logging.GgInternalLoggerFactory;
 
@@ -50,10 +50,10 @@ public abstract class DbModelAbstract implements DbModel {
      * Recreate the disconnected session
      * 
      * @param dbSession
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     private void recreateSession(DbSession dbSession)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         DbAdmin admin = dbSession.getAdmin();
         if (admin == null) {
             if (dbSession.autoCommit) {
@@ -94,7 +94,7 @@ public abstract class DbModelAbstract implements DbModel {
 
     @Override
     public void validConnection(DbSession dbSession)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         // try to limit the number of check!
         synchronized (dbSession) {
             try {
@@ -119,7 +119,7 @@ public abstract class DbModelAbstract implements DbModel {
                 try {
                     try {
                         recreateSession(dbSession);
-                    } catch (GoldenGateDatabaseNoConnectionError e) {
+                    } catch (GoldenGateDatabaseNoConnectionException e) {
                         closeInternalConnection(dbSession);
                         throw e;
                     }
@@ -127,12 +127,12 @@ public abstract class DbModelAbstract implements DbModel {
                         if (!dbSession.conn.isValid(DbConstant.VALIDTESTDURATION)) {
                             // Not ignored
                             closeInternalConnection(dbSession);
-                            throw new GoldenGateDatabaseNoConnectionError(
+                            throw new GoldenGateDatabaseNoConnectionException(
                                     "Cannot connect to database", e2);
                         }
                     } catch (SQLException e) {
                         closeInternalConnection(dbSession);
-                        throw new GoldenGateDatabaseNoConnectionError(
+                        throw new GoldenGateDatabaseNoConnectionException(
                                 "Cannot connect to database", e);
                     }
                     dbSession.isDisconnected = false;
@@ -140,18 +140,18 @@ public abstract class DbModelAbstract implements DbModel {
                         dbSession.admin.isConnected = true;
                     dbSession.recreateLongTermPreparedStatements();
                     return;
-                } catch (GoldenGateDatabaseSqlError e1) {
+                } catch (GoldenGateDatabaseSqlException e1) {
                     // ignore and will send a No Connection error
                 }
                 closeInternalConnection(dbSession);
-                throw new GoldenGateDatabaseNoConnectionError(
+                throw new GoldenGateDatabaseNoConnectionException(
                         "Cannot connect to database", e2);
             }
         }
     }
 
     public void validConnectionSelect(DbSession dbSession)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         // try to limit the number of check!
         synchronized (dbSession) {
             Statement stmt = null;
@@ -176,7 +176,7 @@ public abstract class DbModelAbstract implements DbModel {
                 try {
                     try {
                         recreateSession(dbSession);
-                    } catch (GoldenGateDatabaseNoConnectionError e) {
+                    } catch (GoldenGateDatabaseNoConnectionException e) {
                         closeInternalConnection(dbSession);
                         throw e;
                     }
@@ -193,7 +193,7 @@ public abstract class DbModelAbstract implements DbModel {
                     } catch (SQLException e) {
                         // Not ignored
                         closeInternalConnection(dbSession);
-                        throw new GoldenGateDatabaseNoConnectionError(
+                        throw new GoldenGateDatabaseNoConnectionException(
                                 "Cannot connect to database", e);
                     }
                     try {
@@ -205,7 +205,7 @@ public abstract class DbModelAbstract implements DbModel {
                                     stmt = null;
                                 }
                                 closeInternalConnection(dbSession);
-                                throw new GoldenGateDatabaseNoConnectionError(
+                                throw new GoldenGateDatabaseNoConnectionException(
                                         "Cannot connect to database");
                             }
                         }
@@ -219,7 +219,7 @@ public abstract class DbModelAbstract implements DbModel {
                         } catch (SQLException e1) {
                         }
                         closeInternalConnection(dbSession);
-                        throw new GoldenGateDatabaseNoConnectionError(
+                        throw new GoldenGateDatabaseNoConnectionException(
                                 "Cannot connect to database", e);
                     }
                     dbSession.isDisconnected = false;
@@ -227,11 +227,11 @@ public abstract class DbModelAbstract implements DbModel {
                         dbSession.admin.isConnected = true;
                     dbSession.recreateLongTermPreparedStatements();
                     return;
-                } catch (GoldenGateDatabaseSqlError e1) {
+                } catch (GoldenGateDatabaseSqlException e1) {
                     // ignore and will send a No Connection error
                 }
                 closeInternalConnection(dbSession);
-                throw new GoldenGateDatabaseNoConnectionError(
+                throw new GoldenGateDatabaseNoConnectionException(
                         "Cannot connect to database", e2);
             } finally {
                 if (stmt != null) {

@@ -24,9 +24,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import goldengate.common.database.DbSession;
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
 import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
-import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlException;
 
 /**
  * Interface for Database Model
@@ -66,31 +66,31 @@ public interface DbModel {
     /**
      * Create all necessary tables into the database
      * @param session SQL session
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public void createTables(DbSession session) throws GoldenGateDatabaseNoConnectionError;
+    public void createTables(DbSession session) throws GoldenGateDatabaseNoConnectionException;
 
     /**
      * Reset the sequence (example)
      * @param session SQL session
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public void resetSequence(DbSession session, long newvalue) throws GoldenGateDatabaseNoConnectionError;
+    public void resetSequence(DbSession session, long newvalue) throws GoldenGateDatabaseNoConnectionException;
 
     /**
      * @param dbSession
      * @return The next unique specialId
      */
     public long nextSequence(DbSession dbSession)
-            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError,
+            throws GoldenGateDatabaseNoConnectionException, GoldenGateDatabaseSqlException,
             GoldenGateDatabaseNoDataException;
 
     /**
      * Validate connection
      * @param dbSession
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public void validConnection(DbSession dbSession) throws GoldenGateDatabaseNoConnectionError;
+    public void validConnection(DbSession dbSession) throws GoldenGateDatabaseNoConnectionException;
 
     /**
      * Add a limit on the request to get the "limit" first rows. Note that

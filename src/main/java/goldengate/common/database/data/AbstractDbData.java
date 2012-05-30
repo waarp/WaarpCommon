@@ -32,9 +32,9 @@ import java.sql.Types;
 import goldengate.common.database.DbPreparedStatement;
 import goldengate.common.database.DbSession;
 import goldengate.common.database.exception.GoldenGateDatabaseException;
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
 import goldengate.common.database.exception.GoldenGateDatabaseNoDataException;
-import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlException;
 
 /**
  * Abstract database table implementation without explicit COMMIT.<br><br>
@@ -270,18 +270,18 @@ public abstract class AbstractDbData {
     protected abstract void setToArray();
     /**
      * Internal function to retrieve data from Array to pull data from database
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseSqlException
      */
-    protected abstract void setFromArray() throws GoldenGateDatabaseSqlError;
+    protected abstract void setFromArray() throws GoldenGateDatabaseSqlException;
     /**
      * Set Value into PreparedStatement
      * @param ps
      * @param value
      * @param rank >= 1
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseSqlException
      */
     static public void setTrueValue(PreparedStatement ps, DbValue value, int rank)
-            throws GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseSqlException {
         try {
             switch (value.type) {
                 case Types.VARCHAR:
@@ -383,15 +383,15 @@ public abstract class AbstractDbData {
                     ps.setBlob(rank, (InputStream) value.value);
                     break;
                 default:
-                    throw new GoldenGateDatabaseSqlError("Type not supported: " +
+                    throw new GoldenGateDatabaseSqlException("Type not supported: " +
                             value.type + " at " + rank);
             }
         } catch (ClassCastException e) {
-            throw new GoldenGateDatabaseSqlError("Setting values casting error: " +
+            throw new GoldenGateDatabaseSqlException("Setting values casting error: " +
                     value.type + " at " + rank, e);
         } catch (SQLException e) {
             DbSession.error(e);
-            throw new GoldenGateDatabaseSqlError("Setting values in error: " +
+            throw new GoldenGateDatabaseSqlException("Setting values in error: " +
                     value.type + " at " + rank, e);
         }
     }
@@ -399,11 +399,11 @@ public abstract class AbstractDbData {
      * Set one value to a DbPreparedStatement
      * @param preparedStatement
      * @param value
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     protected void setValue(DbPreparedStatement preparedStatement, DbValue value)
-            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException, GoldenGateDatabaseSqlException {
         PreparedStatement ps = preparedStatement.getPreparedStatement();
         setTrueValue(ps, value, 1);
     }
@@ -411,12 +411,12 @@ public abstract class AbstractDbData {
      * Set several values to a DbPreparedStatement
      * @param preparedStatement
      * @param values
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     protected void setValues(DbPreparedStatement preparedStatement,
-            DbValue[] values) throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            DbValue[] values) throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         PreparedStatement ps = preparedStatement.getPreparedStatement();
         for (int i = 0; i < values.length; i ++) {
             DbValue value = values[i];
@@ -427,10 +427,10 @@ public abstract class AbstractDbData {
      * Get one value into DbValue from ResultSet
      * @param rs
      * @param value
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseSqlException
      */
     static public void getTrueValue(ResultSet rs, DbValue value)
-            throws GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseSqlException {
         try {
             switch (value.type) {
                 case Types.VARCHAR:
@@ -476,12 +476,12 @@ public abstract class AbstractDbData {
                     value.value = rs.getBlob(value.column).getBinaryStream();
                     break;
                 default:
-                    throw new GoldenGateDatabaseSqlError("Type not supported: " +
+                    throw new GoldenGateDatabaseSqlException("Type not supported: " +
                             value.type + " for " + value.column);
             }
         } catch (SQLException e) {
             DbSession.error(e);
-            throw new GoldenGateDatabaseSqlError("Getting values in error: " +
+            throw new GoldenGateDatabaseSqlException("Getting values in error: " +
                     value.type + " for " + value.column, e);
         }
     }
@@ -489,11 +489,11 @@ public abstract class AbstractDbData {
      * Get one value into DbValue from DbPreparedStatement
      * @param preparedStatement
      * @param value
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     protected void getValue(DbPreparedStatement preparedStatement, DbValue value)
-            throws GoldenGateDatabaseNoConnectionError, GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException, GoldenGateDatabaseSqlException {
         ResultSet rs = preparedStatement.getResultSet();
         getTrueValue(rs, value);
     }
@@ -501,12 +501,12 @@ public abstract class AbstractDbData {
      * Get several values into DbValue from DbPreparedStatement
      * @param preparedStatement
      * @param values
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     protected void getValues(DbPreparedStatement preparedStatement,
-            DbValue[] values) throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            DbValue[] values) throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         ResultSet rs = preparedStatement.getResultSet();
         for (DbValue value: values) {
             getTrueValue(rs, value);
@@ -522,9 +522,9 @@ public abstract class AbstractDbData {
         try {
             getValues(preparedStatement, allFields);
             setFromArray();
-        } catch (GoldenGateDatabaseNoConnectionError e1) {
+        } catch (GoldenGateDatabaseNoConnectionException e1) {
             return false;
-        } catch (GoldenGateDatabaseSqlError e1) {
+        } catch (GoldenGateDatabaseSqlException e1) {
             return false;
         }
         isSaved = true;

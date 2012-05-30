@@ -36,8 +36,7 @@ public class GgThreadFactory implements ThreadFactory {
     }
 
     public Thread newThread(Runnable arg0) {
-        Thread thread = new Thread(arg0);
-        thread.setName(GlobalName+counter.incrementAndGet());
+        Thread thread = new Thread(arg0, GlobalName+counter.incrementAndGet());
         return thread;
     }
 }

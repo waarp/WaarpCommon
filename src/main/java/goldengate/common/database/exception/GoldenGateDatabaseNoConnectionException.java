@@ -25,7 +25,7 @@ package goldengate.common.database.exception;
  * @author Frederic Bregier
  *
  */
-public class GoldenGateDatabaseNoConnectionError extends GoldenGateDatabaseException {
+public class GoldenGateDatabaseNoConnectionException extends GoldenGateDatabaseException {
 
     /**
      *
@@ -35,7 +35,7 @@ public class GoldenGateDatabaseNoConnectionError extends GoldenGateDatabaseExcep
     /**
      *
      */
-    public GoldenGateDatabaseNoConnectionError() {
+    public GoldenGateDatabaseNoConnectionException() {
         super();
     }
 
@@ -43,21 +43,21 @@ public class GoldenGateDatabaseNoConnectionError extends GoldenGateDatabaseExcep
      * @param arg0
      * @param arg1
      */
-    public GoldenGateDatabaseNoConnectionError(String arg0, Throwable arg1) {
+    public GoldenGateDatabaseNoConnectionException(String arg0, Throwable arg1) {
         super(arg0, arg1);
     }
 
     /**
      * @param arg0
      */
-    public GoldenGateDatabaseNoConnectionError(String arg0) {
+    public GoldenGateDatabaseNoConnectionException(String arg0) {
         super(arg0);
     }
 
     /**
      * @param arg0
      */
-    public GoldenGateDatabaseNoConnectionError(Throwable arg0) {
+    public GoldenGateDatabaseNoConnectionException(Throwable arg0) {
         super(arg0);
     }
 

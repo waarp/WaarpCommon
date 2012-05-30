@@ -26,8 +26,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
-import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlException;
 import goldengate.common.database.model.DbType;
 import goldengate.common.database.model.DbModelFactory;
 
@@ -92,12 +92,12 @@ public class DbAdmin {
     /**
      * Validate connection
      * 
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public void validConnection() throws GoldenGateDatabaseNoConnectionError {
+    public void validConnection() throws GoldenGateDatabaseNoConnectionException {
         try {
             DbModelFactory.dbModel.validConnection(session);
-        } catch (GoldenGateDatabaseNoConnectionError e) {
+        } catch (GoldenGateDatabaseNoConnectionException e) {
             session.isDisconnected = true;
             isConnected = false;
             throw e;
@@ -122,17 +122,17 @@ public class DbAdmin {
      * @param server
      * @param user
      * @param passwd
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public DbAdmin(DbType driver, String server, String user, String passwd)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         this.server = server;
         this.user = user;
         this.passwd = passwd;
         this.typeDriver = driver;
         if (typeDriver == null) {
             logger.error("Cannot find TypeDriver:" + driver.name());
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot find database drive:" + driver.name());
         }
         session = new DbSession(this.server, this.user, this.passwd, false);
@@ -159,18 +159,18 @@ public class DbAdmin {
      * @param user
      * @param passwd
      * @param write
-     * @throws GoldenGateDatabaseSqlError
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlException
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public DbAdmin(DbType driver, String server, String user, String passwd,
-            boolean write) throws GoldenGateDatabaseNoConnectionError {
+            boolean write) throws GoldenGateDatabaseNoConnectionException {
         this.server = server;
         this.user = user;
         this.passwd = passwd;
         this.typeDriver = driver;
         if (typeDriver == null) {
             logger.error("Cannot find TypeDriver");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot find database driver");
         }
         if (write) {
@@ -178,7 +178,7 @@ public class DbAdmin {
                 try {
                     session = new DbSession(this.server, this.user,
                             this.passwd, false);
-                } catch (GoldenGateDatabaseNoConnectionError e) {
+                } catch (GoldenGateDatabaseNoConnectionException e) {
                     logger.warn("Attempt of connection in error: " + i);
                     continue;
                 }
@@ -194,7 +194,7 @@ public class DbAdmin {
                 try {
                     session = new DbSession(this.server, this.user,
                             this.passwd, true);
-                } catch (GoldenGateDatabaseNoConnectionError e) {
+                } catch (GoldenGateDatabaseNoConnectionException e) {
                     logger.warn("Attempt of connection in error: " + i);
                     continue;
                 }
@@ -209,7 +209,7 @@ public class DbAdmin {
         session = null;
         isConnected = false;
         logger.error("Cannot connect to Database!");
-        throw new GoldenGateDatabaseNoConnectionError(
+        throw new GoldenGateDatabaseNoConnectionException(
                 "Cannot connect to database");
     }
 
@@ -229,16 +229,16 @@ public class DbAdmin {
      * 
      * @param conn
      * @param isread
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public DbAdmin(Connection conn, boolean isread)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         server = null;
         if (conn == null) {
             session = null;
             isConnected = false;
             logger.error("Cannot Get a Connection from Datasource");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot Get a Connection from Datasource");
         }
         session = new DbSession(conn, isread);
@@ -276,12 +276,12 @@ public class DbAdmin {
     /**
      * Commit on connection (since in autocommit, should not be used)
      * 
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      * 
      */
-    public void commit() throws GoldenGateDatabaseSqlError,
-            GoldenGateDatabaseNoConnectionError {
+    public void commit() throws GoldenGateDatabaseSqlException,
+            GoldenGateDatabaseNoConnectionException {
         if (session != null) {
             session.commit();
         }
@@ -374,7 +374,7 @@ public class DbAdmin {
         for (DbSession session: listConnection.values()) {
             try {
                 session.checkConnection();
-            } catch (GoldenGateDatabaseNoConnectionError e) {
+            } catch (GoldenGateDatabaseNoConnectionException e) {
                 logger.error("Database Connection cannot be reinitialized");
             }
         }

@@ -28,8 +28,8 @@ import java.sql.Savepoint;
 import java.util.LinkedList;
 import java.util.List;
 
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
-import goldengate.common.database.exception.GoldenGateDatabaseSqlError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
+import goldengate.common.database.exception.GoldenGateDatabaseSqlException;
 import goldengate.common.database.model.DbModelFactory;
 
 // Notice, do not import com.mysql.jdbc.*
@@ -108,13 +108,13 @@ public class DbSession {
      * 
      * @param connext
      * @param isReadOnly
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public DbSession(Connection connext, boolean isReadOnly)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         if (connext == null) {
             logger.error("Cannot set a null connection");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot set a null Connection");
         }
         conn = connext;
@@ -130,7 +130,7 @@ public class DbSession {
             error(ex);
             conn = null;
             isDisconnected = true;
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot set properties on connection", ex);
         }
     }
@@ -153,18 +153,18 @@ public class DbSession {
      * @param user
      * @param passwd
      * @param isReadOnly
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseSqlException
      */
     public DbSession(String server, String user, String passwd,
-            boolean isReadOnly) throws GoldenGateDatabaseNoConnectionError {
+            boolean isReadOnly) throws GoldenGateDatabaseNoConnectionException {
         if (!DbModelFactory.classLoaded) {
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "DbAdmin not initialzed");
         }
         if (server == null) {
             conn = null;
             logger.error("Cannot set a null Server");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot set a null Server");
         }
         try {
@@ -181,7 +181,7 @@ public class DbSession {
             logger.error("Cannot create Connection");
             error(ex);
             conn = null;
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot create Connection", ex);
         }
     }
@@ -194,12 +194,12 @@ public class DbSession {
      * 
      * @param admin
      * @param isReadOnly
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseSqlException
      */
     public DbSession(DbAdmin admin, boolean isReadOnly)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         if (!DbModelFactory.classLoaded) {
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "DbAdmin not initialzed");
         }
         try {
@@ -218,13 +218,13 @@ public class DbSession {
             logger.error("Cannot create Connection", ex);
             error(ex);
             conn = null;
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot create Connection", ex);
         } catch (NullPointerException ex) {
             // handle any errors
             logger.error("Cannot create Connection:" + (admin==null), ex);
             conn = null;
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot create Connection", ex);
         }
     }
@@ -247,19 +247,19 @@ public class DbSession {
      * @param passwd
      * @param isReadOnly
      * @param autoCommit
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseSqlException
      */
     public DbSession(String server, String user, String passwd,
             boolean isReadOnly, boolean autoCommit)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         if (!DbModelFactory.classLoaded) {
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "DbAdmin not initialzed");
         }
         if (server == null) {
             conn = null;
             logger.error("Cannot set a null Server");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot set a null Server");
         }
         try {
@@ -277,7 +277,7 @@ public class DbSession {
             logger.error("Cannot create Connection");
             error(ex);
             conn = null;
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot create Connection", ex);
         }
     }
@@ -291,12 +291,12 @@ public class DbSession {
      * @param admin
      * @param isReadOnly
      * @param autoCommit
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseSqlException
      */
     public DbSession(DbAdmin admin, boolean isReadOnly, boolean autoCommit)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         if (!DbModelFactory.classLoaded) {
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "DbAdmin not initialzed");
         }
         try {
@@ -316,7 +316,7 @@ public class DbSession {
             logger.error("Cannot create Connection");
             error(ex);
             conn = null;
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot create Connection", ex);
         }
     }
@@ -325,10 +325,10 @@ public class DbSession {
      * Change the autocommit feature
      * 
      * @param autoCommit
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public void setAutoCommit(boolean autoCommit)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         if (conn != null) {
             this.autoCommit = autoCommit;
             try {
@@ -339,7 +339,7 @@ public class DbSession {
                 error(e);
                 conn = null;
                 isDisconnected = true;
-                throw new GoldenGateDatabaseNoConnectionError(
+                throw new GoldenGateDatabaseNoConnectionException(
                         "Cannot create Connection", e);
             }
         }
@@ -423,15 +423,15 @@ public class DbSession {
     /**
      * Check the connection to the Database and try to reopen it if possible
      * 
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public void checkConnection() throws GoldenGateDatabaseNoConnectionError {
+    public void checkConnection() throws GoldenGateDatabaseNoConnectionException {
         try {
             DbModelFactory.dbModel.validConnection(this);
             isDisconnected = false;
             if (admin != null)
                 admin.isConnected = true;
-        } catch (GoldenGateDatabaseNoConnectionError e) {
+        } catch (GoldenGateDatabaseNoConnectionException e) {
             isDisconnected = true;
             if (admin != null)
                 admin.isConnected = false;
@@ -447,7 +447,7 @@ public class DbSession {
         try {
             checkConnection();
             return true;
-        } catch (GoldenGateDatabaseNoConnectionError e) {
+        } catch (GoldenGateDatabaseNoConnectionException e) {
             return false;
         }
     }
@@ -465,24 +465,24 @@ public class DbSession {
      * Due to a reconnection, recreate all associated long term
      * PreparedStatements
      * 
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     public void recreateLongTermPreparedStatements()
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
-        GoldenGateDatabaseNoConnectionError elast = null;
-        GoldenGateDatabaseSqlError e2last = null;
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
+        GoldenGateDatabaseNoConnectionException elast = null;
+        GoldenGateDatabaseSqlException e2last = null;
         logger.info("RecreateLongTermPreparedStatements: "+listPreparedStatement.size());
         for (DbPreparedStatement longterm: listPreparedStatement) {
             try {
                 longterm.recreatePreparedStatement();
-            } catch (GoldenGateDatabaseNoConnectionError e) {
+            } catch (GoldenGateDatabaseNoConnectionException e) {
                 logger.warn(
                         "Error while recreation of Long Term PreparedStatement",
                         e);
                 elast = e;
-            } catch (GoldenGateDatabaseSqlError e) {
+            } catch (GoldenGateDatabaseSqlException e) {
                 logger.warn(
                         "Error while recreation of Long Term PreparedStatement",
                         e);
@@ -518,14 +518,14 @@ public class DbSession {
     /**
      * Commit everything
      * 
-     * @throws GoldenGateDatabaseSqlError
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseSqlException
+     * @throws GoldenGateDatabaseNoConnectionException
      */
-    public void commit() throws GoldenGateDatabaseSqlError,
-            GoldenGateDatabaseNoConnectionError {
+    public void commit() throws GoldenGateDatabaseSqlException,
+            GoldenGateDatabaseNoConnectionException {
         if (conn == null) {
             logger.warn("Cannot commit since connection is null");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot commit since connection is null");
         }
         if (isDisconnected) {
@@ -536,7 +536,7 @@ public class DbSession {
         } catch (SQLException e) {
             logger.error("Cannot Commit");
             error(e);
-            throw new GoldenGateDatabaseSqlError("Cannot commit", e);
+            throw new GoldenGateDatabaseSqlException("Cannot commit", e);
         }
     }
 
@@ -544,15 +544,15 @@ public class DbSession {
      * Rollback from the savepoint or the last set if null
      * 
      * @param savepoint
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     public void rollback(Savepoint savepoint)
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (conn == null) {
             logger.warn("Cannot rollback since connection is null");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot rollback since connection is null");
         }
         if (isDisconnected) {
@@ -567,7 +567,7 @@ public class DbSession {
         } catch (SQLException e) {
             logger.error("Cannot rollback");
             error(e);
-            throw new GoldenGateDatabaseSqlError("Cannot rollback", e);
+            throw new GoldenGateDatabaseSqlException("Cannot rollback", e);
         }
     }
 
@@ -575,14 +575,14 @@ public class DbSession {
      * Make a savepoint
      * 
      * @return the new savepoint
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
-    public Savepoint savepoint() throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+    public Savepoint savepoint() throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (conn == null) {
             logger.warn("Cannot savepoint since connection is null");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot savepoint since connection is null");
         }
         if (isDisconnected) {
@@ -593,7 +593,7 @@ public class DbSession {
         } catch (SQLException e) {
             logger.error("Cannot savepoint");
             error(e);
-            throw new GoldenGateDatabaseSqlError("Cannot savepoint", e);
+            throw new GoldenGateDatabaseSqlException("Cannot savepoint", e);
         }
     }
 
@@ -601,15 +601,15 @@ public class DbSession {
      * Release the savepoint
      * 
      * @param savepoint
-     * @throws GoldenGateDatabaseNoConnectionError
-     * @throws GoldenGateDatabaseSqlError
+     * @throws GoldenGateDatabaseNoConnectionException
+     * @throws GoldenGateDatabaseSqlException
      */
     public void releaseSavepoint(Savepoint savepoint)
-            throws GoldenGateDatabaseNoConnectionError,
-            GoldenGateDatabaseSqlError {
+            throws GoldenGateDatabaseNoConnectionException,
+            GoldenGateDatabaseSqlException {
         if (conn == null) {
             logger.warn("Cannot release savepoint since connection is null");
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "Cannot release savepoint since connection is null");
         }
         if (isDisconnected) {
@@ -620,7 +620,7 @@ public class DbSession {
         } catch (SQLException e) {
             logger.error("Cannot release savepoint");
             error(e);
-            throw new GoldenGateDatabaseSqlError("Cannot release savepoint", e);
+            throw new GoldenGateDatabaseSqlException("Cannot release savepoint", e);
         }
     }
 }

@@ -22,7 +22,7 @@ package goldengate.common.database.model;
 
 
 import goldengate.common.database.DbAdmin;
-import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionError;
+import goldengate.common.database.exception.GoldenGateDatabaseNoConnectionException;
 
 /**
  * Factory to store the Database Model object
@@ -47,11 +47,11 @@ public class DbModelFactory {
      * @param dbuser
      * @param dbpasswd
      * @param write
-     * @throws GoldenGateDatabaseNoConnectionError
+     * @throws GoldenGateDatabaseNoConnectionException
      */
     public static DbAdmin initialize(String dbdriver, String dbserver,
             String dbuser, String dbpasswd, boolean write)
-            throws GoldenGateDatabaseNoConnectionError {
+            throws GoldenGateDatabaseNoConnectionException {
         DbType type = DbType.getFromDriver(dbdriver);
         switch (type) {
             case H2:
@@ -67,11 +67,11 @@ public class DbModelFactory {
                 //dbModel = new DbModelMysql(dbserver, dbuser, dbpasswd);
                 break;
             default:
-                throw new GoldenGateDatabaseNoConnectionError(
+                throw new GoldenGateDatabaseNoConnectionException(
                         "TypeDriver unknown: " + type);
         }
         if (dbModel == null) {
-            throw new GoldenGateDatabaseNoConnectionError(
+            throw new GoldenGateDatabaseNoConnectionException(
                     "TypeDriver not allocated: " + type);            
         }
         return new DbAdmin(type, dbserver, dbuser, dbpasswd,
