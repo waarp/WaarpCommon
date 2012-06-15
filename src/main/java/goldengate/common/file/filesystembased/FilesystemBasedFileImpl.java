@@ -640,7 +640,13 @@ public abstract class FilesystemBasedFileImpl implements
         long transfert = 0;
         try {
             size = fileChannelIn.size();
-            transfert = fileChannelOut.transferFrom(fileChannelIn, 0, size);
+            int chunkSize = this.session.getBlockSize();
+            while (transfert < size) {
+                if (chunkSize < size - transfert) {
+                    chunkSize = (int) (size - transfert);
+                }
+                transfert += fileChannelOut.transferFrom(fileChannelIn, transfert, chunkSize);
+            }
             fileChannelOut.force(true);
             fileChannelIn.close();
             fileChannelIn = null;

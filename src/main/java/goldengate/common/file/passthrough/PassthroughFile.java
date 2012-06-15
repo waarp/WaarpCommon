@@ -47,6 +47,14 @@ public interface PassthroughFile {
     public boolean renameTo(String path) throws PassthroughException;
     public void position(long position) throws PassthroughException;
     public void flush() throws PassthroughException;
+    /**
+     * Note: be aware to not directly use transferTo or transferFrom at once but
+     * to use them by chunk to prevent memory usage (mmap used under the wood by the JVM)
+     * 
+     * @param out
+     * @return
+     * @throws PassthroughException
+     */
     public long transferTo(FileChannel out) throws PassthroughException;
     public void close() throws PassthroughException;
 
