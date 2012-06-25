@@ -52,7 +52,7 @@ public interface PassthroughFile {
      * to use them by chunk to prevent memory usage (mmap used under the wood by the JVM)
      * 
      * @param out
-     * @return
+     * @return the size in bytes transfered
      * @throws PassthroughException
      */
     public long transferTo(FileChannel out) throws PassthroughException;
