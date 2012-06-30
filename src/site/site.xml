@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="GoldenGate Common">
+<project name="Waarp Common">
   <skin>
   	<groupId>org.apache.maven/skins</groupId>
   	<artifactId>maven-default-skin</artifactId>
@@ -7,19 +7,14 @@
   </skin>
   <publishDate/><version/>
   <bannerLeft>
-    <name>GoldenGate Project</name>
-    <src>images/goldengatesmall.jpg</src>
-    <href>http://openr66.free.fr/</href>
+    <name>Waarp Project</name>
+    <src>images/waarp.jpg</src>
+    <href>http://www.waarp.it</href>
   </bannerLeft>
   <body>
     <links>
-    	<item name="GoldenGate" href="http://openr66.free.fr/"/>
+    	<item name="Waarp" href="http://www.waarp.it/"/>
     </links>
-  	<menu name="GoldenGate Common">
-  		<item name="Overview of GoldenGate Common" href="index.html"/>
-  		<item name="Main page of GoldenGate Common" href="../GoldenGateCommon.html"/>
-  		<item name="GoldenGate Main Project" href="../"/>
-  	</menu>
     <menu ref="reports"/>
   </body>
 </project>
