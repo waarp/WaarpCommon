@@ -1,28 +1,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>GoldenGate</groupId>
-  <artifactId>GoldenGateCommon</artifactId>
+  <artifactId>WaarpCommon</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.11</version>
-  <name>GoldenGateCommon</name>
+  <version>1.2.0</version>
+  <name>Waarp Common</name>
   <description>
-	  The GoldenGate Common project contains several classes that are common with different
-	  sub projects of GoldenGate (FTP, OpenR66, ...). Mainly there are classes for virtual
+	  The Waarp Common project contains several classes that are common with different
+	  sub projects of Waarp (FTP, R66, ...). Mainly there are classes for virtual
 	  Directory and File implementations, Logger interfaces, Common exceptions...
   </description>
-  <url>http://openr66.free.fr/GoldenGateCommon</url>
+  <url>http://waarp.github.com/WaarpDigest</url>
   <inceptionYear>2009</inceptionYear>
-  <scm>
-  	<connection>scm:svn:http://goldengate.svn.sourceforge.net/svnroot/goldengate/GoldenGateCommon/trunk</connection>
-  	<developerConnection>scm:svn:https://goldengate.svn.sourceforge.net/svnroot/goldengate/GoldenGateCommon/trunk</developerConnection>
-  	<url>http://goldengate.svn.sourceforge.net/svnroot/goldengate/GoldenGateCommon/trunk</url>
-  </scm>
   <parent>
-    <groupId>GoldenGate</groupId>
+    <groupId>Waarp</groupId>
     <artifactId>persistence-deps</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
   </parent>
+  <issueManagement>
+	<system>GitHub</system>
+  	<url>https://github.com/waarp/WaarpDigest/issues/</url>
+  </issueManagement>
+  <scm>
+  	<connection>scm:git:git://github.com/waarp/WaarpDigest.git</connection>
+  	<developerConnection>scm:git:git@github.com:YourID/WaarpDigest.git</developerConnection>
+  	<url>https://github.com/waarp/WaarpDigest</url>
+  </scm>
   <licenses>
   	<license>
   		<name>GPL 3.0</name>
@@ -31,9 +34,9 @@
   </licenses>
   <repositories>
   	<repository>
-  		<id>goldengate.releases</id>
-  		<name>GoldenGate releases</name>
-  		<url>http://openr66.free.fr/maven2</url>
+  		<id>waarp.releases</id>
+  		<name>Waarp releases</name>
+  		<url>http://waarp.github.com/Waarp/maven2</url>
   		<releases>
   			<enabled>true</enabled>
   		</releases>
@@ -67,9 +70,9 @@
     	<version>2.3</version>
     </dependency>
     <dependency>
-      <groupId>GoldenGate</groupId>
-      <artifactId>GoldenGateDigest</artifactId>
-      <version>1.0.6</version>
+      <groupId>Waarp</groupId>
+      <artifactId>WaarpDigest</artifactId>
+      <version>1.1.1</version>
     </dependency>
     <dependency>
     	<groupId>org.slf4j</groupId>
@@ -180,7 +183,7 @@
                 <echo message="${project.artifactId}" />
                 <taskdef resource="net/sf/antcontrib/antlib.xml" />
                 <if>
-                <equals arg1="${project.artifactId}" arg2="GoldenGateCommon"/>
+                <equals arg1="${project.artifactId}" arg2="WaarpCommon"/>
                 <then>
                 	<mkdir dir="${project.build.directory}/site"/>
                 </then>
@@ -278,21 +281,21 @@
 	          <windowtitle>${project.name} ${project.version} API Reference</windowtitle>
 	          <additionalparam>
 	            -link http://java.sun.com/javase/6/docs/api/
-	            -link http://www.jboss.org/file-access/default/members/netty/freezone/api/3.1/index.html
+	            -link http://static.netty.io/3.5/api/
 	            -link http://www.slf4j.org/apidocs/
 
-				-group "GoldenGate Common Command Authentication Session and File package" "goldengate.common.command*:goldengate.common.file*"
-				-group "GoldenGate Common Crypto package" "goldengate.common.crypto*"
-				-group "GoldenGate Common Database package" "goldengate.common.database*"
-				-group "GoldenGate Common CPU package" "goldengate.common.cpu*"
-				-group "GoldenGate Common Utility package" "goldengate.common.tar*:goldengate.common.utility*:goldengate.common.xml*"
-				-group "GoldenGate Common Logging and Future package" "goldengate.common.exception*:goldengate.common.future*:goldengate.common.logging*"
+				-group "Waarp Common Command Authentication Session and File package" "org.waarp.common.command*:org.waarp.common.file*"
+				-group "Waarp Common Crypto package" "org.waarp.common.crypto*"
+				-group "Waarp Common Database package" "org.waarp.common.database*"
+				-group "Waarp Common CPU package" "org.waarp.common.cpu*"
+				-group "Waarp Common Utility package" "org.waarp.common.tar*:org.waarp.common.utility*:org.waarp.common.xml*:org.waarp.common.lru*:org.waarp.common.state*:org.waarp.common.role*"
+				-group "Waarp Common Logging and Future package" "org.waarp.common.exception*:org.waarp.common.future*:org.waarp.common.logging*"
 
 	            -sourceclasspath ${basedir}/target/classes
 	          </additionalparam>
 	          <encoding>UTF-8</encoding>
 	          <locale>en_US</locale>
-	          <excludePackageNames>${project.groupId}.example*:${project.groupId}.util.internal*</excludePackageNames>
+	          <excludePackageNames>${project.groupId}.test*:${project.groupId}.example*:${project.groupId}.util.internal*</excludePackageNames>
           </configuration>
           <reports>
            <report>aggregate</report>

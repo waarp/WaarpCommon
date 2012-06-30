@@ -1,12 +1,12 @@
-GoldenGate Common
+Waarp Common
 
-  The GoldenGate Common project contains several classes that are common with different
-  sub projects of GoldenGate (FTP, OpenR66, ...). Mainly there are classes for virtual
+  The Waarp Common project contains several classes that are common with different
+  sub projects of Waarp (FTP, OpenR66, ...). Mainly there are classes for virtual
   Directory and File implementations, Logger interface, XML and Database support and Common exceptions....
 
 Dependency
 
-  It is based mainly on the NETTY framework (NIO great framework support at {{http://www.jboss.org/netty}}
+  This project has Netty framework (NIO great framework support at {{http://netty.io}} as dependency
   and is tend to be really efficient, both in term of memory, threads and network bandwidth.
 
 Specificities
@@ -14,7 +14,6 @@ Specificities
   Mainly there are classes for virtual Directory and File implementations,
   Logger interface, Future object and some Exceptions...
 
-[images/goldengatesmall.jpg] GoldenGate Main Project Logo
+[images/waarp.jpg] Waarp Main Project Logo
 
-  See global GoldenGate project at {{http://openr66.free.fr/}}and particular GoldenGate Common page at
-  {{http://openr66.free.fr/GoldenGateCommon.html}}
+  See global Waarp project at {{http://waarp.github.com/Waarp/}}
