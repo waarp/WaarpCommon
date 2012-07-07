@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-07-06T17:48:32.717">
+<pmd version="4.3" timestamp="2012-07-07T21:43:09.460">
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\command\ReplyCode.java">
 <violation beginline="316" endline="318" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.command" method="getFinalMsg" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
@@ -292,13 +292,19 @@ Avoid empty catch blocks
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\AbstractDir.java">
-<violation beginline="72" endline="78" begincolumn="17" endcolumn="17" rule="NonThreadSafeSingleton" ruleset="Design Rules" package="org.waarp.common.file" class="AbstractDir" method="initWindowsSupport" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#NonThreadSafeSingleton" priority="3">
+<violation beginline="73" endline="76" begincolumn="17" endcolumn="17" rule="NonThreadSafeSingleton" ruleset="Design Rules" package="org.waarp.common.file" class="AbstractDir" method="initWindowsSupport" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#NonThreadSafeSingleton" priority="3">
 Singleton is not thread safe
 </violation>
-<violation beginline="200" endline="200" begincolumn="37" endcolumn="54" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.file" class="AbstractDir" method="getCanonicalPath" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="77" endline="81" begincolumn="17" endcolumn="17" rule="NonThreadSafeSingleton" ruleset="Design Rules" package="org.waarp.common.file" class="AbstractDir" method="initWindowsSupport" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#NonThreadSafeSingleton" priority="3">
+Singleton is not thread safe
+</violation>
+<violation beginline="78" endline="80" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.file" class="AbstractDir" method="initWindowsSupport" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+<violation beginline="203" endline="203" begincolumn="37" endcolumn="54" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.file" class="AbstractDir" method="getCanonicalPath" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
-<violation beginline="202" endline="202" begincolumn="44" endcolumn="62" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.file" class="AbstractDir" method="getCanonicalPath" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="205" endline="205" begincolumn="44" endcolumn="62" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.file" class="AbstractDir" method="getCanonicalPath" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
 </file>
@@ -313,37 +319,40 @@ Private field 'internal' could be made final; it is only initialized in the decl
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java">
-<violation beginline="491" endline="494" begincolumn="19" endcolumn="9" rule="EmptyMethodInAbstractClassShouldBeAbstract" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#EmptyMethodInAbstractClassShouldBeAbstract" priority="1">
+<violation beginline="72" endline="74" begincolumn="9" endcolumn="9" rule="NonStaticInitializer" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#NonStaticInitializer" priority="3">
+Non-static initializers are confusing
+</violation>
+<violation beginline="516" endline="519" begincolumn="19" endcolumn="9" rule="EmptyMethodInAbstractClassShouldBeAbstract" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#EmptyMethodInAbstractClassShouldBeAbstract" priority="1">
 An empty method in an abstract class should be abstract instead
 </violation>
-<violation beginline="509" endline="512" begincolumn="17" endcolumn="44" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="lsInfo" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="534" endline="537" begincolumn="17" endcolumn="44" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="lsInfo" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="614" endline="615" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="mlsxInfo" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="639" endline="640" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="mlsxInfo" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="633" endline="636" begincolumn="17" endcolumn="49" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getFreeSpace" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="658" endline="661" begincolumn="17" endcolumn="49" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getFreeSpace" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="647" endline="647" begincolumn="25" endcolumn="81" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="setUniqueFile" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="672" endline="672" begincolumn="25" endcolumn="81" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="setUniqueFile" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="678" endline="678" begincolumn="33" endcolumn="87" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getCRC" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="703" endline="703" begincolumn="33" endcolumn="87" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getCRC" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="681" endline="682" begincolumn="52" endcolumn="25" rule="EmptyWhileStmt" ruleset="Basic Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getCRC" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
+<violation beginline="706" endline="707" begincolumn="52" endcolumn="25" rule="EmptyWhileStmt" ruleset="Basic Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getCRC" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyWhileStmt" priority="3">
 Avoid empty while statements
 </violation>
-<violation beginline="686" endline="687" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getCRC" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="711" endline="712" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getCRC" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="690" endline="690" begincolumn="25" endcolumn="89" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getCRC" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="715" endline="715" begincolumn="25" endcolumn="89" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getCRC" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="702" endline="702" begincolumn="25" endcolumn="89" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getMD5" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="727" endline="727" begincolumn="25" endcolumn="89" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getMD5" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="714" endline="714" begincolumn="25" endcolumn="89" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getSHA1" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="739" endline="739" begincolumn="25" endcolumn="89" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" method="getSHA1" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
 </file>
@@ -726,6 +735,20 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 <violation beginline="211" endline="213" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.tar" class="ZipUtility" method="createZipFromFiles" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\utility\DetectionUtils.java">
+<violation beginline="29" endline="77" begincolumn="29" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.utility" class="DetectionUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
+All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
+</violation>
+<violation beginline="57" endline="59" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+<violation beginline="64" endline="66" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+<violation beginline="71" endline="73" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
