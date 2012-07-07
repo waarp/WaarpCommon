@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 
+import org.jboss.netty.util.internal.DetectionUtil;
 import org.waarp.common.command.exception.CommandAbstractException;
 import org.waarp.common.command.exception.Reply550Exception;
 import org.waarp.common.command.exception.Reply553Exception;
@@ -41,6 +42,8 @@ import org.waarp.common.file.FileInterface;
 import org.waarp.common.file.OptsMLSxInterface;
 import org.waarp.common.file.SessionInterface;
 import org.waarp.common.file.filesystembased.specific.FilesystemBasedCommonsIo;
+import org.waarp.common.file.filesystembased.specific.FilesystemBasedDirJdk5;
+import org.waarp.common.file.filesystembased.specific.FilesystemBasedDirJdk6;
 import org.waarp.common.file.filesystembased.specific.FilesystemBasedDirJdkAbstract;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
@@ -64,10 +67,32 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 	protected static FilesystemBasedDirJdkAbstract filesystemBasedFtpDirJdk = null;
 
 	/**
+	 * Initialize the filesystem
+	 */
+	{
+		initJdkDependent();
+	}
+	/**
+	 * Init according to internals of JDK
+	 * 
+	 */
+	private static void initJdkDependent() {
+		if (DetectionUtil.javaVersion() >= 6) {
+			filesystemBasedFtpDirJdk = new FilesystemBasedDirJdk6();
+		} else {
+			filesystemBasedFtpDirJdk = new FilesystemBasedDirJdk5();
+		}
+		initWindowsSupport();
+	}
+
+	/**
 	 * Init the dependant object according to internals of JDK
 	 * 
 	 * @param filesystemBasedFtpDirJdkChoice
+	 * 
+	 * @deprecated replaced by initJdkDependent()
 	 */
+	@Deprecated 
 	public static void initJdkDependent(
 			FilesystemBasedDirJdkAbstract filesystemBasedFtpDirJdkChoice) {
 		filesystemBasedFtpDirJdk = filesystemBasedFtpDirJdkChoice;

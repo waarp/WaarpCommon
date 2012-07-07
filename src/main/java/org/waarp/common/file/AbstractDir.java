@@ -29,6 +29,7 @@ import org.waarp.common.command.exception.Reply550Exception;
 import org.waarp.common.command.exception.Reply553Exception;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.utility.DetectionUtils;
 
 /**
  * Abstract Main Implementation of Directory
@@ -59,7 +60,7 @@ public abstract class AbstractDir implements DirInterface {
 	/**
 	 * Hack to say Windows or Unix (root like X:\ or /)
 	 */
-	protected static Boolean ISUNIX = null;
+	protected static Boolean ISUNIX = ! DetectionUtils.isWindows();
 	/**
 	 * Roots for Windows system
 	 */
@@ -72,6 +73,8 @@ public abstract class AbstractDir implements DirInterface {
 		if (ISUNIX == null) {
 			ISUNIX = (!System.getProperty("os.name")
 					.toLowerCase().startsWith("win"));
+		}
+		if (roots == null) {
 			if (!ISUNIX) {
 				roots = File.listRoots();
 			}
