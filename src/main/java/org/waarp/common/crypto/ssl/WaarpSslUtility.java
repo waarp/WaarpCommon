@@ -37,15 +37,17 @@ public class WaarpSslUtility {
 	 * @param channel
 	 */
 	public static void closingSslChannel(Channel channel) {
-		ChannelHandler handler = channel.getPipeline().getFirst();
-		if (handler instanceof SslHandler) {
-			SslHandler sslHandler = (SslHandler) handler;
-			try {
-				sslHandler.close().await();
-			} catch (InterruptedException e) {
+		if (channel.isConnected()) {
+			ChannelHandler handler = channel.getPipeline().getFirst();
+			if (handler instanceof SslHandler) {
+				SslHandler sslHandler = (SslHandler) handler;
+				try {
+					sslHandler.close().await();
+				} catch (InterruptedException e) {
+				}
 			}
+			Channels.close(channel);
 		}
-		Channels.close(channel);
 	}
 	
 	/**
@@ -53,17 +55,19 @@ public class WaarpSslUtility {
 	 * @param channel
 	 */
 	public static void removingSslHandler(Channel channel) {
-		channel.setReadable(true);
-		ChannelHandler handler = channel.getPipeline().getFirst();
-		if (handler instanceof SslHandler) {
-			SslHandler sslHandler = (SslHandler) handler;
-			try {
-				sslHandler.close().await();
-			} catch (InterruptedException e) {
+		if (channel.isConnected()) {
+			channel.setReadable(true);
+			ChannelHandler handler = channel.getPipeline().getFirst();
+			if (handler instanceof SslHandler) {
+				SslHandler sslHandler = (SslHandler) handler;
+				try {
+					sslHandler.close().await();
+				} catch (InterruptedException e) {
+				}
+				channel.setReadable(false);
+				channel.getPipeline().removeFirst();
+				channel.setReadable(true);
 			}
 		}
-		channel.setReadable(false);
-		channel.getPipeline().removeFirst();
-		channel.setReadable(true);
 	}
 }
