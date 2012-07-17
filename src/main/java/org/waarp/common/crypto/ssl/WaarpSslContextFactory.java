@@ -200,6 +200,50 @@ public class WaarpSslContextFactory {
 	}
 
 	/**
+	 * To be called before adding as first entry in the PipelineFactory as<br>
+	 * pipeline.addLast("ssl", sslhandler);<br>
+	 * 
+	 * @param serverMode
+	 *            True if in Server Mode, else False in Client mode
+	 * @param needClientAuth
+	 *            True if the client needs to be authenticated (only if serverMode is True)
+	 * @param renegotiationEnable
+	 *            True if you want to enable renegotiation (security issue CVE-2009-3555)
+	 * @param host
+	 * 			Host for which a resume is allowed
+	 * @param port
+	 * 			port associated with the host for which a resume is allowed
+	 * @param executorService
+	 *            if not Null, gives a specific executorService
+	 * @return the sslhandler
+	 */
+	public SslHandler initPipelineFactory(boolean serverMode,
+			boolean needClientAuth, boolean renegotiationEnable,
+			String host, int port,
+			ExecutorService executorService) {
+		// Add SSL handler first to encrypt and decrypt everything.
+		SSLEngine engine;
+		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode);
+		if (serverMode) {
+			engine = getServerContext().createSSLEngine(host, port);
+			engine.setUseClientMode(false);
+			engine.setNeedClientAuth(needClientAuth);
+		} else {
+			engine = getClientContext().createSSLEngine(host, port);
+			engine.setUseClientMode(true);
+		}
+		SslHandler handler = null;
+		if (executorService != null) {
+			handler = new SslHandler(engine, executorService);
+		} else {
+			handler = new SslHandler(engine);
+		}
+		// Set the RenegotiationEnable or not
+		handler.setEnableRenegotiation(renegotiationEnable);
+		return handler;
+	}
+
+	/**
 	 * 
 	 * @return True if the associated KeyStore has a TrustStore
 	 */
