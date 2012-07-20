@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
 <duplication lines="56" tokens="287">
-<file line="224" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="156" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="224" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="156" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		String primaryKey = " PRIMARY KEY ";
@@ -65,8 +65,8 @@
 </codefragment>
 </duplication>
 <duplication lines="65" tokens="250">
-<file line="356" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
-<file line="302" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java"/>
+<file line="356" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
+<file line="302" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java"/>
 <codefragment>
 <![CDATA[
 			long newposition = ((FilesystemBasedRestartImpl) restart)
@@ -138,8 +138,8 @@
 </codefragment>
 </duplication>
 <duplication lines="47" tokens="241">
-<file line="62" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\DynamicKeyManager.java"/>
-<file line="54" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\KeyManager.java"/>
+<file line="62" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\crypto\DynamicKeyManager.java"/>
+<file line="54" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\crypto\KeyManager.java"/>
 <codefragment>
 <![CDATA[
 	public List<String> initFromList(List<String> keys, String extension) {
@@ -193,8 +193,8 @@
 </codefragment>
 </duplication>
 <duplication lines="52" tokens="201">
-<file line="186" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="105" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="186" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="105" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		VARBINARY(Types.VARBINARY, " BLOB "),
@@ -253,8 +253,8 @@
 </codefragment>
 </duplication>
 <duplication lines="47" tokens="193">
-<file line="170" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="185" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="170" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="185" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <codefragment>
 <![CDATA[
 		DOUBLE(Types.DOUBLE, " DOUBLE "),
@@ -308,8 +308,8 @@
 </codefragment>
 </duplication>
 <duplication lines="35" tokens="191">
-<file line="188" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="220" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="188" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="220" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <codefragment>
 <![CDATA[
 	@Override
@@ -351,8 +351,8 @@
 </codefragment>
 </duplication>
 <duplication lines="46" tokens="184">
-<file line="171" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="105" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="171" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="105" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		VARBINARY(Types.VARBINARY, " BLOB "),
@@ -405,8 +405,8 @@
 </codefragment>
 </duplication>
 <duplication lines="31" tokens="175">
-<file line="192" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="156" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="192" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="156" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		String primaryKey = " PRIMARY KEY ";
@@ -444,8 +444,8 @@
 </codefragment>
 </duplication>
 <duplication lines="55" tokens="167">
-<file line="273" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="236" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="273" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="236" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 			logger.warn("ResetSequences Error", e);
@@ -507,10 +507,10 @@
 </codefragment>
 </duplication>
 <duplication lines="39" tokens="159">
-<file line="139" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="173" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="188" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="107" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="139" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="173" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="188" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="107" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		BLOB(Types.BLOB, " BLOB ");
@@ -556,8 +556,8 @@
 </codefragment>
 </duplication>
 <duplication lines="26" tokens="139">
-<file line="263" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="180" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="263" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="180" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 			return;
@@ -590,8 +590,8 @@
 </codefragment>
 </duplication>
 <duplication lines="39" tokens="137">
-<file line="134" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java"/>
-<file line="183" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java"/>
+<file line="134" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java"/>
+<file line="183" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java"/>
 <codefragment>
 <![CDATA[
 	public static boolean createTarFromFiles(List<File> files, String filename) {
@@ -637,8 +637,8 @@
 </codefragment>
 </duplication>
 <duplication lines="37" tokens="129">
-<file line="132" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java"/>
-<file line="179" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java"/>
+<file line="132" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java"/>
+<file line="179" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java"/>
 <codefragment>
 <![CDATA[
 	public static boolean createZipFromFiles(List<File> files, String filename) {
@@ -682,8 +682,8 @@
 </codefragment>
 </duplication>
 <duplication lines="32" tokens="124">
-<file line="248" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="263" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="248" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="263" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <codefragment>
 <![CDATA[
 			return;
@@ -722,8 +722,8 @@
 </codefragment>
 </duplication>
 <duplication lines="44" tokens="122">
-<file line="141" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
-<file line="134" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java"/>
+<file line="141" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
+<file line="134" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java"/>
 <codefragment>
 <![CDATA[
 	}
@@ -774,8 +774,8 @@
 </codefragment>
 </duplication>
 <duplication lines="29" tokens="118">
-<file line="242" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="205" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="242" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="205" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 				" START WITH " + (DbConstant.ILLEGALVALUE + 1);
@@ -811,10 +811,10 @@
 </codefragment>
 </duplication>
 <duplication lines="20" tokens="111">
-<file line="222" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="253" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="268" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="185" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="222" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="253" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="268" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="185" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		action = "CREATE INDEX IF NOT EXISTS IDX_RUNNER ON " + DbDataModel.table + "(";
@@ -841,8 +841,8 @@
 </codefragment>
 </duplication>
 <duplication lines="16" tokens="111">
-<file line="250" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
-<file line="163" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
+<file line="250" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="163" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
 		return ((FilesystemBasedAuthImpl) getSession().getAuth())
@@ -865,10 +865,10 @@
 </codefragment>
 </duplication>
 <duplication lines="14" tokens="107">
-<file line="192" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="224" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="238" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="156" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="192" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="224" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="238" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="156" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		String primaryKey = " PRIMARY KEY ";
@@ -889,8 +889,8 @@
 </codefragment>
 </duplication>
 <duplication lines="14" tokens="105">
-<file line="284" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
-<file line="188" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
+<file line="284" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="188" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
 	}
@@ -911,8 +911,8 @@
 </codefragment>
 </duplication>
 <duplication lines="23" tokens="104">
-<file line="214" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
-<file line="130" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
+<file line="214" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="130" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
 		String truedir = ((FilesystemBasedAuthImpl) getSession().getAuth())
@@ -942,8 +942,8 @@
 </codefragment>
 </duplication>
 <duplication lines="31" tokens="103">
-<file line="217" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\data\AbstractDbData.java"/>
-<file line="84" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\data\AbstractDbDataWithCommit.java"/>
+<file line="217" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\data\AbstractDbData.java"/>
+<file line="84" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\data\AbstractDbDataWithCommit.java"/>
 <codefragment>
 <![CDATA[
 			isSaved = true;
@@ -981,8 +981,8 @@
 </codefragment>
 </duplication>
 <duplication lines="14" tokens="101">
-<file line="271" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java"/>
-<file line="265" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java"/>
+<file line="271" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java"/>
+<file line="265" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java"/>
 <codefragment>
 <![CDATA[
 					"   option=3 means tar and source is a list of files comma separated");
@@ -1003,8 +1003,8 @@
 </codefragment>
 </duplication>
 <duplication lines="26" tokens="101">
-<file line="259" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
-<file line="432" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
+<file line="259" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
+<file line="432" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
 <codefragment>
 <![CDATA[
 		for (int i = 0; i < pathes.length - 1; i++) {
@@ -1037,8 +1037,8 @@
 </codefragment>
 </duplication>
 <duplication lines="15" tokens="100">
-<file line="361" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
-<file line="412" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
+<file line="361" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
+<file line="412" path="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
 <codefragment>
 <![CDATA[
 	static public Element addOrGetElement(Document doc, String path) {
