@@ -21,9 +21,13 @@
 package org.waarp.common.crypto.ssl;
 
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.Channels;
+import org.jboss.netty.channel.SucceededChannelFuture;
 import org.jboss.netty.handler.ssl.SslHandler;
+import org.waarp.common.logging.WaarpInternalLogger;
+import org.waarp.common.logging.WaarpInternalLoggerFactory;
 
 /**
  * Utilities for SSL support
@@ -32,22 +36,32 @@ import org.jboss.netty.handler.ssl.SslHandler;
  *
  */
 public class WaarpSslUtility {
+    /**
+     * Internal Logger
+     */
+    private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+            .getLogger(WaarpSslUtility.class);
+    
 	/**
 	 * Utility method to close a channel in SSL mode correctly (if any)
 	 * @param channel
 	 */
-	public static void closingSslChannel(Channel channel) {
+	public static ChannelFuture closingSslChannel(Channel channel) {
 		if (channel.isConnected()) {
 			ChannelHandler handler = channel.getPipeline().getFirst();
 			if (handler instanceof SslHandler) {
 				SslHandler sslHandler = (SslHandler) handler;
+				logger.debug("Found SslHandler and wait for Ssl.close()");
 				try {
 					sslHandler.close().await();
 				} catch (InterruptedException e) {
 				}
 			}
-			Channels.close(channel);
+			logger.debug("Close the channel and returns the ChannelFuture");
+			return Channels.close(channel);
 		}
+		logger.debug("Already closed");
+		return new SucceededChannelFuture(channel);
 	}
 	
 	/**
