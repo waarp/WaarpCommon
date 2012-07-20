@@ -128,6 +128,16 @@ public enum ReplyCode {
 	REPLY_230_USER_LOGGED_IN(230),
 
 	/**
+	 * 232 User logged in, authorized by security data exchange.
+	 */
+	REPLY_232_USER_LOGGED_IN(232),
+	
+	/**
+	 * 234 Security data exchange complete.
+	 */
+	REPLY_234_SECURITY_DATA_EXCHANGE_COMPLETE(234),
+	
+	/**
 	 * 250 Requested file action okay, completed.
 	 */
 	REPLY_250_REQUESTED_FILE_ACTION_OKAY(250),
@@ -168,6 +178,11 @@ public enum ReplyCode {
 	 */
 	REPLY_426_CONNECTION_CLOSED_TRANSFER_ABORTED(426),
 
+	/**
+	 * 431 Need some unavailable resource to process security.
+	 */
+	REPLY_431_NEED_UNAVAILABLE_RESOURCE_TO_PROCESS_SECURITY(431),
+	
 	/**
 	 * 450 Requested file action not taken. File unavailable (e.g., file busy).
 	 */
@@ -223,6 +238,26 @@ public enum ReplyCode {
 	 * 532 Need account for storing files.
 	 */
 	REPLY_532_NEED_ACCOUNT_FOR_STORING_FILES(532),
+	
+	/**
+	 * 533 Command protection level denied for policy reasons.
+	 */
+	REPLY_533_COMMAND_PROTECTION_LEVEL_DENIED_FOR_POLICY_REASONS(533),
+	
+	/**
+	 * 534 Request denied for policy reasons.
+	 */
+	REPLY_534_REQUEST_DENIED_FOR_POLICY_REASONS(534),
+	
+	/**
+	 * 535 Failed security check (hash, sequence, etc).
+	 */
+	REPLY_535_FAILED_SECURITY_CHECK(535),
+	
+	/**
+	 * 536 Requested PROT level not supported by mechanism.
+	 */
+	REPLY_536_REQUESTED_PROT_LEVEL_NOT_SUPPORTED(536),
 
 	/**
 	 * 550 Requested action not taken. File unavailable (e.g., file not found, no access).
@@ -402,6 +437,10 @@ public enum ReplyCode {
 				return REPLY_229_ENTERING_PASSIVE_MODE;
 			case 230:
 				return REPLY_230_USER_LOGGED_IN;
+			case 232:
+				return REPLY_232_USER_LOGGED_IN;
+			case 234:
+				return REPLY_234_SECURITY_DATA_EXCHANGE_COMPLETE;
 			case 250:
 				return REPLY_250_REQUESTED_FILE_ACTION_OKAY;
 			case 257:
@@ -418,6 +457,8 @@ public enum ReplyCode {
 				return REPLY_425_CANT_OPEN_DATA_CONNECTION;
 			case 426:
 				return REPLY_426_CONNECTION_CLOSED_TRANSFER_ABORTED;
+			case 431:
+				return REPLY_431_NEED_UNAVAILABLE_RESOURCE_TO_PROCESS_SECURITY;
 			case 450:
 				return REPLY_450_REQUESTED_FILE_ACTION_NOT_TAKEN;
 			case 451:
@@ -440,6 +481,14 @@ public enum ReplyCode {
 				return REPLY_530_NOT_LOGGED_IN;
 			case 532:
 				return REPLY_532_NEED_ACCOUNT_FOR_STORING_FILES;
+			case 533:
+				return REPLY_533_COMMAND_PROTECTION_LEVEL_DENIED_FOR_POLICY_REASONS;
+			case 534:
+				return REPLY_534_REQUEST_DENIED_FOR_POLICY_REASONS;
+			case 535:
+				return REPLY_535_FAILED_SECURITY_CHECK;
+			case 536:
+				return REPLY_536_REQUESTED_PROT_LEVEL_NOT_SUPPORTED;
 			case 550:
 				return REPLY_550_REQUESTED_ACTION_NOT_TAKEN;
 			case 551:

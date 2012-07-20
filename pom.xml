@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>WaarpCommon</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.2</version>
+  <version>1.2.3</version>
   <name>Waarp Common</name>
   <description>
 	  The Waarp Common project contains several classes that are common with different
@@ -142,7 +142,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>1.3.167</version>
+      <version>1.3.168</version>
       <optional>true</optional>
     </dependency>
     <dependency>
