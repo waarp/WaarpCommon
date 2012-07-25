@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-07-20T20:22:00.610">
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\command\ReplyCode.java">
+<pmd version="4.3" timestamp="2012-07-25T18:35:18.095">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\command\ReplyCode.java">
 <violation beginline="351" endline="353" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.command" method="getFinalMsg" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\command\exception\CommandAbstractException.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\command\exception\CommandAbstractException.java">
 <violation beginline="58" endline="58" begincolumn="34" endcolumn="82" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.command.exception" class="CommandAbstractException" method="toString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\cpu\WaarpConstraintLimitHandler.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\cpu\WaarpConstraintLimitHandler.java">
 <violation beginline="254" endline="257" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.cpu" class="WaarpConstraintLimitHandler" method="getLastLA" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
@@ -21,7 +21,7 @@ Avoid instantiation through private constructors from outside of the constructor
 Avoid instantiation through private constructors from outside of the constructor's class.
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\crypto\DynamicKeyManager.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\DynamicKeyManager.java">
 <violation beginline="103" endline="104" begincolumn="35" endcolumn="33" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.crypto" class="DynamicKeyManager" method="initFromList" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
@@ -29,12 +29,12 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\crypto\KeyManager.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\KeyManager.java">
 <violation beginline="95" endline="96" begincolumn="35" endcolumn="33" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.crypto" class="KeyManager" method="initFromList" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\crypto\KeyObject.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\KeyObject.java">
 <violation beginline="73" endline="74" begincolumn="16" endcolumn="9" rule="UncommentedEmptyConstructor" ruleset="Design Rules" package="org.waarp.common.crypto" class="KeyObject" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UncommentedEmptyConstructor" priority="3">
 Document empty constructor
 </violation>
@@ -45,7 +45,7 @@ Avoid if (x != y) ..; else ..;
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\crypto\ssl\WaarpSecureKeyStore.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\ssl\WaarpSecureKeyStore.java">
 <violation beginline="80" endline="80" begincolumn="41" endcolumn="61" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSecureKeyStore" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'getKeyStorePassword' called during object construction
 </violation>
@@ -80,7 +80,7 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\crypto\ssl\WaarpSslContextFactory.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\ssl\WaarpSslContextFactory.java">
 <violation beginline="192" endline="196" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSslContextFactory" method="initPipelineFactory" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
@@ -88,12 +88,15 @@ Avoid if (x != y) ..; else ..;
 Avoid if (x != y) ..; else ..;
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\crypto\ssl\WaarpSslUtility.java">
-<violation beginline="38" endline="87" begincolumn="30" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSslUtility" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\ssl\WaarpSslUtility.java">
+<violation beginline="45" endline="292" begincolumn="30" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSslUtility" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
+<violation beginline="263" endline="263" begincolumn="52" endcolumn="85" rule="AccessorClassGeneration" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSslUtility" method="operationComplete" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AccessorClassGeneration" priority="3">
+Avoid instantiation through private constructors from outside of the constructor's class.
+</violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\DbAdmin.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\DbAdmin.java">
 <violation beginline="136" endline="136" begincolumn="17" endcolumn="33" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.database" class="DbAdmin" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'validConnection' called during object construction
 </violation>
@@ -110,7 +113,7 @@ Overridable method 'validConnection' called during object construction
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\DbConnectionPool.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\DbConnectionPool.java">
 <violation beginline="59" endline="59" begincolumn="22" endcolumn="38" rule="ImmutableField" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" variable="timeOutForceClose" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ImmutableField" priority="3">
 Private field 'timeOutForceClose' could be made final; it is only initialized in the declaration or constructor.
 </violation>
@@ -154,7 +157,7 @@ Avoid empty catch blocks
 Use block level rather than method level synchronization
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\DbPreparedStatement.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\DbPreparedStatement.java">
 <violation beginline="133" endline="134" begincolumn="33" endcolumn="86" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database" class="DbPreparedStatement" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
@@ -168,7 +171,7 @@ New exception is thrown in catch block, original stack trace may be lost
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\DbRequest.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\DbRequest.java">
 <violation beginline="97" endline="98" begincolumn="33" endcolumn="83" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database" class="DbRequest" method="createStatement" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
@@ -176,12 +179,12 @@ New exception is thrown in catch block, original stack trace may be lost
 Ensure that resources like this ResultSet object are closed after use
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\DbSession.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\DbSession.java">
 <violation beginline="89" endline="96" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbSession" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\data\AbstractDbData.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\data\AbstractDbData.java">
 <violation beginline="530" endline="530" begincolumn="27" endcolumn="28" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database.data" class="AbstractDbData" method="getValue" variable="rs" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
 Ensure that resources like this ResultSet object are closed after use
 </violation>
@@ -189,7 +192,7 @@ Ensure that resources like this ResultSet object are closed after use
 Ensure that resources like this ResultSet object are closed after use
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\data\DbDataModel.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\data\DbDataModel.java">
 <violation beginline="234" endline="234" begincolumn="17" endcolumn="28" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.database.data" class="DbDataModel" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'setToArray' called during object construction
 </violation>
@@ -197,7 +200,7 @@ Overridable method 'setToArray' called during object construction
 Overridable method 'select' called during object construction
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\data\DbValue.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\data\DbValue.java">
 <violation beginline="268" endline="286" begincolumn="17" endcolumn="17" rule="MissingBreakInSwitch" ruleset="Design Rules" package="org.waarp.common.database.data" class="DbValue" method="getValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#MissingBreakInSwitch" priority="3">
 A switch statement does not contain a break
 </violation>
@@ -205,7 +208,7 @@ A switch statement does not contain a break
 A switch statement does not contain a break
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelAbstract.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelAbstract.java">
 <violation beginline="68" endline="69" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="recreateSession" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
@@ -258,17 +261,17 @@ An empty method in an abstract class should be abstract instead
 Document empty method
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelFactory.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelFactory.java">
 <violation beginline="29" endline="78" begincolumn="29" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelFactory" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java">
 <violation beginline="53" endline="53" begincolumn="45" endcolumn="48" rule="AssignmentToNonFinalStatic" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelH2" variable="pool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AssignmentToNonFinalStatic" priority="3">
 Possible unsafe assignment to a non-final static field in a constructor.
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java">
 <violation beginline="57" endline="57" begincolumn="56" endcolumn="84" rule="AssignmentToNonFinalStatic" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelMysql" variable="mysqlConnectionPoolDataSource" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AssignmentToNonFinalStatic" priority="3">
 Possible unsafe assignment to a non-final static field in a constructor.
 </violation>
@@ -288,7 +291,7 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java">
 <violation beginline="56" endline="56" begincolumn="57" endcolumn="86" rule="AssignmentToNonFinalStatic" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelOracle" variable="oracleConnectionPoolDataSource" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AssignmentToNonFinalStatic" priority="3">
 Possible unsafe assignment to a non-final static field in a constructor.
 </violation>
@@ -299,7 +302,7 @@ Possible unsafe assignment to a non-final static field in a constructor.
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\AbstractDir.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\AbstractDir.java">
 <violation beginline="73" endline="76" begincolumn="17" endcolumn="17" rule="NonThreadSafeSingleton" ruleset="Design Rules" package="org.waarp.common.file" class="AbstractDir" method="initWindowsSupport" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#NonThreadSafeSingleton" priority="3">
 Singleton is not thread safe
 </violation>
@@ -316,17 +319,17 @@ Position literals first in String comparisons
 Position literals first in String comparisons
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\DataBlock.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\DataBlock.java">
 <violation beginline="80" endline="81" begincolumn="16" endcolumn="9" rule="UncommentedEmptyConstructor" ruleset="Design Rules" package="org.waarp.common.file" class="DataBlock" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UncommentedEmptyConstructor" priority="3">
 Document empty constructor
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\DataBlockSizeEstimator.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\DataBlockSizeEstimator.java">
 <violation beginline="31" endline="31" begincolumn="44" endcolumn="51" rule="ImmutableField" ruleset="Design Rules" package="org.waarp.common.file" class="DataBlockSizeEstimator" variable="internal" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ImmutableField" priority="3">
 Private field 'internal' could be made final; it is only initialized in the declaration or constructor.
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java">
 <violation beginline="72" endline="74" begincolumn="9" endcolumn="9" rule="NonStaticInitializer" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedDirImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#NonStaticInitializer" priority="3">
 Non-static initializers are confusing
 </violation>
@@ -364,7 +367,7 @@ New exception is thrown in catch block, original stack trace may be lost
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java">
 <violation beginline="107" endline="107" begincolumn="29" endcolumn="49" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedFileImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'getFileFromPath' called during object construction
 </violation>
@@ -423,17 +426,17 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedOptsMLSxImpl.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedOptsMLSxImpl.java">
 <violation beginline="78" endline="79" begincolumn="16" endcolumn="9" rule="UncommentedEmptyConstructor" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedOptsMLSxImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UncommentedEmptyConstructor" priority="3">
 Document empty constructor
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\specific\FilesystemBasedCommonsIo.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\specific\FilesystemBasedCommonsIo.java">
 <violation beginline="33" endline="56" begincolumn="39" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.file.filesystembased.specific" class="FilesystemBasedCommonsIo" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java">
 <violation beginline="74" endline="75" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.file.passthrough" class="PassthroughBasedDirImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
@@ -516,7 +519,7 @@ New exception is thrown in catch block, original stack trace may be lost
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java">
 <violation beginline="116" endline="116" begincolumn="29" endcolumn="49" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.file.passthrough" class="PassthroughBasedFileImpl" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'getFileFromPath' called during object construction
 </violation>
@@ -566,7 +569,7 @@ New exception is thrown in catch block, original stack trace may be lost
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\future\WaarpCompletedFuture.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\future\WaarpCompletedFuture.java">
 <violation beginline="66" endline="68" begincolumn="16" endcolumn="9" rule="EmptyMethodInAbstractClassShouldBeAbstract" ruleset="Design Rules" package="org.waarp.common.future" class="WaarpCompletedFuture" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#EmptyMethodInAbstractClassShouldBeAbstract" priority="1">
 An empty method in an abstract class should be abstract instead
 </violation>
@@ -589,7 +592,7 @@ An empty method in an abstract class should be abstract instead
 An empty method in an abstract class should be abstract instead
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\future\WaarpFailedFuture.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\future\WaarpFailedFuture.java">
 <violation beginline="45" endline="47" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.future" class="WaarpFailedFuture" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
@@ -597,7 +600,7 @@ Use block level rather than method level synchronization
 Use block level rather than method level synchronization
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\future\WaarpFuture.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\future\WaarpFuture.java">
 <violation beginline="66" endline="68" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.future" class="WaarpFuture" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
@@ -626,7 +629,7 @@ New exception is thrown in catch block, original stack trace may be lost
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\future\WaarpSucceededFuture.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\future\WaarpSucceededFuture.java">
 <violation beginline="29" endline="31" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.future" class="WaarpSucceededFuture" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
@@ -634,12 +637,12 @@ Use block level rather than method level synchronization
 Use block level rather than method level synchronization
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\logging\WaarpInternalLogger.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\logging\WaarpInternalLogger.java">
 <violation beginline="54" endline="56" begincolumn="9" endcolumn="9" rule="NonStaticInitializer" ruleset="Design Rules" package="org.waarp.common.logging" class="WaarpInternalLogger" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#NonStaticInitializer" priority="3">
 Non-static initializers are confusing
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\lru\SynchronizedLruCache.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\lru\SynchronizedLruCache.java">
 <violation beginline="85" endline="87" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
@@ -659,12 +662,12 @@ Use block level rather than method level synchronization
 Use block level rather than method level synchronization
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\state\example\ExampleUsageMachineState.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\state\example\ExampleUsageMachineState.java">
 <violation beginline="35" endline="108" begincolumn="39" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.state.example" class="ExampleUsageMachineState" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java">
 <violation beginline="41" endline="315" begincolumn="25" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.tar" class="TarUtility" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
@@ -705,7 +708,7 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java">
 <violation beginline="39" endline="309" begincolumn="25" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.tar" class="ZipUtility" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
@@ -746,7 +749,7 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\utility\DetectionUtils.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\utility\DetectionUtils.java">
 <violation beginline="29" endline="77" begincolumn="29" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.utility" class="DetectionUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
@@ -760,7 +763,7 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\utility\WaarpStringUtils.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\utility\WaarpStringUtils.java">
 <violation beginline="43" endline="255" begincolumn="31" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.utility" class="WaarpStringUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
@@ -789,7 +792,7 @@ New exception is thrown in catch block, original stack trace may be lost
 Avoid empty while statements
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\utility\WaarpThreadFactory.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\utility\WaarpThreadFactory.java">
 <violation beginline="28" endline="28" begincolumn="24" endcolumn="33" rule="ImmutableField" ruleset="Design Rules" package="org.waarp.common.utility" class="WaarpThreadFactory" variable="GlobalName" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ImmutableField" priority="3">
 Private field 'GlobalName' could be made final; it is only initialized in the declaration or constructor.
 </violation>
@@ -800,12 +803,12 @@ Private field 'counter' could be made final; it is only initialized in the decla
 Consider simply returning the value vs storing it in local variable 'thread'
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\xml\XmlHash.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlHash.java">
 <violation beginline="40" endline="40" begincolumn="33" endcolumn="50" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlHash" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'put' called during object construction
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\xml\XmlStaticShared.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlStaticShared.java">
 <violation beginline="35" endline="36" begincolumn="50" endcolumn="48" rule="SimpleDateFormatNeedsLocale" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlStaticShared" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SimpleDateFormatNeedsLocale" priority="3">
 When instantiating a SimpleDateFormat object, specify a Locale
 </violation>
@@ -819,7 +822,7 @@ When instantiating a SimpleDateFormat object, specify a Locale
 Non-static initializers are confusing
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java">
 <violation beginline="49" endline="1007" begincolumn="22" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlUtil" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
@@ -842,7 +845,7 @@ Avoid if (x != y) ..; else ..;
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\fredericBregier\WaarpCommon\src\main\java\org\waarp\common\xml\XmlValue.java">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlValue.java">
 <violation beginline="66" endline="66" begincolumn="33" endcolumn="46" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'getType' called during object construction
 </violation>
