@@ -131,6 +131,38 @@ public class DbSession {
 		}
 	}
 
+	private void initialize(String server, String user, String passwd, boolean isReadOnly,
+			boolean autoCommit) throws WaarpDatabaseNoConnectionException {
+		if (!DbModelFactory.classLoaded) {
+			throw new WaarpDatabaseNoConnectionException(
+					"DbAdmin not initialzed");
+		}
+		if (server == null) {
+			conn = null;
+			logger.error("Cannot set a null Server");
+			throw new WaarpDatabaseNoConnectionException(
+					"Cannot set a null Server");
+		}
+		try {
+			this.autoCommit = autoCommit;
+			conn = DbModelFactory.dbModel.getDbConnection(server, user, passwd);
+			conn.setAutoCommit(this.autoCommit);
+			this.isReadOnly = isReadOnly;
+			conn.setReadOnly(this.isReadOnly);
+			setInternalId(this);
+			DbAdmin.addConnection(internalId, this);
+			isDisconnected = false;
+		} catch (SQLException ex) {
+			isDisconnected = true;
+			// handle any errors
+			logger.error("Cannot create Connection");
+			error(ex);
+			conn = null;
+			throw new WaarpDatabaseNoConnectionException(
+					"Cannot create Connection", ex);
+		}
+	}
+
 	/**
 	 * Create a session and connect the current object to the server using the string with the form
 	 * for mysql for instance jdbc:type://[host:port],[failoverhost:port]
@@ -150,33 +182,7 @@ public class DbSession {
 	 */
 	public DbSession(String server, String user, String passwd,
 			boolean isReadOnly) throws WaarpDatabaseNoConnectionException {
-		if (!DbModelFactory.classLoaded) {
-			throw new WaarpDatabaseNoConnectionException(
-					"DbAdmin not initialzed");
-		}
-		if (server == null) {
-			conn = null;
-			logger.error("Cannot set a null Server");
-			throw new WaarpDatabaseNoConnectionException(
-					"Cannot set a null Server");
-		}
-		try {
-			conn = DbModelFactory.dbModel.getDbConnection(server, user, passwd);
-			conn.setAutoCommit(true);
-			this.isReadOnly = isReadOnly;
-			conn.setReadOnly(this.isReadOnly);
-			setInternalId(this);
-			DbAdmin.addConnection(internalId, this);
-			isDisconnected = false;
-		} catch (SQLException ex) {
-			// handle any errors
-			isDisconnected = true;
-			logger.error("Cannot create Connection");
-			error(ex);
-			conn = null;
-			throw new WaarpDatabaseNoConnectionException(
-					"Cannot create Connection", ex);
-		}
+		initialize(server, user, passwd, isReadOnly, true);
 	}
 
 	/**
@@ -191,28 +197,9 @@ public class DbSession {
 	 */
 	public DbSession(DbAdmin admin, boolean isReadOnly)
 			throws WaarpDatabaseNoConnectionException {
-		if (!DbModelFactory.classLoaded) {
-			throw new WaarpDatabaseNoConnectionException(
-					"DbAdmin not initialzed");
-		}
 		try {
-			conn = DbModelFactory.dbModel.getDbConnection(admin.getServer(),
-					admin.getUser(), admin.getPasswd());
-			conn.setAutoCommit(true);
-			this.isReadOnly = isReadOnly;
-			conn.setReadOnly(this.isReadOnly);
-			setInternalId(this);
-			DbAdmin.addConnection(internalId, this);
+			initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, true);
 			this.admin = admin;
-			isDisconnected = false;
-		} catch (SQLException ex) {
-			// handle any errors
-			isDisconnected = true;
-			logger.error("Cannot create Connection", ex);
-			error(ex);
-			conn = null;
-			throw new WaarpDatabaseNoConnectionException(
-					"Cannot create Connection", ex);
 		} catch (NullPointerException ex) {
 			// handle any errors
 			logger.error("Cannot create Connection:" + (admin == null), ex);
@@ -242,34 +229,7 @@ public class DbSession {
 	public DbSession(String server, String user, String passwd,
 			boolean isReadOnly, boolean autoCommit)
 			throws WaarpDatabaseNoConnectionException {
-		if (!DbModelFactory.classLoaded) {
-			throw new WaarpDatabaseNoConnectionException(
-					"DbAdmin not initialzed");
-		}
-		if (server == null) {
-			conn = null;
-			logger.error("Cannot set a null Server");
-			throw new WaarpDatabaseNoConnectionException(
-					"Cannot set a null Server");
-		}
-		try {
-			this.autoCommit = autoCommit;
-			conn = DbModelFactory.dbModel.getDbConnection(server, user, passwd);
-			conn.setAutoCommit(this.autoCommit);
-			this.isReadOnly = isReadOnly;
-			conn.setReadOnly(this.isReadOnly);
-			setInternalId(this);
-			DbAdmin.addConnection(internalId, this);
-			isDisconnected = false;
-		} catch (SQLException ex) {
-			isDisconnected = true;
-			// handle any errors
-			logger.error("Cannot create Connection");
-			error(ex);
-			conn = null;
-			throw new WaarpDatabaseNoConnectionException(
-					"Cannot create Connection", ex);
-		}
+		initialize(server, user, passwd, isReadOnly, autoCommit);
 	}
 
 	/**
@@ -284,26 +244,12 @@ public class DbSession {
 	 */
 	public DbSession(DbAdmin admin, boolean isReadOnly, boolean autoCommit)
 			throws WaarpDatabaseNoConnectionException {
-		if (!DbModelFactory.classLoaded) {
-			throw new WaarpDatabaseNoConnectionException(
-					"DbAdmin not initialzed");
-		}
 		try {
-			this.autoCommit = autoCommit;
-			conn = DbModelFactory.dbModel.getDbConnection(admin.getServer(),
-					admin.getUser(), admin.getPasswd());
-			conn.setAutoCommit(this.autoCommit);
-			this.isReadOnly = isReadOnly;
-			conn.setReadOnly(this.isReadOnly);
-			setInternalId(this);
-			DbAdmin.addConnection(internalId, this);
+			initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
 			this.admin = admin;
-			isDisconnected = false;
-		} catch (SQLException ex) {
+		} catch (NullPointerException ex) {
 			// handle any errors
-			isDisconnected = true;
-			logger.error("Cannot create Connection");
-			error(ex);
+			logger.error("Cannot create Connection:" + (admin == null), ex);
 			conn = null;
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot create Connection", ex);
@@ -364,7 +310,16 @@ public class DbSession {
 	 * To be called when a client will start to use this DbSession (once by client)
 	 */
 	public void useConnection() {
+		if (isDisconnected) {
+			try {
+				initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
+			} catch (WaarpDatabaseNoConnectionException e) {
+				logger.error("ThreadUsing: "+nbThread+" but not connected");
+				return;
+			}
+		}
 		nbThread++;
+		logger.info("ThreadUsing: "+nbThread);
 	}
 
 	/**
@@ -372,6 +327,7 @@ public class DbSession {
 	 */
 	public void endUseConnection() {
 		nbThread--;
+		logger.info("ThreadUsing: "+nbThread);
 		if (nbThread <= 0) {
 			disconnect();
 		}
@@ -392,7 +348,7 @@ public class DbSession {
 			Thread.currentThread().interrupt();
 		}
 		if (nbThread > 0) {
-			logger.info("Still some clients could use this Database Session: " +
+			logger.warn("Still some clients could use this Database Session: " +
 					nbThread);
 		}
 		removeLongTermPreparedStatements();
