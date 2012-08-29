@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>WaarpCommon</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.5</version>
+  <version>1.2.6</version>
   <name>Waarp Common</name>
   <description>
 	  The Waarp Common project contains several classes that are common with different
@@ -155,6 +155,12 @@
     	<groupId>mysql</groupId>
     	<artifactId>mysql-connector-java</artifactId>
     	<version>5.1.21</version>
+    	<optional>true</optional>
+    </dependency>
+    <dependency>
+    	<groupId>commons-daemon</groupId>
+    	<artifactId>commons-daemon</artifactId>
+    	<version>1.0.10</version>
     	<optional>true</optional>
     </dependency>
   </dependencies>
