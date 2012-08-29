@@ -51,8 +51,6 @@ public abstract class ServiceLauncher implements Daemon {
 
     protected ExecutorService executor = null;
     
-	//{ engineLauncherInstance = new XXXServiceLauncher(); }
-
     /**
      * 
      * @return a new EngineAbstract
@@ -71,16 +69,34 @@ public abstract class ServiceLauncher implements Daemon {
     		engine = getNewEngineAbstract();
     	}
     }
+    
+    protected static void initStatic() {
+    	if (!(InternalLoggerFactory.getDefaultFactory() instanceof WaarpSlf4JLoggerFactory)) {
+    		InternalLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
+    	}
+    	if (logger == null) {
+    		logger = WaarpInternalLoggerFactory.getLogger(ServiceLauncher.class);
+    	}
+    	String className = Thread.currentThread().getStackTrace()[3].getClassName();;
+    	logger.debug("Engine " + className);
+    	try {
+			engineLauncherInstance = (ServiceLauncher) Class.forName(className).newInstance();
+		} catch (Exception e) {
+        	logger.error("Engine not correctly initialized", e);
+        	System.exit(2);
+		}
+        if (engineLauncherInstance == null || engine == null) {
+        	logger.error("Engine not correctly initialized");
+        	System.exit(1);
+        }
+    }
+    
     /**
      * The Java entry point.
      * @param args Command line arguments, all ignored.
      */
-    public static void main(String[] args) {
-		InternalLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
-        if (engineLauncherInstance == null || engine == null) {
-        	System.err.println("Engine not correctly initialized");
-        	System.exit(1);
-        }
+    public static void _main(String[] args) {
+    	initStatic();
         // the main routine is only here so I can also run the app from the command line
         engineLauncherInstance.initialize();
 
@@ -94,7 +110,7 @@ public abstract class ServiceLauncher implements Daemon {
         }
         sc.close();
     }
-
+    
     /**
      * Windows mode<br>
      * <br>
@@ -108,15 +124,11 @@ public abstract class ServiceLauncher implements Daemon {
      * </pre> 
      * @param args Arguments from prunsrv command line
      **/
-    public static void windowsService(String args[]) {
-		InternalLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
+    public static void _windowsService(String args[]) {
+    	initStatic();
         String cmd = "start";
         if (args.length > 0) {
             cmd = args[0];
-        }
-        if (engineLauncherInstance == null || engine == null) {
-        	System.err.println("Engine not correctly initialized");
-        	System.exit(1);
         }
         if ("start".equals(cmd)) {
             engineLauncherInstance.windowsStart();
@@ -128,29 +140,53 @@ public abstract class ServiceLauncher implements Daemon {
     /**
      * Windows mode<br>
      * <br>
-     * <pre>
-     * prunsrv.exe //IS/MyService --Classpath=C:\...\xxx.jar --Description="My Java Service" --Jvm=auto --StartMode=jvm --SartClass=org.waarp.xxx.service.ServiceLauncher --StartMethod=start --StopMode=jvm --StopClass=org.waarp.xxx.service.ServiceLauncher --StopMethod=stop
-     * </pre>
-     */
-    public void windowsStart() {
-        logger.debug("windowsStart called");
-        initialize();
-        // Should we wait ?
-        try {
-			engine.getShutdownFuture().await();
-		} catch (InterruptedException e) {
-		}
+     * Static methods called by prunsrv to start
+     * the Windows service.
+     *
+     * <pre> 
+     * prunsrv.exe //IS/MyService --Classpath=C:\...\xxx.jar --Description="My Java Service" --Jvm=auto --StartMode=jvm --StartClass=org.waarp.xxx.service.ServiceLauncher --StartMethod=windowsStart --StopMode=jvm --StopClass=org.waarp.xxx.service.ServiceLauncher --StopMethod=windowsStop
+     * </pre> 
+     * @param args Arguments are ignored
+     **/
+    public static void _windowsStart(String args[]) {
+    	initStatic();
+        engineLauncherInstance.windowsStart();
     }
 
     /**
      * Windows mode<br>
      * <br>
-     * <pre>
-     * prunsrv.exe //IS/MyService --Classpath=C:\...\xxx.jar --Description="My Java Service" --Jvm=auto --SartClass=org.waarp.xxx.service.EngineLauncher --StartMethod=start --StartMode=jvm --StopClass=org.waarp.xxx.service.EngineLauncher --StopMethod=stop --StopMode=jvm
-     * </pre>
+     * Static methods called by prunsrv to stop
+     * the Windows service.
+     *
+     * <pre> 
+     * prunsrv.exe //IS/MyService --Classpath=C:\...\xxx.jar --Description="My Java Service" --Jvm=auto --StartMode=jvm --StartClass=org.waarp.xxx.service.ServiceLauncher --StartMethod=windowsStart --StopMode=jvm --StopClass=org.waarp.xxx.service.ServiceLauncher --StopMethod=windowsStop
+     * </pre> 
+     * @param args Arguments are ignored
+     **/
+    public static void _windowsStop(String args[]) {
+    	initStatic();
+        engineLauncherInstance.windowsStop();
+    }
+
+    /**
+     * Internal command
      */
-    public void windowsStop() {
-        logger.debug("windowsStop called");
+    protected void windowsStart() {
+        logger.info("windowsStart called");
+        initialize();
+        // We must wait in Windows Mode
+        try {
+			engine.waitShutdown();
+		} catch (InterruptedException e) {
+		}
+    }
+
+    /**
+     * Internal command
+     */
+    protected void windowsStop() {
+        logger.info("windowsStop called");
         terminate();
         // should we force Future to be cancelled there?
     }
@@ -158,24 +194,24 @@ public abstract class ServiceLauncher implements Daemon {
     // Implementing the Daemon interface is not required for Windows but is for Linux
     @Override
     public void init(DaemonContext arg0) throws Exception {
-    	logger.debug("Daemon init");
+    	logger.info("Daemon init");
     }
 
     @Override
     public void start() {
-    	logger.debug("Daemon start");
+    	logger.info("Daemon start");
         initialize();
     }
 
     @Override
     public void stop() {
-    	logger.debug("Daemon stop");
+    	logger.info("Daemon stop");
         terminate();
     }
 
     @Override
     public void destroy() {
-    	logger.debug("Daemon destroy");
+    	logger.info("Daemon destroy");
     	if (engine != null && !engine.isShutdown()) {
     		terminate();
     	}
@@ -188,7 +224,7 @@ public abstract class ServiceLauncher implements Daemon {
     /**
      * Do the work of starting the engine
      */
-    private void initialize() {
+    protected void initialize() {
         if (engine != null) {
         	logger.info("Starting the Engine");
         	engine.setDaemon(true);
@@ -201,7 +237,7 @@ public abstract class ServiceLauncher implements Daemon {
     /**
      * Cleanly stop the engine.
      */
-    private void terminate() {
+    protected void terminate() {
         if (engine != null) {
         	logger.info("Stopping the Engine");
             engine.shutdown();

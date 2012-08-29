@@ -20,8 +20,6 @@
  */
 package org.waarp.common.service;
 
-import org.waarp.common.future.WaarpFuture;
-
 /**
  * Abstract class to implement to be able to start or shutdown a service
  * @author Frederic Bregier
@@ -38,8 +36,8 @@ public abstract class EngineAbstract extends Thread {
 	 */
     public abstract boolean isShutdown();
     /**
-     * 
-     * @return the associated future with the service (ending when the service is shutdown)
+     * Return when the service is shutdown
+     * @return True if the service is correctly shutdown, else False if in error
      */
-    public abstract WaarpFuture getShutdownFuture();
+    public abstract boolean waitShutdown() throws InterruptedException;
 }
