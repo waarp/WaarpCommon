@@ -4,8 +4,8 @@ rem -- DO NOT CHANGE THIS ! OR YOU REALLY KNOW WHAT YOU ARE DOING ;)
 
 rem -- Organization: 
 rem -- EXEC_PATH is root (pid will be there)
-rem -- EXEC_PATH/../logs/ will be the log place
-rem -- EXEC_PATH/windows/ is where prunsrv.exe is placed
+rem -- EXEC_PATH\..\logs\ will be the log place
+rem -- EXEC_PATH\windows\ is where prunsrv.exe is placed
 rem -- DAEMON_ROOT is where all you jars are (even commons-daemon)
 rem -- DAEMON_NAME will be the service name
 rem -- SERVICE_DESCRIPTION will be the service description
@@ -45,21 +45,28 @@ set OUT_LOG_FILE=%LOG_PATH%\stdout.txt
 rem -- Startup mode (manual or auto)
 set SERVICE_STARTUP=auto
 
+rem -- JVM option (auto or full path to jvm.dll, if possible pointing to server version)
+rem example: C:\Program Files\Java\jdk1.7.0_05\jre\bin\server\jvm.dll
+set JVMMODE=--Jvm=auto
+
 rem -- Java memory options
 set JAVAxMS=64m
 set JAVAxMX=512m
 
-rem -- JVM server option
-set JAVASERVER=++JvmOptions=-server
-
 rem -- Logback configuration file
 set LOGBACK_CONF=%EXEC_PATH%\..\conf\logback.xml
 
+rem -- prunsrv.exe location
+set PRUNSRVEXEC=%EXEC_PATH%\windows\prunsrv.exe
+
+rem -- Loglevel of Daemon between debug, info, warn, error
+set LOGLEVEL=info
+
+rem ---------------------------------------------------------------------------
 rem -- Various Java options
 set JAVA_OPTS=--JvmMs=%JAVAxMS% --JvmMx=%JAVAxMX% %JAVASERVER% ++JvmOptions=-Dlogback.configurationFile=%LOGBACK_CONF%
 
-rem ---------------------------------------------------------------------------
-set SERVICE_OPTIONS=%JAVA_OPTS% --Description=%SERVICE_DESCRIPTION% --Jvm=auto --Classpath=%SERVICE_CLASSPATH% --StartMode=jvm --StartClass=%MAIN_SERVICE_CLASS% --StartMethod=start --StopMode=jvm --StopClass=%MAIN_SERVICE_CLASS% --StopMethod=stop --LogPath=%LOG_PATH% --StdOutput=%OUT_LOG_FILE% --StdError=%ERR_LOG_FILE% --Startup=%SERVICE_STARTUP%
+set SERVICE_OPTIONS=%JAVA_OPTS% --Description=%SERVICE_DESCRIPTION% %JVMMODE% --Classpath=%SERVICE_CLASSPATH% --StartMode=jvm --StartClass=%MAIN_SERVICE_CLASS% --StartMethod=windowsStart --StopMode=jvm --StopClass=%MAIN_SERVICE_CLASS% --StopMethod=windowsStop --LogPath=%LOG_PATH% --StdOutput=%OUT_LOG_FILE% --StdError=%ERR_LOG_FILE% --Startup=%SERVICE_STARTUP% --PidFile=service.pid --LogLevel=%LOGLEVEL%
 
 set RESTART=0
 
@@ -77,7 +84,7 @@ rem -- START ------------------------------------------------------------------
 :START
 
 echo Start service %SERVICE_NAME%
-%EXEC_PATH%\windows\prunsrv.exe //RS/%SERVICE_NAME% %SERVICE_OPTIONS%
+%PRUNSRVEXEC% //RS/%SERVICE_NAME% %SERVICE_OPTIONS%
 
 goto FIN
 
@@ -85,7 +92,7 @@ rem -- INSTALL ----------------------------------------------------------------
 :INSTALL
 
 echo Install service %SERVICE_NAME%
-%EXEC_PATH%\windows\prunsrv.exe //IS/%SERVICE_NAME% %SERVICE_OPTIONS%
+%PRUNSRVEXEC% //IS/%SERVICE_NAME% %SERVICE_OPTIONS%
 
 goto FIN
 
@@ -93,7 +100,7 @@ rem -- STOP -------------------------------------------------------------------
 :STOP
 
 echo Stop service %SERVICE_NAME%
-%EXEC_PATH%\windows\prunsrv.exe //SS/%SERVICE_NAME% %SERVICE_OPTIONS%
+%PRUNSRVEXEC% //SS/%SERVICE_NAME% %SERVICE_OPTIONS%
 
 if "%RESTART%" == "1" ( goto START )
 goto FIN
@@ -102,14 +109,14 @@ rem -- REMOVE -----------------------------------------------------------------
 :REMOVE
 
 echo Remove service %SERVICE_NAME%
-%EXEC_PATH%\windows\prunsrv.exe //DS/%SERVICE_NAME% %SERVICE_OPTIONS%
+%PRUNSRVEXEC% //DS/%SERVICE_NAME% %SERVICE_OPTIONS%
 
 goto FIN
 
 rem -- CONSOLE ----------------------------------------------------------------
 :CONSOLE
 
-%EXEC_PATH%\windows\prunsrv.exe //TS/%SERVICE_NAME% %SERVICE_OPTIONS%
+%PRUNSRVEXEC% //TS/%SERVICE_NAME% %SERVICE_OPTIONS%
 
 goto FIN
 
