@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
+import org.apache.commons.daemon.DaemonController;
 import org.jboss.netty.logging.InternalLoggerFactory;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
@@ -50,6 +51,10 @@ public abstract class ServiceLauncher implements Daemon {
     protected static ServiceLauncher engineLauncherInstance = null;
 
     protected ExecutorService executor = null;
+
+    protected static DaemonController controller = null;
+    
+    protected static boolean stopCalledCorrectly = false;
     
     /**
      * 
@@ -123,8 +128,9 @@ public abstract class ServiceLauncher implements Daemon {
      * prunsrv.exe //IS/MyService --Classpath=C:\...\xxx.jar --Description="My Java Service" --Jvm=auto --StartMode=jvm --StartClass=org.waarp.xxx.service.ServiceLauncher --StartMethod=windowsService --StartParams=start --StopMode=jvm --StopClass=org.waarp.xxx.service.ServiceLauncher --StopMethod=windowsService --StopParams=stop 
      * </pre> 
      * @param args Arguments from prunsrv command line
+     * @throws Exception 
      **/
-    public static void _windowsService(String args[]) {
+    public static void _windowsService(String args[]) throws Exception {
     	initStatic();
         String cmd = "start";
         if (args.length > 0) {
@@ -147,8 +153,9 @@ public abstract class ServiceLauncher implements Daemon {
      * prunsrv.exe //IS/MyService --Classpath=C:\...\xxx.jar --Description="My Java Service" --Jvm=auto --StartMode=jvm --StartClass=org.waarp.xxx.service.ServiceLauncher --StartMethod=windowsStart --StopMode=jvm --StopClass=org.waarp.xxx.service.ServiceLauncher --StopMethod=windowsStop
      * </pre> 
      * @param args Arguments are ignored
+     * @throws Exception 
      **/
-    public static void _windowsStart(String args[]) {
+    public static void _windowsStart(String args[]) throws Exception {
     	initStatic();
         engineLauncherInstance.windowsStart();
     }
@@ -166,20 +173,35 @@ public abstract class ServiceLauncher implements Daemon {
      **/
     public static void _windowsStop(String args[]) {
     	initStatic();
+    	stopCalledCorrectly = true;
         engineLauncherInstance.windowsStop();
     }
 
     /**
      * Internal command
+     * @throws Exception 
      */
-    protected void windowsStart() {
+    protected void windowsStart() throws Exception {
         logger.info("windowsStart called");
         initialize();
         // We must wait in Windows Mode
+        boolean status = false;
         try {
-			engine.waitShutdown();
+			status = engine.waitShutdown();
 		} catch (InterruptedException e) {
 		}
+        if (!status || !stopCalledCorrectly) {
+        	// Was stopped outside service management
+    		if (executor != null) {
+        		executor.shutdown();
+        		executor = null;
+        	}
+        	if (controller != null) {
+        		controller.fail("Service stopped abnormally");
+        	} else {
+        		throw new Exception("Service stopped abnormally");
+        	}
+        }
     }
 
     /**
@@ -194,6 +216,7 @@ public abstract class ServiceLauncher implements Daemon {
     // Implementing the Daemon interface is not required for Windows but is for Linux
     @Override
     public void init(DaemonContext arg0) throws Exception {
+    	controller = arg0.getController();
     	logger.info("Daemon init");
     }
 
