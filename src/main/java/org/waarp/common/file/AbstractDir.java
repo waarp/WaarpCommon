@@ -71,8 +71,7 @@ public abstract class AbstractDir implements DirInterface {
 	 */
 	protected static void initWindowsSupport() {
 		if (ISUNIX == null) {
-			ISUNIX = (!System.getProperty("os.name")
-					.toLowerCase().startsWith("win"));
+			ISUNIX = ! DetectionUtils.isWindows();
 		}
 		if (roots == null) {
 			if (!ISUNIX) {

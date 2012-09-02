@@ -36,10 +36,10 @@ set MAIN_SERVICE_CLASS=org.waarp.xxx.service.ServiceLauncher
 rem -- Path for log files
 set LOG_PATH=%EXEC_PATH%\..\logs
 
-rem -- STDERR log file
+rem -- STDERR log file: IMPORTANT SINCE LOG will be there according to logback.xml
 set ERR_LOG_FILE=%LOG_PATH%\stderr.txt
 
-rem -- STDOUT log file
+rem -- STDOUT log file: IMPORTANT SINCE LOG will be there according to logback.xml
 set OUT_LOG_FILE=%LOG_PATH%\stdout.txt
 
 rem -- Startup mode (manual or auto)
@@ -53,7 +53,7 @@ rem -- Java memory options
 set JAVAxMS=64m
 set JAVAxMX=512m
 
-rem -- Logback configuration file
+rem -- Logback configuration file: IMPORTANT recommended to configure to STDOUT
 set LOGBACK_CONF=%EXEC_PATH%\..\conf\logback.xml
 
 rem -- prunsrv.exe location
