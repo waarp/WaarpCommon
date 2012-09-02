@@ -29,10 +29,18 @@ import java.util.zip.Deflater;
 public class DetectionUtils {
 	private static final int JAVA_VERSION = javaVersion0();
 	private static final boolean IS_WINDOWS;
+	private static final boolean IS_UNIX_IBM;
 	static {
-		String os = System.getProperty("os.name").toLowerCase();
+		String os = SystemPropertyUtil.get("os.name").toLowerCase();
 		// windows
 		IS_WINDOWS = os.indexOf("win") >= 0;
+		if (! IS_WINDOWS) {
+			String vendor = SystemPropertyUtil.get("java.vm.vendor");
+			vendor = vendor.toLowerCase();
+			IS_UNIX_IBM = (vendor.indexOf("ibm") >= 0);
+		} else {
+			IS_UNIX_IBM = false;
+		}
 	}
 
 	/**
@@ -41,6 +49,14 @@ public class DetectionUtils {
 	 */
 	public static boolean isWindows() {
 		return IS_WINDOWS;
+	}
+
+	/**
+	 * Return <code>true</code> if the JVM is running on IBM UNIX JVM
+	 * 
+	 */
+	public static boolean isUnixIBM() {
+		return IS_UNIX_IBM;
 	}
 
 	public static int javaVersion() {
