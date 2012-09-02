@@ -17,6 +17,7 @@ org.waarp.common.future
 org.waarp.common.logging
 org.waarp.common.lru
 org.waarp.common.role
+org.waarp.common.service
 org.waarp.common.state
 org.waarp.common.state.example
 org.waarp.common.tar
