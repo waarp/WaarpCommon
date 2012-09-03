@@ -91,4 +91,10 @@ public abstract class Restart {
 	public abstract long getPosition() throws NoRestartException;
 	// FIXME Additionally the implementation should implement a way to get the
 	// values
+	/**
+	 * 
+	 * @param nextBlock
+	 * @return the max between the available size and the nextblock size
+	 */
+	public abstract int getMaxSize(int nextBlock);
 }

@@ -5,7 +5,12 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
-		<release version="1.2.6" date="2012-09-02" description="Fix release">
+		<release version="1.2.7" date="2012-09-08" description="Fix release">
+			<action dev="Frederic Bregier" type="add">Add support for extended RESTart with limit added (offset size) to allow a frame of a file to be transmitted</action>
+			<action dev="Frederic Bregier" type="fix">Fix DetectionUtils and SystemProperty and ShutdownHook</action>
+			<action dev="Frederic Bregier" type="fix">Upgrade jar dependencies</action>
+		</release>
+	    <release version="1.2.6" date="2012-09-02" description="Fix release">
 			<action dev="Frederic Bregier" type="add">Add support for Windows Service through Apache Commons Daemon</action>
 			<action dev="Frederic Bregier" type="fix">Upgrade jar dependencies</action>
 		</release>

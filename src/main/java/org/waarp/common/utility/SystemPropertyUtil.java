@@ -19,33 +19,45 @@ package org.waarp.common.utility;
 
 import java.util.Properties;
 
-import org.jboss.netty.logging.InternalLogger;
-import org.jboss.netty.logging.InternalLoggerFactory;
+import org.waarp.common.logging.WaarpInternalLogger;
+import org.waarp.common.logging.WaarpInternalLoggerFactory;
 
 /**
  * A collection of utility methods to retrieve and parse the values of the Java system properties.
  */
 public final class SystemPropertyUtil {
+	/**
+	 * Internal Logger
+	 */
+	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+			.getLogger(SystemPropertyUtil.class);
 
-    private static final InternalLogger logger =
-            InternalLoggerFactory.getInstance(SystemPropertyUtil.class);
-
-    private static final Properties props;
+	private static final Properties props = new Properties();
 
     // Retrieve all system properties at once so that there's no need to deal with
     // security exceptions from next time.  Otherwise, we might end up with logging every
     // security exceptions on every system property access or introducing more complexity
     // just because of less verbose logging.
     static {
+    	refresh();
+    }
+
+    /**
+    * Re-retrieves all system properties so that any post-launch properties updates are retrieved.
+    */
+    public static void refresh() {
         Properties newProps = null;
         try {
             newProps = System.getProperties();
         } catch (SecurityException e) {
-            logger.warn("Unable to access the system properties; default values will be used.", e);
+            logger.warn("Unable to retrieve the system properties; default values will be used.", e);
             newProps = new Properties();
         }
 
-        props = newProps;
+        synchronized (props) {
+            props.clear();
+            props.putAll(newProps);
+        }
     }
 
     /**

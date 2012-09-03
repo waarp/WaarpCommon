@@ -167,6 +167,8 @@ public abstract class WaarpShutdownHook extends Thread {
 		}
 		if (stacks.length >= 1)
 			System.err.println(stacks[stacks.length - 1].toString());
+		else
+			System.err.println();
 	}
 
 	/**
@@ -234,7 +236,7 @@ public abstract class WaarpShutdownHook extends Thread {
 			shutdownHook.exit();
 			// Force exit!
 			try {
-				Thread.sleep(shutdownHook.shutdownConfiguration.timeout);
+				Thread.sleep(shutdownHook.shutdownConfiguration.timeout/2);
 			} catch (InterruptedException e) {
 			}
 			if (logger.isDebugEnabled()) {

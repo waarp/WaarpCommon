@@ -32,6 +32,7 @@ public abstract class FilesystemBasedRestartImpl extends Restart {
 	 * Valid Position for the next current file
 	 */
 	protected long position = -1;
+	protected int limit = -1;
 
 	/**
 	 * @param session
@@ -48,4 +49,19 @@ public abstract class FilesystemBasedRestartImpl extends Restart {
 		}
 		throw new NoRestartException("Restart is not set");
 	}
+	@Override
+	public int getMaxSize(int nextBlock) {
+		if (limit > 0) {
+			if (nextBlock > limit) {
+				nextBlock = limit;
+			}
+			limit -= nextBlock;
+			return nextBlock;
+		} else if (limit == 0) {
+			limit = -1;
+			return 0;
+		}
+		return nextBlock;
+	}
+	
 }
