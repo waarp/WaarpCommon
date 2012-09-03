@@ -49,6 +49,7 @@ public abstract class FilesystemBasedRestartImpl extends Restart {
 		}
 		throw new NoRestartException("Restart is not set");
 	}
+	
 	@Override
 	public int getMaxSize(int nextBlock) {
 		if (limit > 0) {
@@ -62,6 +63,12 @@ public abstract class FilesystemBasedRestartImpl extends Restart {
 			return 0;
 		}
 		return nextBlock;
+	}
+
+	@Override
+	public void setSet(boolean isSet) {
+		super.setSet(isSet);
+		limit = -1;
 	}
 	
 }
