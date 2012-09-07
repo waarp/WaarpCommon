@@ -21,5 +21,6 @@ org.waarp.common.service
 org.waarp.common.state
 org.waarp.common.state.example
 org.waarp.common.tar
+org.waarp.common.transcode
 org.waarp.common.utility
 org.waarp.common.xml

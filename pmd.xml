@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-09-02T22:09:34.343">
+<pmd version="4.3" timestamp="2012-09-07T22:46:14.448">
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\command\ReplyCode.java">
 <violation beginline="351" endline="353" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.command" method="getFinalMsg" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
@@ -431,6 +431,11 @@ Avoid empty catch blocks
 Document empty constructor
 </violation>
 </file>
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedRestartImpl.java">
+<violation beginline="54" endline="54" begincolumn="35" endcolumn="43" rule="AvoidReassigningParameters" ruleset="Design Rules" package="org.waarp.common.file.filesystembased" class="FilesystemBasedRestartImpl" method="getMaxSize" variable="nextBlock" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidReassigningParameters" priority="2">
+Avoid reassigning parameters such as 'nextBlock'
+</violation>
+</file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\specific\FilesystemBasedCommonsIo.java">
 <violation beginline="33" endline="56" begincolumn="39" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.file.filesystembased.specific" class="FilesystemBasedCommonsIo" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
@@ -775,49 +780,84 @@ Avoid empty catch blocks
 Avoid empty catch blocks
 </violation>
 </file>
-<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\utility\DetectionUtils.java">
-<violation beginline="29" endline="93" begincolumn="29" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.utility" class="DetectionUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\transcode\CharsetsUtil.java">
+<violation beginline="53" endline="245" begincolumn="27" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
-<violation beginline="37" endline="43" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.utility" class="DetectionUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="107" endline="117" begincolumn="17" endcolumn="17" rule="SwitchStmtsShouldHaveDefault" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="printOutCharsetsAvailable" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SwitchStmtsShouldHaveDefault" priority="3">
+Switch statements should have a default label
+</violation>
+<violation beginline="121" endline="131" begincolumn="25" endcolumn="25" rule="SwitchStmtsShouldHaveDefault" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="printOutCharsetsAvailable" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SwitchStmtsShouldHaveDefault" priority="3">
+Switch statements should have a default label
+</violation>
+<violation beginline="134" endline="144" begincolumn="33" endcolumn="33" rule="SwitchStmtsShouldHaveDefault" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="printOutCharsetsAvailable" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SwitchStmtsShouldHaveDefault" priority="3">
+Switch statements should have a default label
+</violation>
+<violation beginline="146" endline="156" begincolumn="25" endcolumn="25" rule="SwitchStmtsShouldHaveDefault" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="printOutCharsetsAvailable" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SwitchStmtsShouldHaveDefault" priority="3">
+Switch statements should have a default label
+</violation>
+<violation beginline="157" endline="176" begincolumn="25" endcolumn="25" rule="SwitchStmtsShouldHaveDefault" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="printOutCharsetsAvailable" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SwitchStmtsShouldHaveDefault" priority="3">
+Switch statements should have a default label
+</violation>
+<violation beginline="178" endline="186" begincolumn="17" endcolumn="17" rule="SwitchStmtsShouldHaveDefault" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="printOutCharsetsAvailable" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SwitchStmtsShouldHaveDefault" priority="3">
+Switch statements should have a default label
+</violation>
+<violation beginline="226" endline="230" begincolumn="25" endcolumn="25" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="transcode" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="39" endline="39" begincolumn="34" endcolumn="53" rule="UseLocaleWithCaseConversions" ruleset="Design Rules" package="org.waarp.common.utility" class="DetectionUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseLocaleWithCaseConversions" priority="3">
+<violation beginline="231" endline="232" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="transcode" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+<violation beginline="234" endline="239" begincolumn="25" endcolumn="25" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="transcode" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="240" endline="241" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.transcode" class="CharsetsUtil" method="transcode" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+</file>
+<file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\utility\DetectionUtils.java">
+<violation beginline="30" endline="97" begincolumn="29" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.utility" class="DetectionUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
+All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
+</violation>
+<violation beginline="38" endline="44" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.utility" class="DetectionUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+Avoid if (x != y) ..; else ..;
+</violation>
+<violation beginline="40" endline="40" begincolumn="34" endcolumn="53" rule="UseLocaleWithCaseConversions" ruleset="Design Rules" package="org.waarp.common.utility" class="DetectionUtils" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseLocaleWithCaseConversions" priority="3">
 When doing a String.toLowerCase()/toUpperCase() call, use a Locale
 </violation>
-<violation beginline="73" endline="75" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="74" endline="76" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="80" endline="82" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="83" endline="85" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="87" endline="89" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="91" endline="93" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="DetectionUtils" method="javaVersion0" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\utility\SystemPropertyUtil.java">
-<violation beginline="118" endline="118" begincolumn="13" endcolumn="32" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="130" endline="130" begincolumn="13" endcolumn="32" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
-<violation beginline="118" endline="118" begincolumn="37" endcolumn="55" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="130" endline="130" begincolumn="37" endcolumn="55" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
-<violation beginline="118" endline="118" begincolumn="60" endcolumn="76" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="130" endline="130" begincolumn="60" endcolumn="76" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
-<violation beginline="122" endline="122" begincolumn="13" endcolumn="33" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="134" endline="134" begincolumn="13" endcolumn="33" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
-<violation beginline="122" endline="122" begincolumn="38" endcolumn="55" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="134" endline="134" begincolumn="38" endcolumn="55" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
-<violation beginline="122" endline="122" begincolumn="60" endcolumn="76" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="134" endline="134" begincolumn="60" endcolumn="76" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getBoolean" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
-<violation beginline="156" endline="158" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getInt" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="168" endline="170" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getInt" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="191" endline="193" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getLong" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="203" endline="205" begincolumn="15" endcolumn="13" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.utility" class="SystemPropertyUtil" method="getLong" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
@@ -831,7 +871,7 @@ Possible unsafe assignment to a non-final static field in a constructor.
 <violation beginline="130" endline="136" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.utility" class="WaarpShutdownHook" method="terminate" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="212" endline="212" begincolumn="47" endcolumn="69" rule="AccessorClassGeneration" ruleset="Design Rules" package="org.waarp.common.utility" class="WaarpShutdownHook" method="launchFinalExit" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AccessorClassGeneration" priority="3">
+<violation beginline="214" endline="214" begincolumn="47" endcolumn="69" rule="AccessorClassGeneration" ruleset="Design Rules" package="org.waarp.common.utility" class="WaarpShutdownHook" method="launchFinalExit" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AccessorClassGeneration" priority="3">
 Avoid instantiation through private constructors from outside of the constructor's class.
 </violation>
 </file>
@@ -895,84 +935,87 @@ Non-static initializers are confusing
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java">
-<violation beginline="49" endline="1007" begincolumn="22" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlUtil" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
+<violation beginline="50" endline="1026" begincolumn="22" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlUtil" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
-<violation beginline="801" endline="807" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="814" endline="823" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
-<violation beginline="811" endline="817" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="827" endline="833" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
-<violation beginline="926" endline="935" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="942" endline="954" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
-<violation beginline="939" endline="956" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="958" endline="975" begincolumn="25" endcolumn="25" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="main" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
-<violation beginline="994" endline="998" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlUtil" method="writeXML" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="1013" endline="1017" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlUtil" method="writeXML" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="1004" endline="1005" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="writeXML" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="1023" endline="1024" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlUtil" method="writeXML" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlValue.java">
-<violation beginline="66" endline="66" begincolumn="33" endcolumn="46" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
+<violation beginline="68" endline="68" begincolumn="33" endcolumn="46" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'getType' called during object construction
 </violation>
-<violation beginline="132" endline="132" begincolumn="41" endcolumn="87" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
+<violation beginline="134" endline="134" begincolumn="41" endcolumn="87" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'addValue' called during object construction
 </violation>
-<violation beginline="132" endline="132" begincolumn="69" endcolumn="77" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
+<violation beginline="134" endline="134" begincolumn="69" endcolumn="77" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'getType' called during object construction
 </violation>
-<violation beginline="139" endline="139" begincolumn="33" endcolumn="67" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
+<violation beginline="141" endline="141" begincolumn="33" endcolumn="67" rule="ConstructorCallsOverridableMethod" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConstructorCallsOverridableMethod" priority="1">
 Overridable method 'setValue' called during object construction
 </violation>
-<violation beginline="140" endline="142" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="142" endline="144" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="223" endline="275" begincolumn="17" endcolumn="17" rule="SwitchStmtsShouldHaveDefault" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="addFromString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SwitchStmtsShouldHaveDefault" priority="3">
+<violation beginline="226" endline="278" begincolumn="17" endcolumn="17" rule="SwitchStmtsShouldHaveDefault" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="addFromString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SwitchStmtsShouldHaveDefault" priority="3">
 Switch statements should have a default label
 </violation>
-<violation beginline="319" endline="319" begincolumn="74" endcolumn="86" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="addValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
+<violation beginline="322" endline="322" begincolumn="74" endcolumn="86" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="addValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
 Avoid using java.lang.ThreadGroup; it is not thread safe
 </violation>
-<violation beginline="363" endline="393" begincolumn="17" endcolumn="17" rule="MissingBreakInSwitch" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="getCloneValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#MissingBreakInSwitch" priority="3">
+<violation beginline="366" endline="396" begincolumn="17" endcolumn="17" rule="MissingBreakInSwitch" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="getCloneValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#MissingBreakInSwitch" priority="3">
 A switch statement does not contain a break
 </violation>
-<violation beginline="365" endline="365" begincolumn="40" endcolumn="67" rule="BooleanInstantiation" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="getCloneValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#BooleanInstantiation" priority="2">
+<violation beginline="368" endline="368" begincolumn="40" endcolumn="67" rule="BooleanInstantiation" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="getCloneValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#BooleanInstantiation" priority="2">
 Avoid instantiating Boolean objects; reference Boolean.TRUE or Boolean.FALSE or call Boolean.valueOf() instead.
 </violation>
-<violation beginline="381" endline="381" begincolumn="44" endcolumn="56" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="getCloneValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
+<violation beginline="384" endline="384" begincolumn="44" endcolumn="56" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="getCloneValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
 Avoid using java.lang.ThreadGroup; it is not thread safe
 </violation>
-<violation beginline="575" endline="584" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="getIntoString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="579" endline="588" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="getIntoString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="576" endline="580" begincolumn="25" endcolumn="25" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="getIntoString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="580" endline="584" begincolumn="25" endcolumn="25" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="getIntoString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="626" endline="626" begincolumn="66" endcolumn="78" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="setValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
+<violation beginline="630" endline="630" begincolumn="66" endcolumn="78" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="setValue" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
 Avoid using java.lang.ThreadGroup; it is not thread safe
 </violation>
-<violation beginline="683" endline="683" begincolumn="37" endcolumn="53" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
+<violation beginline="688" endline="688" begincolumn="37" endcolumn="53" rule="PositionLiteralsFirstInComparisons" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PositionLiteralsFirstInComparisons" priority="3">
 Position literals first in String comparisons
 </violation>
-<violation beginline="751" endline="751" begincolumn="44" endcolumn="56" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
+<violation beginline="756" endline="756" begincolumn="44" endcolumn="56" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
 Avoid using java.lang.ThreadGroup; it is not thread safe
 </violation>
-<violation beginline="769" endline="769" begincolumn="44" endcolumn="56" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
+<violation beginline="774" endline="774" begincolumn="44" endcolumn="56" rule="AvoidThreadGroup" ruleset="Basic Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#AvoidThreadGroup" priority="3">
 Avoid using java.lang.ThreadGroup; it is not thread safe
 </violation>
-<violation beginline="777" endline="778" begincolumn="25" endcolumn="68" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="780" endline="781" begincolumn="25" endcolumn="68" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="785" endline="786" begincolumn="52" endcolumn="106" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="toString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="786" endline="787" begincolumn="25" endcolumn="68" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="convert" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+New exception is thrown in catch block, original stack trace may be lost
+</violation>
+<violation beginline="794" endline="795" begincolumn="52" endcolumn="106" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="toString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="786" endline="786" begincolumn="68" endcolumn="105" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="toString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="795" endline="795" begincolumn="68" endcolumn="105" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.xml" class="XmlValue" method="toString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
 </file>
