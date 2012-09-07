@@ -17,7 +17,8 @@
  */
 package org.waarp.common.utility;
 
-import java.util.zip.Deflater;
+import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Utility that detects various properties specific to the current runtime environment, such as Java
@@ -34,7 +35,7 @@ public class DetectionUtils {
 		String os = SystemPropertyUtil.get("os.name").toLowerCase();
 		// windows
 		IS_WINDOWS = os.indexOf("win") >= 0;
-		if (! IS_WINDOWS) {
+		if (!IS_WINDOWS) {
 			String vendor = SystemPropertyUtil.get("java.vm.vendor");
 			vendor = vendor.toLowerCase();
 			IS_UNIX_IBM = (vendor.indexOf("ibm") >= 0);
@@ -75,14 +76,17 @@ public class DetectionUtils {
 		}
 
 		try {
-			Deflater.class.getDeclaredField("SYNC_FLUSH");
+			Class.forName(
+					"java.util.concurrent.LinkedTransferQueue", false,
+					BlockingQueue.class.getClassLoader());
 			return 7;
 		} catch (Exception e) {
 			// Ignore
 		}
 
 		try {
-			Double.class.getDeclaredField("MIN_NORMAL");
+			Class.forName(
+					"java.util.ArrayDeque", false, Queue.class.getClassLoader());
 			return 6;
 		} catch (Exception e) {
 			// Ignore

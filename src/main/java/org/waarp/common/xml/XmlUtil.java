@@ -30,6 +30,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.waarp.common.exception.InvalidArgumentException;
 
 /**
  * XML utility that handles simple cases as:<br>
@@ -560,6 +561,8 @@ public class XmlUtil {
 						value.addFromString(svalue);
 					} catch (InvalidObjectException e) {
 						continue;
+					} catch (InvalidArgumentException e) {
+						continue;
 					}
 				}
 			} else {
@@ -570,7 +573,11 @@ public class XmlUtil {
 					continue;
 				}
 				String svalue = element.getText();
-				value.setFromString(svalue);
+				try {
+					value.setFromString(svalue);
+				} catch (InvalidArgumentException e) {
+					continue;
+				}
 			}
 		}
 		return values;
@@ -640,6 +647,8 @@ public class XmlUtil {
 						value.addFromString(svalue);
 					} catch (InvalidObjectException e) {
 						continue;
+					} catch (InvalidArgumentException e) {
+						continue;
 					}
 				}
 			} else {
@@ -650,7 +659,11 @@ public class XmlUtil {
 					continue;
 				}
 				String svalue = element.getText();
-				value.setFromString(svalue);
+				try {
+					value.setFromString(svalue);
+				} catch (InvalidArgumentException e) {
+					continue;
+				}
 			}
 		}
 		return values;
@@ -803,6 +816,9 @@ public class XmlUtil {
 					value.addFromString("true");
 				} catch (InvalidObjectException e) {
 					e.printStackTrace();
+				} catch (InvalidArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
@@ -930,6 +946,9 @@ public class XmlUtil {
 				try {
 					value.addFromString("10.3");
 				} catch (InvalidObjectException e) {
+					e.printStackTrace();
+				} catch (InvalidArgumentException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

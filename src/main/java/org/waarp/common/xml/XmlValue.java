@@ -26,6 +26,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.waarp.common.exception.InvalidArgumentException;
+
 /**
  * XmlValue base element
  * 
@@ -217,9 +219,10 @@ public class XmlValue {
 	 * 
 	 * @param value
 	 * @throws InvalidObjectException
+	 * @throws InvalidArgumentException 
 	 */
 	@SuppressWarnings("unchecked")
-	public void addFromString(String value) throws InvalidObjectException {
+	public void addFromString(String value) throws InvalidObjectException, InvalidArgumentException {
 		switch (this.getType()) {
 			case BOOLEAN:
 				((List<Boolean>) this.values).add((Boolean) convert(
@@ -540,8 +543,9 @@ public class XmlValue {
 	 * Set a value from String
 	 * 
 	 * @param value
+	 * @throws InvalidArgumentException 
 	 */
-	public void setFromString(String value) {
+	public void setFromString(String value) throws InvalidArgumentException {
 		this.value = convert(this.getClassType(), value);
 	}
 
@@ -666,11 +670,12 @@ public class XmlValue {
 	}
 
 	/**
-	 * Convert String value to the specified type. Throws IllegalArgumentException if type is
+	 * Convert String value to the specified type. Throws InvalidArgumentException if type is
 	 * unrecognized.
+	 * @throws InvalidArgumentException 
 	 */
 	protected static Object convert(Class<?> type, String value)
-			throws IllegalArgumentException {
+			throws InvalidArgumentException {
 		try {
 			// test from specific to general
 			//
@@ -771,10 +776,14 @@ public class XmlValue {
 				throw new IllegalArgumentException("Can not convert value " +
 						value + " to type " + type);
 			}
+		} catch (NumberFormatException e) {
+			throw new InvalidArgumentException("Can not convert value " +
+					value + " to type " + type);
 		} catch (IllegalArgumentException e) {
-			throw e;
+			throw new InvalidArgumentException("Can not convert value " +
+					value + " to type " + type, e);
 		} catch (ParseException e) {
-			throw new IllegalArgumentException("Can not convert value " +
+			throw new InvalidArgumentException("Can not convert value " +
 					value + " to type " + type);
 		}
 	}
