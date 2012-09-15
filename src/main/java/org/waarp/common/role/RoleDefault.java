@@ -26,100 +26,139 @@ package org.waarp.common.role;
  * 
  */
 public class RoleDefault {
-	public static byte NOACCESS = ((byte) 0);
-	public static byte READONLY = ((byte) 1);
-	public static byte TRANSFER = ((byte) 2);
-	public static byte RULE = ((byte) 4);
-	public static byte HOST = ((byte) 8);
-	public static byte LIMIT = ((byte) 16);
-	public static byte SYSTEM = ((byte) 32);
-	public static byte UNUSED1 = ((byte) 64);
-	public static byte UNUSED2 = ((byte) -128);
+	public static enum ROLE {
+		NOACCESS(0), 
+		READONLY(1), TRANSFER(2), 
+		RULE(4), HOST(8), 
+		LIMIT(16), SYSTEM(32), LOGCONTROL(64), 
+		UNUSED(-128),
+		PARTNER(READONLY, TRANSFER),
+		CONFIGADMIN(PARTNER, RULE, HOST),
+		FULLADMIN(CONFIGADMIN, LIMIT, SYSTEM, LOGCONTROL);
+		
+		private byte role;
+		private ROLE(int val) {
+			this.role = (byte) val;
+		}
+		private ROLE(ROLE...name) {
+			for (ROLE role : name) {
+				this.role |= role.role;
+			}
+		}
+		private boolean isContained(byte value) {
+			return (value & role) != 0;
+		}
+		public static String toString(byte fromRole) {
+			StringBuilder result = new StringBuilder("[ ");
+			ROLE [] values = ROLE.values();
+			for (ROLE role : values) {
+				if (role.isContained(fromRole)) {
+					result.append(role.name());
+					result.append(' ');
+				}
+			}
+			result.append(']');
+			return result.toString();
+		}
+	};
 
 	private byte role;
 
 	public RoleDefault() {
-		this.role = NOACCESS;
+		this.role = ROLE.NOACCESS.role;
 	}
 
-	public void addRole(byte newrole) {
-		this.role |= newrole;
+	public RoleDefault(ROLE role) {
+		this.role = role.role;
 	}
 
-	public void setRole(byte newrole) {
-		this.role = newrole;
+	@Override
+	public String toString() {
+		return ROLE.toString(role);
+	}
+	
+	public void addRole(ROLE newrole) {
+		this.role |= newrole.role;
+	}
+
+	public void setRole(ROLE newrole) {
+		this.role = newrole.role;
+	}
+
+	public void setRole(RoleDefault newrole) {
+		this.role = newrole.role;
 	}
 
 	public void clear() {
-		this.role = NOACCESS;
+		this.role = ROLE.NOACCESS.role;
 	}
-
-	public byte getRole() {
-		return this.role;
+	
+	public boolean isContaining(ROLE otherrole) {
+		return otherrole.isContained(role);
 	}
 
 	public boolean hasReadOnly() {
-		return (role & READONLY) != 0;
+		return ROLE.READONLY.isContained(role);
 	}
 
 	public boolean hasTransfer() {
-		return (role & TRANSFER) != 0;
+		return ROLE.TRANSFER.isContained(role);
 	}
 
 	public boolean hasRule() {
-		return (role & RULE) != 0;
+		return ROLE.RULE.isContained(role);
 	}
 
 	public boolean hasHost() {
-		return (role & HOST) != 0;
+		return ROLE.HOST.isContained(role);
 	}
 
 	public boolean hasLimit() {
-		return (role & LIMIT) != 0;
+		return ROLE.LIMIT.isContained(role);
 	}
 
 	public boolean hasSystem() {
-		return (role & SYSTEM) != 0;
+		return ROLE.SYSTEM.isContained(role);
 	}
 
-	public boolean hasUnused1() {
-		return (role & UNUSED1) != 0;
+	public boolean hasUnused() {
+		return ROLE.UNUSED.isContained(role);
 	}
 
-	public boolean hasUnused2() {
-		return (role & UNUSED2) != 0;
+	public boolean hasLogControl() {
+		return ROLE.LOGCONTROL.isContained(role);
 	}
 
 	public static boolean HasReadOnly(byte role) {
-		return (role & READONLY) != 0;
+		return ROLE.READONLY.isContained(role);
 	}
 
 	public static boolean HasTransfer(byte role) {
-		return (role & TRANSFER) != 0;
+		return ROLE.TRANSFER.isContained(role);
 	}
 
 	public static boolean HasRule(byte role) {
-		return (role & RULE) != 0;
+		return ROLE.RULE.isContained(role);
 	}
 
 	public static boolean HasHost(byte role) {
-		return (role & HOST) != 0;
+		return ROLE.HOST.isContained(role);
 	}
 
 	public static boolean HasLimit(byte role) {
-		return (role & LIMIT) != 0;
+		return ROLE.LIMIT.isContained(role);
 	}
 
 	public static boolean HasSystem(byte role) {
-		return (role & SYSTEM) != 0;
+		return ROLE.SYSTEM.isContained(role);
 	}
 
-	public static boolean HasUnused1(byte role) {
-		return (role & UNUSED1) != 0;
+	public static boolean HasUnused(byte role) {
+		return ROLE.UNUSED.isContained(role);
 	}
 
-	public static boolean HasUnused2(byte role) {
-		return (role & UNUSED2) != 0;
+	public static boolean HasLogControl(byte role) {
+		return ROLE.LOGCONTROL.isContained(role);
 	}
 
 }
