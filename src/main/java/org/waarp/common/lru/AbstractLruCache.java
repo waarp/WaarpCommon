@@ -43,7 +43,6 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 		this.ttl = ttl;
 	}
 
-	@Override
 	public boolean contains(K key) {
 		// can't use contains because of expiration policy
 		V value = get(key);
@@ -64,17 +63,14 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 		return new StrongReferenceCacheEntry<V>(value, ttl);
 	}
 
-	@Override
 	public V get(K key) {
 		return getValue(key);
 	}
 
-	@Override
 	public V get(K key, Callable<V> callback) throws Exception {
 		return get(key, callback, ttl);
 	}
 
-	@Override
 	public V get(K key, Callable<V> callback, long ttl) throws Exception {
 		V value = get(key);
 
@@ -87,7 +83,6 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 		return value;
 	}
 
-	@Override
 	public long getTtl() {
 		return ttl;
 	}
@@ -123,17 +118,14 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 		return value;
 	}
 
-	@Override
 	public boolean isEmpty() {
 		return getSize() == 0;
 	}
 
-	@Override
 	public void put(K key, V value) {
 		put(key, value, ttl);
 	}
 
-	@Override
 	public void put(K key, V value, long ttl) {
 		if (value != null)
 			putEntry(key, createEntry(value, ttl));

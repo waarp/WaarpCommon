@@ -257,7 +257,6 @@ public class WaarpSslUtility {
 	 */
 	public static ChannelFutureListener SSLCLOSE = new ChannelFutureListener() {
 		
-		@Override
 		public void operationComplete(ChannelFuture future) throws Exception {
 			if (future.getChannel().isConnected()) {
 				SSLTHREAD thread = new SSLTHREAD(future.getChannel());

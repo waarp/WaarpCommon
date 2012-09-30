@@ -70,12 +70,6 @@ public class WaarpX509TrustManager implements X509TrustManager {
 		throw new CryptoException("Cannot initialize the WaarpX509TrustManager");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javax.net.ssl.X509TrustManager#checkClientTrusted(java.security.cert.X509Certificate[],
-	 * java.lang.String)
-	 */
-	@Override
 	public void checkClientTrusted(X509Certificate[] arg0, String arg1)
 			throws CertificateException {
 		if (defaultX509TrustManager == null) {
@@ -84,12 +78,6 @@ public class WaarpX509TrustManager implements X509TrustManager {
 		defaultX509TrustManager.checkClientTrusted(arg0, arg1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javax.net.ssl.X509TrustManager#checkServerTrusted(java.security.cert.X509Certificate[],
-	 * java.lang.String)
-	 */
-	@Override
 	public void checkServerTrusted(X509Certificate[] arg0, String arg1)
 			throws CertificateException {
 		if (defaultX509TrustManager == null) {
@@ -98,11 +86,6 @@ public class WaarpX509TrustManager implements X509TrustManager {
 		defaultX509TrustManager.checkServerTrusted(arg0, arg1);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javax.net.ssl.X509TrustManager#getAcceptedIssuers()
-	 */
-	@Override
 	public X509Certificate[] getAcceptedIssuers() {
 		if (defaultX509TrustManager == null) {
 			return new X509Certificate[0]; // none valid

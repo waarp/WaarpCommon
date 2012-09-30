@@ -91,7 +91,6 @@ public abstract class DbModelAbstract implements DbModel {
 		DbAdmin.removeConnection(dbSession.internalId);
 	}
 
-	@Override
 	public void validConnection(DbSession dbSession)
 			throws WaarpDatabaseNoConnectionException {
 		// try to limit the number of check!
@@ -249,18 +248,15 @@ public abstract class DbModelAbstract implements DbModel {
 	 */
 	protected abstract String validConnectionString();
 
-	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
 		// Default implementation
 		return DriverManager.getConnection(server, user, passwd);
 	}
 
-	@Override
 	public void releaseResources() {
 	}
 
-	@Override
 	public int currentNumberOfPooledConnections() {
 		return DbAdmin.getNbConnection();
 	}
