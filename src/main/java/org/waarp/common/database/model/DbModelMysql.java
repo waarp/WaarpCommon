@@ -57,11 +57,6 @@ public abstract class DbModelMysql extends DbModelAbstract {
 	protected static MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.database.model.DbModel#getDbType()
-	 */
-	@Override
 	public DbType getDbType() {
 		return type;
 	}
@@ -217,7 +212,6 @@ public abstract class DbModelMysql extends DbModelAbstract {
 
 	private final ReentrantLock lock = new ReentrantLock();
 
-	@Override
 	public void createTables(DbSession session) throws WaarpDatabaseNoConnectionException {
 		// Create tables: configuration, hosts, rules, runner, cptrunner
 		String createTableH2 = "CREATE TABLE IF NOT EXISTS ";
@@ -306,11 +300,6 @@ public abstract class DbModelMysql extends DbModelAbstract {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see openr66.database.model.DbModel#resetSequence()
-	 */
-	@Override
 	public void resetSequence(DbSession session, long newvalue)
 			throws WaarpDatabaseNoConnectionException {
 		String action = "UPDATE Sequences SET seq = " + newvalue +
@@ -330,11 +319,6 @@ public abstract class DbModelMysql extends DbModelAbstract {
 		logger.warn(action);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see openr66.database.model.DbModel#nextSequence()
-	 */
-	@Override
 	public synchronized long nextSequence(DbSession dbSession)
 			throws WaarpDatabaseNoConnectionException,
 			WaarpDatabaseSqlException, WaarpDatabaseNoDataException {
@@ -394,7 +378,6 @@ public abstract class DbModelMysql extends DbModelAbstract {
 		return "select 1 from dual";
 	}
 
-	@Override
 	public String limitRequest(String allfields, String request, int nb) {
 		return request + " LIMIT " + nb;
 	}

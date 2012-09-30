@@ -56,11 +56,6 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	protected static OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.database.model.DbModel#getDbType()
-	 */
-	@Override
 	public DbType getDbType() {
 		return type;
 	}
@@ -230,7 +225,6 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		}
 	}
 
-	@Override
 	public void createTables(DbSession session) throws WaarpDatabaseNoConnectionException {
 		// Create tables: configuration, hosts, rules, runner, cptrunner
 		String createTableH2 = "CREATE TABLE ";
@@ -300,11 +294,6 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see openr66.database.model.DbModel#resetSequence()
-	 */
-	@Override
 	public void resetSequence(DbSession session, long newvalue)
 			throws WaarpDatabaseNoConnectionException {
 		String action = "DROP SEQUENCE " + DbDataModel.fieldseq;
@@ -328,11 +317,6 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		logger.warn(action);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see openr66.database.model.DbModel#nextSequence()
-	 */
-	@Override
 	public long nextSequence(DbSession dbSession)
 			throws WaarpDatabaseNoConnectionException,
 			WaarpDatabaseSqlException, WaarpDatabaseNoDataException {
@@ -369,11 +353,6 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		return "select 1 from dual";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see openr66.database.model.DbModel#limitRequest(java.lang.String, java.lang.String, int)
-	 */
-	@Override
 	public String limitRequest(String allfields, String request, int nb) {
 		return "select " + allfields + " from ( " + request + " ) where rownum <= " + nb;
 	}
