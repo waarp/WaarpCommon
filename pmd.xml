@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-09-07T22:46:14.448">
+<pmd version="4.3" timestamp="2012-09-30T12:06:16.557">
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\command\ReplyCode.java">
 <violation beginline="351" endline="353" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.command" method="getFinalMsg" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
@@ -89,10 +89,10 @@ Avoid if (x != y) ..; else ..;
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\crypto\ssl\WaarpSslUtility.java">
-<violation beginline="45" endline="292" begincolumn="30" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSslUtility" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
+<violation beginline="45" endline="291" begincolumn="30" endcolumn="1" rule="UseSingleton" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSslUtility" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UseSingleton" priority="3">
 All methods are static.  Consider using Singleton instead.  Alternatively, you could add a private constructor or make the class abstract to silence this warning.
 </violation>
-<violation beginline="263" endline="263" begincolumn="52" endcolumn="85" rule="AccessorClassGeneration" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSslUtility" method="operationComplete" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AccessorClassGeneration" priority="3">
+<violation beginline="262" endline="262" begincolumn="52" endcolumn="85" rule="AccessorClassGeneration" ruleset="Design Rules" package="org.waarp.common.crypto.ssl" class="WaarpSslUtility" method="operationComplete" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AccessorClassGeneration" priority="3">
 Avoid instantiation through private constructors from outside of the constructor's class.
 </violation>
 </file>
@@ -215,49 +215,49 @@ Avoid empty catch blocks
 <violation beginline="86" endline="87" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="closeInternalConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="101" endline="104" begincolumn="41" endcolumn="41" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="100" endline="103" begincolumn="41" endcolumn="41" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
-<violation beginline="114" endline="114" begincolumn="37" endcolumn="38" rule="AvoidInstanceofChecksInCatchClause" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidInstanceofChecksInCatchClause" priority="3">
+<violation beginline="113" endline="113" begincolumn="37" endcolumn="38" rule="AvoidInstanceofChecksInCatchClause" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidInstanceofChecksInCatchClause" priority="3">
 An instanceof check is being performed on the caught exception.  Create a separate catch clause for this exception type.
 </violation>
-<violation beginline="134" endline="135" begincolumn="49" endcolumn="97" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="133" endline="134" begincolumn="49" endcolumn="97" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="142" endline="144" begincolumn="35" endcolumn="33" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="141" endline="143" begincolumn="35" endcolumn="33" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="160" endline="160" begincolumn="51" endcolumn="53" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" variable="set" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
+<violation beginline="159" endline="159" begincolumn="51" endcolumn="53" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" variable="set" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
 Ensure that resources like this ResultSet object are closed after use
 </violation>
-<violation beginline="187" endline="189" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="186" endline="188" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="195" endline="196" begincolumn="49" endcolumn="97" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="194" endline="195" begincolumn="49" endcolumn="97" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="200" endline="200" begincolumn="67" endcolumn="69" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" variable="set" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
+<violation beginline="199" endline="199" begincolumn="67" endcolumn="69" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" variable="set" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
 Ensure that resources like this ResultSet object are closed after use
 </violation>
-<violation beginline="207" endline="208" begincolumn="65" endcolumn="110" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="206" endline="207" begincolumn="65" endcolumn="110" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="218" endline="219" begincolumn="51" endcolumn="49" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="217" endline="218" begincolumn="51" endcolumn="49" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="221" endline="222" begincolumn="49" endcolumn="97" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
+<violation beginline="220" endline="221" begincolumn="49" endcolumn="97" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="229" endline="231" begincolumn="35" endcolumn="33" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="228" endline="230" begincolumn="35" endcolumn="33" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="239" endline="240" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="238" endline="239" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="validConnectionSelect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="260" endline="261" begincolumn="16" endcolumn="9" rule="EmptyMethodInAbstractClassShouldBeAbstract" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#EmptyMethodInAbstractClassShouldBeAbstract" priority="1">
+<violation beginline="257" endline="258" begincolumn="16" endcolumn="9" rule="EmptyMethodInAbstractClassShouldBeAbstract" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#EmptyMethodInAbstractClassShouldBeAbstract" priority="1">
 An empty method in an abstract class should be abstract instead
 </violation>
-<violation beginline="260" endline="261" begincolumn="40" endcolumn="9" rule="UncommentedEmptyMethod" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="releaseResources" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UncommentedEmptyMethod" priority="3">
+<violation beginline="257" endline="258" begincolumn="40" endcolumn="9" rule="UncommentedEmptyMethod" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelAbstract" method="releaseResources" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#UncommentedEmptyMethod" priority="3">
 Document empty method
 </violation>
 </file>
@@ -278,16 +278,16 @@ Possible unsafe assignment to a non-final static field in a constructor.
 <violation beginline="58" endline="58" begincolumn="43" endcolumn="46" rule="AssignmentToNonFinalStatic" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelMysql" variable="pool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AssignmentToNonFinalStatic" priority="3">
 Possible unsafe assignment to a non-final static field in a constructor.
 </violation>
-<violation beginline="141" endline="142" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelMysql" method="releaseResources" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="136" endline="137" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelMysql" method="releaseResources" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="338" endline="386" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelMysql" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="322" endline="370" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelMysql" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="350" endline="351" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelMysql" method="nextSequence" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="334" endline="335" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelMysql" method="nextSequence" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="382" endline="383" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelMysql" method="nextSequence" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="366" endline="367" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelMysql" method="nextSequence" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
@@ -298,7 +298,7 @@ Possible unsafe assignment to a non-final static field in a constructor.
 <violation beginline="57" endline="57" begincolumn="43" endcolumn="46" rule="AssignmentToNonFinalStatic" ruleset="Design Rules" package="org.waarp.common.database.model" class="DbModelOracle" variable="pool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AssignmentToNonFinalStatic" priority="3">
 Possible unsafe assignment to a non-final static field in a constructor.
 </violation>
-<violation beginline="155" endline="156" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelOracle" method="releaseResources" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="150" endline="151" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database.model" class="DbModelOracle" method="releaseResources" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
 </file>
@@ -648,22 +648,22 @@ Non-static initializers are confusing
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\lru\SynchronizedLruCache.java">
-<violation beginline="85" endline="87" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="84" endline="86" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="90" endline="92" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="89" endline="91" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="105" endline="107" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="102" endline="104" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="109" endline="111" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="106" endline="108" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="119" endline="121" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="115" endline="117" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="124" endline="134" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="119" endline="129" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.lru" class="SynchronizedLruCache" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
 </file>
@@ -689,7 +689,7 @@ Avoid empty while statements
 <violation beginline="199" endline="203" begincolumn="17" endcolumn="17" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.service" class="ServiceLauncher" method="windowsStart" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="251" endline="257" begincolumn="9" endcolumn="9" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.service" class="ServiceLauncher" method="initialize" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="247" endline="253" begincolumn="9" endcolumn="9" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.service" class="ServiceLauncher" method="initialize" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
 </file>
