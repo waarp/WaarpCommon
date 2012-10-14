@@ -29,8 +29,6 @@ import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 
 /**
@@ -328,21 +326,20 @@ public class DbValue {
 				return sBuilder.toString();
 			}
 			case Types.BLOB: {
-				InputStream reader = ((InputStream) value);
+				StringBuilder sBuilder = new StringBuilder();
+				Reader reader = ((Reader) value);
+				char[] cbuf = new char[4096];
 				int len;
-				ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
 				try {
-					len = reader.available();
+					len = reader.read(cbuf);
 					while (len > 0) {
-						buffer.writeBytes(reader, len);
+						sBuilder.append(cbuf, 0, len);
+						len = reader.read(cbuf);
 					}
 				} catch (IOException e) {
 					throw new WaarpDatabaseSqlException("Error while reading Clob as String", e);
 				}
-				len = buffer.readableBytes();
-				byte[] dst = new byte[len];
-				buffer.readBytes(dst);
-				return new String(dst);
+				return sBuilder.toString();
 			}
 			default:
 				throw new WaarpDatabaseSqlException("Type unknown: " + type);

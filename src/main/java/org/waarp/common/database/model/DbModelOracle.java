@@ -21,10 +21,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Timer;
 
 import oracle.jdbc.pool.OracleConnectionPoolDataSource;
 
-import org.jboss.netty.util.Timer;
 import org.waarp.common.database.DbAdmin;
 import org.waarp.common.database.DbConnectionPool;
 import org.waarp.common.database.DbConstant;

@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 
-import org.jboss.netty.util.internal.DetectionUtil;
 import org.waarp.common.command.exception.CommandAbstractException;
 import org.waarp.common.command.exception.Reply550Exception;
 import org.waarp.common.command.exception.Reply553Exception;
@@ -47,6 +46,7 @@ import org.waarp.common.file.filesystembased.specific.FilesystemBasedDirJdk6;
 import org.waarp.common.file.filesystembased.specific.FilesystemBasedDirJdkAbstract;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.utility.DetectionUtils;
 
 /**
  * Directory implementation for Filesystem Based
@@ -77,7 +77,7 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 	 * 
 	 */
 	private static void initJdkDependent() {
-		if (DetectionUtil.javaVersion() >= 6) {
+		if (DetectionUtils.javaVersion() >= 6) {
 			filesystemBasedFtpDirJdk = new FilesystemBasedDirJdk6();
 		} else {
 			filesystemBasedFtpDirJdk = new FilesystemBasedDirJdk5();
