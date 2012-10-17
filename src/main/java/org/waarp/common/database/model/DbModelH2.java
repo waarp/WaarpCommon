@@ -70,7 +70,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
 		pool = JdbcConnectionPool.create(dbserver, dbuser, dbpasswd);
 		pool.setMaxConnections(DbConstant.MAXCONNECTION);
 		pool.setLoginTimeout(DbConstant.DELAYMAXCONNECTION);
-		logger.warn("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
+		logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
 				+ pool.getLoginTimeout());
 	}
 
