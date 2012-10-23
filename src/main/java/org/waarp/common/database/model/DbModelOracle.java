@@ -344,12 +344,8 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.database.model.DbModelAbstract#validConnectionString()
-	 */
 	@Override
-	protected String validConnectionString() {
+	public String validConnectionString() {
 		return "select 1 from dual";
 	}
 

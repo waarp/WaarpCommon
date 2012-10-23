@@ -246,7 +246,7 @@ public abstract class DbModelAbstract implements DbModel {
 	 * 
 	 * @return the associated String to validate the connection (as "select 1 frm dual")
 	 */
-	protected abstract String validConnectionString();
+	public abstract String validConnectionString();
 
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
