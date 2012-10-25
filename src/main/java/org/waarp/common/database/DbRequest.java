@@ -145,10 +145,12 @@ public class DbRequest {
 			WaarpDatabaseSqlException {
 		close();
 		stmt = createStatement();
-		try {
-			stmt.setQueryTimeout(timeout);
-		} catch (SQLException e1) {
-			// ignore
+		if (timeout > 0) {
+			try {
+				stmt.setQueryTimeout(timeout);
+			} catch (SQLException e1) {
+				// ignore
+			}
 		}
 		// rs = stmt.executeQuery(select);
 		// or alternatively, if you don't know ahead of time that
