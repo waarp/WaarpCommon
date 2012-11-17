@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>WaarpCommon</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.8</version>
+  <version>1.2.9</version>
   <name>Waarp Common</name>
   <description>
 	  The Waarp Common project contains several classes that are common with different
@@ -167,6 +167,11 @@
     	<groupId>dom4j</groupId>
     	<artifactId>dom4j</artifactId>
     	<version>1.6.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>io.netty</groupId>
+    	<artifactId>netty</artifactId>
+    	<version>3.5.10.Final</version>
     </dependency>
   </dependencies>
   <properties>

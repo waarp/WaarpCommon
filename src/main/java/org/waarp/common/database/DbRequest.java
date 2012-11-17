@@ -129,6 +129,45 @@ public class DbRequest {
 					select, e);
 		}
 	}
+	
+	/**
+	 * Execute a SELECT statement and set of Result. The statement must not be an
+	 * update/insert/delete. The previous statement and resultSet are closed.
+	 * The timeout is applied if > 0.
+	 * 
+	 * @param select
+	 * @param timeout in seconds
+	 * @throws WaarpDatabaseSqlException
+	 * @throws WaarpDatabaseNoConnectionException
+	 */
+	public void select(String select, int timeout)
+			throws WaarpDatabaseNoConnectionException,
+			WaarpDatabaseSqlException {
+		close();
+		stmt = createStatement();
+		if (timeout > 0) {
+			try {
+				stmt.setQueryTimeout(timeout);
+			} catch (SQLException e1) {
+				// ignore
+			}
+		}
+		// rs = stmt.executeQuery(select);
+		// or alternatively, if you don't know ahead of time that
+		// the query will be a SELECT...
+		try {
+			if (stmt.execute(select)) {
+				rs = stmt.getResultSet();
+			}
+		} catch (SQLException e) {
+			logger.error("SQL Exception Request:" + select + "\n" +
+					e.getMessage());
+			DbSession.error(e);
+			ls.checkConnectionNoException();
+			throw new WaarpDatabaseSqlException("SQL Exception Request:" +
+					select, e);
+		}
+	}
 
 	/**
 	 * Execute a UPDATE/INSERT/DELETE statement and returns the number of row. The previous

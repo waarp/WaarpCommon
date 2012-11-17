@@ -21,9 +21,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Timer;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.jboss.netty.util.Timer;
 import org.waarp.common.database.DbAdmin;
 import org.waarp.common.database.DbConnectionPool;
 import org.waarp.common.database.DbConstant;
@@ -80,7 +80,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
 		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
 		// Create a pool with no limit
 		pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
-		logger.warn("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
+		logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
 				+ pool.getLoginTimeout()
 				+ " ForceClose: " + pool.getTimeoutForceClose());
 	}
@@ -369,12 +369,8 @@ public abstract class DbModelMysql extends DbModelAbstract {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.database.model.DbModelAbstract#validConnectionString()
-	 */
 	@Override
-	protected String validConnectionString() {
+	public String validConnectionString() {
 		return "select 1 from dual";
 	}
 

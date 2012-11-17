@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -30,9 +32,6 @@ import javax.sql.ConnectionEventListener;
 import javax.sql.ConnectionPoolDataSource;
 import javax.sql.PooledConnection;
 
-import org.jboss.netty.util.Timeout;
-import org.jboss.netty.util.Timer;
-import org.jboss.netty.util.TimerTask;
 
 /**
  * 
@@ -103,7 +102,7 @@ public class DbConnectionPool {
 	 * @author Frederic Bregier
 	 * 
 	 */
-	private static class TimerTaskCheckConnections implements TimerTask {
+	private static class TimerTaskCheckConnections extends TimerTask {
 		DbConnectionPool pool;
 		Timer timer;
 		long delay;
@@ -124,7 +123,7 @@ public class DbConnectionPool {
 			this.delay = delay;
 		}
 
-		public void run(Timeout timeout) throws Exception {
+		public void run() {
 			Iterator<Con> conIterator = pool.recycledConnections.iterator();
 			long now = System.currentTimeMillis();
 			while (conIterator.hasNext()) {
@@ -144,7 +143,7 @@ public class DbConnectionPool {
 					}
 				}
 			}
-			timer.newTimeout(this, delay, TimeUnit.MILLISECONDS);
+			timer.schedule(this, delay);
 		}
 
 	}
@@ -198,8 +197,8 @@ public class DbConnectionPool {
 	 */
 	public DbConnectionPool(ConnectionPoolDataSource dataSource, Timer timer, long delay) {
 		this(dataSource, 0, (int) (delay / 1000));
-		timer.newTimeout(new TimerTaskCheckConnections(timer, delay, this),
-				delay, TimeUnit.MILLISECONDS);
+		timer.schedule(new TimerTaskCheckConnections(timer, delay, this),
+				delay);
 	}
 
 	/**
