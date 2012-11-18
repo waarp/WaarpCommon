@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2012-09-30T12:06:16.557">
+<pmd version="4.3" timestamp="2012-11-17T21:54:20.976">
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\command\ReplyCode.java">
 <violation beginline="351" endline="353" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.command" method="getFinalMsg" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
@@ -114,46 +114,46 @@ Avoid empty catch blocks
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\DbConnectionPool.java">
-<violation beginline="59" endline="59" begincolumn="22" endcolumn="38" rule="ImmutableField" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" variable="timeOutForceClose" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ImmutableField" priority="3">
+<violation beginline="58" endline="58" begincolumn="22" endcolumn="38" rule="ImmutableField" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" variable="timeOutForceClose" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ImmutableField" priority="3">
 Private field 'timeOutForceClose' could be made final; it is only initialized in the declaration or constructor.
 </violation>
-<violation beginline="86" endline="86" begincolumn="29" endcolumn="60" rule="SimplifyConditional" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool$Con" method="equals" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SimplifyConditional" priority="3">
+<violation beginline="85" endline="85" begincolumn="29" endcolumn="60" rule="SimplifyConditional" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool$Con" method="equals" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SimplifyConditional" priority="3">
 No need to check for null before an instanceof
 </violation>
-<violation beginline="155" endline="165" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="154" endline="164" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="201" endline="201" begincolumn="34" endcolumn="82" rule="AccessorClassGeneration" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AccessorClassGeneration" priority="3">
+<violation beginline="200" endline="200" begincolumn="32" endcolumn="80" rule="AccessorClassGeneration" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AccessorClassGeneration" priority="3">
 Avoid instantiation through private constructors from outside of the constructor's class.
 </violation>
-<violation beginline="276" endline="293" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="275" endline="292" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="327" endline="327" begincolumn="36" endcolumn="39" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" method="getConnection" variable="conn" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
+<violation beginline="326" endline="326" begincolumn="36" endcolumn="39" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" method="getConnection" variable="conn" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
 Ensure that resources like this Connection object are closed after use
 </violation>
-<violation beginline="332" endline="333" begincolumn="33" endcolumn="60" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.database" class="DbConnectionPool" method="getConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+<violation beginline="331" endline="332" begincolumn="33" endcolumn="60" rule="CollapsibleIfStatements" ruleset="Basic Rules" package="org.waarp.common.database" class="DbConnectionPool" method="getConnection" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
 These nested if statements could be combined
 </violation>
-<violation beginline="338" endline="366" begincolumn="30" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="337" endline="365" begincolumn="30" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="346" endline="350" begincolumn="25" endcolumn="25" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" method="getConnection2" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
+<violation beginline="345" endline="349" begincolumn="25" endcolumn="25" rule="ConfusingTernary" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" method="getConnection2" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#ConfusingTernary" priority="3">
 Avoid if (x != y) ..; else ..;
 </violation>
-<violation beginline="352" endline="352" begincolumn="36" endcolumn="39" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" method="getConnection2" variable="conn" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
+<violation beginline="351" endline="351" begincolumn="36" endcolumn="39" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" method="getConnection2" variable="conn" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
 Ensure that resources like this Connection object are closed after use
 </violation>
-<violation beginline="368" endline="390" begincolumn="30" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="367" endline="389" begincolumn="30" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="392" endline="401" begincolumn="30" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="391" endline="400" begincolumn="30" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
-<violation beginline="406" endline="408" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database" class="DbConnectionPool" method="closeConnectionNoEx" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+<violation beginline="405" endline="407" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database" class="DbConnectionPool" method="closeConnectionNoEx" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
 </violation>
-<violation beginline="444" endline="446" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
+<violation beginline="443" endline="445" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbConnectionPool" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
 Use block level rather than method level synchronization
 </violation>
 </file>
@@ -175,7 +175,10 @@ Avoid empty catch blocks
 <violation beginline="97" endline="98" begincolumn="33" endcolumn="83" rule="PreserveStackTrace" ruleset="Design Rules" package="org.waarp.common.database" class="DbRequest" method="createStatement" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#PreserveStackTrace" priority="3">
 New exception is thrown in catch block, original stack trace may be lost
 </violation>
-<violation beginline="193" endline="193" begincolumn="27" endcolumn="31" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database" class="DbRequest" method="getLastId" variable="rstmp" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
+<violation beginline="151" endline="153" begincolumn="27" endcolumn="25" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database" class="DbRequest" method="select" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
+Avoid empty catch blocks
+</violation>
+<violation beginline="232" endline="232" begincolumn="27" endcolumn="31" rule="CloseResource" ruleset="Design Rules" package="org.waarp.common.database" class="DbRequest" method="getLastId" variable="rstmp" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#CloseResource" priority="3">
 Ensure that resources like this ResultSet object are closed after use
 </violation>
 </file>
@@ -201,10 +204,10 @@ Overridable method 'select' called during object construction
 </violation>
 </file>
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\data\DbValue.java">
-<violation beginline="268" endline="286" begincolumn="17" endcolumn="17" rule="MissingBreakInSwitch" ruleset="Design Rules" package="org.waarp.common.database.data" class="DbValue" method="getValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#MissingBreakInSwitch" priority="3">
+<violation beginline="266" endline="284" begincolumn="17" endcolumn="17" rule="MissingBreakInSwitch" ruleset="Design Rules" package="org.waarp.common.database.data" class="DbValue" method="getValue" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#MissingBreakInSwitch" priority="3">
 A switch statement does not contain a break
 </violation>
-<violation beginline="290" endline="349" begincolumn="17" endcolumn="17" rule="MissingBreakInSwitch" ruleset="Design Rules" package="org.waarp.common.database.data" class="DbValue" method="getValueAsString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#MissingBreakInSwitch" priority="3">
+<violation beginline="288" endline="346" begincolumn="17" endcolumn="17" rule="MissingBreakInSwitch" ruleset="Design Rules" package="org.waarp.common.database.data" class="DbValue" method="getValueAsString" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#MissingBreakInSwitch" priority="3">
 A switch statement does not contain a break
 </violation>
 </file>

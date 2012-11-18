@@ -31,10 +31,10 @@
 <a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> java.sql.DriverManager;
 <a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> java.sql.SQLException;
 <a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> java.sql.Types;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> oracle.jdbc.pool.OracleConnectionPoolDataSource;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.jboss.netty.util.Timer;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> java.util.Timer;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> oracle.jdbc.pool.OracleConnectionPoolDataSource;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  
 <a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.waarp.common.database.DbAdmin;
 <a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.waarp.common.database.DbConnectionPool;
 <a class="jxr_linenumber" name="30" href="#30">30</a>  <strong class="jxr_keyword">import</strong> org.waarp.common.database.DbConstant;
@@ -95,7 +95,7 @@
 <a class="jxr_linenumber" name="85" href="#85">85</a>  		oracleConnectionPoolDataSource.setUser(dbuser);
 <a class="jxr_linenumber" name="86" href="#86">86</a>  		oracleConnectionPoolDataSource.setPassword(dbpasswd);
 <a class="jxr_linenumber" name="87" href="#87">87</a>  		pool = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/database/DbConnectionPool.html">DbConnectionPool</a>(oracleConnectionPoolDataSource, timer, delay);
-<a class="jxr_linenumber" name="88" href="#88">88</a>  		logger.warn(<span class="jxr_string">"Some info: MaxConn: "</span> + pool.getMaxConnections() + <span class="jxr_string">" LogTimeout: "</span>
+<a class="jxr_linenumber" name="88" href="#88">88</a>  		logger.info(<span class="jxr_string">"Some info: MaxConn: "</span> + pool.getMaxConnections() + <span class="jxr_string">" LogTimeout: "</span>
 <a class="jxr_linenumber" name="89" href="#89">89</a>  				+ pool.getLoginTimeout()
 <a class="jxr_linenumber" name="90" href="#90">90</a>  				+ <span class="jxr_string">" ForceClose: "</span> + pool.getTimeoutForceClose());
 <a class="jxr_linenumber" name="91" href="#91">91</a>  	}
@@ -354,19 +354,15 @@
 <a class="jxr_linenumber" name="344" href="#344">344</a> 		}
 <a class="jxr_linenumber" name="345" href="#345">345</a> 	}
 <a class="jxr_linenumber" name="346" href="#346">346</a> 
-<a class="jxr_linenumber" name="347" href="#347">347</a> 	<em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="348" href="#348">348</a> <em class="jxr_comment">	 * (non-Javadoc)</em>
-<a class="jxr_linenumber" name="349" href="#349">349</a> <em class="jxr_comment">	 * @see org.waarp.common.database.model.DbModelAbstract#validConnectionString()</em>
-<a class="jxr_linenumber" name="350" href="#350">350</a> <em class="jxr_comment">	 */</em>
-<a class="jxr_linenumber" name="351" href="#351">351</a> 	@Override
-<a class="jxr_linenumber" name="352" href="#352">352</a> 	<strong class="jxr_keyword">protected</strong> String validConnectionString() {
-<a class="jxr_linenumber" name="353" href="#353">353</a> 		<strong class="jxr_keyword">return</strong> <span class="jxr_string">"select 1 from dual"</span>;
+<a class="jxr_linenumber" name="347" href="#347">347</a> 	@Override
+<a class="jxr_linenumber" name="348" href="#348">348</a> 	<strong class="jxr_keyword">public</strong> String validConnectionString() {
+<a class="jxr_linenumber" name="349" href="#349">349</a> 		<strong class="jxr_keyword">return</strong> <span class="jxr_string">"select 1 from dual"</span>;
+<a class="jxr_linenumber" name="350" href="#350">350</a> 	}
+<a class="jxr_linenumber" name="351" href="#351">351</a> 
+<a class="jxr_linenumber" name="352" href="#352">352</a> 	<strong class="jxr_keyword">public</strong> String limitRequest(String allfields, String request, <strong class="jxr_keyword">int</strong> nb) {
+<a class="jxr_linenumber" name="353" href="#353">353</a> 		<strong class="jxr_keyword">return</strong> <span class="jxr_string">"select "</span> + allfields + <span class="jxr_string">" from ( "</span> + request + <span class="jxr_string">" ) where rownum &lt;= "</span> + nb;
 <a class="jxr_linenumber" name="354" href="#354">354</a> 	}
-<a class="jxr_linenumber" name="355" href="#355">355</a> 
-<a class="jxr_linenumber" name="356" href="#356">356</a> 	<strong class="jxr_keyword">public</strong> String limitRequest(String allfields, String request, <strong class="jxr_keyword">int</strong> nb) {
-<a class="jxr_linenumber" name="357" href="#357">357</a> 		<strong class="jxr_keyword">return</strong> <span class="jxr_string">"select "</span> + allfields + <span class="jxr_string">" from ( "</span> + request + <span class="jxr_string">" ) where rownum &lt;= "</span> + nb;
-<a class="jxr_linenumber" name="358" href="#358">358</a> 	}
-<a class="jxr_linenumber" name="359" href="#359">359</a> }
+<a class="jxr_linenumber" name="355" href="#355">355</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

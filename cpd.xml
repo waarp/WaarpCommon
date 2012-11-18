@@ -441,7 +441,7 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="49" tokens="163">
+<duplication lines="45" tokens="163">
 <file line="262" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
 <file line="225" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
@@ -481,12 +481,8 @@
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.database.model.DbModelAbstract#validConnectionString()
-	 */
 	@Override
-	protected String validConnectionString() {
+	public String validConnectionString() {
 		return "select 1";
 	}
 
