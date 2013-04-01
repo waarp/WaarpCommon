@@ -348,8 +348,9 @@ public class DbSession {
 			Thread.currentThread().interrupt();
 		}
 		if (nbThread > 0) {
-			logger.warn("Still some clients could use this Database Session: " +
-					nbThread);
+			logger.info("Still some clients could use this Database Session: " +
+					nbThread, new Exception("trace"));
+			return;
 		}
 		removeLongTermPreparedStatements();
 		DbAdmin.removeConnection(internalId);
