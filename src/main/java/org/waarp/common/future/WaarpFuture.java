@@ -368,4 +368,12 @@ public class WaarpFuture {
 		}
 		return true;
 	}
+	
+	/**
+	 * Experimental: try to re-enable the future
+	 */
+	public void reset() {
+		this.done = false;
+		this.cause = null;
+	}
 }
