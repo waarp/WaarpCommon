@@ -246,7 +246,16 @@ public class ZipUtility {
 		ZipArchiveInputStream in = new ZipArchiveInputStream(inputStream);
 		ZipArchiveEntry entry = in.getNextZipEntry();
 		while (entry != null) {
-			OutputStream out = new FileOutputStream(new File(directory, entry.getName()));
+			if (entry.isDirectory()) {
+				entry = in.getNextZipEntry();
+				continue;
+			}
+			File curfile = new File(directory, entry.getName());
+			File parent = curfile.getParentFile();
+			if (! parent.exists()) {
+				parent.mkdirs();
+			}
+			OutputStream out = new FileOutputStream(curfile);
 			IOUtils.copy(in, out);
 			out.close();
 			result.add(entry.getName());
