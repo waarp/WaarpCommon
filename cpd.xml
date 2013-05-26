@@ -964,8 +964,8 @@
 </codefragment>
 </duplication>
 <duplication lines="14" tokens="101">
-<file line="271" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java"/>
-<file line="265" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java"/>
+<file line="280" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\TarUtility.java"/>
+<file line="274" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\tar\ZipUtility.java"/>
 <codefragment>
 <![CDATA[
 					"   option=3 means tar and source is a list of files comma separated");
