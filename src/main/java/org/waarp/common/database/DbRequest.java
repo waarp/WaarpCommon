@@ -121,7 +121,7 @@ public class DbRequest {
 				rs = stmt.getResultSet();
 			}
 		} catch (SQLException e) {
-			logger.error("SQL Exception Request:" + select + "\n" +
+			logger.error("SQL Exception Request:" + select + " " +
 					e.getMessage());
 			DbSession.error(e);
 			ls.checkConnectionNoException();
@@ -160,7 +160,7 @@ public class DbRequest {
 				rs = stmt.getResultSet();
 			}
 		} catch (SQLException e) {
-			logger.error("SQL Exception Request:" + select + "\n" +
+			logger.error("SQL Exception Request:" + select + " " +
 					e.getMessage());
 			DbSession.error(e);
 			ls.checkConnectionNoException();
@@ -187,7 +187,7 @@ public class DbRequest {
 			logger.debug("QUERY(" + rowcount + "): {}", query);
 			return rowcount;
 		} catch (SQLException e) {
-			logger.error("SQL Exception Request:" + query + "\n" +
+			logger.error("SQL Exception Request:" + query + " " +
 					e.getMessage());
 			DbSession.error(e);
 			ls.checkConnectionNoException();
@@ -268,7 +268,7 @@ public class DbRequest {
 		try {
 			return rs.next();
 		} catch (SQLException e) {
-			logger.warn("SQL Exception to getNextRow" + "\n" + e.getMessage());
+			logger.warn("SQL Exception to getNextRow" + " " + e.getMessage());
 			DbSession.error(e);
 			ls.checkConnectionNoException();
 			throw new WaarpDatabaseSqlException("SQL Exception to getNextRow",

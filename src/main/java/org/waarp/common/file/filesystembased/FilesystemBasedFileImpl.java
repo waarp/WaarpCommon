@@ -310,6 +310,7 @@ public abstract class FilesystemBasedFileImpl implements
 	public boolean renameTo(String path) throws CommandAbstractException {
 		checkIdentify();
 		if (!isReady) {
+			logger.warn("File not ready: {}", this);
 			return false;
 		}
 		File file = getFileFromPath(currentFile);
@@ -340,9 +341,11 @@ public abstract class FilesystemBasedFileImpl implements
 				}
 				currentFile = getRelativePath(newFile);
 				isReady = true;
+				logger.debug("File renamed to: {} and real position: {}", this, newFile);
 				return true;
 			}
 		}
+		logger.warn("Cannot read file: {}", file);
 		return false;
 	}
 
