@@ -6,7 +6,8 @@
 	</properties>
 	<body>
 		<release version="1.2.13" date="2013-07-20" description="Fix release">
-			<action dev="Frederic Bregier" type="add">Extend DB model to support upgrade procedure</action>
+			<action dev="Frederic Bregier" type="add">Add JSON module support</action>
+		    <action dev="Frederic Bregier" type="add">Extend DB model to support upgrade procedure</action>
 		    <action dev="Frederic Bregier" type="fix">Fix File issue in rename</action>
 			<action dev="Frederic Bregier" type="fix">Upgrade jar dependencies</action>
 		</release>
