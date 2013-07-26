@@ -20,20 +20,59 @@ package org.waarp.common.role;
 /**
  * Role to be used in Waarp projects
  * 
- * FIXME not functional for the moment: early stage development
  * 
  * @author Frederic Bregier
  * 
  */
 public class RoleDefault {
 	public static enum ROLE {
+		/**
+		 * No access to any function
+		 */
 		NOACCESS(0), 
-		READONLY(1), TRANSFER(2), 
-		RULE(4), HOST(8), 
-		LIMIT(16), SYSTEM(32), LOGCONTROL(64), 
+		/**
+		 * Read only access, no action
+		 */
+		READONLY(1), 
+		/**
+		 * Ability to starts transfer
+		 */
+		TRANSFER(2), 
+		/**
+		 * Ability to control rules
+		 */
+		RULE(4), 
+		/**
+		 * Ability to control hosts
+		 */
+		HOST(8), 
+		/**
+		 * Ability to control bandwidth limitation
+		 */
+		LIMIT(16), 
+		/**
+		 * Ability to control the system configuration and to control transfers
+		 */
+		SYSTEM(32), 
+		/**
+		 * Ability to control the logging
+		 */
+		LOGCONTROL(64), 
+		/**
+		 * Unused Role value
+		 */
 		UNUSED(-128),
+		/**
+		 * Default partner : ability to read and starts transfers
+		 */
 		PARTNER(READONLY, TRANSFER),
+		/**
+		 * Administrator on configuration (partner, rule, host)
+		 */
 		CONFIGADMIN(PARTNER, RULE, HOST),
+		/**
+		 * Administrator on all
+		 */
 		FULLADMIN(CONFIGADMIN, LIMIT, SYSTEM, LOGCONTROL);
 		
 		private byte role;
