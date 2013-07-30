@@ -290,467 +290,469 @@
 <a class="jxr_linenumber" name="280" href="#280">280</a> 		}
 <a class="jxr_linenumber" name="281" href="#281">281</a> 		String extDir = paths.get(0);
 <a class="jxr_linenumber" name="282" href="#282">282</a> 		extDir = <strong class="jxr_keyword">this</strong>.validatePath(extDir);
-<a class="jxr_linenumber" name="283" href="#283">283</a> 		<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="284" href="#284">284</a> 	}
-<a class="jxr_linenumber" name="285" href="#285">285</a> 
-<a class="jxr_linenumber" name="286" href="#286">286</a> 	<strong class="jxr_keyword">public</strong> String mkdir(String directory) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="287" href="#287">287</a> 		checkIdentify();
-<a class="jxr_linenumber" name="288" href="#288">288</a> 		String newdirectory = consolidatePath(directory);
-<a class="jxr_linenumber" name="289" href="#289">289</a> 		File dir = <strong class="jxr_keyword">new</strong> File(newdirectory);
-<a class="jxr_linenumber" name="290" href="#290">290</a> 		String parent = dir.getParentFile().getPath();
-<a class="jxr_linenumber" name="291" href="#291">291</a> 		List&lt;String&gt; paths = wildcardFiles(normalizePath(parent));
-<a class="jxr_linenumber" name="292" href="#292">292</a> 		<strong class="jxr_keyword">if</strong> (paths.size() != 1) {
-<a class="jxr_linenumber" name="293" href="#293">293</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Base Directory not found: "</span> +
-<a class="jxr_linenumber" name="294" href="#294">294</a> 					paths.size() + <span class="jxr_string">" founds"</span>);
-<a class="jxr_linenumber" name="295" href="#295">295</a> 		}
-<a class="jxr_linenumber" name="296" href="#296">296</a> 		String newDir = paths.get(0) + SEPARATOR + dir.getName();
-<a class="jxr_linenumber" name="297" href="#297">297</a> 		newDir = <strong class="jxr_keyword">this</strong>.validatePath(newDir);
-<a class="jxr_linenumber" name="298" href="#298">298</a> 		File newdir = getFileFromPath(newDir);
-<a class="jxr_linenumber" name="299" href="#299">299</a> 		<strong class="jxr_keyword">if</strong> (newdir.mkdir()) {
-<a class="jxr_linenumber" name="300" href="#300">300</a> 			<strong class="jxr_keyword">return</strong> newDir;
-<a class="jxr_linenumber" name="301" href="#301">301</a> 		}
-<a class="jxr_linenumber" name="302" href="#302">302</a> 		<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Cannot create directory "</span> + newDir);
-<a class="jxr_linenumber" name="303" href="#303">303</a> 	}
-<a class="jxr_linenumber" name="304" href="#304">304</a> 
-<a class="jxr_linenumber" name="305" href="#305">305</a> 	<strong class="jxr_keyword">public</strong> String rmdir(String directory) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="306" href="#306">306</a> 		checkIdentify();
-<a class="jxr_linenumber" name="307" href="#307">307</a> 		String newdirectory = consolidatePath(directory);
-<a class="jxr_linenumber" name="308" href="#308">308</a> 		List&lt;String&gt; paths = wildcardFiles(normalizePath(newdirectory));
-<a class="jxr_linenumber" name="309" href="#309">309</a> 		<strong class="jxr_keyword">if</strong> (paths.size() != 1) {
-<a class="jxr_linenumber" name="310" href="#310">310</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Directory not found: "</span> + paths.size() +
-<a class="jxr_linenumber" name="311" href="#311">311</a> 					<span class="jxr_string">" founds"</span>);
-<a class="jxr_linenumber" name="312" href="#312">312</a> 		}
-<a class="jxr_linenumber" name="313" href="#313">313</a> 		String extDir = paths.get(0);
-<a class="jxr_linenumber" name="314" href="#314">314</a> 		extDir = <strong class="jxr_keyword">this</strong>.validatePath(extDir);
-<a class="jxr_linenumber" name="315" href="#315">315</a> 		File dir = getFileFromPath(extDir);
-<a class="jxr_linenumber" name="316" href="#316">316</a> 		<strong class="jxr_keyword">if</strong> (dir.delete()) {
-<a class="jxr_linenumber" name="317" href="#317">317</a> 			<strong class="jxr_keyword">return</strong> extDir;
-<a class="jxr_linenumber" name="318" href="#318">318</a> 		}
-<a class="jxr_linenumber" name="319" href="#319">319</a> 		<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Cannot delete directory "</span> + extDir);
-<a class="jxr_linenumber" name="320" href="#320">320</a> 	}
-<a class="jxr_linenumber" name="321" href="#321">321</a> 
-<a class="jxr_linenumber" name="322" href="#322">322</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isDirectory(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="323" href="#323">323</a> 		checkIdentify();
-<a class="jxr_linenumber" name="324" href="#324">324</a> 		File dir = getFileFromPath(path);
-<a class="jxr_linenumber" name="325" href="#325">325</a> 		<strong class="jxr_keyword">return</strong> dir.isDirectory();
-<a class="jxr_linenumber" name="326" href="#326">326</a> 	}
-<a class="jxr_linenumber" name="327" href="#327">327</a> 
-<a class="jxr_linenumber" name="328" href="#328">328</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isFile(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="329" href="#329">329</a> 		checkIdentify();
-<a class="jxr_linenumber" name="330" href="#330">330</a> 		<strong class="jxr_keyword">return</strong> getFileFromPath(path).isFile();
-<a class="jxr_linenumber" name="331" href="#331">331</a> 	}
-<a class="jxr_linenumber" name="332" href="#332">332</a> 
-<a class="jxr_linenumber" name="333" href="#333">333</a> 	<strong class="jxr_keyword">public</strong> String getModificationTime(String path)
-<a class="jxr_linenumber" name="334" href="#334">334</a> 			<strong class="jxr_keyword">throws</strong> <a href="../../../../../org/waarp/common/command/exception/CommandAbstractException.html">CommandAbstractException</a> {
-<a class="jxr_linenumber" name="335" href="#335">335</a> 		checkIdentify();
-<a class="jxr_linenumber" name="336" href="#336">336</a> 		File file = getFileFromPath(path);
-<a class="jxr_linenumber" name="337" href="#337">337</a> 		<strong class="jxr_keyword">if</strong> (file.exists()) {
-<a class="jxr_linenumber" name="338" href="#338">338</a> 			<strong class="jxr_keyword">return</strong> getModificationTime(file);
-<a class="jxr_linenumber" name="339" href="#339">339</a> 		}
-<a class="jxr_linenumber" name="340" href="#340">340</a> 		<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"\&quot;"</span> + path + <span class="jxr_string">"\&quot; does not exist"</span>);
-<a class="jxr_linenumber" name="341" href="#341">341</a> 	}
-<a class="jxr_linenumber" name="342" href="#342">342</a> 
-<a class="jxr_linenumber" name="343" href="#343">343</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="344" href="#344">344</a> <em class="jxr_javadoccomment">	 * Return the Modification time for the File</em>
-<a class="jxr_linenumber" name="345" href="#345">345</a> <em class="jxr_javadoccomment">	 * </em>
-<a class="jxr_linenumber" name="346" href="#346">346</a> <em class="jxr_javadoccomment">	 * @param file</em>
-<a class="jxr_linenumber" name="347" href="#347">347</a> <em class="jxr_javadoccomment">	 * @return the Modification time as a String YYYYMMDDHHMMSS.sss</em>
-<a class="jxr_linenumber" name="348" href="#348">348</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="349" href="#349">349</a> 	<strong class="jxr_keyword">protected</strong> String getModificationTime(File file) {
-<a class="jxr_linenumber" name="350" href="#350">350</a> 		<strong class="jxr_keyword">long</strong> mstime = file.lastModified();
-<a class="jxr_linenumber" name="351" href="#351">351</a> 		Calendar calendar = Calendar.getInstance();
-<a class="jxr_linenumber" name="352" href="#352">352</a> 		calendar.setTimeInMillis(mstime);
-<a class="jxr_linenumber" name="353" href="#353">353</a> 		<strong class="jxr_keyword">int</strong> year = calendar.get(Calendar.YEAR);
-<a class="jxr_linenumber" name="354" href="#354">354</a> 		<strong class="jxr_keyword">int</strong> month = calendar.get(Calendar.MONTH) + 1;
-<a class="jxr_linenumber" name="355" href="#355">355</a> 		<strong class="jxr_keyword">int</strong> day = calendar.get(Calendar.DAY_OF_MONTH);
-<a class="jxr_linenumber" name="356" href="#356">356</a> 		<strong class="jxr_keyword">int</strong> hour = calendar.get(Calendar.HOUR_OF_DAY);
-<a class="jxr_linenumber" name="357" href="#357">357</a> 		<strong class="jxr_keyword">int</strong> minute = calendar.get(Calendar.MINUTE);
-<a class="jxr_linenumber" name="358" href="#358">358</a> 		<strong class="jxr_keyword">int</strong> second = calendar.get(Calendar.SECOND);
-<a class="jxr_linenumber" name="359" href="#359">359</a> 		<strong class="jxr_keyword">int</strong> ms = calendar.get(Calendar.MILLISECOND);
-<a class="jxr_linenumber" name="360" href="#360">360</a> 		StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder(18);
-<a class="jxr_linenumber" name="361" href="#361">361</a> 		sb.append(year);
-<a class="jxr_linenumber" name="362" href="#362">362</a> 		<strong class="jxr_keyword">if</strong> (month &lt; 10) {
-<a class="jxr_linenumber" name="363" href="#363">363</a> 			sb.append(0);
-<a class="jxr_linenumber" name="364" href="#364">364</a> 		}
-<a class="jxr_linenumber" name="365" href="#365">365</a> 		sb.append(month);
-<a class="jxr_linenumber" name="366" href="#366">366</a> 		<strong class="jxr_keyword">if</strong> (day &lt; 10) {
-<a class="jxr_linenumber" name="367" href="#367">367</a> 			sb.append(0);
-<a class="jxr_linenumber" name="368" href="#368">368</a> 		}
-<a class="jxr_linenumber" name="369" href="#369">369</a> 		sb.append(day);
-<a class="jxr_linenumber" name="370" href="#370">370</a> 		<strong class="jxr_keyword">if</strong> (hour &lt; 10) {
-<a class="jxr_linenumber" name="371" href="#371">371</a> 			sb.append(0);
-<a class="jxr_linenumber" name="372" href="#372">372</a> 		}
-<a class="jxr_linenumber" name="373" href="#373">373</a> 		sb.append(hour);
-<a class="jxr_linenumber" name="374" href="#374">374</a> 		<strong class="jxr_keyword">if</strong> (minute &lt; 10) {
-<a class="jxr_linenumber" name="375" href="#375">375</a> 			sb.append(0);
-<a class="jxr_linenumber" name="376" href="#376">376</a> 		}
-<a class="jxr_linenumber" name="377" href="#377">377</a> 		sb.append(minute);
-<a class="jxr_linenumber" name="378" href="#378">378</a> 		<strong class="jxr_keyword">if</strong> (second &lt; 10) {
-<a class="jxr_linenumber" name="379" href="#379">379</a> 			sb.append(0);
-<a class="jxr_linenumber" name="380" href="#380">380</a> 		}
-<a class="jxr_linenumber" name="381" href="#381">381</a> 		sb.append(second);
-<a class="jxr_linenumber" name="382" href="#382">382</a> 		sb.append('.');
-<a class="jxr_linenumber" name="383" href="#383">383</a> 		<strong class="jxr_keyword">if</strong> (ms &lt; 10) {
-<a class="jxr_linenumber" name="384" href="#384">384</a> 			sb.append(0);
-<a class="jxr_linenumber" name="385" href="#385">385</a> 		}
-<a class="jxr_linenumber" name="386" href="#386">386</a> 		<strong class="jxr_keyword">if</strong> (ms &lt; 100) {
-<a class="jxr_linenumber" name="387" href="#387">387</a> 			sb.append(0);
-<a class="jxr_linenumber" name="388" href="#388">388</a> 		}
-<a class="jxr_linenumber" name="389" href="#389">389</a> 		sb.append(ms);
-<a class="jxr_linenumber" name="390" href="#390">390</a> 		<strong class="jxr_keyword">return</strong> sb.toString();
-<a class="jxr_linenumber" name="391" href="#391">391</a> 	}
-<a class="jxr_linenumber" name="392" href="#392">392</a> 
-<a class="jxr_linenumber" name="393" href="#393">393</a> 	<strong class="jxr_keyword">public</strong> List&lt;String&gt; list(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="394" href="#394">394</a> 		checkIdentify();
-<a class="jxr_linenumber" name="395" href="#395">395</a> 		<em class="jxr_comment">// First get all base directories</em>
-<a class="jxr_linenumber" name="396" href="#396">396</a> 		String newpath = path;
-<a class="jxr_linenumber" name="397" href="#397">397</a> 		<strong class="jxr_keyword">if</strong> (newpath == <strong class="jxr_keyword">null</strong> || newpath.length() == 0) {
-<a class="jxr_linenumber" name="398" href="#398">398</a> 			newpath = currentDir;
-<a class="jxr_linenumber" name="399" href="#399">399</a> 		}
-<a class="jxr_linenumber" name="400" href="#400">400</a> 		<strong class="jxr_keyword">if</strong> (newpath.startsWith(<span class="jxr_string">"-a"</span>) || newpath.startsWith(<span class="jxr_string">"-A"</span>)) {
-<a class="jxr_linenumber" name="401" href="#401">401</a> 			String[] args = newpath.split(<span class="jxr_string">" "</span>);
-<a class="jxr_linenumber" name="402" href="#402">402</a> 			<strong class="jxr_keyword">if</strong> (args.length &gt; 1) {
-<a class="jxr_linenumber" name="403" href="#403">403</a> 				newpath = args[1];
-<a class="jxr_linenumber" name="404" href="#404">404</a> 			} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="405" href="#405">405</a> 				newpath = currentDir;
-<a class="jxr_linenumber" name="406" href="#406">406</a> 			}
-<a class="jxr_linenumber" name="407" href="#407">407</a> 		}
-<a class="jxr_linenumber" name="408" href="#408">408</a> 		newpath = consolidatePath(newpath);
-<a class="jxr_linenumber" name="409" href="#409">409</a> 		List&lt;String&gt; paths = wildcardFiles(newpath);
-<a class="jxr_linenumber" name="410" href="#410">410</a> 		<strong class="jxr_keyword">if</strong> (paths.isEmpty()) {
-<a class="jxr_linenumber" name="411" href="#411">411</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"No files found"</span>);
-<a class="jxr_linenumber" name="412" href="#412">412</a> 		}
-<a class="jxr_linenumber" name="413" href="#413">413</a> 		<em class="jxr_comment">// Now if they are directories, list inside them</em>
-<a class="jxr_linenumber" name="414" href="#414">414</a> 		List&lt;String&gt; newPaths = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
-<a class="jxr_linenumber" name="415" href="#415">415</a> 		<strong class="jxr_keyword">for</strong> (String file : paths) {
-<a class="jxr_linenumber" name="416" href="#416">416</a> 			File dir = getFileFromPath(file);
-<a class="jxr_linenumber" name="417" href="#417">417</a> 			<strong class="jxr_keyword">if</strong> (dir.exists()) {
-<a class="jxr_linenumber" name="418" href="#418">418</a> 				<strong class="jxr_keyword">if</strong> (dir.isDirectory()) {
-<a class="jxr_linenumber" name="419" href="#419">419</a> 					String[] files = dir.list();
-<a class="jxr_linenumber" name="420" href="#420">420</a> 					<strong class="jxr_keyword">for</strong> (String finalFile : files) {
-<a class="jxr_linenumber" name="421" href="#421">421</a> 						String relativePath = ((FilesystemBasedAuthImpl) getSession()
-<a class="jxr_linenumber" name="422" href="#422">422</a> 								.getAuth()).getRelativePath(finalFile);
-<a class="jxr_linenumber" name="423" href="#423">423</a> 						newPaths.add(relativePath);
-<a class="jxr_linenumber" name="424" href="#424">424</a> 					}
-<a class="jxr_linenumber" name="425" href="#425">425</a> 				} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="426" href="#426">426</a> 					newPaths.add(file);
-<a class="jxr_linenumber" name="427" href="#427">427</a> 				}
-<a class="jxr_linenumber" name="428" href="#428">428</a> 			}
-<a class="jxr_linenumber" name="429" href="#429">429</a> 		}
-<a class="jxr_linenumber" name="430" href="#430">430</a> 		<strong class="jxr_keyword">return</strong> newPaths;
-<a class="jxr_linenumber" name="431" href="#431">431</a> 	}
-<a class="jxr_linenumber" name="432" href="#432">432</a> 
-<a class="jxr_linenumber" name="433" href="#433">433</a> 	<strong class="jxr_keyword">public</strong> List&lt;String&gt; listFull(String path, <strong class="jxr_keyword">boolean</strong> lsFormat)
-<a class="jxr_linenumber" name="434" href="#434">434</a> 			<strong class="jxr_keyword">throws</strong> <a href="../../../../../org/waarp/common/command/exception/CommandAbstractException.html">CommandAbstractException</a> {
-<a class="jxr_linenumber" name="435" href="#435">435</a> 		checkIdentify();
-<a class="jxr_linenumber" name="436" href="#436">436</a> 		<strong class="jxr_keyword">boolean</strong> listAllFiles = false;
-<a class="jxr_linenumber" name="437" href="#437">437</a> 		String newpath = path;
-<a class="jxr_linenumber" name="438" href="#438">438</a> 		<strong class="jxr_keyword">if</strong> (newpath == <strong class="jxr_keyword">null</strong> || newpath.length() == 0) {
-<a class="jxr_linenumber" name="439" href="#439">439</a> 			newpath = currentDir;
-<a class="jxr_linenumber" name="440" href="#440">440</a> 		}
-<a class="jxr_linenumber" name="441" href="#441">441</a> 		<strong class="jxr_keyword">if</strong> (newpath.startsWith(<span class="jxr_string">"-a"</span>) || newpath.startsWith(<span class="jxr_string">"-A"</span>)) {
-<a class="jxr_linenumber" name="442" href="#442">442</a> 			String[] args = newpath.split(<span class="jxr_string">" "</span>);
-<a class="jxr_linenumber" name="443" href="#443">443</a> 			<strong class="jxr_keyword">if</strong> (args.length &gt; 1) {
-<a class="jxr_linenumber" name="444" href="#444">444</a> 				newpath = args[1];
-<a class="jxr_linenumber" name="445" href="#445">445</a> 			} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="446" href="#446">446</a> 				newpath = currentDir;
-<a class="jxr_linenumber" name="447" href="#447">447</a> 			}
-<a class="jxr_linenumber" name="448" href="#448">448</a> 			listAllFiles = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="449" href="#449">449</a> 		}
-<a class="jxr_linenumber" name="450" href="#450">450</a> 		newpath = consolidatePath(newpath);
-<a class="jxr_linenumber" name="451" href="#451">451</a> 		<em class="jxr_comment">// First get all base directories</em>
-<a class="jxr_linenumber" name="452" href="#452">452</a> 		List&lt;String&gt; paths = wildcardFiles(newpath);
-<a class="jxr_linenumber" name="453" href="#453">453</a> 		<strong class="jxr_keyword">if</strong> (paths.isEmpty()) {
-<a class="jxr_linenumber" name="454" href="#454">454</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"No files found"</span>);
-<a class="jxr_linenumber" name="455" href="#455">455</a> 		}
-<a class="jxr_linenumber" name="456" href="#456">456</a> 		<em class="jxr_comment">// Now if they are directories, list inside them</em>
-<a class="jxr_linenumber" name="457" href="#457">457</a> 		List&lt;String&gt; newPaths = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
-<a class="jxr_linenumber" name="458" href="#458">458</a> 		<strong class="jxr_keyword">for</strong> (String file : paths) {
-<a class="jxr_linenumber" name="459" href="#459">459</a> 			File dir = getFileFromPath(file);
-<a class="jxr_linenumber" name="460" href="#460">460</a> 			<strong class="jxr_keyword">if</strong> (dir.exists()) {
-<a class="jxr_linenumber" name="461" href="#461">461</a> 				<strong class="jxr_keyword">if</strong> (dir.isDirectory()) {
-<a class="jxr_linenumber" name="462" href="#462">462</a> 					File[] files = dir.listFiles();
-<a class="jxr_linenumber" name="463" href="#463">463</a> 					<strong class="jxr_keyword">for</strong> (File finalFile : files) {
-<a class="jxr_linenumber" name="464" href="#464">464</a> 						<strong class="jxr_keyword">if</strong> (lsFormat) {
-<a class="jxr_linenumber" name="465" href="#465">465</a> 							newPaths.add(lsInfo(finalFile));
-<a class="jxr_linenumber" name="466" href="#466">466</a> 						} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="467" href="#467">467</a> 							newPaths.add(mlsxInfo(finalFile));
-<a class="jxr_linenumber" name="468" href="#468">468</a> 						}
-<a class="jxr_linenumber" name="469" href="#469">469</a> 					}
-<a class="jxr_linenumber" name="470" href="#470">470</a> 				} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="471" href="#471">471</a> 					<strong class="jxr_keyword">if</strong> (lsFormat) {
-<a class="jxr_linenumber" name="472" href="#472">472</a> 						newPaths.add(lsInfo(dir));
-<a class="jxr_linenumber" name="473" href="#473">473</a> 					} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="474" href="#474">474</a> 						newPaths.add(mlsxInfo(dir));
-<a class="jxr_linenumber" name="475" href="#475">475</a> 					}
-<a class="jxr_linenumber" name="476" href="#476">476</a> 				}
-<a class="jxr_linenumber" name="477" href="#477">477</a> 			}
-<a class="jxr_linenumber" name="478" href="#478">478</a> 		}
-<a class="jxr_linenumber" name="479" href="#479">479</a> 		<strong class="jxr_keyword">if</strong> (listAllFiles) {
-<a class="jxr_linenumber" name="480" href="#480">480</a> 			File dir = <strong class="jxr_keyword">new</strong> File(getFileFromPath(newpath), SEPARATOR + <span class="jxr_string">".."</span>);
-<a class="jxr_linenumber" name="481" href="#481">481</a> 			<strong class="jxr_keyword">if</strong> (lsFormat) {
-<a class="jxr_linenumber" name="482" href="#482">482</a> 				newPaths.add(lsInfo(dir));
-<a class="jxr_linenumber" name="483" href="#483">483</a> 			} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="484" href="#484">484</a> 				newPaths.add(mlsxInfo(dir));
-<a class="jxr_linenumber" name="485" href="#485">485</a> 			}
-<a class="jxr_linenumber" name="486" href="#486">486</a> 		}
-<a class="jxr_linenumber" name="487" href="#487">487</a> 		<strong class="jxr_keyword">return</strong> newPaths;
-<a class="jxr_linenumber" name="488" href="#488">488</a> 	}
-<a class="jxr_linenumber" name="489" href="#489">489</a> 
-<a class="jxr_linenumber" name="490" href="#490">490</a> 	<strong class="jxr_keyword">public</strong> String fileFull(String path, <strong class="jxr_keyword">boolean</strong> lsFormat)
-<a class="jxr_linenumber" name="491" href="#491">491</a> 			<strong class="jxr_keyword">throws</strong> <a href="../../../../../org/waarp/common/command/exception/CommandAbstractException.html">CommandAbstractException</a> {
-<a class="jxr_linenumber" name="492" href="#492">492</a> 		checkIdentify();
-<a class="jxr_linenumber" name="493" href="#493">493</a> 		String newpath = consolidatePath(path);
-<a class="jxr_linenumber" name="494" href="#494">494</a> 		List&lt;String&gt; paths = wildcardFiles(normalizePath(newpath));
-<a class="jxr_linenumber" name="495" href="#495">495</a> 		<strong class="jxr_keyword">if</strong> (paths.size() != 1) {
-<a class="jxr_linenumber" name="496" href="#496">496</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"No files found "</span> + paths.size() +
-<a class="jxr_linenumber" name="497" href="#497">497</a> 					<span class="jxr_string">" founds"</span>);
-<a class="jxr_linenumber" name="498" href="#498">498</a> 		}
-<a class="jxr_linenumber" name="499" href="#499">499</a> 		File file = getFileFromPath(paths.get(0));
-<a class="jxr_linenumber" name="500" href="#500">500</a> 		<strong class="jxr_keyword">if</strong> (file.exists()) {
-<a class="jxr_linenumber" name="501" href="#501">501</a> 			<strong class="jxr_keyword">if</strong> (lsFormat) {
-<a class="jxr_linenumber" name="502" href="#502">502</a> 				<strong class="jxr_keyword">return</strong> <span class="jxr_string">"Listing of \&quot;"</span> + paths.get(0) + <span class="jxr_string">"\&quot;\n"</span> + lsInfo(file) +
-<a class="jxr_linenumber" name="503" href="#503">503</a> 						<span class="jxr_string">"\nEnd of listing"</span>;
-<a class="jxr_linenumber" name="504" href="#504">504</a> 			}
-<a class="jxr_linenumber" name="505" href="#505">505</a> 			<strong class="jxr_keyword">return</strong> <span class="jxr_string">"Listing of \&quot;"</span> + paths.get(0) + <span class="jxr_string">"\&quot;\n"</span> + mlsxInfo(file) +
-<a class="jxr_linenumber" name="506" href="#506">506</a> 					<span class="jxr_string">"\nEnd of listing"</span>;
-<a class="jxr_linenumber" name="507" href="#507">507</a> 		}
-<a class="jxr_linenumber" name="508" href="#508">508</a> 		<strong class="jxr_keyword">return</strong> <span class="jxr_string">"No file with name \&quot;"</span> + path + <span class="jxr_string">"\&quot;"</span>;
-<a class="jxr_linenumber" name="509" href="#509">509</a> 	}
-<a class="jxr_linenumber" name="510" href="#510">510</a> 
-<a class="jxr_linenumber" name="511" href="#511">511</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="512" href="#512">512</a> <em class="jxr_javadoccomment">	 * Decide if Full time or partial time as in 'ls' command</em>
-<a class="jxr_linenumber" name="513" href="#513">513</a> <em class="jxr_javadoccomment">	 * </em>
-<a class="jxr_linenumber" name="514" href="#514">514</a> <em class="jxr_javadoccomment">	 * @return True if Full Time, False is Default (as in 'ls' command)</em>
-<a class="jxr_linenumber" name="515" href="#515">515</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="516" href="#516">516</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isFullTime() {
-<a class="jxr_linenumber" name="517" href="#517">517</a> 		<em class="jxr_comment">// FIXME should be it the default ?</em>
-<a class="jxr_linenumber" name="518" href="#518">518</a> 		<strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="519" href="#519">519</a> 	}
-<a class="jxr_linenumber" name="520" href="#520">520</a> 
-<a class="jxr_linenumber" name="521" href="#521">521</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="522" href="#522">522</a> <em class="jxr_javadoccomment">	 * </em>
-<a class="jxr_linenumber" name="523" href="#523">523</a> <em class="jxr_javadoccomment">	 * @param file</em>
-<a class="jxr_linenumber" name="524" href="#524">524</a> <em class="jxr_javadoccomment">	 * @return the ls format information</em>
-<a class="jxr_linenumber" name="525" href="#525">525</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="526" href="#526">526</a> 	<strong class="jxr_keyword">protected</strong> String lsInfo(File file) {
-<a class="jxr_linenumber" name="527" href="#527">527</a> 		<em class="jxr_comment">// Unix FileInterface type,permissions,hard</em>
-<a class="jxr_linenumber" name="528" href="#528">528</a> 		<em class="jxr_comment">// link(?),owner(?),group(?),size,date</em>
-<a class="jxr_linenumber" name="529" href="#529">529</a> 		<em class="jxr_comment">// and filename</em>
-<a class="jxr_linenumber" name="530" href="#530">530</a> 		StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="531" href="#531">531</a> 		builder.append((file.isDirectory() ? 'd' : '-'));
-<a class="jxr_linenumber" name="532" href="#532">532</a> 		builder.append((file.canRead() ? 'r' : '-'));
-<a class="jxr_linenumber" name="533" href="#533">533</a> 		builder.append((file.canWrite() ? 'w' : '-'));
-<a class="jxr_linenumber" name="534" href="#534">534</a> 		<strong class="jxr_keyword">if</strong> (filesystemBasedFtpDirJdk != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="535" href="#535">535</a> 			builder.append(filesystemBasedFtpDirJdk.canExecute(file) ? 'x' : '-');
-<a class="jxr_linenumber" name="536" href="#536">536</a> 		<strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="537" href="#537">537</a> 			builder.append('-');
-<a class="jxr_linenumber" name="538" href="#538">538</a> 		<em class="jxr_comment">// Group and others not supported</em>
-<a class="jxr_linenumber" name="539" href="#539">539</a> 		builder.append(<span class="jxr_string">"---"</span>);
-<a class="jxr_linenumber" name="540" href="#540">540</a> 		builder.append(<span class="jxr_string">"---"</span>);
-<a class="jxr_linenumber" name="541" href="#541">541</a> 		builder.append(' ');
-<a class="jxr_linenumber" name="542" href="#542">542</a> 		builder.append(<span class="jxr_string">"1 "</span>);<em class="jxr_comment">// hard link ?</em>
-<a class="jxr_linenumber" name="543" href="#543">543</a> 		builder.append(<span class="jxr_string">"anybody\t"</span>);<em class="jxr_comment">// owner ?</em>
-<a class="jxr_linenumber" name="544" href="#544">544</a> 		builder.append(<span class="jxr_string">"anygroup\t"</span>);<em class="jxr_comment">// group ?</em>
-<a class="jxr_linenumber" name="545" href="#545">545</a> 		builder.append(file.length());<em class="jxr_comment">// size</em>
-<a class="jxr_linenumber" name="546" href="#546">546</a> 		builder.append('\t');
-<a class="jxr_linenumber" name="547" href="#547">547</a> 		<strong class="jxr_keyword">long</strong> lastmod = file.lastModified();
-<a class="jxr_linenumber" name="548" href="#548">548</a> 		String fmt = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="549" href="#549">549</a> 		<em class="jxr_comment">// It seems Full Time is not recognized by some FTP client</em>
-<a class="jxr_linenumber" name="550" href="#550">550</a> 		<em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="551" href="#551">551</a> <em class="jxr_comment">		 * if(isFullTime()) { fmt = "EEE MMM dd HH:mm:ss yyyy"; } else {</em>
-<a class="jxr_linenumber" name="552" href="#552">552</a> <em class="jxr_comment">		 */</em>
-<a class="jxr_linenumber" name="553" href="#553">553</a> 		<strong class="jxr_keyword">long</strong> currentTime = System.currentTimeMillis();
-<a class="jxr_linenumber" name="554" href="#554">554</a> 		<strong class="jxr_keyword">if</strong> (currentTime &gt; lastmod + 6L * 30L * 24L * 60L * 60L * 1000L <em class="jxr_comment">// Old.</em>
-<a class="jxr_linenumber" name="555" href="#555">555</a> 				|| currentTime &lt; lastmod - 60L * 60L * 1000L) { <em class="jxr_comment">// In the</em>
-<a class="jxr_linenumber" name="556" href="#556">556</a> 			<em class="jxr_comment">// future.</em>
-<a class="jxr_linenumber" name="557" href="#557">557</a> 			<em class="jxr_comment">// The file is fairly old or in the future.</em>
-<a class="jxr_linenumber" name="558" href="#558">558</a> 			<em class="jxr_comment">// POSIX says the cutoff is 6 months old;</em>
-<a class="jxr_linenumber" name="559" href="#559">559</a> 			<em class="jxr_comment">// approximate this by 6*30 days.</em>
-<a class="jxr_linenumber" name="560" href="#560">560</a> 			<em class="jxr_comment">// Allow a 1 hour slop factor for what is considered "the future",</em>
-<a class="jxr_linenumber" name="561" href="#561">561</a> 			<em class="jxr_comment">// to allow for NFS server/client clock disagreement.</em>
-<a class="jxr_linenumber" name="562" href="#562">562</a> 			<em class="jxr_comment">// Show the year instead of the time of day.</em>
-<a class="jxr_linenumber" name="563" href="#563">563</a> 			fmt = <span class="jxr_string">"MMM dd  yyyy"</span>;
-<a class="jxr_linenumber" name="564" href="#564">564</a> 		} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="565" href="#565">565</a> 			fmt = <span class="jxr_string">"MMM dd HH:mm"</span>;
-<a class="jxr_linenumber" name="566" href="#566">566</a> 		}
-<a class="jxr_linenumber" name="567" href="#567">567</a> 		<em class="jxr_comment">/*<em class="jxr_comment"> } */</em></em>
-<a class="jxr_linenumber" name="568" href="#568">568</a> 		SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat
-<a class="jxr_linenumber" name="569" href="#569">569</a> 				.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG,
-<a class="jxr_linenumber" name="570" href="#570">570</a> 						Locale.ENGLISH);
-<a class="jxr_linenumber" name="571" href="#571">571</a> 		dateFormat.applyPattern(fmt);
-<a class="jxr_linenumber" name="572" href="#572">572</a> 		builder.append(dateFormat.format(<strong class="jxr_keyword">new</strong> Date(lastmod)));<em class="jxr_comment">// date</em>
-<a class="jxr_linenumber" name="573" href="#573">573</a> 		builder.append('\t');
-<a class="jxr_linenumber" name="574" href="#574">574</a> 		builder.append(file.getName());
-<a class="jxr_linenumber" name="575" href="#575">575</a> 		<strong class="jxr_keyword">return</strong> builder.toString();
-<a class="jxr_linenumber" name="576" href="#576">576</a> 	}
-<a class="jxr_linenumber" name="577" href="#577">577</a> 
-<a class="jxr_linenumber" name="578" href="#578">578</a> 	<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="579" href="#579">579</a> <em class="jxr_javadoccomment">	 * </em>
-<a class="jxr_linenumber" name="580" href="#580">580</a> <em class="jxr_javadoccomment">	 * @param file</em>
-<a class="jxr_linenumber" name="581" href="#581">581</a> <em class="jxr_javadoccomment">	 * @return the MLSx information: ' Fact=facts;...; filename'</em>
-<a class="jxr_linenumber" name="582" href="#582">582</a> <em class="jxr_javadoccomment">	 */</em>
-<a class="jxr_linenumber" name="583" href="#583">583</a> 	<strong class="jxr_keyword">protected</strong> String mlsxInfo(File file) {
-<a class="jxr_linenumber" name="584" href="#584">584</a> 		<em class="jxr_comment">// don't have create, unique, lang, media-type, charset</em>
-<a class="jxr_linenumber" name="585" href="#585">585</a> 		StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">" "</span>);
-<a class="jxr_linenumber" name="586" href="#586">586</a> 		<strong class="jxr_keyword">if</strong> (getOptsMLSx().getOptsSize() == 1) {
-<a class="jxr_linenumber" name="587" href="#587">587</a> 			builder.append(<span class="jxr_string">"Size="</span>);
-<a class="jxr_linenumber" name="588" href="#588">588</a> 			builder.append(file.length());
-<a class="jxr_linenumber" name="589" href="#589">589</a> 			builder.append(';');
-<a class="jxr_linenumber" name="590" href="#590">590</a> 		}
-<a class="jxr_linenumber" name="591" href="#591">591</a> 		<strong class="jxr_keyword">if</strong> (getOptsMLSx().getOptsModify() == 1) {
-<a class="jxr_linenumber" name="592" href="#592">592</a> 			builder.append(<span class="jxr_string">"Modify="</span>);
-<a class="jxr_linenumber" name="593" href="#593">593</a> 			builder.append(<strong class="jxr_keyword">this</strong>.getModificationTime(file));
-<a class="jxr_linenumber" name="594" href="#594">594</a> 			builder.append(';');
-<a class="jxr_linenumber" name="595" href="#595">595</a> 		}
-<a class="jxr_linenumber" name="596" href="#596">596</a> 		<strong class="jxr_keyword">if</strong> (getOptsMLSx().getOptsType() == 1) {
-<a class="jxr_linenumber" name="597" href="#597">597</a> 			builder.append(<span class="jxr_string">"Type="</span>);
-<a class="jxr_linenumber" name="598" href="#598">598</a> 			<strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="599" href="#599">599</a> 				<strong class="jxr_keyword">if</strong> (getFileFromPath(currentDir).equals(file)) {
-<a class="jxr_linenumber" name="600" href="#600">600</a> 					builder.append(<span class="jxr_string">"cdir"</span>);
-<a class="jxr_linenumber" name="601" href="#601">601</a> 				} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="602" href="#602">602</a> 					<strong class="jxr_keyword">if</strong> (file.isDirectory()) {
-<a class="jxr_linenumber" name="603" href="#603">603</a> 						builder.append(<span class="jxr_string">"dir"</span>);
-<a class="jxr_linenumber" name="604" href="#604">604</a> 					} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="605" href="#605">605</a> 						builder.append(<span class="jxr_string">"file"</span>);
-<a class="jxr_linenumber" name="606" href="#606">606</a> 					}
-<a class="jxr_linenumber" name="607" href="#607">607</a> 				}
-<a class="jxr_linenumber" name="608" href="#608">608</a> 			} <strong class="jxr_keyword">catch</strong> (CommandAbstractException e) {
-<a class="jxr_linenumber" name="609" href="#609">609</a> 				<strong class="jxr_keyword">if</strong> (file.isDirectory()) {
-<a class="jxr_linenumber" name="610" href="#610">610</a> 					builder.append(<span class="jxr_string">"dir"</span>);
-<a class="jxr_linenumber" name="611" href="#611">611</a> 				} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="612" href="#612">612</a> 					builder.append(<span class="jxr_string">"file"</span>);
-<a class="jxr_linenumber" name="613" href="#613">613</a> 				}
-<a class="jxr_linenumber" name="614" href="#614">614</a> 			}
-<a class="jxr_linenumber" name="615" href="#615">615</a> 			builder.append(';');
-<a class="jxr_linenumber" name="616" href="#616">616</a> 		}
-<a class="jxr_linenumber" name="617" href="#617">617</a> 		<strong class="jxr_keyword">if</strong> (getOptsMLSx().getOptsPerm() == 1) {
-<a class="jxr_linenumber" name="618" href="#618">618</a> 			builder.append(<span class="jxr_string">"Perm="</span>);
-<a class="jxr_linenumber" name="619" href="#619">619</a> 			<strong class="jxr_keyword">if</strong> (file.isFile()) {
-<a class="jxr_linenumber" name="620" href="#620">620</a> 				<strong class="jxr_keyword">if</strong> (file.canWrite()) {
-<a class="jxr_linenumber" name="621" href="#621">621</a> 					builder.append('a');
-<a class="jxr_linenumber" name="622" href="#622">622</a> 					builder.append('d');
-<a class="jxr_linenumber" name="623" href="#623">623</a> 					builder.append('f');
-<a class="jxr_linenumber" name="624" href="#624">624</a> 					builder.append('w');
-<a class="jxr_linenumber" name="625" href="#625">625</a> 				}
-<a class="jxr_linenumber" name="626" href="#626">626</a> 				<strong class="jxr_keyword">if</strong> (file.canRead()) {
-<a class="jxr_linenumber" name="627" href="#627">627</a> 					builder.append('r');
-<a class="jxr_linenumber" name="628" href="#628">628</a> 				}
-<a class="jxr_linenumber" name="629" href="#629">629</a> 			} <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="630" href="#630">630</a> 				<em class="jxr_comment">// Directory</em>
-<a class="jxr_linenumber" name="631" href="#631">631</a> 				<strong class="jxr_keyword">if</strong> (file.canWrite()) {
-<a class="jxr_linenumber" name="632" href="#632">632</a> 					builder.append('c');
-<a class="jxr_linenumber" name="633" href="#633">633</a> 					<strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="634" href="#634">634</a> 						<strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.validatePath(file) != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="635" href="#635">635</a> 							builder.append('d');
-<a class="jxr_linenumber" name="636" href="#636">636</a> 							builder.append('m');
-<a class="jxr_linenumber" name="637" href="#637">637</a> 							builder.append('p');
-<a class="jxr_linenumber" name="638" href="#638">638</a> 						}
-<a class="jxr_linenumber" name="639" href="#639">639</a> 					} <strong class="jxr_keyword">catch</strong> (CommandAbstractException e) {
-<a class="jxr_linenumber" name="640" href="#640">640</a> 					}
-<a class="jxr_linenumber" name="641" href="#641">641</a> 				}
-<a class="jxr_linenumber" name="642" href="#642">642</a> 				<strong class="jxr_keyword">if</strong> (file.canRead()) {
-<a class="jxr_linenumber" name="643" href="#643">643</a> 					builder.append('l');
-<a class="jxr_linenumber" name="644" href="#644">644</a> 					builder.append('e');
-<a class="jxr_linenumber" name="645" href="#645">645</a> 				}
-<a class="jxr_linenumber" name="646" href="#646">646</a> 			}
-<a class="jxr_linenumber" name="647" href="#647">647</a> 			builder.append(';');
-<a class="jxr_linenumber" name="648" href="#648">648</a> 		}
-<a class="jxr_linenumber" name="649" href="#649">649</a> 
-<a class="jxr_linenumber" name="650" href="#650">650</a> 		builder.append(' ');
-<a class="jxr_linenumber" name="651" href="#651">651</a> 		builder.append(file.getName());
-<a class="jxr_linenumber" name="652" href="#652">652</a> 		<strong class="jxr_keyword">return</strong> builder.toString();
-<a class="jxr_linenumber" name="653" href="#653">653</a> 	}
-<a class="jxr_linenumber" name="654" href="#654">654</a> 
-<a class="jxr_linenumber" name="655" href="#655">655</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getFreeSpace() <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="656" href="#656">656</a> 		checkIdentify();
-<a class="jxr_linenumber" name="657" href="#657">657</a> 		File directory = getFileFromPath(currentDir);
-<a class="jxr_linenumber" name="658" href="#658">658</a> 		<strong class="jxr_keyword">if</strong> (filesystemBasedFtpDirJdk != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="659" href="#659">659</a> 			<strong class="jxr_keyword">return</strong> filesystemBasedFtpDirJdk.getFreeSpace(directory);
-<a class="jxr_linenumber" name="660" href="#660">660</a> 		<strong class="jxr_keyword">else</strong>
-<a class="jxr_linenumber" name="661" href="#661">661</a> 			<strong class="jxr_keyword">return</strong> Integer.MAX_VALUE;
-<a class="jxr_linenumber" name="662" href="#662">662</a> 	}
-<a class="jxr_linenumber" name="663" href="#663">663</a> 
-<a class="jxr_linenumber" name="664" href="#664">664</a> 	<strong class="jxr_keyword">public</strong> <a href="../../../../../org/waarp/common/file/FileInterface.html">FileInterface</a> setUniqueFile()
-<a class="jxr_linenumber" name="665" href="#665">665</a> 			<strong class="jxr_keyword">throws</strong> <a href="../../../../../org/waarp/common/command/exception/CommandAbstractException.html">CommandAbstractException</a> {
-<a class="jxr_linenumber" name="666" href="#666">666</a> 		checkIdentify();
-<a class="jxr_linenumber" name="667" href="#667">667</a> 		File file = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="668" href="#668">668</a> 		<strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="669" href="#669">669</a> 			file = File.createTempFile(getSession().getAuth().getUser(),
-<a class="jxr_linenumber" name="670" href="#670">670</a> 					<strong class="jxr_keyword">this</strong>.session.getUniqueExtension(), getFileFromPath(currentDir));
-<a class="jxr_linenumber" name="671" href="#671">671</a> 		} <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="672" href="#672">672</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Cannot create unique file"</span>);
-<a class="jxr_linenumber" name="673" href="#673">673</a> 		}
-<a class="jxr_linenumber" name="674" href="#674">674</a> 		String currentFile = getRelativePath(file);
-<a class="jxr_linenumber" name="675" href="#675">675</a> 		<strong class="jxr_keyword">return</strong> newFile(normalizePath(currentFile), false);
-<a class="jxr_linenumber" name="676" href="#676">676</a> 	}
-<a class="jxr_linenumber" name="677" href="#677">677</a> 
-<a class="jxr_linenumber" name="678" href="#678">678</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> canRead() <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="679" href="#679">679</a> 		checkIdentify();
-<a class="jxr_linenumber" name="680" href="#680">680</a> 		<strong class="jxr_keyword">return</strong> getFileFromPath(currentDir).canRead();
-<a class="jxr_linenumber" name="681" href="#681">681</a> 	}
-<a class="jxr_linenumber" name="682" href="#682">682</a> 
-<a class="jxr_linenumber" name="683" href="#683">683</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> canWrite() <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="684" href="#684">684</a> 		checkIdentify();
-<a class="jxr_linenumber" name="685" href="#685">685</a> 		File file = getFileFromPath(currentDir);
-<a class="jxr_linenumber" name="686" href="#686">686</a> 		<strong class="jxr_keyword">return</strong> file.canWrite();
-<a class="jxr_linenumber" name="687" href="#687">687</a> 	}
-<a class="jxr_linenumber" name="688" href="#688">688</a> 
-<a class="jxr_linenumber" name="689" href="#689">689</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> exists() <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="690" href="#690">690</a> 		checkIdentify();
-<a class="jxr_linenumber" name="691" href="#691">691</a> 		<strong class="jxr_keyword">return</strong> getFileFromPath(currentDir).exists();
-<a class="jxr_linenumber" name="692" href="#692">692</a> 	}
-<a class="jxr_linenumber" name="693" href="#693">693</a> 
-<a class="jxr_linenumber" name="694" href="#694">694</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getCRC(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="695" href="#695">695</a> 		File file = getTrueFile(path);
-<a class="jxr_linenumber" name="696" href="#696">696</a> 		<strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="697" href="#697">697</a> 			CheckedInputStream cis = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="698" href="#698">698</a> 			<strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="699" href="#699">699</a> 				<em class="jxr_comment">// Computer CRC32 checksum</em>
-<a class="jxr_linenumber" name="700" href="#700">700</a> 				cis = <strong class="jxr_keyword">new</strong> CheckedInputStream(<strong class="jxr_keyword">new</strong> FileInputStream(file),
-<a class="jxr_linenumber" name="701" href="#701">701</a> 						<strong class="jxr_keyword">new</strong> CRC32());
-<a class="jxr_linenumber" name="702" href="#702">702</a> 			} <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
-<a class="jxr_linenumber" name="703" href="#703">703</a> 				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"File not found: "</span> + path);
-<a class="jxr_linenumber" name="704" href="#704">704</a> 			}
-<a class="jxr_linenumber" name="705" href="#705">705</a> 			byte[] buf = <strong class="jxr_keyword">new</strong> byte[session.getBlockSize()];
-<a class="jxr_linenumber" name="706" href="#706">706</a> 			<strong class="jxr_keyword">while</strong> (cis.read(buf) &gt;= 0) {
-<a class="jxr_linenumber" name="707" href="#707">707</a> 			}
-<a class="jxr_linenumber" name="708" href="#708">708</a> 			<strong class="jxr_keyword">long</strong> result = cis.getChecksum().getValue();
-<a class="jxr_linenumber" name="709" href="#709">709</a> 			<strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="710" href="#710">710</a> 				cis.close();
-<a class="jxr_linenumber" name="711" href="#711">711</a> 			} <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="712" href="#712">712</a> 			}
-<a class="jxr_linenumber" name="713" href="#713">713</a> 			<strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="714" href="#714">714</a> 		} <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="715" href="#715">715</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Error while reading file: "</span> + path);
-<a class="jxr_linenumber" name="716" href="#716">716</a> 		}
-<a class="jxr_linenumber" name="717" href="#717">717</a> 	}
-<a class="jxr_linenumber" name="718" href="#718">718</a> 
-<a class="jxr_linenumber" name="719" href="#719">719</a> 	<strong class="jxr_keyword">public</strong> byte[] getMD5(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="720" href="#720">720</a> 		File file = getTrueFile(path);
-<a class="jxr_linenumber" name="721" href="#721">721</a> 		<strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="722" href="#722">722</a> 			<strong class="jxr_keyword">if</strong> (FilesystemBasedFileParameterImpl.useNio) {
-<a class="jxr_linenumber" name="723" href="#723">723</a> 				<strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHashMd5Nio(file);
-<a class="jxr_linenumber" name="724" href="#724">724</a> 			}
-<a class="jxr_linenumber" name="725" href="#725">725</a> 			<strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHashMd5(file);
-<a class="jxr_linenumber" name="726" href="#726">726</a> 		} <strong class="jxr_keyword">catch</strong> (IOException e1) {
-<a class="jxr_linenumber" name="727" href="#727">727</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Error while reading file: "</span> + path);
-<a class="jxr_linenumber" name="728" href="#728">728</a> 		}
-<a class="jxr_linenumber" name="729" href="#729">729</a> 	}
-<a class="jxr_linenumber" name="730" href="#730">730</a> 
-<a class="jxr_linenumber" name="731" href="#731">731</a> 	<strong class="jxr_keyword">public</strong> byte[] getSHA1(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
-<a class="jxr_linenumber" name="732" href="#732">732</a> 		File file = getTrueFile(path);
-<a class="jxr_linenumber" name="733" href="#733">733</a> 		<strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="734" href="#734">734</a> 			<strong class="jxr_keyword">if</strong> (FilesystemBasedFileParameterImpl.useNio) {
-<a class="jxr_linenumber" name="735" href="#735">735</a> 				<strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHashSha1Nio(file);
-<a class="jxr_linenumber" name="736" href="#736">736</a> 			}
-<a class="jxr_linenumber" name="737" href="#737">737</a> 			<strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHashSha1(file);
-<a class="jxr_linenumber" name="738" href="#738">738</a> 		} <strong class="jxr_keyword">catch</strong> (IOException e1) {
-<a class="jxr_linenumber" name="739" href="#739">739</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Error while reading file: "</span> + path);
-<a class="jxr_linenumber" name="740" href="#740">740</a> 		}
-<a class="jxr_linenumber" name="741" href="#741">741</a> 	}
-<a class="jxr_linenumber" name="742" href="#742">742</a> 
-<a class="jxr_linenumber" name="743" href="#743">743</a> }
+<a class="jxr_linenumber" name="283" href="#283">283</a> 		currentDir = extDir;
+<a class="jxr_linenumber" name="284" href="#284">284</a> 		<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="285" href="#285">285</a> 	}
+<a class="jxr_linenumber" name="286" href="#286">286</a> 
+<a class="jxr_linenumber" name="287" href="#287">287</a> 	<strong class="jxr_keyword">public</strong> String mkdir(String directory) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="288" href="#288">288</a> 		checkIdentify();
+<a class="jxr_linenumber" name="289" href="#289">289</a> 		String newdirectory = consolidatePath(directory);
+<a class="jxr_linenumber" name="290" href="#290">290</a> 		File dir = <strong class="jxr_keyword">new</strong> File(newdirectory);
+<a class="jxr_linenumber" name="291" href="#291">291</a> 		String parent = dir.getParentFile().getPath();
+<a class="jxr_linenumber" name="292" href="#292">292</a> 		List&lt;String&gt; paths = wildcardFiles(normalizePath(parent));
+<a class="jxr_linenumber" name="293" href="#293">293</a> 		<strong class="jxr_keyword">if</strong> (paths.size() != 1) {
+<a class="jxr_linenumber" name="294" href="#294">294</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Base Directory not found: "</span> +
+<a class="jxr_linenumber" name="295" href="#295">295</a> 					paths.size() + <span class="jxr_string">" founds"</span>);
+<a class="jxr_linenumber" name="296" href="#296">296</a> 		}
+<a class="jxr_linenumber" name="297" href="#297">297</a> 		String newDir = paths.get(0) + SEPARATOR + dir.getName();
+<a class="jxr_linenumber" name="298" href="#298">298</a> 		newDir = <strong class="jxr_keyword">this</strong>.validatePath(newDir);
+<a class="jxr_linenumber" name="299" href="#299">299</a> 		File newdir = getFileFromPath(newDir);
+<a class="jxr_linenumber" name="300" href="#300">300</a> 		<strong class="jxr_keyword">if</strong> (newdir.mkdir()) {
+<a class="jxr_linenumber" name="301" href="#301">301</a> 			<strong class="jxr_keyword">return</strong> newDir;
+<a class="jxr_linenumber" name="302" href="#302">302</a> 		}
+<a class="jxr_linenumber" name="303" href="#303">303</a> 		<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Cannot create directory "</span> + newDir);
+<a class="jxr_linenumber" name="304" href="#304">304</a> 	}
+<a class="jxr_linenumber" name="305" href="#305">305</a> 
+<a class="jxr_linenumber" name="306" href="#306">306</a> 	<strong class="jxr_keyword">public</strong> String rmdir(String directory) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="307" href="#307">307</a> 		checkIdentify();
+<a class="jxr_linenumber" name="308" href="#308">308</a> 		String newdirectory = consolidatePath(directory);
+<a class="jxr_linenumber" name="309" href="#309">309</a> 		List&lt;String&gt; paths = wildcardFiles(normalizePath(newdirectory));
+<a class="jxr_linenumber" name="310" href="#310">310</a> 		<strong class="jxr_keyword">if</strong> (paths.size() != 1) {
+<a class="jxr_linenumber" name="311" href="#311">311</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Directory not found: "</span> + paths.size() +
+<a class="jxr_linenumber" name="312" href="#312">312</a> 					<span class="jxr_string">" founds"</span>);
+<a class="jxr_linenumber" name="313" href="#313">313</a> 		}
+<a class="jxr_linenumber" name="314" href="#314">314</a> 		String extDir = paths.get(0);
+<a class="jxr_linenumber" name="315" href="#315">315</a> 		extDir = <strong class="jxr_keyword">this</strong>.validatePath(extDir);
+<a class="jxr_linenumber" name="316" href="#316">316</a> 		File dir = getFileFromPath(extDir);
+<a class="jxr_linenumber" name="317" href="#317">317</a> 		<strong class="jxr_keyword">if</strong> (dir.delete()) {
+<a class="jxr_linenumber" name="318" href="#318">318</a> 			<strong class="jxr_keyword">return</strong> extDir;
+<a class="jxr_linenumber" name="319" href="#319">319</a> 		}
+<a class="jxr_linenumber" name="320" href="#320">320</a> 		<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Cannot delete directory "</span> + extDir);
+<a class="jxr_linenumber" name="321" href="#321">321</a> 	}
+<a class="jxr_linenumber" name="322" href="#322">322</a> 
+<a class="jxr_linenumber" name="323" href="#323">323</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isDirectory(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="324" href="#324">324</a> 		checkIdentify();
+<a class="jxr_linenumber" name="325" href="#325">325</a> 		File dir = getFileFromPath(path);
+<a class="jxr_linenumber" name="326" href="#326">326</a> 		<strong class="jxr_keyword">return</strong> dir.isDirectory();
+<a class="jxr_linenumber" name="327" href="#327">327</a> 	}
+<a class="jxr_linenumber" name="328" href="#328">328</a> 
+<a class="jxr_linenumber" name="329" href="#329">329</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isFile(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="330" href="#330">330</a> 		checkIdentify();
+<a class="jxr_linenumber" name="331" href="#331">331</a> 		<strong class="jxr_keyword">return</strong> getFileFromPath(path).isFile();
+<a class="jxr_linenumber" name="332" href="#332">332</a> 	}
+<a class="jxr_linenumber" name="333" href="#333">333</a> 
+<a class="jxr_linenumber" name="334" href="#334">334</a> 	<strong class="jxr_keyword">public</strong> String getModificationTime(String path)
+<a class="jxr_linenumber" name="335" href="#335">335</a> 			<strong class="jxr_keyword">throws</strong> <a href="../../../../../org/waarp/common/command/exception/CommandAbstractException.html">CommandAbstractException</a> {
+<a class="jxr_linenumber" name="336" href="#336">336</a> 		checkIdentify();
+<a class="jxr_linenumber" name="337" href="#337">337</a> 		File file = getFileFromPath(path);
+<a class="jxr_linenumber" name="338" href="#338">338</a> 		<strong class="jxr_keyword">if</strong> (file.exists()) {
+<a class="jxr_linenumber" name="339" href="#339">339</a> 			<strong class="jxr_keyword">return</strong> getModificationTime(file);
+<a class="jxr_linenumber" name="340" href="#340">340</a> 		}
+<a class="jxr_linenumber" name="341" href="#341">341</a> 		<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"\&quot;"</span> + path + <span class="jxr_string">"\&quot; does not exist"</span>);
+<a class="jxr_linenumber" name="342" href="#342">342</a> 	}
+<a class="jxr_linenumber" name="343" href="#343">343</a> 
+<a class="jxr_linenumber" name="344" href="#344">344</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="345" href="#345">345</a> <em class="jxr_javadoccomment">	 * Return the Modification time for the File</em>
+<a class="jxr_linenumber" name="346" href="#346">346</a> <em class="jxr_javadoccomment">	 * </em>
+<a class="jxr_linenumber" name="347" href="#347">347</a> <em class="jxr_javadoccomment">	 * @param file</em>
+<a class="jxr_linenumber" name="348" href="#348">348</a> <em class="jxr_javadoccomment">	 * @return the Modification time as a String YYYYMMDDHHMMSS.sss</em>
+<a class="jxr_linenumber" name="349" href="#349">349</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="350" href="#350">350</a> 	<strong class="jxr_keyword">protected</strong> String getModificationTime(File file) {
+<a class="jxr_linenumber" name="351" href="#351">351</a> 		<strong class="jxr_keyword">long</strong> mstime = file.lastModified();
+<a class="jxr_linenumber" name="352" href="#352">352</a> 		Calendar calendar = Calendar.getInstance();
+<a class="jxr_linenumber" name="353" href="#353">353</a> 		calendar.setTimeInMillis(mstime);
+<a class="jxr_linenumber" name="354" href="#354">354</a> 		<strong class="jxr_keyword">int</strong> year = calendar.get(Calendar.YEAR);
+<a class="jxr_linenumber" name="355" href="#355">355</a> 		<strong class="jxr_keyword">int</strong> month = calendar.get(Calendar.MONTH) + 1;
+<a class="jxr_linenumber" name="356" href="#356">356</a> 		<strong class="jxr_keyword">int</strong> day = calendar.get(Calendar.DAY_OF_MONTH);
+<a class="jxr_linenumber" name="357" href="#357">357</a> 		<strong class="jxr_keyword">int</strong> hour = calendar.get(Calendar.HOUR_OF_DAY);
+<a class="jxr_linenumber" name="358" href="#358">358</a> 		<strong class="jxr_keyword">int</strong> minute = calendar.get(Calendar.MINUTE);
+<a class="jxr_linenumber" name="359" href="#359">359</a> 		<strong class="jxr_keyword">int</strong> second = calendar.get(Calendar.SECOND);
+<a class="jxr_linenumber" name="360" href="#360">360</a> 		<strong class="jxr_keyword">int</strong> ms = calendar.get(Calendar.MILLISECOND);
+<a class="jxr_linenumber" name="361" href="#361">361</a> 		StringBuilder sb = <strong class="jxr_keyword">new</strong> StringBuilder(18);
+<a class="jxr_linenumber" name="362" href="#362">362</a> 		sb.append(year);
+<a class="jxr_linenumber" name="363" href="#363">363</a> 		<strong class="jxr_keyword">if</strong> (month &lt; 10) {
+<a class="jxr_linenumber" name="364" href="#364">364</a> 			sb.append(0);
+<a class="jxr_linenumber" name="365" href="#365">365</a> 		}
+<a class="jxr_linenumber" name="366" href="#366">366</a> 		sb.append(month);
+<a class="jxr_linenumber" name="367" href="#367">367</a> 		<strong class="jxr_keyword">if</strong> (day &lt; 10) {
+<a class="jxr_linenumber" name="368" href="#368">368</a> 			sb.append(0);
+<a class="jxr_linenumber" name="369" href="#369">369</a> 		}
+<a class="jxr_linenumber" name="370" href="#370">370</a> 		sb.append(day);
+<a class="jxr_linenumber" name="371" href="#371">371</a> 		<strong class="jxr_keyword">if</strong> (hour &lt; 10) {
+<a class="jxr_linenumber" name="372" href="#372">372</a> 			sb.append(0);
+<a class="jxr_linenumber" name="373" href="#373">373</a> 		}
+<a class="jxr_linenumber" name="374" href="#374">374</a> 		sb.append(hour);
+<a class="jxr_linenumber" name="375" href="#375">375</a> 		<strong class="jxr_keyword">if</strong> (minute &lt; 10) {
+<a class="jxr_linenumber" name="376" href="#376">376</a> 			sb.append(0);
+<a class="jxr_linenumber" name="377" href="#377">377</a> 		}
+<a class="jxr_linenumber" name="378" href="#378">378</a> 		sb.append(minute);
+<a class="jxr_linenumber" name="379" href="#379">379</a> 		<strong class="jxr_keyword">if</strong> (second &lt; 10) {
+<a class="jxr_linenumber" name="380" href="#380">380</a> 			sb.append(0);
+<a class="jxr_linenumber" name="381" href="#381">381</a> 		}
+<a class="jxr_linenumber" name="382" href="#382">382</a> 		sb.append(second);
+<a class="jxr_linenumber" name="383" href="#383">383</a> 		sb.append('.');
+<a class="jxr_linenumber" name="384" href="#384">384</a> 		<strong class="jxr_keyword">if</strong> (ms &lt; 10) {
+<a class="jxr_linenumber" name="385" href="#385">385</a> 			sb.append(0);
+<a class="jxr_linenumber" name="386" href="#386">386</a> 		}
+<a class="jxr_linenumber" name="387" href="#387">387</a> 		<strong class="jxr_keyword">if</strong> (ms &lt; 100) {
+<a class="jxr_linenumber" name="388" href="#388">388</a> 			sb.append(0);
+<a class="jxr_linenumber" name="389" href="#389">389</a> 		}
+<a class="jxr_linenumber" name="390" href="#390">390</a> 		sb.append(ms);
+<a class="jxr_linenumber" name="391" href="#391">391</a> 		<strong class="jxr_keyword">return</strong> sb.toString();
+<a class="jxr_linenumber" name="392" href="#392">392</a> 	}
+<a class="jxr_linenumber" name="393" href="#393">393</a> 
+<a class="jxr_linenumber" name="394" href="#394">394</a> 	<strong class="jxr_keyword">public</strong> List&lt;String&gt; list(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="395" href="#395">395</a> 		checkIdentify();
+<a class="jxr_linenumber" name="396" href="#396">396</a> 		<em class="jxr_comment">// First get all base directories</em>
+<a class="jxr_linenumber" name="397" href="#397">397</a> 		String newpath = path;
+<a class="jxr_linenumber" name="398" href="#398">398</a> 		<strong class="jxr_keyword">if</strong> (newpath == <strong class="jxr_keyword">null</strong> || newpath.isEmpty()) {
+<a class="jxr_linenumber" name="399" href="#399">399</a> 			newpath = currentDir;
+<a class="jxr_linenumber" name="400" href="#400">400</a> 		}
+<a class="jxr_linenumber" name="401" href="#401">401</a> 		<strong class="jxr_keyword">if</strong> (newpath.startsWith(<span class="jxr_string">"-a"</span>) || newpath.startsWith(<span class="jxr_string">"-A"</span>)) {
+<a class="jxr_linenumber" name="402" href="#402">402</a> 			String[] args = newpath.split(<span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="403" href="#403">403</a> 			<strong class="jxr_keyword">if</strong> (args.length &gt; 1) {
+<a class="jxr_linenumber" name="404" href="#404">404</a> 				newpath = args[1];
+<a class="jxr_linenumber" name="405" href="#405">405</a> 			} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="406" href="#406">406</a> 				newpath = currentDir;
+<a class="jxr_linenumber" name="407" href="#407">407</a> 			}
+<a class="jxr_linenumber" name="408" href="#408">408</a> 		}
+<a class="jxr_linenumber" name="409" href="#409">409</a> 		newpath = consolidatePath(newpath);
+<a class="jxr_linenumber" name="410" href="#410">410</a> 		logger.debug(<span class="jxr_string">"debug: "</span>+newpath);
+<a class="jxr_linenumber" name="411" href="#411">411</a> 		List&lt;String&gt; paths = wildcardFiles(newpath);
+<a class="jxr_linenumber" name="412" href="#412">412</a> 		<strong class="jxr_keyword">if</strong> (paths.isEmpty()) {
+<a class="jxr_linenumber" name="413" href="#413">413</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"No files found"</span>);
+<a class="jxr_linenumber" name="414" href="#414">414</a> 		}
+<a class="jxr_linenumber" name="415" href="#415">415</a> 		<em class="jxr_comment">// Now if they are directories, list inside them</em>
+<a class="jxr_linenumber" name="416" href="#416">416</a> 		List&lt;String&gt; newPaths = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
+<a class="jxr_linenumber" name="417" href="#417">417</a> 		<strong class="jxr_keyword">for</strong> (String file : paths) {
+<a class="jxr_linenumber" name="418" href="#418">418</a> 			File dir = getFileFromPath(file);
+<a class="jxr_linenumber" name="419" href="#419">419</a> 			<strong class="jxr_keyword">if</strong> (dir.exists()) {
+<a class="jxr_linenumber" name="420" href="#420">420</a> 				<strong class="jxr_keyword">if</strong> (dir.isDirectory()) {
+<a class="jxr_linenumber" name="421" href="#421">421</a> 					String[] files = dir.list();
+<a class="jxr_linenumber" name="422" href="#422">422</a> 					<strong class="jxr_keyword">for</strong> (String finalFile : files) {
+<a class="jxr_linenumber" name="423" href="#423">423</a> 						String relativePath = ((FilesystemBasedAuthImpl) getSession()
+<a class="jxr_linenumber" name="424" href="#424">424</a> 								.getAuth()).getRelativePath(finalFile);
+<a class="jxr_linenumber" name="425" href="#425">425</a> 						newPaths.add(relativePath);
+<a class="jxr_linenumber" name="426" href="#426">426</a> 					}
+<a class="jxr_linenumber" name="427" href="#427">427</a> 				} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="428" href="#428">428</a> 					newPaths.add(file);
+<a class="jxr_linenumber" name="429" href="#429">429</a> 				}
+<a class="jxr_linenumber" name="430" href="#430">430</a> 			}
+<a class="jxr_linenumber" name="431" href="#431">431</a> 		}
+<a class="jxr_linenumber" name="432" href="#432">432</a> 		<strong class="jxr_keyword">return</strong> newPaths;
+<a class="jxr_linenumber" name="433" href="#433">433</a> 	}
+<a class="jxr_linenumber" name="434" href="#434">434</a> 
+<a class="jxr_linenumber" name="435" href="#435">435</a> 	<strong class="jxr_keyword">public</strong> List&lt;String&gt; listFull(String path, <strong class="jxr_keyword">boolean</strong> lsFormat)
+<a class="jxr_linenumber" name="436" href="#436">436</a> 			<strong class="jxr_keyword">throws</strong> <a href="../../../../../org/waarp/common/command/exception/CommandAbstractException.html">CommandAbstractException</a> {
+<a class="jxr_linenumber" name="437" href="#437">437</a> 		checkIdentify();
+<a class="jxr_linenumber" name="438" href="#438">438</a> 		<strong class="jxr_keyword">boolean</strong> listAllFiles = false;
+<a class="jxr_linenumber" name="439" href="#439">439</a> 		String newpath = path;
+<a class="jxr_linenumber" name="440" href="#440">440</a> 		<strong class="jxr_keyword">if</strong> (newpath == <strong class="jxr_keyword">null</strong> || newpath.isEmpty()) {
+<a class="jxr_linenumber" name="441" href="#441">441</a> 			newpath = currentDir;
+<a class="jxr_linenumber" name="442" href="#442">442</a> 		}
+<a class="jxr_linenumber" name="443" href="#443">443</a> 		<strong class="jxr_keyword">if</strong> (newpath.startsWith(<span class="jxr_string">"-a"</span>) || newpath.startsWith(<span class="jxr_string">"-A"</span>)) {
+<a class="jxr_linenumber" name="444" href="#444">444</a> 			String[] args = newpath.split(<span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="445" href="#445">445</a> 			<strong class="jxr_keyword">if</strong> (args.length &gt; 1) {
+<a class="jxr_linenumber" name="446" href="#446">446</a> 				newpath = args[1];
+<a class="jxr_linenumber" name="447" href="#447">447</a> 			} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="448" href="#448">448</a> 				newpath = currentDir;
+<a class="jxr_linenumber" name="449" href="#449">449</a> 			}
+<a class="jxr_linenumber" name="450" href="#450">450</a> 			listAllFiles = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="451" href="#451">451</a> 		}
+<a class="jxr_linenumber" name="452" href="#452">452</a> 		newpath = consolidatePath(newpath);
+<a class="jxr_linenumber" name="453" href="#453">453</a> 		<em class="jxr_comment">// First get all base directories</em>
+<a class="jxr_linenumber" name="454" href="#454">454</a> 		List&lt;String&gt; paths = wildcardFiles(newpath);
+<a class="jxr_linenumber" name="455" href="#455">455</a> 		<strong class="jxr_keyword">if</strong> (paths.isEmpty()) {
+<a class="jxr_linenumber" name="456" href="#456">456</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"No files found"</span>);
+<a class="jxr_linenumber" name="457" href="#457">457</a> 		}
+<a class="jxr_linenumber" name="458" href="#458">458</a> 		<em class="jxr_comment">// Now if they are directories, list inside them</em>
+<a class="jxr_linenumber" name="459" href="#459">459</a> 		List&lt;String&gt; newPaths = <strong class="jxr_keyword">new</strong> ArrayList&lt;String&gt;();
+<a class="jxr_linenumber" name="460" href="#460">460</a> 		<strong class="jxr_keyword">for</strong> (String file : paths) {
+<a class="jxr_linenumber" name="461" href="#461">461</a> 			File dir = getFileFromPath(file);
+<a class="jxr_linenumber" name="462" href="#462">462</a> 			<strong class="jxr_keyword">if</strong> (dir.exists()) {
+<a class="jxr_linenumber" name="463" href="#463">463</a> 				<strong class="jxr_keyword">if</strong> (dir.isDirectory()) {
+<a class="jxr_linenumber" name="464" href="#464">464</a> 					File[] files = dir.listFiles();
+<a class="jxr_linenumber" name="465" href="#465">465</a> 					<strong class="jxr_keyword">for</strong> (File finalFile : files) {
+<a class="jxr_linenumber" name="466" href="#466">466</a> 						<strong class="jxr_keyword">if</strong> (lsFormat) {
+<a class="jxr_linenumber" name="467" href="#467">467</a> 							newPaths.add(lsInfo(finalFile));
+<a class="jxr_linenumber" name="468" href="#468">468</a> 						} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="469" href="#469">469</a> 							newPaths.add(mlsxInfo(finalFile));
+<a class="jxr_linenumber" name="470" href="#470">470</a> 						}
+<a class="jxr_linenumber" name="471" href="#471">471</a> 					}
+<a class="jxr_linenumber" name="472" href="#472">472</a> 				} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="473" href="#473">473</a> 					<strong class="jxr_keyword">if</strong> (lsFormat) {
+<a class="jxr_linenumber" name="474" href="#474">474</a> 						newPaths.add(lsInfo(dir));
+<a class="jxr_linenumber" name="475" href="#475">475</a> 					} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="476" href="#476">476</a> 						newPaths.add(mlsxInfo(dir));
+<a class="jxr_linenumber" name="477" href="#477">477</a> 					}
+<a class="jxr_linenumber" name="478" href="#478">478</a> 				}
+<a class="jxr_linenumber" name="479" href="#479">479</a> 			}
+<a class="jxr_linenumber" name="480" href="#480">480</a> 		}
+<a class="jxr_linenumber" name="481" href="#481">481</a> 		<strong class="jxr_keyword">if</strong> (listAllFiles) {
+<a class="jxr_linenumber" name="482" href="#482">482</a> 			File dir = <strong class="jxr_keyword">new</strong> File(getFileFromPath(newpath), SEPARATOR + <span class="jxr_string">".."</span>);
+<a class="jxr_linenumber" name="483" href="#483">483</a> 			<strong class="jxr_keyword">if</strong> (lsFormat) {
+<a class="jxr_linenumber" name="484" href="#484">484</a> 				newPaths.add(lsInfo(dir));
+<a class="jxr_linenumber" name="485" href="#485">485</a> 			} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="486" href="#486">486</a> 				newPaths.add(mlsxInfo(dir));
+<a class="jxr_linenumber" name="487" href="#487">487</a> 			}
+<a class="jxr_linenumber" name="488" href="#488">488</a> 		}
+<a class="jxr_linenumber" name="489" href="#489">489</a> 		<strong class="jxr_keyword">return</strong> newPaths;
+<a class="jxr_linenumber" name="490" href="#490">490</a> 	}
+<a class="jxr_linenumber" name="491" href="#491">491</a> 
+<a class="jxr_linenumber" name="492" href="#492">492</a> 	<strong class="jxr_keyword">public</strong> String fileFull(String path, <strong class="jxr_keyword">boolean</strong> lsFormat)
+<a class="jxr_linenumber" name="493" href="#493">493</a> 			<strong class="jxr_keyword">throws</strong> <a href="../../../../../org/waarp/common/command/exception/CommandAbstractException.html">CommandAbstractException</a> {
+<a class="jxr_linenumber" name="494" href="#494">494</a> 		checkIdentify();
+<a class="jxr_linenumber" name="495" href="#495">495</a> 		String newpath = consolidatePath(path);
+<a class="jxr_linenumber" name="496" href="#496">496</a> 		List&lt;String&gt; paths = wildcardFiles(normalizePath(newpath));
+<a class="jxr_linenumber" name="497" href="#497">497</a> 		<strong class="jxr_keyword">if</strong> (paths.size() != 1) {
+<a class="jxr_linenumber" name="498" href="#498">498</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"No files found "</span> + paths.size() +
+<a class="jxr_linenumber" name="499" href="#499">499</a> 					<span class="jxr_string">" founds"</span>);
+<a class="jxr_linenumber" name="500" href="#500">500</a> 		}
+<a class="jxr_linenumber" name="501" href="#501">501</a> 		File file = getFileFromPath(paths.get(0));
+<a class="jxr_linenumber" name="502" href="#502">502</a> 		<strong class="jxr_keyword">if</strong> (file.exists()) {
+<a class="jxr_linenumber" name="503" href="#503">503</a> 			<strong class="jxr_keyword">if</strong> (lsFormat) {
+<a class="jxr_linenumber" name="504" href="#504">504</a> 				<strong class="jxr_keyword">return</strong> <span class="jxr_string">"Listing of \&quot;"</span> + paths.get(0) + <span class="jxr_string">"\&quot;\n"</span> + lsInfo(file) +
+<a class="jxr_linenumber" name="505" href="#505">505</a> 						<span class="jxr_string">"\nEnd of listing"</span>;
+<a class="jxr_linenumber" name="506" href="#506">506</a> 			}
+<a class="jxr_linenumber" name="507" href="#507">507</a> 			<strong class="jxr_keyword">return</strong> <span class="jxr_string">"Listing of \&quot;"</span> + paths.get(0) + <span class="jxr_string">"\&quot;\n"</span> + mlsxInfo(file) +
+<a class="jxr_linenumber" name="508" href="#508">508</a> 					<span class="jxr_string">"\nEnd of listing"</span>;
+<a class="jxr_linenumber" name="509" href="#509">509</a> 		}
+<a class="jxr_linenumber" name="510" href="#510">510</a> 		<strong class="jxr_keyword">return</strong> <span class="jxr_string">"No file with name \&quot;"</span> + path + <span class="jxr_string">"\&quot;"</span>;
+<a class="jxr_linenumber" name="511" href="#511">511</a> 	}
+<a class="jxr_linenumber" name="512" href="#512">512</a> 
+<a class="jxr_linenumber" name="513" href="#513">513</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="514" href="#514">514</a> <em class="jxr_javadoccomment">	 * Decide if Full time or partial time as in 'ls' command</em>
+<a class="jxr_linenumber" name="515" href="#515">515</a> <em class="jxr_javadoccomment">	 * </em>
+<a class="jxr_linenumber" name="516" href="#516">516</a> <em class="jxr_javadoccomment">	 * @return True if Full Time, False is Default (as in 'ls' command)</em>
+<a class="jxr_linenumber" name="517" href="#517">517</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="518" href="#518">518</a> 	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> isFullTime() {
+<a class="jxr_linenumber" name="519" href="#519">519</a> 		<em class="jxr_comment">// FIXME should be it the default ?</em>
+<a class="jxr_linenumber" name="520" href="#520">520</a> 		<strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="521" href="#521">521</a> 	}
+<a class="jxr_linenumber" name="522" href="#522">522</a> 
+<a class="jxr_linenumber" name="523" href="#523">523</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="524" href="#524">524</a> <em class="jxr_javadoccomment">	 * </em>
+<a class="jxr_linenumber" name="525" href="#525">525</a> <em class="jxr_javadoccomment">	 * @param file</em>
+<a class="jxr_linenumber" name="526" href="#526">526</a> <em class="jxr_javadoccomment">	 * @return the ls format information</em>
+<a class="jxr_linenumber" name="527" href="#527">527</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="528" href="#528">528</a> 	<strong class="jxr_keyword">protected</strong> String lsInfo(File file) {
+<a class="jxr_linenumber" name="529" href="#529">529</a> 		<em class="jxr_comment">// Unix FileInterface type,permissions,hard</em>
+<a class="jxr_linenumber" name="530" href="#530">530</a> 		<em class="jxr_comment">// link(?),owner(?),group(?),size,date</em>
+<a class="jxr_linenumber" name="531" href="#531">531</a> 		<em class="jxr_comment">// and filename</em>
+<a class="jxr_linenumber" name="532" href="#532">532</a> 		StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="533" href="#533">533</a> 		builder.append((file.isDirectory() ? 'd' : '-'));
+<a class="jxr_linenumber" name="534" href="#534">534</a> 		builder.append((file.canRead() ? 'r' : '-'));
+<a class="jxr_linenumber" name="535" href="#535">535</a> 		builder.append((file.canWrite() ? 'w' : '-'));
+<a class="jxr_linenumber" name="536" href="#536">536</a> 		<strong class="jxr_keyword">if</strong> (filesystemBasedFtpDirJdk != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="537" href="#537">537</a> 			builder.append(filesystemBasedFtpDirJdk.canExecute(file) ? 'x' : '-');
+<a class="jxr_linenumber" name="538" href="#538">538</a> 		<strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="539" href="#539">539</a> 			builder.append('-');
+<a class="jxr_linenumber" name="540" href="#540">540</a> 		<em class="jxr_comment">// Group and others not supported</em>
+<a class="jxr_linenumber" name="541" href="#541">541</a> 		builder.append(<span class="jxr_string">"---"</span>);
+<a class="jxr_linenumber" name="542" href="#542">542</a> 		builder.append(<span class="jxr_string">"---"</span>);
+<a class="jxr_linenumber" name="543" href="#543">543</a> 		builder.append(' ');
+<a class="jxr_linenumber" name="544" href="#544">544</a> 		builder.append(<span class="jxr_string">"1 "</span>);<em class="jxr_comment">// hard link ?</em>
+<a class="jxr_linenumber" name="545" href="#545">545</a> 		builder.append(<span class="jxr_string">"anybody\t"</span>);<em class="jxr_comment">// owner ?</em>
+<a class="jxr_linenumber" name="546" href="#546">546</a> 		builder.append(<span class="jxr_string">"anygroup\t"</span>);<em class="jxr_comment">// group ?</em>
+<a class="jxr_linenumber" name="547" href="#547">547</a> 		builder.append(file.length());<em class="jxr_comment">// size</em>
+<a class="jxr_linenumber" name="548" href="#548">548</a> 		builder.append('\t');
+<a class="jxr_linenumber" name="549" href="#549">549</a> 		<strong class="jxr_keyword">long</strong> lastmod = file.lastModified();
+<a class="jxr_linenumber" name="550" href="#550">550</a> 		String fmt = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="551" href="#551">551</a> 		<em class="jxr_comment">// It seems Full Time is not recognized by some FTP client</em>
+<a class="jxr_linenumber" name="552" href="#552">552</a> 		<em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="553" href="#553">553</a> <em class="jxr_comment">		 * if(isFullTime()) { fmt = "EEE MMM dd HH:mm:ss yyyy"; } else {</em>
+<a class="jxr_linenumber" name="554" href="#554">554</a> <em class="jxr_comment">		 */</em>
+<a class="jxr_linenumber" name="555" href="#555">555</a> 		<strong class="jxr_keyword">long</strong> currentTime = System.currentTimeMillis();
+<a class="jxr_linenumber" name="556" href="#556">556</a> 		<strong class="jxr_keyword">if</strong> (currentTime &gt; lastmod + 6L * 30L * 24L * 60L * 60L * 1000L <em class="jxr_comment">// Old.</em>
+<a class="jxr_linenumber" name="557" href="#557">557</a> 				|| currentTime &lt; lastmod - 60L * 60L * 1000L) { <em class="jxr_comment">// In the</em>
+<a class="jxr_linenumber" name="558" href="#558">558</a> 			<em class="jxr_comment">// future.</em>
+<a class="jxr_linenumber" name="559" href="#559">559</a> 			<em class="jxr_comment">// The file is fairly old or in the future.</em>
+<a class="jxr_linenumber" name="560" href="#560">560</a> 			<em class="jxr_comment">// POSIX says the cutoff is 6 months old;</em>
+<a class="jxr_linenumber" name="561" href="#561">561</a> 			<em class="jxr_comment">// approximate this by 6*30 days.</em>
+<a class="jxr_linenumber" name="562" href="#562">562</a> 			<em class="jxr_comment">// Allow a 1 hour slop factor for what is considered "the future",</em>
+<a class="jxr_linenumber" name="563" href="#563">563</a> 			<em class="jxr_comment">// to allow for NFS server/client clock disagreement.</em>
+<a class="jxr_linenumber" name="564" href="#564">564</a> 			<em class="jxr_comment">// Show the year instead of the time of day.</em>
+<a class="jxr_linenumber" name="565" href="#565">565</a> 			fmt = <span class="jxr_string">"MMM dd  yyyy"</span>;
+<a class="jxr_linenumber" name="566" href="#566">566</a> 		} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="567" href="#567">567</a> 			fmt = <span class="jxr_string">"MMM dd HH:mm"</span>;
+<a class="jxr_linenumber" name="568" href="#568">568</a> 		}
+<a class="jxr_linenumber" name="569" href="#569">569</a> 		<em class="jxr_comment">/*<em class="jxr_comment"> } */</em></em>
+<a class="jxr_linenumber" name="570" href="#570">570</a> 		SimpleDateFormat dateFormat = (SimpleDateFormat) DateFormat
+<a class="jxr_linenumber" name="571" href="#571">571</a> 				.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG,
+<a class="jxr_linenumber" name="572" href="#572">572</a> 						Locale.ENGLISH);
+<a class="jxr_linenumber" name="573" href="#573">573</a> 		dateFormat.applyPattern(fmt);
+<a class="jxr_linenumber" name="574" href="#574">574</a> 		builder.append(dateFormat.format(<strong class="jxr_keyword">new</strong> Date(lastmod)));<em class="jxr_comment">// date</em>
+<a class="jxr_linenumber" name="575" href="#575">575</a> 		builder.append('\t');
+<a class="jxr_linenumber" name="576" href="#576">576</a> 		builder.append(file.getName());
+<a class="jxr_linenumber" name="577" href="#577">577</a> 		<strong class="jxr_keyword">return</strong> builder.toString();
+<a class="jxr_linenumber" name="578" href="#578">578</a> 	}
+<a class="jxr_linenumber" name="579" href="#579">579</a> 
+<a class="jxr_linenumber" name="580" href="#580">580</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="581" href="#581">581</a> <em class="jxr_javadoccomment">	 * </em>
+<a class="jxr_linenumber" name="582" href="#582">582</a> <em class="jxr_javadoccomment">	 * @param file</em>
+<a class="jxr_linenumber" name="583" href="#583">583</a> <em class="jxr_javadoccomment">	 * @return the MLSx information: ' Fact=facts;...; filename'</em>
+<a class="jxr_linenumber" name="584" href="#584">584</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="585" href="#585">585</a> 	<strong class="jxr_keyword">protected</strong> String mlsxInfo(File file) {
+<a class="jxr_linenumber" name="586" href="#586">586</a> 		<em class="jxr_comment">// don't have create, unique, lang, media-type, charset</em>
+<a class="jxr_linenumber" name="587" href="#587">587</a> 		StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="588" href="#588">588</a> 		<strong class="jxr_keyword">if</strong> (getOptsMLSx().getOptsSize() == 1) {
+<a class="jxr_linenumber" name="589" href="#589">589</a> 			builder.append(<span class="jxr_string">"Size="</span>);
+<a class="jxr_linenumber" name="590" href="#590">590</a> 			builder.append(file.length());
+<a class="jxr_linenumber" name="591" href="#591">591</a> 			builder.append(';');
+<a class="jxr_linenumber" name="592" href="#592">592</a> 		}
+<a class="jxr_linenumber" name="593" href="#593">593</a> 		<strong class="jxr_keyword">if</strong> (getOptsMLSx().getOptsModify() == 1) {
+<a class="jxr_linenumber" name="594" href="#594">594</a> 			builder.append(<span class="jxr_string">"Modify="</span>);
+<a class="jxr_linenumber" name="595" href="#595">595</a> 			builder.append(<strong class="jxr_keyword">this</strong>.getModificationTime(file));
+<a class="jxr_linenumber" name="596" href="#596">596</a> 			builder.append(';');
+<a class="jxr_linenumber" name="597" href="#597">597</a> 		}
+<a class="jxr_linenumber" name="598" href="#598">598</a> 		<strong class="jxr_keyword">if</strong> (getOptsMLSx().getOptsType() == 1) {
+<a class="jxr_linenumber" name="599" href="#599">599</a> 			builder.append(<span class="jxr_string">"Type="</span>);
+<a class="jxr_linenumber" name="600" href="#600">600</a> 			<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="601" href="#601">601</a> 				<strong class="jxr_keyword">if</strong> (getFileFromPath(currentDir).equals(file)) {
+<a class="jxr_linenumber" name="602" href="#602">602</a> 					builder.append(<span class="jxr_string">"cdir"</span>);
+<a class="jxr_linenumber" name="603" href="#603">603</a> 				} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="604" href="#604">604</a> 					<strong class="jxr_keyword">if</strong> (file.isDirectory()) {
+<a class="jxr_linenumber" name="605" href="#605">605</a> 						builder.append(<span class="jxr_string">"dir"</span>);
+<a class="jxr_linenumber" name="606" href="#606">606</a> 					} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="607" href="#607">607</a> 						builder.append(<span class="jxr_string">"file"</span>);
+<a class="jxr_linenumber" name="608" href="#608">608</a> 					}
+<a class="jxr_linenumber" name="609" href="#609">609</a> 				}
+<a class="jxr_linenumber" name="610" href="#610">610</a> 			} <strong class="jxr_keyword">catch</strong> (CommandAbstractException e) {
+<a class="jxr_linenumber" name="611" href="#611">611</a> 				<strong class="jxr_keyword">if</strong> (file.isDirectory()) {
+<a class="jxr_linenumber" name="612" href="#612">612</a> 					builder.append(<span class="jxr_string">"dir"</span>);
+<a class="jxr_linenumber" name="613" href="#613">613</a> 				} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="614" href="#614">614</a> 					builder.append(<span class="jxr_string">"file"</span>);
+<a class="jxr_linenumber" name="615" href="#615">615</a> 				}
+<a class="jxr_linenumber" name="616" href="#616">616</a> 			}
+<a class="jxr_linenumber" name="617" href="#617">617</a> 			builder.append(';');
+<a class="jxr_linenumber" name="618" href="#618">618</a> 		}
+<a class="jxr_linenumber" name="619" href="#619">619</a> 		<strong class="jxr_keyword">if</strong> (getOptsMLSx().getOptsPerm() == 1) {
+<a class="jxr_linenumber" name="620" href="#620">620</a> 			builder.append(<span class="jxr_string">"Perm="</span>);
+<a class="jxr_linenumber" name="621" href="#621">621</a> 			<strong class="jxr_keyword">if</strong> (file.isFile()) {
+<a class="jxr_linenumber" name="622" href="#622">622</a> 				<strong class="jxr_keyword">if</strong> (file.canWrite()) {
+<a class="jxr_linenumber" name="623" href="#623">623</a> 					builder.append('a');
+<a class="jxr_linenumber" name="624" href="#624">624</a> 					builder.append('d');
+<a class="jxr_linenumber" name="625" href="#625">625</a> 					builder.append('f');
+<a class="jxr_linenumber" name="626" href="#626">626</a> 					builder.append('w');
+<a class="jxr_linenumber" name="627" href="#627">627</a> 				}
+<a class="jxr_linenumber" name="628" href="#628">628</a> 				<strong class="jxr_keyword">if</strong> (file.canRead()) {
+<a class="jxr_linenumber" name="629" href="#629">629</a> 					builder.append('r');
+<a class="jxr_linenumber" name="630" href="#630">630</a> 				}
+<a class="jxr_linenumber" name="631" href="#631">631</a> 			} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="632" href="#632">632</a> 				<em class="jxr_comment">// Directory</em>
+<a class="jxr_linenumber" name="633" href="#633">633</a> 				<strong class="jxr_keyword">if</strong> (file.canWrite()) {
+<a class="jxr_linenumber" name="634" href="#634">634</a> 					builder.append('c');
+<a class="jxr_linenumber" name="635" href="#635">635</a> 					<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="636" href="#636">636</a> 						<strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.validatePath(file) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="637" href="#637">637</a> 							builder.append('d');
+<a class="jxr_linenumber" name="638" href="#638">638</a> 							builder.append('m');
+<a class="jxr_linenumber" name="639" href="#639">639</a> 							builder.append('p');
+<a class="jxr_linenumber" name="640" href="#640">640</a> 						}
+<a class="jxr_linenumber" name="641" href="#641">641</a> 					} <strong class="jxr_keyword">catch</strong> (CommandAbstractException e) {
+<a class="jxr_linenumber" name="642" href="#642">642</a> 					}
+<a class="jxr_linenumber" name="643" href="#643">643</a> 				}
+<a class="jxr_linenumber" name="644" href="#644">644</a> 				<strong class="jxr_keyword">if</strong> (file.canRead()) {
+<a class="jxr_linenumber" name="645" href="#645">645</a> 					builder.append('l');
+<a class="jxr_linenumber" name="646" href="#646">646</a> 					builder.append('e');
+<a class="jxr_linenumber" name="647" href="#647">647</a> 				}
+<a class="jxr_linenumber" name="648" href="#648">648</a> 			}
+<a class="jxr_linenumber" name="649" href="#649">649</a> 			builder.append(';');
+<a class="jxr_linenumber" name="650" href="#650">650</a> 		}
+<a class="jxr_linenumber" name="651" href="#651">651</a> 
+<a class="jxr_linenumber" name="652" href="#652">652</a> 		builder.append(' ');
+<a class="jxr_linenumber" name="653" href="#653">653</a> 		builder.append(file.getName());
+<a class="jxr_linenumber" name="654" href="#654">654</a> 		<strong class="jxr_keyword">return</strong> builder.toString();
+<a class="jxr_linenumber" name="655" href="#655">655</a> 	}
+<a class="jxr_linenumber" name="656" href="#656">656</a> 
+<a class="jxr_linenumber" name="657" href="#657">657</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getFreeSpace() <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="658" href="#658">658</a> 		checkIdentify();
+<a class="jxr_linenumber" name="659" href="#659">659</a> 		File directory = getFileFromPath(currentDir);
+<a class="jxr_linenumber" name="660" href="#660">660</a> 		<strong class="jxr_keyword">if</strong> (filesystemBasedFtpDirJdk != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="661" href="#661">661</a> 			<strong class="jxr_keyword">return</strong> filesystemBasedFtpDirJdk.getFreeSpace(directory);
+<a class="jxr_linenumber" name="662" href="#662">662</a> 		<strong class="jxr_keyword">else</strong>
+<a class="jxr_linenumber" name="663" href="#663">663</a> 			<strong class="jxr_keyword">return</strong> Integer.MAX_VALUE;
+<a class="jxr_linenumber" name="664" href="#664">664</a> 	}
+<a class="jxr_linenumber" name="665" href="#665">665</a> 
+<a class="jxr_linenumber" name="666" href="#666">666</a> 	<strong class="jxr_keyword">public</strong> <a href="../../../../../org/waarp/common/file/FileInterface.html">FileInterface</a> setUniqueFile()
+<a class="jxr_linenumber" name="667" href="#667">667</a> 			<strong class="jxr_keyword">throws</strong> <a href="../../../../../org/waarp/common/command/exception/CommandAbstractException.html">CommandAbstractException</a> {
+<a class="jxr_linenumber" name="668" href="#668">668</a> 		checkIdentify();
+<a class="jxr_linenumber" name="669" href="#669">669</a> 		File file = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="670" href="#670">670</a> 		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="671" href="#671">671</a> 			file = File.createTempFile(getSession().getAuth().getUser(),
+<a class="jxr_linenumber" name="672" href="#672">672</a> 					<strong class="jxr_keyword">this</strong>.session.getUniqueExtension(), getFileFromPath(currentDir));
+<a class="jxr_linenumber" name="673" href="#673">673</a> 		} <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="674" href="#674">674</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Cannot create unique file"</span>);
+<a class="jxr_linenumber" name="675" href="#675">675</a> 		}
+<a class="jxr_linenumber" name="676" href="#676">676</a> 		String currentFile = getRelativePath(file);
+<a class="jxr_linenumber" name="677" href="#677">677</a> 		<strong class="jxr_keyword">return</strong> newFile(normalizePath(currentFile), false);
+<a class="jxr_linenumber" name="678" href="#678">678</a> 	}
+<a class="jxr_linenumber" name="679" href="#679">679</a> 
+<a class="jxr_linenumber" name="680" href="#680">680</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> canRead() <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="681" href="#681">681</a> 		checkIdentify();
+<a class="jxr_linenumber" name="682" href="#682">682</a> 		<strong class="jxr_keyword">return</strong> getFileFromPath(currentDir).canRead();
+<a class="jxr_linenumber" name="683" href="#683">683</a> 	}
+<a class="jxr_linenumber" name="684" href="#684">684</a> 
+<a class="jxr_linenumber" name="685" href="#685">685</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> canWrite() <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="686" href="#686">686</a> 		checkIdentify();
+<a class="jxr_linenumber" name="687" href="#687">687</a> 		File file = getFileFromPath(currentDir);
+<a class="jxr_linenumber" name="688" href="#688">688</a> 		<strong class="jxr_keyword">return</strong> file.canWrite();
+<a class="jxr_linenumber" name="689" href="#689">689</a> 	}
+<a class="jxr_linenumber" name="690" href="#690">690</a> 
+<a class="jxr_linenumber" name="691" href="#691">691</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> exists() <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="692" href="#692">692</a> 		checkIdentify();
+<a class="jxr_linenumber" name="693" href="#693">693</a> 		<strong class="jxr_keyword">return</strong> getFileFromPath(currentDir).exists();
+<a class="jxr_linenumber" name="694" href="#694">694</a> 	}
+<a class="jxr_linenumber" name="695" href="#695">695</a> 
+<a class="jxr_linenumber" name="696" href="#696">696</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getCRC(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="697" href="#697">697</a> 		File file = getTrueFile(path);
+<a class="jxr_linenumber" name="698" href="#698">698</a> 		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="699" href="#699">699</a> 			CheckedInputStream cis = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="700" href="#700">700</a> 			<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="701" href="#701">701</a> 				<em class="jxr_comment">// Computer CRC32 checksum</em>
+<a class="jxr_linenumber" name="702" href="#702">702</a> 				cis = <strong class="jxr_keyword">new</strong> CheckedInputStream(<strong class="jxr_keyword">new</strong> FileInputStream(file),
+<a class="jxr_linenumber" name="703" href="#703">703</a> 						<strong class="jxr_keyword">new</strong> CRC32());
+<a class="jxr_linenumber" name="704" href="#704">704</a> 			} <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
+<a class="jxr_linenumber" name="705" href="#705">705</a> 				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"File not found: "</span> + path);
+<a class="jxr_linenumber" name="706" href="#706">706</a> 			}
+<a class="jxr_linenumber" name="707" href="#707">707</a> 			byte[] buf = <strong class="jxr_keyword">new</strong> byte[session.getBlockSize()];
+<a class="jxr_linenumber" name="708" href="#708">708</a> 			<strong class="jxr_keyword">while</strong> (cis.read(buf) &gt;= 0) {
+<a class="jxr_linenumber" name="709" href="#709">709</a> 			}
+<a class="jxr_linenumber" name="710" href="#710">710</a> 			<strong class="jxr_keyword">long</strong> result = cis.getChecksum().getValue();
+<a class="jxr_linenumber" name="711" href="#711">711</a> 			<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="712" href="#712">712</a> 				cis.close();
+<a class="jxr_linenumber" name="713" href="#713">713</a> 			} <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="714" href="#714">714</a> 			}
+<a class="jxr_linenumber" name="715" href="#715">715</a> 			<strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="716" href="#716">716</a> 		} <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="717" href="#717">717</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Error while reading file: "</span> + path);
+<a class="jxr_linenumber" name="718" href="#718">718</a> 		}
+<a class="jxr_linenumber" name="719" href="#719">719</a> 	}
+<a class="jxr_linenumber" name="720" href="#720">720</a> 
+<a class="jxr_linenumber" name="721" href="#721">721</a> 	<strong class="jxr_keyword">public</strong> byte[] getMD5(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="722" href="#722">722</a> 		File file = getTrueFile(path);
+<a class="jxr_linenumber" name="723" href="#723">723</a> 		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="724" href="#724">724</a> 			<strong class="jxr_keyword">if</strong> (FilesystemBasedFileParameterImpl.useNio) {
+<a class="jxr_linenumber" name="725" href="#725">725</a> 				<strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHashMd5Nio(file);
+<a class="jxr_linenumber" name="726" href="#726">726</a> 			}
+<a class="jxr_linenumber" name="727" href="#727">727</a> 			<strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHashMd5(file);
+<a class="jxr_linenumber" name="728" href="#728">728</a> 		} <strong class="jxr_keyword">catch</strong> (IOException e1) {
+<a class="jxr_linenumber" name="729" href="#729">729</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Error while reading file: "</span> + path);
+<a class="jxr_linenumber" name="730" href="#730">730</a> 		}
+<a class="jxr_linenumber" name="731" href="#731">731</a> 	}
+<a class="jxr_linenumber" name="732" href="#732">732</a> 
+<a class="jxr_linenumber" name="733" href="#733">733</a> 	<strong class="jxr_keyword">public</strong> byte[] getSHA1(String path) <strong class="jxr_keyword">throws</strong> CommandAbstractException {
+<a class="jxr_linenumber" name="734" href="#734">734</a> 		File file = getTrueFile(path);
+<a class="jxr_linenumber" name="735" href="#735">735</a> 		<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="736" href="#736">736</a> 			<strong class="jxr_keyword">if</strong> (FilesystemBasedFileParameterImpl.useNio) {
+<a class="jxr_linenumber" name="737" href="#737">737</a> 				<strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHashSha1Nio(file);
+<a class="jxr_linenumber" name="738" href="#738">738</a> 			}
+<a class="jxr_linenumber" name="739" href="#739">739</a> 			<strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHashSha1(file);
+<a class="jxr_linenumber" name="740" href="#740">740</a> 		} <strong class="jxr_keyword">catch</strong> (IOException e1) {
+<a class="jxr_linenumber" name="741" href="#741">741</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/command/exception/Reply550Exception.html">Reply550Exception</a>(<span class="jxr_string">"Error while reading file: "</span> + path);
+<a class="jxr_linenumber" name="742" href="#742">742</a> 		}
+<a class="jxr_linenumber" name="743" href="#743">743</a> 	}
+<a class="jxr_linenumber" name="744" href="#744">744</a> 
+<a class="jxr_linenumber" name="745" href="#745">745</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

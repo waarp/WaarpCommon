@@ -65,7 +65,7 @@
 </codefragment>
 </duplication>
 <duplication lines="65" tokens="250">
-<file line="356" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
+<file line="359" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
 <file line="302" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java"/>
 <codefragment>
 <![CDATA[
@@ -872,7 +872,7 @@
 </codefragment>
 </duplication>
 <duplication lines="14" tokens="105">
-<file line="284" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="285" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
 <file line="188" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
@@ -982,63 +982,6 @@
 				files[i] = new File(tarfiles[i]);
 			}
 			if (createTarFromFiles(files, tarfile)) {
-]]>
-</codefragment>
-</duplication>
-<duplication lines="26" tokens="101">
-<file line="260" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
-<file line="433" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
-<codefragment>
-<![CDATA[
-		for (int i = 0; i < pathes.length - 1; i++) {
-			String nodename = pathes[i];
-			if (nodename.length() > 0) {
-				Element exist = current.element(nodename);
-				if (exist == null) {
-					current = current.addElement(nodename);
-				} else {
-					current = exist;
-				}
-			}
-		}
-		String nodename = pathes[pathes.length - 1];
-		if (nodename.length() > 0) {
-			current = current.addElement(nodename);
-		}
-		return current;
-	}
-
-	/**
-	 * 
-	 * @param ref
-	 * @param path
-	 * @return the parent element associated with the path relatively to the referent element
-	 * @throws DocumentException
-	 */
-	static public Element getParentElement(Element ref, String path)
-]]>
-</codefragment>
-</duplication>
-<duplication lines="15" tokens="100">
-<file line="362" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
-<file line="413" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\xml\XmlUtil.java"/>
-<codefragment>
-<![CDATA[
-	static public Element addOrGetElement(Document doc, String path) {
-		String[] pathes = path.split("/");
-		int rank = 0;
-		for (rank = 0; rank < pathes.length; rank++) {
-			if (pathes[rank].length() > 0) {
-				break; // found
-			}
-		}
-		if (rank >= pathes.length) {
-			return null; // Should not be !
-		}
-		Element current = (Element) doc.selectSingleNode(pathes[rank]);
-		if (current == null) {
-			current = doc.addElement(pathes[rank]);
-		}
 ]]>
 </codefragment>
 </duplication>

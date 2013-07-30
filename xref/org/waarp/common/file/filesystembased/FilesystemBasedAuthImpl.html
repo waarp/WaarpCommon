@@ -238,7 +238,7 @@
 <a class="jxr_linenumber" name="228" href="#228">228</a> <em class="jxr_javadoccomment">	 * @return the full path as a String</em>
 <a class="jxr_linenumber" name="229" href="#229">229</a> <em class="jxr_javadoccomment">	 */</em>
 <a class="jxr_linenumber" name="230" href="#230">230</a> 	<strong class="jxr_keyword">public</strong> String getAbsolutePath(String path) {
-<a class="jxr_linenumber" name="231" href="#231">231</a> 		<strong class="jxr_keyword">if</strong> (path == <strong class="jxr_keyword">null</strong> || path.length() == 0) {
+<a class="jxr_linenumber" name="231" href="#231">231</a> 		<strong class="jxr_keyword">if</strong> (path == <strong class="jxr_keyword">null</strong> || path.isEmpty()) {
 <a class="jxr_linenumber" name="232" href="#232">232</a> 			<strong class="jxr_keyword">return</strong> getBaseDirectory();
 <a class="jxr_linenumber" name="233" href="#233">233</a> 		}
 <a class="jxr_linenumber" name="234" href="#234">234</a> 		<strong class="jxr_keyword">return</strong> FilesystemBasedDirImpl.normalizePath(getBaseDirectory() +

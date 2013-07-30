@@ -14,6 +14,7 @@ org.waarp.common.file.filesystembased
 org.waarp.common.file.filesystembased.specific
 org.waarp.common.file.passthrough
 org.waarp.common.future
+org.waarp.common.json
 org.waarp.common.logging
 org.waarp.common.lru
 org.waarp.common.role

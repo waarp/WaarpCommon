@@ -136,7 +136,7 @@
 <a class="jxr_linenumber" name="126" href="#126">126</a> 				isReady = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="127" href="#127">127</a> 			} <strong class="jxr_keyword">catch</strong> (SQLException e1) {
 <a class="jxr_linenumber" name="128" href="#128">128</a> 				logger.error(<span class="jxr_string">"SQL Exception PreparedStatement: "</span> + request +
-<a class="jxr_linenumber" name="129" href="#129">129</a> 						<span class="jxr_string">"\n"</span> + e.getMessage());
+<a class="jxr_linenumber" name="129" href="#129">129</a> 						<span class="jxr_string">" "</span> + e.getMessage());
 <a class="jxr_linenumber" name="130" href="#130">130</a> 				DbSession.error(e);
 <a class="jxr_linenumber" name="131" href="#131">131</a> 				preparedStatement = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="132" href="#132">132</a> 				isReady = false;
@@ -190,7 +190,7 @@
 <a class="jxr_linenumber" name="180" href="#180">180</a> 				isReady = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="181" href="#181">181</a> 			} <strong class="jxr_keyword">catch</strong> (SQLException e1) {
 <a class="jxr_linenumber" name="182" href="#182">182</a> 				logger.error(<span class="jxr_string">"SQL Exception PreparedStatement: "</span> + request +
-<a class="jxr_linenumber" name="183" href="#183">183</a> 						<span class="jxr_string">"\n"</span> + e.getMessage());
+<a class="jxr_linenumber" name="183" href="#183">183</a> 						<span class="jxr_string">" "</span> + e.getMessage());
 <a class="jxr_linenumber" name="184" href="#184">184</a> 				DbSession.error(e);
 <a class="jxr_linenumber" name="185" href="#185">185</a> 				preparedStatement = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="186" href="#186">186</a> 				isReady = false;
@@ -236,7 +236,7 @@
 <a class="jxr_linenumber" name="226" href="#226">226</a> 				isReady = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="227" href="#227">227</a> 			} <strong class="jxr_keyword">catch</strong> (SQLException e1) {
 <a class="jxr_linenumber" name="228" href="#228">228</a> 				logger.error(<span class="jxr_string">"SQL Exception createPreparedStatement:"</span> +
-<a class="jxr_linenumber" name="229" href="#229">229</a> 						requestarg + <span class="jxr_string">"\n"</span> + e.getMessage());
+<a class="jxr_linenumber" name="229" href="#229">229</a> 						requestarg + <span class="jxr_string">" "</span> + e.getMessage());
 <a class="jxr_linenumber" name="230" href="#230">230</a> 				DbSession.error(e);
 <a class="jxr_linenumber" name="231" href="#231">231</a> 				realClose();
 <a class="jxr_linenumber" name="232" href="#232">232</a> 				preparedStatement = <strong class="jxr_keyword">null</strong>;
@@ -287,7 +287,7 @@
 <a class="jxr_linenumber" name="277" href="#277">277</a> 		<strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="278" href="#278">278</a> 			rs = preparedStatement.executeQuery();
 <a class="jxr_linenumber" name="279" href="#279">279</a> 		} <strong class="jxr_keyword">catch</strong> (SQLException e) {
-<a class="jxr_linenumber" name="280" href="#280">280</a> 			logger.error(<span class="jxr_string">"SQL Exception executeQuery:"</span> + request + <span class="jxr_string">"\n"</span> +
+<a class="jxr_linenumber" name="280" href="#280">280</a> 			logger.error(<span class="jxr_string">"SQL Exception executeQuery:"</span> + request + <span class="jxr_string">" "</span> +
 <a class="jxr_linenumber" name="281" href="#281">281</a> 					e.getMessage());
 <a class="jxr_linenumber" name="282" href="#282">282</a> 			DbSession.error(e);
 <a class="jxr_linenumber" name="283" href="#283">283</a> 			close();
@@ -325,7 +325,7 @@
 <a class="jxr_linenumber" name="315" href="#315">315</a> 		<strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="316" href="#316">316</a> 			retour = preparedStatement.executeUpdate();
 <a class="jxr_linenumber" name="317" href="#317">317</a> 		} <strong class="jxr_keyword">catch</strong> (SQLException e) {
-<a class="jxr_linenumber" name="318" href="#318">318</a> 			logger.error(<span class="jxr_string">"SQL Exception executeUpdate:"</span> + request + <span class="jxr_string">"\n"</span> +
+<a class="jxr_linenumber" name="318" href="#318">318</a> 			logger.error(<span class="jxr_string">"SQL Exception executeUpdate:"</span> + request + <span class="jxr_string">" "</span> +
 <a class="jxr_linenumber" name="319" href="#319">319</a> 					e.getMessage());
 <a class="jxr_linenumber" name="320" href="#320">320</a> 			DbSession.error(e);
 <a class="jxr_linenumber" name="321" href="#321">321</a> 			ls.checkConnectionNoException();
@@ -391,7 +391,7 @@
 <a class="jxr_linenumber" name="381" href="#381">381</a> 		<strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="382" href="#382">382</a> 			<strong class="jxr_keyword">return</strong> rs.next();
 <a class="jxr_linenumber" name="383" href="#383">383</a> 		} <strong class="jxr_keyword">catch</strong> (SQLException e) {
-<a class="jxr_linenumber" name="384" href="#384">384</a> 			logger.error(<span class="jxr_string">"SQL Exception to getNextRow"</span> + <span class="jxr_string">"\n"</span> + e.getMessage());
+<a class="jxr_linenumber" name="384" href="#384">384</a> 			logger.error(<span class="jxr_string">"SQL Exception to getNextRow"</span> + <span class="jxr_string">" "</span> + e.getMessage());
 <a class="jxr_linenumber" name="385" href="#385">385</a> 			DbSession.error(e);
 <a class="jxr_linenumber" name="386" href="#386">386</a> 			ls.checkConnectionNoException();
 <a class="jxr_linenumber" name="387" href="#387">387</a> 			<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/database/exception/WaarpDatabaseSqlException.html">WaarpDatabaseSqlException</a>(

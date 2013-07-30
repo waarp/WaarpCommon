@@ -230,7 +230,7 @@
 <a class="jxr_linenumber" name="220" href="#220">220</a> 		String[] pathes = path.split(<span class="jxr_string">"/"</span>);
 <a class="jxr_linenumber" name="221" href="#221">221</a> 		Element current = ref;
 <a class="jxr_linenumber" name="222" href="#222">222</a> 		<strong class="jxr_keyword">for</strong> (String nodename : pathes) {
-<a class="jxr_linenumber" name="223" href="#223">223</a> 			<strong class="jxr_keyword">if</strong> (nodename.length() &gt; 0) {
+<a class="jxr_linenumber" name="223" href="#223">223</a> 			<strong class="jxr_keyword">if</strong> (! nodename.isEmpty()) {
 <a class="jxr_linenumber" name="224" href="#224">224</a> 				Element exist = current.element(nodename);
 <a class="jxr_linenumber" name="225" href="#225">225</a> 				<strong class="jxr_keyword">if</strong> (exist == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="226" href="#226">226</a> 					current = current.addElement(nodename);
@@ -269,7 +269,7 @@
 <a class="jxr_linenumber" name="259" href="#259">259</a> 		Element current = ref;
 <a class="jxr_linenumber" name="260" href="#260">260</a> 		<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; pathes.length - 1; i++) {
 <a class="jxr_linenumber" name="261" href="#261">261</a> 			String nodename = pathes[i];
-<a class="jxr_linenumber" name="262" href="#262">262</a> 			<strong class="jxr_keyword">if</strong> (nodename.length() &gt; 0) {
+<a class="jxr_linenumber" name="262" href="#262">262</a> 			<strong class="jxr_keyword">if</strong> (! nodename.isEmpty()) {
 <a class="jxr_linenumber" name="263" href="#263">263</a> 				Element exist = current.element(nodename);
 <a class="jxr_linenumber" name="264" href="#264">264</a> 				<strong class="jxr_keyword">if</strong> (exist == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="265" href="#265">265</a> 					current = current.addElement(nodename);
@@ -279,7 +279,7 @@
 <a class="jxr_linenumber" name="269" href="#269">269</a> 			}
 <a class="jxr_linenumber" name="270" href="#270">270</a> 		}
 <a class="jxr_linenumber" name="271" href="#271">271</a> 		String nodename = pathes[pathes.length - 1];
-<a class="jxr_linenumber" name="272" href="#272">272</a> 		<strong class="jxr_keyword">if</strong> (nodename.length() &gt; 0) {
+<a class="jxr_linenumber" name="272" href="#272">272</a> 		<strong class="jxr_keyword">if</strong> (! nodename.isEmpty()) {
 <a class="jxr_linenumber" name="273" href="#273">273</a> 			current = current.addElement(nodename);
 <a class="jxr_linenumber" name="274" href="#274">274</a> 		}
 <a class="jxr_linenumber" name="275" href="#275">275</a> 		<strong class="jxr_keyword">return</strong> current;
@@ -373,7 +373,7 @@
 <a class="jxr_linenumber" name="363" href="#363">363</a> 		String[] pathes = path.split(<span class="jxr_string">"/"</span>);
 <a class="jxr_linenumber" name="364" href="#364">364</a> 		<strong class="jxr_keyword">int</strong> rank = 0;
 <a class="jxr_linenumber" name="365" href="#365">365</a> 		<strong class="jxr_keyword">for</strong> (rank = 0; rank &lt; pathes.length; rank++) {
-<a class="jxr_linenumber" name="366" href="#366">366</a> 			<strong class="jxr_keyword">if</strong> (pathes[rank].length() &gt; 0) {
+<a class="jxr_linenumber" name="366" href="#366">366</a> 			<strong class="jxr_keyword">if</strong> (! pathes[rank].isEmpty()) {
 <a class="jxr_linenumber" name="367" href="#367">367</a> 				<strong class="jxr_keyword">break</strong>; <em class="jxr_comment">// found</em>
 <a class="jxr_linenumber" name="368" href="#368">368</a> 			}
 <a class="jxr_linenumber" name="369" href="#369">369</a> 		}
@@ -386,7 +386,7 @@
 <a class="jxr_linenumber" name="376" href="#376">376</a> 		}
 <a class="jxr_linenumber" name="377" href="#377">377</a> 		<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = rank + 1; i &lt; pathes.length; i++) {
 <a class="jxr_linenumber" name="378" href="#378">378</a> 			String nodename = pathes[i];
-<a class="jxr_linenumber" name="379" href="#379">379</a> 			<strong class="jxr_keyword">if</strong> (nodename.length() &gt; 0) {
+<a class="jxr_linenumber" name="379" href="#379">379</a> 			<strong class="jxr_keyword">if</strong> (! nodename.isEmpty()) {
 <a class="jxr_linenumber" name="380" href="#380">380</a> 				Element exist = current.element(nodename);
 <a class="jxr_linenumber" name="381" href="#381">381</a> 				<strong class="jxr_keyword">if</strong> (exist == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="382" href="#382">382</a> 					current = current.addElement(nodename);
@@ -424,7 +424,7 @@
 <a class="jxr_linenumber" name="414" href="#414">414</a> 		String[] pathes = path.split(<span class="jxr_string">"/"</span>);
 <a class="jxr_linenumber" name="415" href="#415">415</a> 		<strong class="jxr_keyword">int</strong> rank = 0;
 <a class="jxr_linenumber" name="416" href="#416">416</a> 		<strong class="jxr_keyword">for</strong> (rank = 0; rank &lt; pathes.length; rank++) {
-<a class="jxr_linenumber" name="417" href="#417">417</a> 			<strong class="jxr_keyword">if</strong> (pathes[rank].length() &gt; 0) {
+<a class="jxr_linenumber" name="417" href="#417">417</a> 			<strong class="jxr_keyword">if</strong> (! pathes[rank].isEmpty()) {
 <a class="jxr_linenumber" name="418" href="#418">418</a> 				<strong class="jxr_keyword">break</strong>; <em class="jxr_comment">// found</em>
 <a class="jxr_linenumber" name="419" href="#419">419</a> 			}
 <a class="jxr_linenumber" name="420" href="#420">420</a> 		}
@@ -442,7 +442,7 @@
 <a class="jxr_linenumber" name="432" href="#432">432</a> 		}
 <a class="jxr_linenumber" name="433" href="#433">433</a> 		<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = rank + 1; i &lt; pathes.length - 1; i++) {
 <a class="jxr_linenumber" name="434" href="#434">434</a> 			String nodename = pathes[i];
-<a class="jxr_linenumber" name="435" href="#435">435</a> 			<strong class="jxr_keyword">if</strong> (nodename.length() &gt; 0) {
+<a class="jxr_linenumber" name="435" href="#435">435</a> 			<strong class="jxr_keyword">if</strong> (! nodename.isEmpty()) {
 <a class="jxr_linenumber" name="436" href="#436">436</a> 				Element exist = current.element(nodename);
 <a class="jxr_linenumber" name="437" href="#437">437</a> 				<strong class="jxr_keyword">if</strong> (exist == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="438" href="#438">438</a> 					current = current.addElement(nodename);
@@ -452,7 +452,7 @@
 <a class="jxr_linenumber" name="442" href="#442">442</a> 			}
 <a class="jxr_linenumber" name="443" href="#443">443</a> 		}
 <a class="jxr_linenumber" name="444" href="#444">444</a> 		String nodename = pathes[pathes.length - 1];
-<a class="jxr_linenumber" name="445" href="#445">445</a> 		<strong class="jxr_keyword">if</strong> (nodename.length() &gt; 0) {
+<a class="jxr_linenumber" name="445" href="#445">445</a> 		<strong class="jxr_keyword">if</strong> (!nodename.isEmpty()) {
 <a class="jxr_linenumber" name="446" href="#446">446</a> 			current = current.addElement(nodename);
 <a class="jxr_linenumber" name="447" href="#447">447</a> 		}
 <a class="jxr_linenumber" name="448" href="#448">448</a> 		<strong class="jxr_keyword">return</strong> current;
