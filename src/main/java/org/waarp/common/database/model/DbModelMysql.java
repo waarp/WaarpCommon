@@ -121,7 +121,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
 			DbModelFactory.classLoaded = true;
 		} catch (SQLException e) {
 			// SQLException
-			logger.error("Cannot register Driver " + type.name() + "\n" + e.getMessage());
+			logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());
 			DbSession.error(e);
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot load database drive:" + type.name(), e);

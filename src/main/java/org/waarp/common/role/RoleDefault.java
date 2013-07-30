@@ -20,20 +20,59 @@ package org.waarp.common.role;
 /**
  * Role to be used in Waarp projects
  * 
- * FIXME not functional for the moment: early stage development
  * 
  * @author Frederic Bregier
  * 
  */
 public class RoleDefault {
 	public static enum ROLE {
+		/**
+		 * No access to any function
+		 */
 		NOACCESS(0), 
-		READONLY(1), TRANSFER(2), 
-		RULE(4), HOST(8), 
-		LIMIT(16), SYSTEM(32), LOGCONTROL(64), 
+		/**
+		 * Read only access, no action
+		 */
+		READONLY(1), 
+		/**
+		 * Ability to starts transfer
+		 */
+		TRANSFER(2), 
+		/**
+		 * Ability to control rules
+		 */
+		RULE(4), 
+		/**
+		 * Ability to control hosts
+		 */
+		HOST(8), 
+		/**
+		 * Ability to control bandwidth limitation
+		 */
+		LIMIT(16), 
+		/**
+		 * Ability to control the system configuration and to control transfers
+		 */
+		SYSTEM(32), 
+		/**
+		 * Ability to control the logging
+		 */
+		LOGCONTROL(64), 
+		/**
+		 * Unused Role value
+		 */
 		UNUSED(-128),
+		/**
+		 * Default partner : ability to read and starts transfers
+		 */
 		PARTNER(READONLY, TRANSFER),
+		/**
+		 * Administrator on configuration (partner, rule, host)
+		 */
 		CONFIGADMIN(PARTNER, RULE, HOST),
+		/**
+		 * Administrator on all
+		 */
 		FULLADMIN(CONFIGADMIN, LIMIT, SYSTEM, LOGCONTROL);
 		
 		private byte role;
@@ -48,7 +87,7 @@ public class RoleDefault {
 		private boolean isContained(byte value) {
 			return (value & role) != 0;
 		}
-		public static String toString(byte fromRole) {
+		public final static String toString(byte fromRole) {
 			StringBuilder result = new StringBuilder("[ ");
 			ROLE [] values = ROLE.values();
 			for (ROLE role : values) {
@@ -129,35 +168,35 @@ public class RoleDefault {
 		return ROLE.LOGCONTROL.isContained(role);
 	}
 
-	public static boolean HasReadOnly(byte role) {
+	public final static boolean HasReadOnly(byte role) {
 		return ROLE.READONLY.isContained(role);
 	}
 
-	public static boolean HasTransfer(byte role) {
+	public final static boolean HasTransfer(byte role) {
 		return ROLE.TRANSFER.isContained(role);
 	}
 
-	public static boolean HasRule(byte role) {
+	public final static boolean HasRule(byte role) {
 		return ROLE.RULE.isContained(role);
 	}
 
-	public static boolean HasHost(byte role) {
+	public final static boolean HasHost(byte role) {
 		return ROLE.HOST.isContained(role);
 	}
 
-	public static boolean HasLimit(byte role) {
+	public final static boolean HasLimit(byte role) {
 		return ROLE.LIMIT.isContained(role);
 	}
 
-	public static boolean HasSystem(byte role) {
+	public final static boolean HasSystem(byte role) {
 		return ROLE.SYSTEM.isContained(role);
 	}
 
-	public static boolean HasUnused(byte role) {
+	public final static boolean HasUnused(byte role) {
 		return ROLE.UNUSED.isContained(role);
 	}
 
-	public static boolean HasLogControl(byte role) {
+	public final static boolean HasLogControl(byte role) {
 		return ROLE.LOGCONTROL.isContained(role);
 	}
 

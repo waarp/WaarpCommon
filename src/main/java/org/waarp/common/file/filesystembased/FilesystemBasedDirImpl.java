@@ -280,6 +280,7 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 		}
 		String extDir = paths.get(0);
 		extDir = this.validatePath(extDir);
+		currentDir = extDir;
 		return true;
 	}
 
@@ -394,7 +395,7 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 		checkIdentify();
 		// First get all base directories
 		String newpath = path;
-		if (newpath == null || newpath.length() == 0) {
+		if (newpath == null || newpath.isEmpty()) {
 			newpath = currentDir;
 		}
 		if (newpath.startsWith("-a") || newpath.startsWith("-A")) {
@@ -406,6 +407,7 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 			}
 		}
 		newpath = consolidatePath(newpath);
+		logger.debug("debug: "+newpath);
 		List<String> paths = wildcardFiles(newpath);
 		if (paths.isEmpty()) {
 			throw new Reply550Exception("No files found");
@@ -435,7 +437,7 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 		checkIdentify();
 		boolean listAllFiles = false;
 		String newpath = path;
-		if (newpath == null || newpath.length() == 0) {
+		if (newpath == null || newpath.isEmpty()) {
 			newpath = currentDir;
 		}
 		if (newpath.startsWith("-a") || newpath.startsWith("-A")) {

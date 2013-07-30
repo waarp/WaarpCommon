@@ -126,7 +126,7 @@ public class DbPreparedStatement {
 				isReady = true;
 			} catch (SQLException e1) {
 				logger.error("SQL Exception PreparedStatement: " + request +
-						"\n" + e.getMessage());
+						" " + e.getMessage());
 				DbSession.error(e);
 				preparedStatement = null;
 				isReady = false;
@@ -180,7 +180,7 @@ public class DbPreparedStatement {
 				isReady = true;
 			} catch (SQLException e1) {
 				logger.error("SQL Exception PreparedStatement: " + request +
-						"\n" + e.getMessage());
+						" " + e.getMessage());
 				DbSession.error(e);
 				preparedStatement = null;
 				isReady = false;
@@ -226,7 +226,7 @@ public class DbPreparedStatement {
 				isReady = true;
 			} catch (SQLException e1) {
 				logger.error("SQL Exception createPreparedStatement:" +
-						requestarg + "\n" + e.getMessage());
+						requestarg + " " + e.getMessage());
 				DbSession.error(e);
 				realClose();
 				preparedStatement = null;
@@ -277,7 +277,7 @@ public class DbPreparedStatement {
 		try {
 			rs = preparedStatement.executeQuery();
 		} catch (SQLException e) {
-			logger.error("SQL Exception executeQuery:" + request + "\n" +
+			logger.error("SQL Exception executeQuery:" + request + " " +
 					e.getMessage());
 			DbSession.error(e);
 			close();
@@ -315,7 +315,7 @@ public class DbPreparedStatement {
 		try {
 			retour = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			logger.error("SQL Exception executeUpdate:" + request + "\n" +
+			logger.error("SQL Exception executeUpdate:" + request + " " +
 					e.getMessage());
 			DbSession.error(e);
 			ls.checkConnectionNoException();
@@ -381,7 +381,7 @@ public class DbPreparedStatement {
 		try {
 			return rs.next();
 		} catch (SQLException e) {
-			logger.error("SQL Exception to getNextRow" + "\n" + e.getMessage());
+			logger.error("SQL Exception to getNextRow" + " " + e.getMessage());
 			DbSession.error(e);
 			ls.checkConnectionNoException();
 			throw new WaarpDatabaseSqlException(

@@ -228,7 +228,7 @@ public abstract class FilesystemBasedAuthImpl implements AuthInterface {
 	 * @return the full path as a String
 	 */
 	public String getAbsolutePath(String path) {
-		if (path == null || path.length() == 0) {
+		if (path == null || path.isEmpty()) {
 			return getBaseDirectory();
 		}
 		return FilesystemBasedDirImpl.normalizePath(getBaseDirectory() +

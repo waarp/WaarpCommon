@@ -114,4 +114,23 @@ public interface DbModel {
 	 * @return the new request String which will limit the result to the specified number of rows
 	 */
 	public String limitRequest(String allfields, String request, int limit);
+	
+	/**
+	 * Upgrade Database from version
+	 * @param session
+	 * @param version
+	 * @return True if the Database is upgraded
+	 * @throws WaarpDatabaseNoConnectionException 
+	 */
+	public boolean upgradeDb(DbSession session, String version) throws WaarpDatabaseNoConnectionException;
+
+	/**
+	 * Check if Database is ok from version
+	 * @param session
+	 * @param version
+	 * @param tryFix True will imply a try to fix if possible
+	 * @return True if the Database needs an upgrade
+	 * @throws WaarpDatabaseNoConnectionException 
+	 */
+	public boolean needUpgradeDb(DbSession session, String version, boolean tryFix) throws WaarpDatabaseNoConnectionException;
 }

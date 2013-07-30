@@ -64,7 +64,7 @@ public final class SystemPropertyUtil {
      * Returns {@code true} if and only if the system property with the specified {@code key}
      * exists.
      */
-    public static boolean contains(String key) {
+    public final static boolean contains(String key) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -77,7 +77,7 @@ public final class SystemPropertyUtil {
      *
      * @return the property value or {@code null}
      */
-    public static String get(String key) {
+    public final static String get(String key) {
         return get(key, null);
     }
 
@@ -90,7 +90,7 @@ public final class SystemPropertyUtil {
      *         {@code def} if there's no such property or if an access to the
      *         specified property is not allowed.
      */
-    public static String get(String key, String def) {
+    public final static String get(String key, String def) {
         if (key == null) {
             throw new NullPointerException("key");
         }
@@ -123,7 +123,7 @@ public final class SystemPropertyUtil {
         }
 
         value = value.trim().toLowerCase();
-        if (value.length() == 0) {
+        if (value.isEmpty()) {
             return true;
         }
 
