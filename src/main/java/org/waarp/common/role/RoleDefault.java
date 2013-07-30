@@ -87,7 +87,7 @@ public class RoleDefault {
 		private boolean isContained(byte value) {
 			return (value & role) != 0;
 		}
-		public static String toString(byte fromRole) {
+		public final static String toString(byte fromRole) {
 			StringBuilder result = new StringBuilder("[ ");
 			ROLE [] values = ROLE.values();
 			for (ROLE role : values) {
@@ -168,35 +168,35 @@ public class RoleDefault {
 		return ROLE.LOGCONTROL.isContained(role);
 	}
 
-	public static boolean HasReadOnly(byte role) {
+	public final static boolean HasReadOnly(byte role) {
 		return ROLE.READONLY.isContained(role);
 	}
 
-	public static boolean HasTransfer(byte role) {
+	public final static boolean HasTransfer(byte role) {
 		return ROLE.TRANSFER.isContained(role);
 	}
 
-	public static boolean HasRule(byte role) {
+	public final static boolean HasRule(byte role) {
 		return ROLE.RULE.isContained(role);
 	}
 
-	public static boolean HasHost(byte role) {
+	public final static boolean HasHost(byte role) {
 		return ROLE.HOST.isContained(role);
 	}
 
-	public static boolean HasLimit(byte role) {
+	public final static boolean HasLimit(byte role) {
 		return ROLE.LIMIT.isContained(role);
 	}
 
-	public static boolean HasSystem(byte role) {
+	public final static boolean HasSystem(byte role) {
 		return ROLE.SYSTEM.isContained(role);
 	}
 
-	public static boolean HasUnused(byte role) {
+	public final static boolean HasUnused(byte role) {
 		return ROLE.UNUSED.isContained(role);
 	}
 
-	public static boolean HasLogControl(byte role) {
+	public final static boolean HasLogControl(byte role) {
 		return ROLE.LOGCONTROL.isContained(role);
 	}
 

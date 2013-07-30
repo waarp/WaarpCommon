@@ -220,7 +220,7 @@ public class XmlUtil {
 		String[] pathes = path.split("/");
 		Element current = ref;
 		for (String nodename : pathes) {
-			if (nodename.length() > 0) {
+			if (! nodename.isEmpty()) {
 				Element exist = current.element(nodename);
 				if (exist == null) {
 					current = current.addElement(nodename);
@@ -259,7 +259,7 @@ public class XmlUtil {
 		Element current = ref;
 		for (int i = 0; i < pathes.length - 1; i++) {
 			String nodename = pathes[i];
-			if (nodename.length() > 0) {
+			if (! nodename.isEmpty()) {
 				Element exist = current.element(nodename);
 				if (exist == null) {
 					current = current.addElement(nodename);
@@ -269,7 +269,7 @@ public class XmlUtil {
 			}
 		}
 		String nodename = pathes[pathes.length - 1];
-		if (nodename.length() > 0) {
+		if (! nodename.isEmpty()) {
 			current = current.addElement(nodename);
 		}
 		return current;
@@ -363,7 +363,7 @@ public class XmlUtil {
 		String[] pathes = path.split("/");
 		int rank = 0;
 		for (rank = 0; rank < pathes.length; rank++) {
-			if (pathes[rank].length() > 0) {
+			if (! pathes[rank].isEmpty()) {
 				break; // found
 			}
 		}
@@ -376,7 +376,7 @@ public class XmlUtil {
 		}
 		for (int i = rank + 1; i < pathes.length; i++) {
 			String nodename = pathes[i];
-			if (nodename.length() > 0) {
+			if (! nodename.isEmpty()) {
 				Element exist = current.element(nodename);
 				if (exist == null) {
 					current = current.addElement(nodename);
@@ -414,7 +414,7 @@ public class XmlUtil {
 		String[] pathes = path.split("/");
 		int rank = 0;
 		for (rank = 0; rank < pathes.length; rank++) {
-			if (pathes[rank].length() > 0) {
+			if (! pathes[rank].isEmpty()) {
 				break; // found
 			}
 		}
@@ -432,7 +432,7 @@ public class XmlUtil {
 		}
 		for (int i = rank + 1; i < pathes.length - 1; i++) {
 			String nodename = pathes[i];
-			if (nodename.length() > 0) {
+			if (! nodename.isEmpty()) {
 				Element exist = current.element(nodename);
 				if (exist == null) {
 					current = current.addElement(nodename);
@@ -442,7 +442,7 @@ public class XmlUtil {
 			}
 		}
 		String nodename = pathes[pathes.length - 1];
-		if (nodename.length() > 0) {
+		if (!nodename.isEmpty()) {
 			current = current.addElement(nodename);
 		}
 		return current;

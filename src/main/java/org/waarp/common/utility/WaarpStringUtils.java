@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.dom4j.Node;
 import org.waarp.common.exception.FileTransferException;
@@ -121,10 +122,10 @@ public class WaarpStringUtils {
 	 * @param date
 	 * @return the corresponding Timestamp
 	 */
-	public static Timestamp fixDate(String date) {
+	public final static Timestamp fixDate(String date) {
 		Timestamp tdate = null;
 		String ndate = date.replaceAll("/|:|\\.| |-", "");
-		if (ndate.length() > 0) {
+		if (! ndate.isEmpty()) {
 			if (ndate.length() < 15) {
 				int len = ndate.length();
 				ndate += "000000000000000".substring(len);
@@ -149,10 +150,10 @@ public class WaarpStringUtils {
 	 * @param before
 	 * @return the end date
 	 */
-	public static Timestamp fixDate(String date, Timestamp before) {
+	public final static Timestamp fixDate(String date, Timestamp before) {
 		Timestamp tdate = null;
 		String ndate = date.replaceAll("/|:|\\.| |-", "");
-		if (ndate.length() > 0) {
+		if (! ndate.isEmpty()) {
 			if (ndate.length() < 15) {
 				int len = ndate.length();
 				ndate += "000000000000000".substring(len);
@@ -171,6 +172,15 @@ public class WaarpStringUtils {
 			}
 		}
 		return tdate;
+	}
+	
+	public final static Timestamp getTodayMidnight() {
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.set(GregorianCalendar.HOUR_OF_DAY, 0);
+		calendar.set(GregorianCalendar.MINUTE, 0);
+		calendar.set(GregorianCalendar.SECOND, 0);
+		calendar.set(GregorianCalendar.MILLISECOND, 0);
+		return new Timestamp(calendar.getTimeInMillis());
 	}
 
 	/**
@@ -218,7 +228,7 @@ public class WaarpStringUtils {
 	 * @param find
 	 * @param replace
 	 */
-	public static boolean replace(StringBuilder builder, String find, String replace) {
+	public final static boolean replace(StringBuilder builder, String find, String replace) {
 		int start = builder.indexOf(find);
 		if (start == -1) {
 			return false;
@@ -235,7 +245,7 @@ public class WaarpStringUtils {
 	 * @param find
 	 * @param replace
 	 */
-	public static void replaceAll(StringBuilder builder, String find, String replace) {
+	public final static void replaceAll(StringBuilder builder, String find, String replace) {
 		while (replace(builder, find, replace)) {
 		}
 	}
@@ -247,7 +257,7 @@ public class WaarpStringUtils {
 	 * @param count
 	 * @return the String of length count filled with fillChar
 	 */
-	public static String fillString(char fillChar, int count) {
+	public final static String fillString(char fillChar, int count) {
 		char[] chars = new char[count];
 		Arrays.fill(chars, fillChar);
 		return new String(chars);

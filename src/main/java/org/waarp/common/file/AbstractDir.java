@@ -157,7 +157,7 @@ public abstract class AbstractDir implements DirInterface {
 	 */
 	protected String consolidatePath(String path)
 			throws CommandAbstractException {
-		if (path == null || path.length() == 0) {
+		if (path == null || path.isEmpty()) {
 			throw new Reply501Exception("Path must not be empty");
 		}
 		// First check if the path is relative or absolute

@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -41,13 +42,13 @@ public class JsonHandler {
 	/**
 	 * JSON parser
 	 */
-	public static ObjectMapper mapper = new ObjectMapper();
+	public final static ObjectMapper mapper = new ObjectMapper();
 
 	/**
 	 * 
 	 * @return an empty ObjectNode
 	 */
-	public static ObjectNode createObjectNode() {
+	public final static ObjectNode createObjectNode() {
 		return mapper.createObjectNode();
 	}
 	
@@ -56,7 +57,7 @@ public class JsonHandler {
 	 * @param value
 	 * @return the objectNode or null if an error occurs
 	 */
-	public static ObjectNode getFromString(String value) {
+	public final static ObjectNode getFromString(String value) {
 		try {
 			return (ObjectNode) mapper.readTree(value);
 		} catch (JsonProcessingException e) {
@@ -70,7 +71,7 @@ public class JsonHandler {
 	 * @param object
 	 * @return the Json representation of the object
 	 */
-	public static String writeAsString(Object object) {
+	public final static String writeAsString(Object object) {
 		try {
 			return mapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
@@ -80,11 +81,340 @@ public class JsonHandler {
 	
 	/**
 	 * 
+	 * @param node
+	 * @param field
+	 * @return the String if the field exists, else null
+	 */
+	public final static String getString(ObjectNode node, String field) {
+		return getValue(node, field, (String) null);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @return the String if the field exists, else null
+	 */
+	public final static String getString(ObjectNode node, Enum<?> field) {
+		return getValue(node, field.name(), (String) null);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the String if the field exists, else defValue
+	 */
+	public final static String getValue(ObjectNode node, String field, String defValue) {
+		JsonNode elt = node.get(field);
+		if (elt != null) {
+			String val = elt.asText();
+			if (val.equals("null")) {
+				return defValue;
+			}
+			return val;
+		}
+		return defValue;
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Boolean if the field exists, else defValue
+	 */
+	public final static Boolean getValue(ObjectNode node, String field, boolean defValue) {
+		return node.path(field).asBoolean(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Double if the field exists, else defValue
+	 */
+	public final static Double getValue(ObjectNode node, String field, double defValue) {
+		return node.path(field).asDouble(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Long if the field exists, else defValue
+	 */
+	public final static Long getValue(ObjectNode node, String field, long defValue) {
+		return node.path(field).asLong(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Integer if the field exists, else defValue
+	 */
+	public final static Integer getValue(ObjectNode node, String field, int defValue) {
+		return node.path(field).asInt(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the byte array if the field exists, else defValue
+	 */
+	public final static byte[] getValue(ObjectNode node, String field, byte []defValue) {
+		JsonNode elt = node.get(field);
+		if (elt != null) {
+			try {
+				return elt.binaryValue();
+			} catch (IOException e) {
+				return defValue;
+			}
+		}
+		return defValue;
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, boolean value) {
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, double value) {
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, int value) {
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, long value) {
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, String value) {
+		if (value == null || value.isEmpty()) {
+			return;
+		}
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, byte []value) {
+		if (value == null || value.length == 0) {
+			return;
+		}
+		node.put(field, value);
+	}
+	
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 * @return True if all fields exist
+	 */
+	public final static boolean exist(ObjectNode node, String ...field) {
+		for (String string : field) {
+			if (! node.has(string))
+				return false;
+		}
+		return true;
+	}
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the String if the field exists, else defValue
+	 */
+	public final static String getValue(ObjectNode node, Enum<?> field, String defValue) {
+		return getValue(node, field.name(), defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Boolean if the field exists, else defValue
+	 */
+	public final static Boolean getValue(ObjectNode node, Enum<?> field, boolean defValue) {
+		return node.path(field.name()).asBoolean(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Double if the field exists, else defValue
+	 */
+	public final static Double getValue(ObjectNode node, Enum<?> field, double defValue) {
+		return node.path(field.name()).asDouble(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Long if the field exists, else defValue
+	 */
+	public final static Long getValue(ObjectNode node, Enum<?> field, long defValue) {
+		return node.path(field.name()).asLong(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Integer if the field exists, else defValue
+	 */
+	public final static Integer getValue(ObjectNode node, Enum<?> field, int defValue) {
+		return node.path(field.name()).asInt(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the byte array if the field exists, else defValue
+	 */
+	public final static byte[] getValue(ObjectNode node, Enum<?> field, byte []defValue) {
+		return getValue(node, field.name(), defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, boolean value) {
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, double value) {
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, int value) {
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, long value) {
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, String value) {
+		if (value == null || value.isEmpty()) {
+			return;
+		}
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, byte []value) {
+		if (value == null || value.length == 0) {
+			return;
+		}
+		node.put(field.name(), value);
+	}
+	
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 * @return True if all fields exist
+	 */
+	public final static boolean exist(ObjectNode node, Enum<?> ...field) {
+		for (Enum<?> enm : field) {
+			if (! node.has(enm.name()))
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 
 	 * @param value
 	 * @return the corresponding HashMap
 	 */
-	public static Map<String, Object> getMapFromString(String value) {
-		if (value != null && value.length() > 0) {
+	public final static Map<String, Object> getMapFromString(String value) {
+		if (value != null && ! value.isEmpty()) {
 			Map<String, Object> info = null;
 			try {
 				info = JsonHandler.mapper.readValue(value, new TypeReference<Map<String, Object>>() {});
