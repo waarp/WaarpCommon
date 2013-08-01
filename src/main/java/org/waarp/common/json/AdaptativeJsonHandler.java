@@ -38,19 +38,17 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.csv.CsvFactory;
 import com.fasterxml.jackson.dataformat.smile.SmileFactory;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 
 /**
- * JSON handler using adaptative format (Smile or Json or XML or CSV - in that order -)
+ * JSON handler using adaptative format (Smile or Json - in that order -)
  * @author "Frederic Bregier"
  *
  */
 public class AdaptativeJsonHandler {
 
 	public static enum JsonCodec {
-		SMILE(new SmileFactory()), JSON(new JsonFactory()), XML(new XmlFactory()), CSV(new CsvFactory());
+		SMILE(new SmileFactory()), JSON(new JsonFactory());
 		
 		public final JsonFactory factory;
 		public final ObjectMapper mapper;
