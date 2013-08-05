@@ -131,6 +131,15 @@ public class AdaptativeJsonHandler {
 	}
 	
 	/**
+	 * Change the JsonCodec: warning, change should be done before any usage to preserve consistency
+	 * @param codec
+	 */
+	public void changeHandler(JsonCodec codec) {
+		this.codec = codec;
+		mapper = codec.mapper;
+	}
+	
+	/**
 	 * 
 	 * @return the associated codec
 	 */
