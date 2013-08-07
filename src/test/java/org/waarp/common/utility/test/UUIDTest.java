@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 public class UUIDTest {
 	private static final char VERSION           = 'c';
-	private static int NB = 10000000;
+	private static int NB = 5000000;
 	
     @Test
     public void testStructure() {
