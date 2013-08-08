@@ -26,7 +26,6 @@ import java.net.NetworkInterface;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -44,17 +43,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class UUID {
 	
     /**
-     * Random Generator (could use also ThreadLocalRandom if Java 7)
+     * Random Generator 
      */
-    private static final Random RANDOM			= new Random(System.nanoTime());
+    private static final ThreadLocalRandom RANDOM			= ThreadLocalRandom.current();
     /**
      * So MAX value on 2 bytes
      */
     private static final int MAX_PID			= 65536;
-    /*
-     * Prime of the form n^4+1
-     */
-    //private static final int INCREMENT			= 198491317;//193877777;
     /**
      * Version to store (to check correctness if future algorithm)
      */
@@ -94,7 +89,7 @@ public final class UUID {
      * 
      * @param mac the MAC address in byte format (up to the 6 first bytes will be used)
      */
-    public static synchronized void setMAC(byte []mac) {
+    public static synchronized void setMAC(final byte []mac) {
     	if (mac == null) {
         	MAC = getRandom(6);
     	} else {
@@ -110,28 +105,28 @@ public final class UUID {
      */
     public UUID() {
         //long time = new Date().getTime();
-        long time = System.currentTimeMillis();
+    	final long time = System.currentTimeMillis();
         uuid = new byte[16];
 
         // atomically add a large prime number to the count and get the previous value
-        int count = COUNTER.incrementAndGet();
-    	//int count = COUNTER.addAndGet(INCREMENT);
+        final int count = COUNTER.incrementAndGet();
 
-        // switch the order of the count in 4 bit segments and place into uuid
-        uuid[0] = (byte) (((count & 0xF) << 4) | ((count & 0xF0) >> 4));
+        // switch the order of the count in 3 bit segments and place into uuid
+        uuid[0] = (byte) (((count & 0x0F) << 4) | ((count & 0xF0) >> 4));
         uuid[1] = (byte) (((count & 0xF00) >> 4) | ((count & 0xF000) >> 12));
         uuid[2] = (byte) (((count & 0xF0000) >> 12) | ((count & 0xF00000) >> 20));
-        uuid[3] = (byte) (((count & 0xF000000) >> 20) | ((count & 0xF0000000) >> 28));
+        //uuid[3] = (byte) (((count & 0xF000000) >> 20) | ((count & 0xF0000000) >> 28));
 
         // copy pid to uuid
-        uuid[4]  = (byte) (getJvmpid() >> 8);
-        uuid[5]  = (byte) (getJvmpid());
+        uuid[3]  = (byte) (JVMPID >> 8);
+        uuid[4]  = (byte) (JVMPID);
 
-        // place UUID version (hex 'c') in first four bits and piece of mac address in
+
+        // place UUID version (hex 'c') in first four bits and piece of MAC in
         // the second four bits
-        uuid[6]  = (byte) (VERSION_DEC | (0xF & MAC[2]));
-
+        uuid[5]  = (byte) (VERSION_DEC | (0x0F & MAC[1]));
         // copy rest of mac address into uuid
+        uuid[6]  = MAC[2];
         uuid[7]  = MAC[3];
         uuid[8]  = MAC[4];
         uuid[9]  = MAC[5];
@@ -149,32 +144,37 @@ public final class UUID {
      * Constructor that takes a byte array as this UUID's content
      * @param bytes UUID content
      */
-    public UUID(byte[] bytes) {
+    public UUID(final byte[] bytes) {
         if (bytes.length != 16)
             throw new RuntimeException("Attempted to parse malformed UUID: " + Arrays.toString(bytes));
 
         uuid = Arrays.copyOf(bytes, 16);
     }
 
-    public UUID(String id) {
-        id = id.trim();
+    public UUID(final String idsource) {
+    	final String id = idsource.trim();
 
         if (id.length() != 36)
             throw new RuntimeException("Attempted to parse malformed UUID: " + id);
 
         uuid = new byte[16];
-        char[] chars = id.toCharArray();
+        final char[] chars = id.toCharArray();
 
+        // Counter
         uuid[0]  = asByte(chars[0],  chars[1]);
         uuid[1]  = asByte(chars[2],  chars[3]);
         uuid[2]  = asByte(chars[4],  chars[5]);
-        uuid[3]  = asByte(chars[6],  chars[7]);
+        // PID
+        uuid[3]  = asByte(chars[7],  chars[8]);
         uuid[4]  = asByte(chars[9],  chars[10]);
-        uuid[5]  = asByte(chars[11], chars[12]);
-        uuid[6]  = asByte(chars[14], chars[15]);
-        uuid[7]  = asByte(chars[16], chars[17]);
+        // Version & MAC
+        uuid[5]  = asByte(chars[12], chars[13]);
+        // MAC
+        uuid[6]  = asByte(chars[15], chars[16]);
+        uuid[7]  = asByte(chars[17], chars[18]);
         uuid[8]  = asByte(chars[19], chars[20]);
         uuid[9]  = asByte(chars[21], chars[22]);
+        // Timestamp
         uuid[10] = asByte(chars[24], chars[25]);
         uuid[11] = asByte(chars[26], chars[27]);
         uuid[12] = asByte(chars[28], chars[29]);
@@ -199,33 +199,38 @@ public final class UUID {
 
     @Override
     public String toString() {
-        char[] id = new char[36];
+    	final char[] id = new char[36];
 
         // split each byte into 4 bit numbers and map to hex characters
+        // Counter
         id[0]  = HEX_CHARS[(uuid[0]  & 0xF0) >> 4];
         id[1]  = HEX_CHARS[(uuid[0]  & 0x0F)];
         id[2]  = HEX_CHARS[(uuid[1]  & 0xF0) >> 4];
         id[3]  = HEX_CHARS[(uuid[1]  & 0x0F)];
         id[4]  = HEX_CHARS[(uuid[2]  & 0xF0) >> 4];
         id[5]  = HEX_CHARS[(uuid[2]  & 0x0F)];
-        id[6]  = HEX_CHARS[(uuid[3]  & 0xF0) >> 4];
-        id[7]  = HEX_CHARS[(uuid[3]  & 0x0F)];
-        id[8]  = '-';
+        id[6]  = '-';
+        // PID
+        id[7]  = HEX_CHARS[(uuid[3]  & 0xF0) >> 4];
+        id[8]  = HEX_CHARS[(uuid[3]  & 0x0F)];
         id[9]  = HEX_CHARS[(uuid[4]  & 0xF0) >> 4];
         id[10] = HEX_CHARS[(uuid[4]  & 0x0F)];
-        id[11] = HEX_CHARS[(uuid[5]  & 0xF0) >> 4];
-        id[12] = HEX_CHARS[(uuid[5]  & 0x0F)];
-        id[13] = '-';
-        id[14] = HEX_CHARS[(uuid[6]  & 0xF0) >> 4];
-        id[15] = HEX_CHARS[(uuid[6]  & 0x0F)];
-        id[16] = HEX_CHARS[(uuid[7]  & 0xF0) >> 4];
-        id[17] = HEX_CHARS[(uuid[7]  & 0x0F)];
-        id[18] = '-';
+        id[11] = '-';
+        // Version & Timestamp
+        id[12] = HEX_CHARS[(uuid[5]  & 0xF0) >> 4];
+        id[13] = HEX_CHARS[(uuid[5]  & 0x0F)];
+        id[14]  = '-';
+        // MAC
+        id[15] = HEX_CHARS[(uuid[6]  & 0xF0) >> 4];
+        id[16] = HEX_CHARS[(uuid[6]  & 0x0F)];
+        id[17] = HEX_CHARS[(uuid[7]  & 0xF0) >> 4];
+        id[18] = HEX_CHARS[(uuid[7]  & 0x0F)];
         id[19] = HEX_CHARS[(uuid[8]  & 0xF0) >> 4];
         id[20] = HEX_CHARS[(uuid[8]  & 0x0F)];
         id[21] = HEX_CHARS[(uuid[9]  & 0xF0) >> 4];
         id[22] = HEX_CHARS[(uuid[9]  & 0x0F)];
         id[23] = '-';
+        // Timestamp
         id[24] = HEX_CHARS[(uuid[10] & 0xF0) >> 4];
         id[25] = HEX_CHARS[(uuid[10] & 0x0F)];
         id[26] = HEX_CHARS[(uuid[11] & 0xF0) >> 4];
@@ -255,7 +260,7 @@ public final class UUID {
      * @return version char
      */
     public char getVersion() {
-        return HEX_CHARS[(uuid[6] & 0xF0) >> 4];
+        return HEX_CHARS[(uuid[5] & 0xF0) >> 4];
     }
 
     /**
@@ -266,16 +271,16 @@ public final class UUID {
         if (getVersion() != VERSION)
             return -1;
 
-        return ((uuid[4] & 0xFF) << 8) | (uuid[5] & 0xFF);
+        return ((uuid[3] & 0xFF) << 8) | (uuid[4] & 0xFF);
     }
 
     /**
      * extract timestamp from raw UUID bytes and return as int
-     * @return millisecond UTC timestamp from generation of the UUID, or null for unrecognized format
+     * @return millisecond UTC timestamp from generation of the UUID, or -1 for unrecognized format
      */
-    public Date getTimestamp() {
+    public long getTimestamp() {
         if (getVersion() != VERSION)
-            return null;
+            return -1;
 
         long time;
         time  = ((long)uuid[10] & 0xFF) << 40;
@@ -284,12 +289,12 @@ public final class UUID {
         time |= ((long)uuid[13] & 0xFF) << 16;
         time |= ((long)uuid[14] & 0xFF) << 8;
         time |= ((long)uuid[15] & 0xFF);
-        return new Date(time);
+        return time;
     }
 
     /**
      * extract MAC address fragment from raw UUID bytes, setting missing values to 0,
-     * thus the first 2 and a half bytes will be 0, followed by 3 and a half bytes
+     * thus the first 3 bytes will be 0, followed by 3 bytes
      * of the active MAC address when the UUID was generated
      * @return byte array of UUID fragment, or null for unrecognized format
      */
@@ -297,11 +302,11 @@ public final class UUID {
         if (getVersion() != VERSION)
             return null;
 
-        byte[] x = new byte[6];
+        final byte[] x = new byte[6];
 
         x[0] = 0;
-        x[1] = 0;
-        x[2] = (byte) (uuid[6] & 0xF);
+        x[1] = (byte) (uuid[5] & 0x0F);
+        x[2] = uuid[6];
         x[3] = uuid[7];
         x[4] = uuid[8];
         x[5] = uuid[9];
@@ -325,8 +330,8 @@ public final class UUID {
      * @param length
      * @return a byte array with random values
      */
-    private static final byte[] getRandom(int length) {
-    	byte[] result = new byte[length];
+    public static final byte[] getRandom(final int length) {
+    	final byte[] result = new byte[length];
     	for (int i = 0; i < length; i++) {
     		result[i] = (byte) RANDOM.nextInt(256);
     	}
@@ -337,7 +342,7 @@ public final class UUID {
      * 
      * @return the mac address if possible, else random values
      */
-    private static final byte[] macAddress() {
+    private static byte[] macAddress() {
         try {
         	byte[] mac = null;
             Enumeration<NetworkInterface> enumset = NetworkInterface.getNetworkInterfaces();
@@ -363,7 +368,7 @@ public final class UUID {
     }
 
     // pulled from http://stackoverflow.com/questions/35842/how-can-a-java-program-get-its-own-process-id
-    private static final int jvmProcessId() {
+    public static int jvmProcessId() {
         // Note: may fail in some JVM implementations
         // something like '<pid>@<hostname>', at least in SUN / Oracle JVMs
         final String jvmName = ManagementFactory.getRuntimeMXBean().getName();
@@ -387,9 +392,11 @@ public final class UUID {
     	if (args.length > 0) {
     		setMAC(args[0].getBytes());
     	}
+    	long pseudoMax = Long.MAX_VALUE >> 16;
+    	System.out.println(new Date(pseudoMax));
         System.out.println(new UUID().toString());
         
-        int n = 10000000;
+        final int n = 10000000;
 
         for (int i = 0; i < n; i++) {
             UUID uuid = new UUID();
@@ -453,15 +460,6 @@ public final class UUID {
         }
         stop = System.currentTimeMillis();
         System.out.println("TimeWAndTest = "+(stop-start)+" so "+(n*1000/(stop-start))+" Uuids/s "+count);
-
-        
     }
-
-	/**
-	 * @return the jvmpid
-	 */
-	public static int getJvmpid() {
-		return JVMPID;
-	}
 }
 

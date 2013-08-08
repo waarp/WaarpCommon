@@ -40,10 +40,10 @@ public class UUIDTest {
         UUID id = new UUID();
         String str = id.toString();
 
-        assertEquals(str.charAt(8) , '-');
-        assertEquals(str.charAt(13), '-');
-        assertEquals(str.charAt(14), VERSION);
-        assertEquals(str.charAt(18), '-');
+        assertEquals(str.charAt(6) , '-');
+        assertEquals(str.charAt(11), '-');
+        assertEquals(str.charAt(12), VERSION);
+        assertEquals(str.charAt(14), '-');
         assertEquals(str.charAt(23), '-');
         assertEquals(str.length(), 36);
     }
@@ -103,13 +103,13 @@ public class UUIDTest {
         UUID generated = new UUID();
         assertEquals(VERSION, generated.getVersion());
 
-        UUID parsed1 = new UUID("20be0ffc-314a-cd53-7a50-013a65ca76d2");
+        UUID parsed1 = new UUID("682e51-1bc0-cc-7e4fa3bc-01405d4857b1");
         assertEquals(VERSION, parsed1.getVersion());
 
-        UUID parsed2 = new UUID("20be0ffc-314a-7d53-7a50-013a65ca76d2");
+        UUID parsed2 = new UUID("682e51-1bc0-7c-7e4fa3bc-01405d4857b1");
         assertEquals('7', parsed2.getVersion());
         assertEquals(-1, parsed2.getProcessId());
-        assertNull(parsed2.getTimestamp());
+        assertEquals(-1, parsed2.getTimestamp());
         assertNull(parsed2.getMacFragment());
     }
 
@@ -117,14 +117,14 @@ public class UUIDTest {
     public void testPIDField() throws Exception {
         UUID id = new UUID();
 
-        assertEquals(UUID.getJvmpid(), id.getProcessId());
+        assertEquals(UUID.jvmProcessId(), id.getProcessId());
     }
 
     @Test
     public void testDateField() {
         UUID id = new UUID();
-        assertTrue(id.getTimestamp().getTime() > new Date().getTime() - 100);
-        assertTrue(id.getTimestamp().getTime() < new Date().getTime() + 100);
+        assertTrue(id.getTimestamp() > new Date().getTime() - 100);
+        assertTrue(id.getTimestamp() < new Date().getTime() + 100);
     }
 
     @Test
@@ -133,14 +133,14 @@ public class UUIDTest {
 
         // if the machine is not connected to a network it has no active MAC address
         if (mac == null || mac.length < 6) {
-            mac = new byte[] {0, 0, 0, 0, 0, 0};
+            mac = UUID.getRandom(6);
             UUID.setMAC(mac);
         }
         UUID id = new UUID();
         byte[] field = id.getMacFragment();
         assertEquals(0, field[0]);
-        assertEquals(0, field[1]);
-        assertEquals(mac[2] & 0xF, field[2]);
+        assertEquals(mac[1] & 0x0F, field[1]);
+        assertEquals(mac[2], field[2]);
         assertEquals(mac[3], field[3]);
         assertEquals(mac[4], field[4]);
         assertEquals(mac[5], field[5]);
@@ -163,9 +163,27 @@ public class UUIDTest {
 
         System.out.println("Create "+n+" and get: "+uuids.size());
         assertEquals(n, uuids.size());
+        int i = 1;
+        int largest = 0;
+        for (; i < n ; i++) {
+        	if (uuidArray[i].getTimestamp() > uuidArray[i-1].getTimestamp()) {
+                int j = i+1;
+                long time = uuidArray[i].getTimestamp();
+                for (; j < n ; j++) {
+                	if (uuidArray[j].getTimestamp() > time) {
+                		if (largest < j-i) {
+                			largest = j-i;
+                			i = j;
+                			break;
+                		}
+                	}
+                }
+        	}
+        }
+        System.out.println(largest+" different consecutive elements");
     }
 
-    private class Generator extends Thread {
+    private static class Generator extends Thread {
         private UUID[] uuids;
         int id;
         int n;
