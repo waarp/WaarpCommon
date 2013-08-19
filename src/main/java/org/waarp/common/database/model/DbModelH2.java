@@ -51,6 +51,8 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	public static DbType type = DbType.H2;
 
 	protected static JdbcConnectionPool pool;
+	protected static String url, user, pwd;
+
 
 	public DbType getDbType() {
 		return type;
@@ -67,6 +69,9 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	public DbModelH2(String dbserver, String dbuser, String dbpasswd)
 			throws WaarpDatabaseNoConnectionException {
 		this();
+		url = dbserver;
+		user = dbuser;
+		pwd = dbpasswd;
 		pool = JdbcConnectionPool.create(dbserver, dbuser, dbpasswd);
 		pool.setMaxConnections(DbConstant.MAXCONNECTION);
 		pool.setLoginTimeout(DbConstant.DELAYMAXCONNECTION);
@@ -111,8 +116,20 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
-		if (pool != null)
-			return pool.getConnection();
+		if (pool != null) {
+			try {
+				return pool.getConnection();
+			} catch (SQLException e) {
+				// try to renew the pool
+				pool.dispose();
+				pool = JdbcConnectionPool.create(url, user, pwd);
+				pool.setMaxConnections(DbConstant.MAXCONNECTION);
+				pool.setLoginTimeout(DbConstant.DELAYMAXCONNECTION);
+				logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
+						+ pool.getLoginTimeout());
+				return pool.getConnection();
+			}
+		}
 		return super.getDbConnection(server, user, passwd);
 	}
 

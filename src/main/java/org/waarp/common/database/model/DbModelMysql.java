@@ -56,7 +56,8 @@ public abstract class DbModelMysql extends DbModelAbstract {
 
 	protected static MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
-
+	protected static String url, user, pwd;
+	
 	public DbType getDbType() {
 		return type;
 	}
@@ -75,6 +76,9 @@ public abstract class DbModelMysql extends DbModelAbstract {
 			throws WaarpDatabaseNoConnectionException {
 		this();
 		mysqlConnectionPoolDataSource = new MysqlConnectionPoolDataSource();
+		url = dbserver;
+		user = dbuser;
+		pwd = dbpasswd;
 		mysqlConnectionPoolDataSource.setUrl(dbserver);
 		mysqlConnectionPoolDataSource.setUser(dbuser);
 		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
@@ -97,6 +101,9 @@ public abstract class DbModelMysql extends DbModelAbstract {
 			throws WaarpDatabaseNoConnectionException {
 		this();
 		mysqlConnectionPoolDataSource = new MysqlConnectionPoolDataSource();
+		url = dbserver;
+		user = dbuser;
+		pwd = dbpasswd;
 		mysqlConnectionPoolDataSource.setUrl(dbserver);
 		mysqlConnectionPoolDataSource.setUser(dbuser);
 		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
@@ -147,8 +154,19 @@ public abstract class DbModelMysql extends DbModelAbstract {
 	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
-		if (pool != null)
-			return pool.getConnection();
+		if (pool != null) {
+			try {
+				return pool.getConnection();
+			} catch (SQLException e) {
+				// try to renew the pool
+				mysqlConnectionPoolDataSource = new MysqlConnectionPoolDataSource();
+				mysqlConnectionPoolDataSource.setUrl(url);
+				mysqlConnectionPoolDataSource.setUser(user);
+				mysqlConnectionPoolDataSource.setPassword(pwd);
+				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+				return pool.getConnection();
+			}
+		}
 		return super.getDbConnection(server, user, passwd);
 	}
 

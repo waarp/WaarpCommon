@@ -242,6 +242,9 @@ public class DbConnectionPool {
 		poolConnectionEventListener = new PoolConnectionEventListener();
 	}
 
+	public void resetPoolDataSource(ConnectionPoolDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 	/**
 	 * 
 	 * @return the max number of connections

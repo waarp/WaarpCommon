@@ -227,14 +227,22 @@ public class WaarpStringUtils {
 	 * @param builder
 	 * @param find
 	 * @param replace
+	 * @return True if one element is found
 	 */
 	public final static boolean replace(StringBuilder builder, String find, String replace) {
+		if (find == null) {
+			return false;
+		}
 		int start = builder.indexOf(find);
 		if (start == -1) {
 			return false;
 		}
 		int end = start + find.length();
-		builder.replace(start, end, replace);
+		if (replace != null) {
+			builder.replace(start, end, replace);
+		} else {
+			builder.replace(start, end, "");
+		}
 		return true;
 	}
 
