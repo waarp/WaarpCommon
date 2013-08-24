@@ -6,7 +6,8 @@
 	</properties>
 	<body>
 		<release version="1.2.14" date="2013-08-28" description="Fix release">
-			<action dev="Frederic Bregier" type="add">Add extended JSON module support</action>
+			<action dev="Frederic Bregier" type="add">Add Mariadb support</action>
+		    <action dev="Frederic Bregier" type="add">Add extended JSON module support</action>
 			<action dev="Frederic Bregier" type="add">Add FileMonitoring support</action>
 			<action dev="Frederic Bregier" type="fix">Fix DB Pooled connection timeout</action>
 			<action dev="Frederic Bregier" type="fix">Fix String handling for null arguments</action>

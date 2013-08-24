@@ -22,6 +22,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ConcurrentModificationException;
 
 import org.waarp.common.database.DbAdmin;
 import org.waarp.common.database.DbConstant;
@@ -66,6 +67,7 @@ public abstract class DbModelAbstract implements DbModel {
 				dbSession.conn.close();
 			}
 		} catch (SQLException e1) {
+		} catch (ConcurrentModificationException e) {
 		}
 		dbSession.conn = newdbSession.conn;
 		DbAdmin.addConnection(dbSession.internalId, dbSession);
@@ -84,6 +86,7 @@ public abstract class DbModelAbstract implements DbModel {
 				dbSession.conn.close();
 			}
 		} catch (SQLException e1) {
+		} catch (ConcurrentModificationException e) {
 		}
 		dbSession.isDisconnected = true;
 		if (dbSession.admin != null)
@@ -148,7 +151,7 @@ public abstract class DbModelAbstract implements DbModel {
 		}
 	}
 
-	public void validConnectionSelect(DbSession dbSession)
+	protected void validConnectionSelect(DbSession dbSession)
 			throws WaarpDatabaseNoConnectionException {
 		// try to limit the number of check!
 		synchronized (dbSession) {
@@ -244,9 +247,9 @@ public abstract class DbModelAbstract implements DbModel {
 
 	/**
 	 * 
-	 * @return the associated String to validate the connection (as "select 1 frm dual")
+	 * @return the associated String to validate the connection (as "select 1 from dual")
 	 */
-	public abstract String validConnectionString();
+	protected abstract String validConnectionString();
 
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {

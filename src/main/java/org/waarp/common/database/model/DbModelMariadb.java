@@ -21,9 +21,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Timer;
+import java.util.concurrent.locks.ReentrantLock;
 
-import org.h2.jdbcx.JdbcConnectionPool;
-import org.waarp.common.database.DbAdmin;
+import org.waarp.common.database.DbConnectionPool;
 import org.waarp.common.database.DbConstant;
 import org.waarp.common.database.DbPreparedStatement;
 import org.waarp.common.database.DbRequest;
@@ -35,24 +36,26 @@ import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
 
+import org.mariadb.jdbc.MySQLDataSource;
+
 /**
- * H2 Database Model implementation
+ * MariaDB Database Model implementation
  * 
  * @author Frederic Bregier
  * 
  */
-public abstract class DbModelH2 extends DbModelAbstract {
+public abstract class DbModelMariadb extends DbModelAbstract {
 	/**
 	 * Internal Logger
 	 */
 	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
-			.getLogger(DbModelH2.class);
+			.getLogger(DbModelMariadb.class);
 
-	public static DbType type = DbType.H2;
+	public static DbType type = DbType.MariaDB;
 
-	protected static JdbcConnectionPool pool;
+	protected static MySQLDataSource mysqlConnectionPoolDataSource;
+	protected static DbConnectionPool pool;
 	protected static String url, user, pwd;
-
 
 	public DbType getDbType() {
 		return type;
@@ -64,19 +67,50 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	 * @param dbserver
 	 * @param dbuser
 	 * @param dbpasswd
+	 * @param timer
+	 * @param delay
 	 * @throws WaarpDatabaseNoConnectionException
 	 */
-	public DbModelH2(String dbserver, String dbuser, String dbpasswd)
+	public DbModelMariadb(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay)
 			throws WaarpDatabaseNoConnectionException {
 		this();
+		mysqlConnectionPoolDataSource = new MySQLDataSource();
 		url = dbserver;
 		user = dbuser;
 		pwd = dbpasswd;
-		pool = JdbcConnectionPool.create(dbserver, dbuser, dbpasswd);
-		pool.setMaxConnections(DbConstant.MAXCONNECTION);
-		pool.setLoginTimeout(DbConstant.DELAYMAXCONNECTION);
+		mysqlConnectionPoolDataSource.setUrl(dbserver);
+		mysqlConnectionPoolDataSource.setUser(dbuser);
+		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+		// Create a pool with no limit
+		pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
 		logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
-				+ pool.getLoginTimeout());
+				+ pool.getLoginTimeout()
+				+ " ForceClose: " + pool.getTimeoutForceClose());
+	}
+
+	/**
+	 * Create the object and initialize if necessary the driver
+	 * 
+	 * @param dbserver
+	 * @param dbuser
+	 * @param dbpasswd
+	 * @throws WaarpDatabaseNoConnectionException
+	 */
+	public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
+			throws WaarpDatabaseNoConnectionException {
+		this();
+		mysqlConnectionPoolDataSource = new MySQLDataSource();
+		url = dbserver;
+		user = dbuser;
+		pwd = dbpasswd;
+		mysqlConnectionPoolDataSource.setUrl(dbserver);
+		mysqlConnectionPoolDataSource.setUser(dbuser);
+		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+		// Create a pool with no limit
+		pool = new DbConnectionPool(mysqlConnectionPoolDataSource);
+		logger.warn("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
+				+ pool.getLoginTimeout()
+				+ " ForceClose: " + pool.getTimeoutForceClose());
 	}
 
 	/**
@@ -84,12 +118,12 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	 * 
 	 * @throws WaarpDatabaseNoConnectionException
 	 */
-	protected DbModelH2() throws WaarpDatabaseNoConnectionException {
+	protected DbModelMariadb() throws WaarpDatabaseNoConnectionException {
 		if (DbModelFactory.classLoaded) {
 			return;
 		}
 		try {
-			DriverManager.registerDriver(new org.h2.Driver());
+			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
 			DbModelFactory.classLoaded = true;
 		} catch (SQLException e) {
 			// SQLException
@@ -101,19 +135,6 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	}
 
 	@Override
-	public void releaseResources() {
-		if (pool != null)
-			pool.dispose();
-	}
-
-	@Override
-	public int currentNumberOfPooledConnections() {
-		if (pool != null)
-			return pool.getActiveConnections();
-		return DbAdmin.getNbConnection();
-	}
-
-	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
 		if (pool != null) {
@@ -121,34 +142,32 @@ public abstract class DbModelH2 extends DbModelAbstract {
 				return pool.getConnection();
 			} catch (SQLException e) {
 				// try to renew the pool
-				pool.dispose();
-				pool = JdbcConnectionPool.create(url, user, pwd);
-				pool.setMaxConnections(DbConstant.MAXCONNECTION);
-				pool.setLoginTimeout(DbConstant.DELAYMAXCONNECTION);
-				logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
-						+ pool.getLoginTimeout());
+				mysqlConnectionPoolDataSource = new MySQLDataSource();
+				mysqlConnectionPoolDataSource.setUrl(url);
+				mysqlConnectionPoolDataSource.setUser(user);
+				mysqlConnectionPoolDataSource.setPassword(pwd);
+				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
 				return pool.getConnection();
 			}
 		}
 		return super.getDbConnection(server, user, passwd);
 	}
 
+
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),
 		VARCHAR(Types.VARCHAR, " VARCHAR(254) "),
-		LONGVARCHAR(Types.LONGVARCHAR, " LONGVARCHAR "),
+		LONGVARCHAR(Types.LONGVARCHAR, " TEXT "),
 		BIT(Types.BIT, " BOOLEAN "),
 		TINYINT(Types.TINYINT, " TINYINT "),
 		SMALLINT(Types.SMALLINT, " SMALLINT "),
 		INTEGER(Types.INTEGER, " INTEGER "),
 		BIGINT(Types.BIGINT, " BIGINT "),
-		REAL(Types.REAL, " REAL "),
+		REAL(Types.REAL, " FLOAT "),
 		DOUBLE(Types.DOUBLE, " DOUBLE "),
-		VARBINARY(Types.VARBINARY, " BINARY "),
+		VARBINARY(Types.VARBINARY, " BLOB "),
 		DATE(Types.DATE, " DATE "),
-		TIMESTAMP(Types.TIMESTAMP, " TIMESTAMP "),
-		CLOB(Types.CLOB, " CLOB "),
-		BLOB(Types.BLOB, " BLOB ");
+		TIMESTAMP(Types.TIMESTAMP, " TIMESTAMP ");
 
 		public int type;
 
@@ -187,15 +206,13 @@ public abstract class DbModelH2 extends DbModelAbstract {
 					return DATE.constructor;
 				case Types.TIMESTAMP:
 					return TIMESTAMP.constructor;
-				case Types.CLOB:
-					return CLOB.constructor;
-				case Types.BLOB:
-					return BLOB.constructor;
 				default:
 					return null;
 			}
 		}
 	}
+
+	private final ReentrantLock lock = new ReentrantLock();
 
 	public void createTables(DbSession session) throws WaarpDatabaseNoConnectionException {
 		// Create tables: configuration, hosts, rules, runner, cptrunner
@@ -228,9 +245,8 @@ public abstract class DbModelH2 extends DbModelAbstract {
 		} finally {
 			request.close();
 		}
-
-		// Index example
-		action = "CREATE INDEX IF NOT EXISTS IDX_RUNNER ON " + DbDataModel.table + "(";
+		// Index Example
+		action = "CREATE INDEX IDX_RUNNER ON " + DbDataModel.table + "(";
 		DbDataModel.Columns[] icolumns = DbDataModel.indexes;
 		for (int i = 0; i < icolumns.length - 1; i++) {
 			action += icolumns[i].name() + ", ";
@@ -249,8 +265,29 @@ public abstract class DbModelH2 extends DbModelAbstract {
 		}
 
 		// example sequence
-		action = "CREATE SEQUENCE IF NOT EXISTS " + DbDataModel.fieldseq +
-				" START WITH " + (DbConstant.ILLEGALVALUE + 1);
+		/*
+		 * # Table to handle any number of sequences: CREATE TABLE Sequences ( name VARCHAR(22) NOT
+		 * NULL, seq INT UNSIGNED NOT NULL, # (or BIGINT) PRIMARY KEY name ); # Create a Sequence:
+		 * INSERT INTO Sequences (name, seq) VALUES (?, 0); # Drop a Sequence: DELETE FROM Sequences
+		 * WHERE name = ?; # Get a sequence number: UPDATE Sequences SET seq = LAST_INSERT_ID(seq +
+		 * 1) WHERE name = ?; $seq = $db->LastInsertId();
+		 */
+		action = "CREATE TABLE Sequences (name VARCHAR(22) NOT NULL PRIMARY KEY," +
+				"seq BIGINT NOT NULL)";
+		logger.warn(action);
+		try {
+			request.query(action);
+		} catch (WaarpDatabaseNoConnectionException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} catch (WaarpDatabaseSqlException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} finally {
+			request.close();
+		}
+		action = "INSERT INTO Sequences (name, seq) VALUES ('" + DbDataModel.fieldseq + "', " +
+				(DbConstant.ILLEGALVALUE + 1) + ")";
 		logger.warn(action);
 		try {
 			request.query(action);
@@ -267,16 +304,16 @@ public abstract class DbModelH2 extends DbModelAbstract {
 
 	public void resetSequence(DbSession session, long newvalue)
 			throws WaarpDatabaseNoConnectionException {
-		String action = "ALTER SEQUENCE " + DbDataModel.fieldseq +
-				" RESTART WITH " + newvalue;
+		String action = "UPDATE Sequences SET seq = " + newvalue +
+				" WHERE name = '" + DbDataModel.fieldseq + "'";
 		DbRequest request = new DbRequest(session);
 		try {
 			request.query(action);
 		} catch (WaarpDatabaseNoConnectionException e) {
-			logger.warn("ResetSequences Error", e);
+			logger.warn("ResetSequence Error", e);
 			return;
 		} catch (WaarpDatabaseSqlException e) {
-			logger.warn("ResetSequences Error", e);
+			logger.warn("ResetSequence Error", e);
 			return;
 		} finally {
 			request.close();
@@ -284,36 +321,59 @@ public abstract class DbModelH2 extends DbModelAbstract {
 		logger.warn(action);
 	}
 
-	public long nextSequence(DbSession dbSession)
+	public synchronized long nextSequence(DbSession dbSession)
 			throws WaarpDatabaseNoConnectionException,
 			WaarpDatabaseSqlException, WaarpDatabaseNoDataException {
-		long result = DbConstant.ILLEGALVALUE;
-		String action = "SELECT NEXTVAL('" + DbDataModel.fieldseq + "')";
-		DbPreparedStatement preparedStatement = new DbPreparedStatement(
-				dbSession);
+		lock.lock();
 		try {
-			preparedStatement.createPrepareStatement(action);
-			// Limit the search
-			preparedStatement.executeQuery();
-			if (preparedStatement.getNext()) {
-				try {
-					result = preparedStatement.getResultSet().getLong(1);
-				} catch (SQLException e) {
-					throw new WaarpDatabaseSqlException(e);
-				}
-				return result;
-			} else {
-				throw new WaarpDatabaseNoDataException(
-						"No sequence found. Must be initialized first");
+			long result = DbConstant.ILLEGALVALUE;
+			String action = "SELECT seq FROM Sequences WHERE name = '" +
+					DbDataModel.fieldseq + "' FOR UPDATE";
+			DbPreparedStatement preparedStatement = new DbPreparedStatement(
+					dbSession);
+			try {
+				dbSession.conn.setAutoCommit(false);
+			} catch (SQLException e1) {
 			}
+			try {
+				preparedStatement.createPrepareStatement(action);
+				// Limit the search
+				preparedStatement.executeQuery();
+				if (preparedStatement.getNext()) {
+					try {
+						result = preparedStatement.getResultSet().getLong(1);
+					} catch (SQLException e) {
+						throw new WaarpDatabaseSqlException(e);
+					}
+				} else {
+					throw new WaarpDatabaseNoDataException(
+							"No sequence found. Must be initialized first");
+				}
+			} finally {
+				preparedStatement.realClose();
+			}
+			action = "UPDATE Sequences SET seq = " + (result + 1) +
+					" WHERE name = '" + DbDataModel.fieldseq + "'";
+			try {
+				preparedStatement.createPrepareStatement(action);
+				// Limit the search
+				preparedStatement.executeUpdate();
+			} finally {
+				preparedStatement.realClose();
+			}
+			return result;
 		} finally {
-			preparedStatement.realClose();
+			try {
+				dbSession.conn.setAutoCommit(true);
+			} catch (SQLException e1) {
+			}
+			lock.unlock();
 		}
 	}
 
 	@Override
 	protected String validConnectionString() {
-		return "select 1";
+		return "select 1 from dual";
 	}
 
 	public String limitRequest(String allfields, String request, int nb) {

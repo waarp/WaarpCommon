@@ -388,7 +388,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
 	}
 
 	@Override
-	public String validConnectionString() {
+	protected String validConnectionString() {
 		return "select 1 from dual";
 	}
 

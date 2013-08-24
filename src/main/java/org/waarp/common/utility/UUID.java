@@ -396,7 +396,7 @@ public final class UUID {
     	System.out.println(new Date(pseudoMax));
         System.out.println(new UUID().toString());
         
-        final int n = 10000000;
+        final int n = 100000000;
 
         for (int i = 0; i < n; i++) {
             UUID uuid = new UUID();

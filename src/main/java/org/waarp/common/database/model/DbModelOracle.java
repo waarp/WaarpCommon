@@ -363,7 +363,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	}
 
 	@Override
-	public String validConnectionString() {
+	protected String validConnectionString() {
 		return "select 1 from dual";
 	}
 

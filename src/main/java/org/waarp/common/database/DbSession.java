@@ -20,6 +20,7 @@ package org.waarp.common.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -152,6 +153,7 @@ public class DbSession {
 			setInternalId(this);
 			DbAdmin.addConnection(internalId, this);
 			isDisconnected = false;
+			checkConnection();
 		} catch (SQLException ex) {
 			isDisconnected = true;
 			// handle any errors
@@ -360,6 +362,8 @@ public class DbSession {
 		} catch (SQLException e) {
 			logger.warn("Disconnection not OK");
 			error(e);
+		} catch (ConcurrentModificationException e) {
+			// ignore
 		}
 		logger.info("Current cached connection: "
 				+ DbModelFactory.dbModel.currentNumberOfPooledConnections());

@@ -19,6 +19,7 @@ package org.waarp.common.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ConcurrentModificationException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
@@ -350,6 +351,7 @@ public class DbAdmin {
 			try {
 				session.conn.close();
 			} catch (SQLException e) {
+			} catch (ConcurrentModificationException e) {
 			}
 		}
 		listConnection.clear();
