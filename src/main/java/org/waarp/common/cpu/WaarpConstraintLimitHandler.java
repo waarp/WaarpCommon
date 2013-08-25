@@ -44,7 +44,8 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 	public String lastAlert = NOALERT;
 	private boolean constraintInactive = true;
 	private boolean useCpuLimits = false;
-
+	private boolean useBandwidthLimit = false;
+	
 	private final Random random = new Random();
 	private CpuManagementInterface cpuManagement;
 	private double cpuLimit = 0.8;
@@ -204,25 +205,28 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 		}
 		this.handler = handler;
 		if (useCpuLimits || highCpuLimit > 0) {
-			constraintInactive = false;
 			if (useJdKCpuLimit) {
 				try {
 					cpuManagement = new CpuManagement();
-				} catch (IllegalArgumentException e) {
+					constraintInactive = false;
+				} catch (UnsupportedOperationException e) {
 					cpuManagement = new CpuManagementNoInfo();
+					constraintInactive = true;
 				}
 			} else {
 				cpuManagement = new CpuManagementSysmon();
+				constraintInactive = false;
 			}
 		} else {
 			// no test at all
 			constraintInactive = true;
 			cpuManagement = new CpuManagementNoInfo();
 		}
+		useBandwidthLimit = highcpuLimit > 0;
 		cpuLimit = cpulimit;
 		channelLimit = channellimit;
 		lastTime = System.currentTimeMillis();
-		if (this.handler != null && (!constraintInactive)) {
+		if (this.handler != null && (!constraintInactive) && (!useBandwidthLimit)) {
 			executor = new ScheduledThreadPoolExecutor(1);
 			executor.scheduleWithFixedDelay(this, this.delay, this.delay, TimeUnit.MILLISECONDS);
 		}
@@ -409,7 +413,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 	 */
 	public void setHandler(GlobalTrafficShapingHandler handler) {
 		this.handler = handler;
-		if ((!constraintInactive) && this.handler != null && highCpuLimit > 0) {
+		if ((!constraintInactive) && this.handler != null && useBandwidthLimit) {
 			if (executor != null) {
 				executor.shutdownNow();
 			}
@@ -431,6 +435,8 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 		if (constraintInactive)
 			return;
 		double curLA = getLastLA();
+		if (! useBandwidthLimit)
+			return;
 		if (curLA > highCpuLimit) {
 			CurLimits curlimit = null;
 			if (curLimits.isEmpty()) {
