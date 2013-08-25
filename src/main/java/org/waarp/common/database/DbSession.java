@@ -477,6 +477,9 @@ public class DbSession {
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot commit since connection is null");
 		}
+		if (this.autoCommit) {
+			return;
+		}
 		if (isDisconnected) {
 			checkConnection();
 		}

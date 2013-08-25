@@ -55,7 +55,6 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
 	protected static OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
-	protected static String url, user, pwd;
 
 
 	public DbType getDbType() {
@@ -83,9 +82,6 @@ public abstract class DbModelOracle extends DbModelAbstract {
 			oracleConnectionPoolDataSource = null;
 			return;
 		}
-		url = dbserver;
-		user = dbuser;
-		pwd = dbpasswd;
 		oracleConnectionPoolDataSource.setURL(dbserver);
 		oracleConnectionPoolDataSource.setUser(dbuser);
 		oracleConnectionPoolDataSource.setPassword(dbpasswd);
@@ -114,9 +110,6 @@ public abstract class DbModelOracle extends DbModelAbstract {
 			oracleConnectionPoolDataSource = null;
 			return;
 		}
-		url = dbserver;
-		user = dbuser;
-		pwd = dbpasswd;
 		oracleConnectionPoolDataSource.setURL(dbserver);
 		oracleConnectionPoolDataSource.setUser(dbuser);
 		oracleConnectionPoolDataSource.setPassword(dbpasswd);
@@ -177,11 +170,17 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		} catch (SQLException e) {
 			// try to renew the pool
 			oracleConnectionPoolDataSource = new OracleConnectionPoolDataSource();
-			oracleConnectionPoolDataSource.setURL(url);
+			oracleConnectionPoolDataSource.setURL(server);
 			oracleConnectionPoolDataSource.setUser(user);
-			oracleConnectionPoolDataSource.setPassword(pwd);
+			oracleConnectionPoolDataSource.setPassword(passwd);
 			pool.resetPoolDataSource(oracleConnectionPoolDataSource);
-			return pool.getConnection();
+			try {
+				return pool.getConnection();
+			} catch (SQLException e2) {
+				pool.dispose();
+				pool = null;
+				return super.getDbConnection(server, user, passwd);
+			}
 		}
 	}
 

@@ -55,7 +55,6 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 
 	protected static MySQLDataSource mysqlConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
-	protected static String url, user, pwd;
 
 	public DbType getDbType() {
 		return type;
@@ -75,9 +74,6 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 			throws WaarpDatabaseNoConnectionException {
 		this();
 		mysqlConnectionPoolDataSource = new MySQLDataSource();
-		url = dbserver;
-		user = dbuser;
-		pwd = dbpasswd;
 		mysqlConnectionPoolDataSource.setUrl(dbserver);
 		mysqlConnectionPoolDataSource.setUser(dbuser);
 		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
@@ -100,9 +96,6 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 			throws WaarpDatabaseNoConnectionException {
 		this();
 		mysqlConnectionPoolDataSource = new MySQLDataSource();
-		url = dbserver;
-		user = dbuser;
-		pwd = dbpasswd;
 		mysqlConnectionPoolDataSource.setUrl(dbserver);
 		mysqlConnectionPoolDataSource.setUser(dbuser);
 		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
@@ -143,11 +136,17 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 			} catch (SQLException e) {
 				// try to renew the pool
 				mysqlConnectionPoolDataSource = new MySQLDataSource();
-				mysqlConnectionPoolDataSource.setUrl(url);
+				mysqlConnectionPoolDataSource.setUrl(server);
 				mysqlConnectionPoolDataSource.setUser(user);
-				mysqlConnectionPoolDataSource.setPassword(pwd);
+				mysqlConnectionPoolDataSource.setPassword(passwd);
 				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
-				return pool.getConnection();
+				try {
+					return pool.getConnection();
+				} catch (SQLException e2) {
+					pool.dispose();
+					pool = null;
+					return super.getDbConnection(server, user, passwd);
+				}
 			}
 		}
 		return super.getDbConnection(server, user, passwd);

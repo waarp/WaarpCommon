@@ -173,7 +173,7 @@ public class DbAdmin {
 					session = new DbSession(this.server, this.user,
 							this.passwd, false);
 				} catch (WaarpDatabaseNoConnectionException e) {
-					logger.warn("Attempt of connection in error: " + i);
+					logger.warn("Attempt of connection in error: " + i, e);
 					continue;
 				}
 				isReadOnly = false;
@@ -189,7 +189,7 @@ public class DbAdmin {
 					session = new DbSession(this.server, this.user,
 							this.passwd, true);
 				} catch (WaarpDatabaseNoConnectionException e) {
-					logger.warn("Attempt of connection in error: " + i);
+					logger.warn("Attempt of connection in error: " + i, e);
 					continue;
 				}
 				isReadOnly = true;
