@@ -28,6 +28,7 @@ import org.waarp.common.database.model.DbModelFactory;
 import org.waarp.common.database.model.DbType;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.utility.UUID;
 
 /**
  * Class for access to Database
@@ -308,7 +309,7 @@ public class DbAdmin {
 	/**
 	 * List all Connection to enable the close call on them
 	 */
-	private static ConcurrentHashMap<Long, DbSession> listConnection = new ConcurrentHashMap<Long, DbSession>();
+	private static ConcurrentHashMap<UUID, DbSession> listConnection = new ConcurrentHashMap<UUID, DbSession>();
 
 	/**
 	 * Number of HttpSession
@@ -321,8 +322,8 @@ public class DbAdmin {
 	 * @param id
 	 * @param session
 	 */
-	public static void addConnection(long id, DbSession session) {
-		listConnection.put(Long.valueOf(id), session);
+	public static void addConnection(UUID id, DbSession session) {
+		listConnection.put(id, session);
 	}
 
 	/**
@@ -331,8 +332,8 @@ public class DbAdmin {
 	 * @param id
 	 *            Id of the connection
 	 */
-	public static void removeConnection(long id) {
-		listConnection.remove(Long.valueOf(id));
+	public static void removeConnection(UUID id) {
+		listConnection.remove(id);
 	}
 
 	/**
@@ -371,5 +372,13 @@ public class DbAdmin {
 				logger.error("Database Connection cannot be reinitialized");
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * @return True if this driver allows Thread Shared Connexion (concurrency usage)
+	 */
+	public boolean isCompatibleWithThreadSharedConnexion() {
+		return (typeDriver != DbType.MariaDB && typeDriver != DbType.MySQL);
 	}
 }

@@ -61,7 +61,10 @@ public abstract class DbModelAbstract implements DbModel {
 				admin = DbConstant.noCommitAdmin;
 			}
 		}
-		DbSession newdbSession = new DbSession(admin, dbSession.isReadOnly);
+		DbSession newdbSession = admin.session;
+		if (admin.isConnected) {
+			newdbSession = new DbSession(admin, dbSession.isReadOnly);
+		}
 		try {
 			if (dbSession.conn != null) {
 				dbSession.conn.close();
