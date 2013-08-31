@@ -60,7 +60,7 @@ public abstract class AbstractDir implements DirInterface {
 	/**
 	 * Hack to say Windows or Unix (root like X:\ or /)
 	 */
-	protected static Boolean ISUNIX = ! DetectionUtils.isWindows();
+	protected static Boolean ISUNIX = null;
 	/**
 	 * Roots for Windows system
 	 */
@@ -69,7 +69,7 @@ public abstract class AbstractDir implements DirInterface {
 	/**
 	 * Init Windows Support
 	 */
-	protected static void initWindowsSupport() {
+	static {
 		if (ISUNIX == null) {
 			ISUNIX = ! DetectionUtils.isWindows();
 		}
@@ -86,7 +86,6 @@ public abstract class AbstractDir implements DirInterface {
 	 * @return The corresponding Root file
 	 */
 	protected File getCorrespondingRoot(File file) {
-		initWindowsSupport();
 		if (ISUNIX) {
 			return new File("/");
 		}
@@ -121,7 +120,7 @@ public abstract class AbstractDir implements DirInterface {
 
 	public String validatePath(String path) throws CommandAbstractException {
 		String extDir;
-		if (isAbsoluteWindows(path)) {
+		if (isAbsolute(path)) {
 			extDir = path;
 			File newDir = new File(extDir);
 			return validatePath(newDir);
@@ -137,15 +136,17 @@ public abstract class AbstractDir implements DirInterface {
 	/**
 	 * 
 	 * @param path
-	 * @return True if the given Path is an absolute one under Windows System
+	 * @return True if the given Path is an absolute one under Windows System or should be an absolute one on Unix
 	 */
-	public boolean isAbsoluteWindows(String path) {
-		initWindowsSupport();
+	public boolean isAbsolute(String path) {
+		File file = new File(path);
+		logger.debug("isAbsolute: "+file+":"+ISUNIX+":"+file.isAbsolute()+":"+file.getParentFile());
 		if (!ISUNIX) {
-			File file = new File(path);
 			return file.isAbsolute();
+		} else {
+			file = file.getParentFile();
+			return (file != null && file.isAbsolute() && file.isDirectory() && file.getAbsolutePath().equals(File.separator));
 		}
-		return false;
 	}
 
 	/**
@@ -161,7 +162,7 @@ public abstract class AbstractDir implements DirInterface {
 			throw new Reply501Exception("Path must not be empty");
 		}
 		// First check if the path is relative or absolute
-		if (isAbsoluteWindows(path)) {
+		if (isAbsolute(path)) {
 			return path;
 		}
 		String extDir = null;
@@ -180,7 +181,6 @@ public abstract class AbstractDir implements DirInterface {
 	 * @return the canonicalPath
 	 */
 	protected String getCanonicalPath(File dir) {
-		initWindowsSupport();
 		if (ISUNIX) {
 			// resolve it without getting symbolic links
 			StringBuilder builder = new StringBuilder();

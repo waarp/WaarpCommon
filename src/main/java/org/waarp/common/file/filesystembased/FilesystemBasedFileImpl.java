@@ -343,6 +343,9 @@ public abstract class FilesystemBasedFileImpl implements
 				isReady = true;
 				logger.debug("File renamed to: {} and real position: {}", this, newFile);
 				return true;
+			} else {
+				logger.warn("Cannot write file: {} from {}", newFile, file);
+				return false;
 			}
 		}
 		logger.warn("Cannot read file: {}", file);

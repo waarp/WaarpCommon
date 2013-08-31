@@ -124,7 +124,7 @@ public abstract class PassthroughBasedDirImpl extends AbstractDir {
 	 */
 	protected File getFileFromPath(String path) throws CommandAbstractException {
 		String newdir = validatePath(path);
-		if (isAbsoluteWindows(newdir)) {
+		if (isAbsolute(newdir)) {
 			return new File(newdir);
 		}
 		String truedir = ((PassthroughBasedAuthImpl) getSession().getAuth())

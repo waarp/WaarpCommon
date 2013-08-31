@@ -11,6 +11,7 @@
 			<action dev="Frederic Bregier" type="add">Add FileMonitoring support</action>
 			<action dev="Frederic Bregier" type="fix">Fix DB Pooled connection timeout</action>
 			<action dev="Frederic Bregier" type="fix">Fix String handling for null arguments</action>
+			<action dev="Frederic Bregier" type="fix">Fix path issue with full/relative path while all are relative</action>
 		    <action dev="Frederic Bregier" type="fix">Upgrade jar dependencies</action>
 		</release>
 	    <release version="1.2.13" date="2013-07-28" description="Fix release">
