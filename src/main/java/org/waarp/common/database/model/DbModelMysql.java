@@ -56,7 +56,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
 
 	protected static MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
-
+	
 	public DbType getDbType() {
 		return type;
 	}
@@ -147,8 +147,25 @@ public abstract class DbModelMysql extends DbModelAbstract {
 	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
-		if (pool != null)
-			return pool.getConnection();
+		if (pool != null) {
+			try {
+				return pool.getConnection();
+			} catch (SQLException e) {
+				// try to renew the pool
+				mysqlConnectionPoolDataSource = new MysqlConnectionPoolDataSource();
+				mysqlConnectionPoolDataSource.setUrl(server);
+				mysqlConnectionPoolDataSource.setUser(user);
+				mysqlConnectionPoolDataSource.setPassword(passwd);
+				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+				try {
+					return pool.getConnection();
+				} catch (SQLException e2) {
+					pool.dispose();
+					pool = null;
+					return super.getDbConnection(server, user, passwd);
+				}
+			}
+		}
 		return super.getDbConnection(server, user, passwd);
 	}
 
@@ -370,7 +387,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
 	}
 
 	@Override
-	public String validConnectionString() {
+	protected String validConnectionString() {
 		return "select 1 from dual";
 	}
 

@@ -64,6 +64,9 @@ public class DbModelFactory {
 			case MySQL:
 				// dbModel = new DbModelMysql(dbserver, dbuser, dbpasswd);
 				break;
+			case MariaDB:
+				// dbModel = new DbModelMariadb(dbserver, dbuser, dbpasswd);
+				break;
 			default:
 				throw new WaarpDatabaseNoConnectionException(
 						"TypeDriver unknown: " + type);

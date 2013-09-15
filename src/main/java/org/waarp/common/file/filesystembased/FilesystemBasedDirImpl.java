@@ -82,7 +82,6 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 		} else {
 			filesystemBasedFtpDirJdk = new FilesystemBasedDirJdk5();
 		}
-		initWindowsSupport();
 	}
 
 	/**
@@ -96,7 +95,6 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 	public static void initJdkDependent(
 			FilesystemBasedDirJdkAbstract filesystemBasedFtpDirJdkChoice) {
 		filesystemBasedFtpDirJdk = filesystemBasedFtpDirJdkChoice;
-		initWindowsSupport();
 	}
 
 	/**
@@ -142,12 +140,16 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 		}
 		File wildcardFile;
 		File rootFile;
-		if (isAbsoluteWindows(pathWithWildcard)) {
+		if (! ISUNIX && isAbsolute(pathWithWildcard)) {
 			wildcardFile = new File(pathWithWildcard);
 			rootFile = getCorrespondingRoot(wildcardFile);
 		} else {
-			rootFile = new File(((FilesystemBasedAuthImpl) getSession()
+			if (isAbsolute(pathWithWildcard)) {
+				rootFile = new File("/");
+			} else {
+				rootFile = new File(((FilesystemBasedAuthImpl) getSession()
 					.getAuth()).getBaseDirectory());
+			}
 			wildcardFile = new File(rootFile, pathWithWildcard);
 		}
 		// Split wildcard path into subdirectories.
@@ -208,7 +210,7 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 	 */
 	protected File getFileFromPath(String path) throws CommandAbstractException {
 		String newdir = validatePath(path);
-		if (isAbsoluteWindows(newdir)) {
+		if (isAbsolute(newdir)) {
 			return new File(newdir);
 		}
 		String truedir = ((FilesystemBasedAuthImpl) getSession().getAuth())

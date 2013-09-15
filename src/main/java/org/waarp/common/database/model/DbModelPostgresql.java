@@ -17,6 +17,7 @@
  */
 package org.waarp.common.database.model;
 
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -47,6 +48,8 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 
 	public static DbType type = DbType.PostGreSQL;
 
+	protected Boolean useIsValid = null;
+	
 	public DbType getDbType() {
 		return type;
 	}
@@ -72,6 +75,11 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 		}
 		// No pooling connection yet available through URL and not for production purpose
 		/*
+		 * Quoting the PostgreSQL documentation: from http://jdbc.postgresql.org/documentation/head/ds-ds.html
+		 * In general it is not recommended to use the PostgreSQL™ provided connection pool.
+		 * 
+		 */
+		/*
 		 * PGPoolingDataSource source = new PGPoolingDataSource();
 		 * source.setDataSourceName("A Data Source"); source.setServerName("localhost");
 		 * source.setDatabaseName("test"); source.setUser("testuser");
@@ -82,7 +90,23 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 	@Override
 	public void validConnection(DbSession dbSession)
 			throws WaarpDatabaseNoConnectionException {
-		// to prevent bug with isValid() not yet implemented in release 901 April 2012
+		if (useIsValid == null) {
+			try {
+				DatabaseMetaData metadata = dbSession.conn.getMetaData();
+				useIsValid = new Boolean(metadata.getDriverMajorVersion() >= 9 && metadata.getDatabaseMinorVersion() >= 2);
+			} catch (SQLException e) {
+				// SQLException
+				logger.error("Cannot get Metadata " + type.name() + " " + e.getMessage());
+				DbSession.error(e);
+				throw new WaarpDatabaseNoConnectionException(
+						"Cannot get Metadata:" + type.name(), e);
+			}
+		}
+		if (useIsValid) {
+			super.validConnection(dbSession);
+			return;
+		}
+		// to prevent bug with isValid() not yet implemented in release 9.1-902 April 2012 but in 9.2-1000
 		validConnectionSelect(dbSession);
 	}
 
@@ -258,7 +282,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 	}
 
 	@Override
-	public String validConnectionString() {
+	protected String validConnectionString() {
 		return "select 1";
 	}
 

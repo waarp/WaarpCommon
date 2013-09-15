@@ -19,7 +19,7 @@ package org.waarp.common.crypto;
 
 /**
  * This class handles methods to crypt and decrypt messages with AES algorithm (very efficient:
- * 11000/s).<br>
+ * 60000/s).<br>
  * <br>
  * Usage:<br>
  * <ul>

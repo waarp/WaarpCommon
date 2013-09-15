@@ -33,24 +33,25 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.smile.SmileFactory;
 
 /**
- * JSON handler
+ * JSON handler using Smile default format
  * @author "Frederic Bregier"
  *
  */
-public class JsonHandler {
+public class SmileJsonHandler {
 
 	/**
-	 * JSON parser
+	 * JSON parser with Smile support
 	 */
-	public final static ObjectMapper mapper = new ObjectMapper();
-
+	public final static ObjectMapper mapper = new ObjectMapper(new SmileFactory());
 	static {
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
+
 	/**
 	 * 
 	 * @return an empty ObjectNode

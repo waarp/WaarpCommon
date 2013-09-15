@@ -22,10 +22,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Timer;
+import java.util.concurrent.locks.ReentrantLock;
 
-import oracle.jdbc.pool.OracleConnectionPoolDataSource;
-
-import org.waarp.common.database.DbAdmin;
 import org.waarp.common.database.DbConnectionPool;
 import org.waarp.common.database.DbConstant;
 import org.waarp.common.database.DbPreparedStatement;
@@ -38,24 +36,25 @@ import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
 
+import org.mariadb.jdbc.MySQLDataSource;
+
 /**
- * Oracle Database Model implementation
+ * MariaDB Database Model implementation
  * 
  * @author Frederic Bregier
  * 
  */
-public abstract class DbModelOracle extends DbModelAbstract {
+public abstract class DbModelMariadb extends DbModelAbstract {
 	/**
 	 * Internal Logger
 	 */
 	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
-			.getLogger(DbModelOracle.class);
+			.getLogger(DbModelMariadb.class);
 
-	public static DbType type = DbType.Oracle;
+	public static DbType type = DbType.MariaDB;
 
-	protected static OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
+	protected static MySQLDataSource mysqlConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
-
 
 	public DbType getDbType() {
 		return type;
@@ -71,21 +70,15 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	 * @param delay
 	 * @throws WaarpDatabaseNoConnectionException
 	 */
-	public DbModelOracle(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay)
+	public DbModelMariadb(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay)
 			throws WaarpDatabaseNoConnectionException {
 		this();
-
-		try {
-			oracleConnectionPoolDataSource = new OracleConnectionPoolDataSource();
-		} catch (SQLException e) {
-			// then no pool
-			oracleConnectionPoolDataSource = null;
-			return;
-		}
-		oracleConnectionPoolDataSource.setURL(dbserver);
-		oracleConnectionPoolDataSource.setUser(dbuser);
-		oracleConnectionPoolDataSource.setPassword(dbpasswd);
-		pool = new DbConnectionPool(oracleConnectionPoolDataSource, timer, delay);
+		mysqlConnectionPoolDataSource = new MySQLDataSource();
+		mysqlConnectionPoolDataSource.setUrl(dbserver);
+		mysqlConnectionPoolDataSource.setUser(dbuser);
+		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+		// Create a pool with no limit
+		pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
 		logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
 				+ pool.getLoginTimeout()
 				+ " ForceClose: " + pool.getTimeoutForceClose());
@@ -99,21 +92,15 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	 * @param dbpasswd
 	 * @throws WaarpDatabaseNoConnectionException
 	 */
-	public DbModelOracle(String dbserver, String dbuser, String dbpasswd)
+	public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
 			throws WaarpDatabaseNoConnectionException {
 		this();
-
-		try {
-			oracleConnectionPoolDataSource = new OracleConnectionPoolDataSource();
-		} catch (SQLException e) {
-			// then no pool
-			oracleConnectionPoolDataSource = null;
-			return;
-		}
-		oracleConnectionPoolDataSource.setURL(dbserver);
-		oracleConnectionPoolDataSource.setUser(dbuser);
-		oracleConnectionPoolDataSource.setPassword(dbpasswd);
-		pool = new DbConnectionPool(oracleConnectionPoolDataSource);
+		mysqlConnectionPoolDataSource = new MySQLDataSource();
+		mysqlConnectionPoolDataSource.setUrl(dbserver);
+		mysqlConnectionPoolDataSource.setUser(dbuser);
+		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+		// Create a pool with no limit
+		pool = new DbConnectionPool(mysqlConnectionPoolDataSource);
 		logger.warn("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
 				+ pool.getLoginTimeout()
 				+ " ForceClose: " + pool.getTimeoutForceClose());
@@ -124,13 +111,12 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	 * 
 	 * @throws WaarpDatabaseNoConnectionException
 	 */
-	protected DbModelOracle() throws WaarpDatabaseNoConnectionException {
+	protected DbModelMariadb() throws WaarpDatabaseNoConnectionException {
 		if (DbModelFactory.classLoaded) {
 			return;
 		}
 		try {
-			DriverManager
-					.registerDriver(new oracle.jdbc.OracleDriver());
+			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
 			DbModelFactory.classLoaded = true;
 		} catch (SQLException e) {
 			// SQLException
@@ -142,59 +128,42 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	}
 
 	@Override
-	public void releaseResources() {
-		try {
-			if (pool != null) {
-				pool.dispose();
-				pool = null;
-			}
-		} catch (SQLException e) {
-		}
-	}
-
-	@Override
-	public int currentNumberOfPooledConnections() {
-		if (pool != null)
-			return pool.getActiveConnections();
-		return DbAdmin.getNbConnection();
-	}
-
-	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
-		if (pool == null) {
-			return super.getDbConnection(server, user, passwd);
-		}
-		try {
-			return pool.getConnection();
-		} catch (SQLException e) {
-			// try to renew the pool
-			oracleConnectionPoolDataSource = new OracleConnectionPoolDataSource();
-			oracleConnectionPoolDataSource.setURL(server);
-			oracleConnectionPoolDataSource.setUser(user);
-			oracleConnectionPoolDataSource.setPassword(passwd);
-			pool.resetPoolDataSource(oracleConnectionPoolDataSource);
+		if (pool != null) {
 			try {
 				return pool.getConnection();
-			} catch (SQLException e2) {
-				pool.dispose();
-				pool = null;
-				return super.getDbConnection(server, user, passwd);
+			} catch (SQLException e) {
+				// try to renew the pool
+				mysqlConnectionPoolDataSource = new MySQLDataSource();
+				mysqlConnectionPoolDataSource.setUrl(server);
+				mysqlConnectionPoolDataSource.setUser(user);
+				mysqlConnectionPoolDataSource.setPassword(passwd);
+				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+				try {
+					return pool.getConnection();
+				} catch (SQLException e2) {
+					pool.dispose();
+					pool = null;
+					return super.getDbConnection(server, user, passwd);
+				}
 			}
 		}
+		return super.getDbConnection(server, user, passwd);
 	}
+
 
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),
-		VARCHAR(Types.VARCHAR, " VARCHAR2(254) "),
-		LONGVARCHAR(Types.LONGVARCHAR, " CLOB "),
-		BIT(Types.BIT, " CHAR(1) "),
-		TINYINT(Types.TINYINT, " SMALLINT "),
+		VARCHAR(Types.VARCHAR, " VARCHAR(254) "),
+		LONGVARCHAR(Types.LONGVARCHAR, " TEXT "),
+		BIT(Types.BIT, " BOOLEAN "),
+		TINYINT(Types.TINYINT, " TINYINT "),
 		SMALLINT(Types.SMALLINT, " SMALLINT "),
 		INTEGER(Types.INTEGER, " INTEGER "),
-		BIGINT(Types.BIGINT, " NUMBER(38,0) "),
-		REAL(Types.REAL, " REAL "),
-		DOUBLE(Types.DOUBLE, " DOUBLE PRECISION "),
+		BIGINT(Types.BIGINT, " BIGINT "),
+		REAL(Types.REAL, " FLOAT "),
+		DOUBLE(Types.DOUBLE, " DOUBLE "),
 		VARBINARY(Types.VARBINARY, " BLOB "),
 		DATE(Types.DATE, " DATE "),
 		TIMESTAMP(Types.TIMESTAMP, " TIMESTAMP ");
@@ -242,14 +211,15 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		}
 	}
 
+	private final ReentrantLock lock = new ReentrantLock();
+
 	public void createTables(DbSession session) throws WaarpDatabaseNoConnectionException {
 		// Create tables: configuration, hosts, rules, runner, cptrunner
-		String createTableH2 = "CREATE TABLE ";
-		String constraint = " CONSTRAINT ";
+		String createTableH2 = "CREATE TABLE IF NOT EXISTS ";
 		String primaryKey = " PRIMARY KEY ";
 		String notNull = " NOT NULL ";
 
-		// example
+		// Example
 		String action = createTableH2 + DbDataModel.table + "(";
 		DbDataModel.Columns[] ccolumns = DbDataModel.Columns
 				.values();
@@ -260,9 +230,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		}
 		action += ccolumns[ccolumns.length - 1].name() +
 				DBType.getType(DbDataModel.dbTypes[ccolumns.length - 1]) +
-				notNull + ",";
-		action += constraint + " conf_pk " + primaryKey + "("
-				+ ccolumns[ccolumns.length - 1].name() + "))";
+				primaryKey + ")";
 		logger.warn(action);
 		DbRequest request = new DbRequest(session);
 		try {
@@ -271,11 +239,12 @@ public abstract class DbModelOracle extends DbModelAbstract {
 			logger.warn("CreateTables Error", e);
 			return;
 		} catch (WaarpDatabaseSqlException e) {
+			logger.warn("CreateTables Error", e);
 			return;
 		} finally {
 			request.close();
 		}
-		// Index example
+		// Index Example
 		action = "CREATE INDEX IDX_RUNNER ON " + DbDataModel.table + "(";
 		DbDataModel.Columns[] icolumns = DbDataModel.indexes;
 		for (int i = 0; i < icolumns.length - 1; i++) {
@@ -295,16 +264,37 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		}
 
 		// example sequence
-		action = "CREATE SEQUENCE " + DbDataModel.fieldseq +
-				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1) +
-				" START WITH " + (DbConstant.ILLEGALVALUE + 1);
+		/*
+		 * # Table to handle any number of sequences: CREATE TABLE Sequences ( name VARCHAR(22) NOT
+		 * NULL, seq INT UNSIGNED NOT NULL, # (or BIGINT) PRIMARY KEY name ); # Create a Sequence:
+		 * INSERT INTO Sequences (name, seq) VALUES (?, 0); # Drop a Sequence: DELETE FROM Sequences
+		 * WHERE name = ?; # Get a sequence number: UPDATE Sequences SET seq = LAST_INSERT_ID(seq +
+		 * 1) WHERE name = ?; $seq = $db->LastInsertId();
+		 */
+		action = "CREATE TABLE Sequences (name VARCHAR(22) NOT NULL PRIMARY KEY," +
+				"seq BIGINT NOT NULL)";
 		logger.warn(action);
 		try {
 			request.query(action);
 		} catch (WaarpDatabaseNoConnectionException e) {
-			logger.warn("CreateTable Error", e);
+			logger.warn("CreateTables Error", e);
 			return;
 		} catch (WaarpDatabaseSqlException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} finally {
+			request.close();
+		}
+		action = "INSERT INTO Sequences (name, seq) VALUES ('" + DbDataModel.fieldseq + "', " +
+				(DbConstant.ILLEGALVALUE + 1) + ")";
+		logger.warn(action);
+		try {
+			request.query(action);
+		} catch (WaarpDatabaseNoConnectionException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} catch (WaarpDatabaseSqlException e) {
+			logger.warn("CreateTables Error", e);
 			return;
 		} finally {
 			request.close();
@@ -313,14 +303,11 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
 	public void resetSequence(DbSession session, long newvalue)
 			throws WaarpDatabaseNoConnectionException {
-		String action = "DROP SEQUENCE " + DbDataModel.fieldseq;
-		String action2 = "CREATE SEQUENCE " + DbDataModel.fieldseq +
-				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1) +
-				" START WITH " + (newvalue);
+		String action = "UPDATE Sequences SET seq = " + newvalue +
+				" WHERE name = '" + DbDataModel.fieldseq + "'";
 		DbRequest request = new DbRequest(session);
 		try {
 			request.query(action);
-			request.query(action2);
 		} catch (WaarpDatabaseNoConnectionException e) {
 			logger.warn("ResetSequence Error", e);
 			return;
@@ -330,34 +317,56 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		} finally {
 			request.close();
 		}
-
 		logger.warn(action);
 	}
 
-	public long nextSequence(DbSession dbSession)
+	public synchronized long nextSequence(DbSession dbSession)
 			throws WaarpDatabaseNoConnectionException,
 			WaarpDatabaseSqlException, WaarpDatabaseNoDataException {
-		long result = DbConstant.ILLEGALVALUE;
-		String action = "SELECT " + DbDataModel.fieldseq + ".NEXTVAL FROM DUAL";
-		DbPreparedStatement preparedStatement = new DbPreparedStatement(
-				dbSession);
+		lock.lock();
 		try {
-			preparedStatement.createPrepareStatement(action);
-			// Limit the search
-			preparedStatement.executeQuery();
-			if (preparedStatement.getNext()) {
-				try {
-					result = preparedStatement.getResultSet().getLong(1);
-				} catch (SQLException e) {
-					throw new WaarpDatabaseSqlException(e);
-				}
-				return result;
-			} else {
-				throw new WaarpDatabaseNoDataException(
-						"No sequence found. Must be initialized first");
+			long result = DbConstant.ILLEGALVALUE;
+			String action = "SELECT seq FROM Sequences WHERE name = '" +
+					DbDataModel.fieldseq + "' FOR UPDATE";
+			DbPreparedStatement preparedStatement = new DbPreparedStatement(
+					dbSession);
+			try {
+				dbSession.conn.setAutoCommit(false);
+			} catch (SQLException e1) {
 			}
+			try {
+				preparedStatement.createPrepareStatement(action);
+				// Limit the search
+				preparedStatement.executeQuery();
+				if (preparedStatement.getNext()) {
+					try {
+						result = preparedStatement.getResultSet().getLong(1);
+					} catch (SQLException e) {
+						throw new WaarpDatabaseSqlException(e);
+					}
+				} else {
+					throw new WaarpDatabaseNoDataException(
+							"No sequence found. Must be initialized first");
+				}
+			} finally {
+				preparedStatement.realClose();
+			}
+			action = "UPDATE Sequences SET seq = " + (result + 1) +
+					" WHERE name = '" + DbDataModel.fieldseq + "'";
+			try {
+				preparedStatement.createPrepareStatement(action);
+				// Limit the search
+				preparedStatement.executeUpdate();
+			} finally {
+				preparedStatement.realClose();
+			}
+			return result;
 		} finally {
-			preparedStatement.realClose();
+			try {
+				dbSession.conn.setAutoCommit(true);
+			} catch (SQLException e1) {
+			}
+			lock.unlock();
 		}
 	}
 
@@ -367,6 +376,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	}
 
 	public String limitRequest(String allfields, String request, int nb) {
-		return "select " + allfields + " from ( " + request + " ) where rownum <= " + nb;
+		return request + " LIMIT " + nb;
 	}
+
 }

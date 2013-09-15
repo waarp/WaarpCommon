@@ -15,29 +15,22 @@
  * You should have received a copy of the GNU General Public License along with Waarp . If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package org.waarp.common.database.model;
+package org.waarp.common.crypto;
 
 /**
- * Type of Database supported
+ * This class implements a simple Key Manager for HmacSha1 class from name
  * 
- * @author Frederic Bregier
- * 
+ * @author frederic bregier
  */
-public enum DbType {
-	Oracle, MySQL, PostGreSQL, H2, MariaDB;
+public class HmacSha1Manager extends KeyManager {
+	public static final HmacSha1Manager aesManager = new HmacSha1Manager();
 
-	public static DbType getFromDriver(String driver) {
-		if (driver.contains("oracle")) {
-			return DbType.Oracle;
-		} else if (driver.contains("mysql")) {
-			return DbType.MySQL;
-		} else if (driver.contains("postgresql")) {
-			return DbType.PostGreSQL;
-		} else if (driver.contains("h2")) {
-			return DbType.H2;
-		} else if (driver.contains("mariadb")) {
-			return DbType.MariaDB;
-		}
-		return null;
+	/*
+	 * (non-Javadoc)
+	 * @see atlas.cryptage.KeyManager#createKeyObject()
+	 */
+	@Override
+	public KeyObject createKeyObject() {
+		return new HmacSha1();
 	}
 }

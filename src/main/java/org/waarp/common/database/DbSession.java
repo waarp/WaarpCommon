@@ -20,6 +20,7 @@ package org.waarp.common.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.database.model.DbModelFactory;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.utility.UUID;
 
 // Notice, do not import com.mysql.jdbc.*
 // or you will have problems!
@@ -68,7 +70,7 @@ public class DbSession {
 	/**
 	 * Internal Id
 	 */
-	public long internalId;
+	public UUID internalId;
 
 	/**
 	 * Number of threads using this connection
@@ -86,13 +88,15 @@ public class DbSession {
 	 */
 	private final List<DbPreparedStatement> listPreparedStatement = new LinkedList<DbPreparedStatement>();
 
-	static synchronized void setInternalId(DbSession session) {
-		session.internalId = System.currentTimeMillis();
+	//static synchronized void setInternalId(DbSession session) {
+	void setInternalId(DbSession session) {
+		session.internalId = new UUID();
+		/*session.internalId = System.currentTimeMillis();
 		try {
 			Thread.sleep(1);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-		}
+		}*/
 	}
 
 	/**
@@ -152,6 +156,7 @@ public class DbSession {
 			setInternalId(this);
 			DbAdmin.addConnection(internalId, this);
 			isDisconnected = false;
+			checkConnection();
 		} catch (SQLException ex) {
 			isDisconnected = true;
 			// handle any errors
@@ -332,6 +337,12 @@ public class DbSession {
 			disconnect();
 		}
 	}
+	
+	@Override
+    public boolean equals(Object o) {
+    	if (o == null || !(o instanceof DbSession)) return false;
+        return (this == o) || this.internalId.equals(((DbSession) o).internalId);
+    }
 
 	/**
 	 * Close the connection
@@ -360,6 +371,8 @@ public class DbSession {
 		} catch (SQLException e) {
 			logger.warn("Disconnection not OK");
 			error(e);
+		} catch (ConcurrentModificationException e) {
+			// ignore
 		}
 		logger.info("Current cached connection: "
 				+ DbModelFactory.dbModel.currentNumberOfPooledConnections());
@@ -472,6 +485,9 @@ public class DbSession {
 			logger.warn("Cannot commit since connection is null");
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot commit since connection is null");
+		}
+		if (this.autoCommit) {
+			return;
 		}
 		if (isDisconnected) {
 			checkConnection();

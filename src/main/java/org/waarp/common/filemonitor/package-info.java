@@ -15,29 +15,12 @@
  * You should have received a copy of the GNU General Public License along with Waarp . If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package org.waarp.common.database.model;
-
 /**
- * Type of Database supported
+ * This package would like to propose a JSE 6 compatible way to scan a directory
+ * for new, deleted and changed files, in order to allow some functions like 
+ * pooling a directory before actions.
  * 
- * @author Frederic Bregier
+ * @author "Frederic Bregier"
  * 
  */
-public enum DbType {
-	Oracle, MySQL, PostGreSQL, H2, MariaDB;
-
-	public static DbType getFromDriver(String driver) {
-		if (driver.contains("oracle")) {
-			return DbType.Oracle;
-		} else if (driver.contains("mysql")) {
-			return DbType.MySQL;
-		} else if (driver.contains("postgresql")) {
-			return DbType.PostGreSQL;
-		} else if (driver.contains("h2")) {
-			return DbType.H2;
-		} else if (driver.contains("mariadb")) {
-			return DbType.MariaDB;
-		}
-		return null;
-	}
-}
+package org.waarp.common.filemonitor;

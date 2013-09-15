@@ -52,6 +52,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
 
 	protected static JdbcConnectionPool pool;
 
+
 	public DbType getDbType() {
 		return type;
 	}
@@ -111,8 +112,20 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
-		if (pool != null)
-			return pool.getConnection();
+		if (pool != null) {
+			try {
+				return pool.getConnection();
+			} catch (SQLException e) {
+				// try to renew the pool
+				pool.dispose();
+				pool = JdbcConnectionPool.create(server, user, passwd);
+				pool.setMaxConnections(DbConstant.MAXCONNECTION);
+				pool.setLoginTimeout(DbConstant.DELAYMAXCONNECTION);
+				logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
+						+ pool.getLoginTimeout());
+				return pool.getConnection();
+			}
+		}
 		return super.getDbConnection(server, user, passwd);
 	}
 
@@ -295,7 +308,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	}
 
 	@Override
-	public String validConnectionString() {
+	protected String validConnectionString() {
 		return "select 1";
 	}
 
