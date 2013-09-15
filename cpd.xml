@@ -1,8 +1,666 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
+<duplication lines="396" tokens="1245">
+<file line="47" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\JsonHandler.java"/>
+<file line="48" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\SmileJsonHandler.java"/>
+<codefragment>
+<![CDATA[
+	public final static ObjectMapper mapper = new ObjectMapper();
+
+	static {
+		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
+	/**
+	 * 
+	 * @return an empty ObjectNode
+	 */
+	public final static ObjectNode createObjectNode() {
+		return mapper.createObjectNode();
+	}
+	
+	/**
+	 * 
+	 * @param value
+	 * @return the objectNode or null if an error occurs
+	 */
+	public final static ObjectNode getFromString(String value) {
+		try {
+			return (ObjectNode) mapper.readTree(value);
+		} catch (JsonProcessingException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	/**
+	 * 
+	 * @param object
+	 * @return the Json representation of the object
+	 */
+	public final static String writeAsString(Object object) {
+		try {
+			return mapper.writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			return "";
+		}
+	}
+	
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @return the String if the field exists, else null
+	 */
+	public final static String getString(ObjectNode node, String field) {
+		return getValue(node, field, (String) null);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @return the String if the field exists, else null
+	 */
+	public final static String getString(ObjectNode node, Enum<?> field) {
+		return getValue(node, field.name(), (String) null);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the String if the field exists, else defValue
+	 */
+	public final static String getValue(ObjectNode node, String field, String defValue) {
+		JsonNode elt = node.get(field);
+		if (elt != null) {
+			String val = elt.asText();
+			if (val.equals("null")) {
+				return defValue;
+			}
+			return val;
+		}
+		return defValue;
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Boolean if the field exists, else defValue
+	 */
+	public final static Boolean getValue(ObjectNode node, String field, boolean defValue) {
+		return node.path(field).asBoolean(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Double if the field exists, else defValue
+	 */
+	public final static Double getValue(ObjectNode node, String field, double defValue) {
+		return node.path(field).asDouble(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Long if the field exists, else defValue
+	 */
+	public final static Long getValue(ObjectNode node, String field, long defValue) {
+		return node.path(field).asLong(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Integer if the field exists, else defValue
+	 */
+	public final static Integer getValue(ObjectNode node, String field, int defValue) {
+		return node.path(field).asInt(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the byte array if the field exists, else defValue
+	 */
+	public final static byte[] getValue(ObjectNode node, String field, byte []defValue) {
+		JsonNode elt = node.get(field);
+		if (elt != null) {
+			try {
+				return elt.binaryValue();
+			} catch (IOException e) {
+				return defValue;
+			}
+		}
+		return defValue;
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, boolean value) {
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, double value) {
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, int value) {
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, long value) {
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, String value) {
+		if (value == null || value.isEmpty()) {
+			return;
+		}
+		node.put(field, value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, String field, byte []value) {
+		if (value == null || value.length == 0) {
+			return;
+		}
+		node.put(field, value);
+	}
+	
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 * @return True if all fields exist
+	 */
+	public final static boolean exist(ObjectNode node, String ...field) {
+		for (String string : field) {
+			if (! node.has(string))
+				return false;
+		}
+		return true;
+	}
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the String if the field exists, else defValue
+	 */
+	public final static String getValue(ObjectNode node, Enum<?> field, String defValue) {
+		return getValue(node, field.name(), defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Boolean if the field exists, else defValue
+	 */
+	public final static Boolean getValue(ObjectNode node, Enum<?> field, boolean defValue) {
+		return node.path(field.name()).asBoolean(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Double if the field exists, else defValue
+	 */
+	public final static Double getValue(ObjectNode node, Enum<?> field, double defValue) {
+		return node.path(field.name()).asDouble(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Long if the field exists, else defValue
+	 */
+	public final static Long getValue(ObjectNode node, Enum<?> field, long defValue) {
+		return node.path(field.name()).asLong(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the Integer if the field exists, else defValue
+	 */
+	public final static Integer getValue(ObjectNode node, Enum<?> field, int defValue) {
+		return node.path(field.name()).asInt(defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param defValue
+	 * @return the byte array if the field exists, else defValue
+	 */
+	public final static byte[] getValue(ObjectNode node, Enum<?> field, byte []defValue) {
+		return getValue(node, field.name(), defValue);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, boolean value) {
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, double value) {
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, int value) {
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, long value) {
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, String value) {
+		if (value == null || value.isEmpty()) {
+			return;
+		}
+		node.put(field.name(), value);
+	}
+
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	public final static void setValue(ObjectNode node, Enum<?> field, byte []value) {
+		if (value == null || value.length == 0) {
+			return;
+		}
+		node.put(field.name(), value);
+	}
+	
+	/**
+	 * 
+	 * @param node
+	 * @param field
+	 * @param value
+	 * @return True if all fields exist
+	 */
+	public final static boolean exist(ObjectNode node, Enum<?> ...field) {
+		for (Enum<?> enm : field) {
+			if (! node.has(enm.name()))
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param value
+	 * @return the corresponding HashMap
+	 */
+	public final static Map<String, Object> getMapFromString(String value) {
+		if (value != null && ! value.isEmpty()) {
+			Map<String, Object> info = null;
+			try {
+				info = mapper.readValue(value, new TypeReference<Map<String, Object>>() {});
+			} catch (JsonParseException e1) {
+			} catch (JsonMappingException e1) {
+			} catch (IOException e1) {
+			}
+			if (info == null) {
+				info = new HashMap<String, Object>();
+			}
+			return info;
+		} else {
+			return new HashMap<String, Object>();
+		}
+	}
+	
+	
+}
+]]>
+</codefragment>
+</duplication>
+<duplication lines="245" tokens="1130">
+<file line="138" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="155" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<codefragment>
+<![CDATA[
+				mysqlConnectionPoolDataSource = new MySQLDataSource();
+				mysqlConnectionPoolDataSource.setUrl(server);
+				mysqlConnectionPoolDataSource.setUser(user);
+				mysqlConnectionPoolDataSource.setPassword(passwd);
+				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+				try {
+					return pool.getConnection();
+				} catch (SQLException e2) {
+					pool.dispose();
+					pool = null;
+					return super.getDbConnection(server, user, passwd);
+				}
+			}
+		}
+		return super.getDbConnection(server, user, passwd);
+	}
+
+
+	protected static enum DBType {
+		CHAR(Types.CHAR, " CHAR(3) "),
+		VARCHAR(Types.VARCHAR, " VARCHAR(254) "),
+		LONGVARCHAR(Types.LONGVARCHAR, " TEXT "),
+		BIT(Types.BIT, " BOOLEAN "),
+		TINYINT(Types.TINYINT, " TINYINT "),
+		SMALLINT(Types.SMALLINT, " SMALLINT "),
+		INTEGER(Types.INTEGER, " INTEGER "),
+		BIGINT(Types.BIGINT, " BIGINT "),
+		REAL(Types.REAL, " FLOAT "),
+		DOUBLE(Types.DOUBLE, " DOUBLE "),
+		VARBINARY(Types.VARBINARY, " BLOB "),
+		DATE(Types.DATE, " DATE "),
+		TIMESTAMP(Types.TIMESTAMP, " TIMESTAMP ");
+
+		public int type;
+
+		public String constructor;
+
+		private DBType(int type, String constructor) {
+			this.type = type;
+			this.constructor = constructor;
+		}
+
+		public static String getType(int sqltype) {
+			switch (sqltype) {
+				case Types.CHAR:
+					return CHAR.constructor;
+				case Types.VARCHAR:
+					return VARCHAR.constructor;
+				case Types.LONGVARCHAR:
+					return LONGVARCHAR.constructor;
+				case Types.BIT:
+					return BIT.constructor;
+				case Types.TINYINT:
+					return TINYINT.constructor;
+				case Types.SMALLINT:
+					return SMALLINT.constructor;
+				case Types.INTEGER:
+					return INTEGER.constructor;
+				case Types.BIGINT:
+					return BIGINT.constructor;
+				case Types.REAL:
+					return REAL.constructor;
+				case Types.DOUBLE:
+					return DOUBLE.constructor;
+				case Types.VARBINARY:
+					return VARBINARY.constructor;
+				case Types.DATE:
+					return DATE.constructor;
+				case Types.TIMESTAMP:
+					return TIMESTAMP.constructor;
+				default:
+					return null;
+			}
+		}
+	}
+
+	private final ReentrantLock lock = new ReentrantLock();
+
+	public void createTables(DbSession session) throws WaarpDatabaseNoConnectionException {
+		// Create tables: configuration, hosts, rules, runner, cptrunner
+		String createTableH2 = "CREATE TABLE IF NOT EXISTS ";
+		String primaryKey = " PRIMARY KEY ";
+		String notNull = " NOT NULL ";
+
+		// Example
+		String action = createTableH2 + DbDataModel.table + "(";
+		DbDataModel.Columns[] ccolumns = DbDataModel.Columns
+				.values();
+		for (int i = 0; i < ccolumns.length - 1; i++) {
+			action += ccolumns[i].name() +
+					DBType.getType(DbDataModel.dbTypes[i]) + notNull +
+					", ";
+		}
+		action += ccolumns[ccolumns.length - 1].name() +
+				DBType.getType(DbDataModel.dbTypes[ccolumns.length - 1]) +
+				primaryKey + ")";
+		logger.warn(action);
+		DbRequest request = new DbRequest(session);
+		try {
+			request.query(action);
+		} catch (WaarpDatabaseNoConnectionException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} catch (WaarpDatabaseSqlException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} finally {
+			request.close();
+		}
+		// Index Example
+		action = "CREATE INDEX IDX_RUNNER ON " + DbDataModel.table + "(";
+		DbDataModel.Columns[] icolumns = DbDataModel.indexes;
+		for (int i = 0; i < icolumns.length - 1; i++) {
+			action += icolumns[i].name() + ", ";
+		}
+		action += icolumns[icolumns.length - 1].name() + ")";
+		logger.warn(action);
+		try {
+			request.query(action);
+		} catch (WaarpDatabaseNoConnectionException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} catch (WaarpDatabaseSqlException e) {
+			return;
+		} finally {
+			request.close();
+		}
+
+		// example sequence
+		/*
+		 * # Table to handle any number of sequences: CREATE TABLE Sequences ( name VARCHAR(22) NOT
+		 * NULL, seq INT UNSIGNED NOT NULL, # (or BIGINT) PRIMARY KEY name ); # Create a Sequence:
+		 * INSERT INTO Sequences (name, seq) VALUES (?, 0); # Drop a Sequence: DELETE FROM Sequences
+		 * WHERE name = ?; # Get a sequence number: UPDATE Sequences SET seq = LAST_INSERT_ID(seq +
+		 * 1) WHERE name = ?; $seq = $db->LastInsertId();
+		 */
+		action = "CREATE TABLE Sequences (name VARCHAR(22) NOT NULL PRIMARY KEY," +
+				"seq BIGINT NOT NULL)";
+		logger.warn(action);
+		try {
+			request.query(action);
+		} catch (WaarpDatabaseNoConnectionException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} catch (WaarpDatabaseSqlException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} finally {
+			request.close();
+		}
+		action = "INSERT INTO Sequences (name, seq) VALUES ('" + DbDataModel.fieldseq + "', " +
+				(DbConstant.ILLEGALVALUE + 1) + ")";
+		logger.warn(action);
+		try {
+			request.query(action);
+		} catch (WaarpDatabaseNoConnectionException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} catch (WaarpDatabaseSqlException e) {
+			logger.warn("CreateTables Error", e);
+			return;
+		} finally {
+			request.close();
+		}
+	}
+
+	public void resetSequence(DbSession session, long newvalue)
+			throws WaarpDatabaseNoConnectionException {
+		String action = "UPDATE Sequences SET seq = " + newvalue +
+				" WHERE name = '" + DbDataModel.fieldseq + "'";
+		DbRequest request = new DbRequest(session);
+		try {
+			request.query(action);
+		} catch (WaarpDatabaseNoConnectionException e) {
+			logger.warn("ResetSequence Error", e);
+			return;
+		} catch (WaarpDatabaseSqlException e) {
+			logger.warn("ResetSequence Error", e);
+			return;
+		} finally {
+			request.close();
+		}
+		logger.warn(action);
+	}
+
+	public synchronized long nextSequence(DbSession dbSession)
+			throws WaarpDatabaseNoConnectionException,
+			WaarpDatabaseSqlException, WaarpDatabaseNoDataException {
+		lock.lock();
+		try {
+			long result = DbConstant.ILLEGALVALUE;
+			String action = "SELECT seq FROM Sequences WHERE name = '" +
+					DbDataModel.fieldseq + "' FOR UPDATE";
+			DbPreparedStatement preparedStatement = new DbPreparedStatement(
+					dbSession);
+			try {
+				dbSession.conn.setAutoCommit(false);
+			} catch (SQLException e1) {
+			}
+			try {
+				preparedStatement.createPrepareStatement(action);
+				// Limit the search
+				preparedStatement.executeQuery();
+				if (preparedStatement.getNext()) {
+					try {
+						result = preparedStatement.getResultSet().getLong(1);
+					} catch (SQLException e) {
+						throw new WaarpDatabaseSqlException(e);
+					}
+				} else {
+					throw new WaarpDatabaseNoDataException(
+							"No sequence found. Must be initialized first");
+				}
+			} finally {
+				preparedStatement.realClose();
+			}
+			action = "UPDATE Sequences SET seq = " + (result + 1) +
+					" WHERE name = '" + DbDataModel.fieldseq + "'";
+			try {
+				preparedStatement.createPrepareStatement(action);
+				// Limit the search
+				preparedStatement.executeUpdate();
+			} finally {
+				preparedStatement.realClose();
+			}
+			return result;
+		} finally {
+			try {
+				dbSession.conn.setAutoCommit(true);
+			} catch (SQLException e1) {
+			}
+			lock.unlock();
+		}
+	}
+
+	@Override
+	protected String validConnectionString() {
+		return "select 1 from dual";
+	}
+
+	public String limitRequest(String allfields, String request, int nb) {
+		return request + " LIMIT " + nb;
+	}
+
+}
+]]>
+</codefragment>
+</duplication>
 <duplication lines="56" tokens="287">
-<file line="218" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="150" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="219" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="235" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="174" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		String primaryKey = " PRIMARY KEY ";
@@ -65,7 +723,7 @@
 </codefragment>
 </duplication>
 <duplication lines="65" tokens="250">
-<file line="359" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
+<file line="362" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
 <file line="302" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java"/>
 <codefragment>
 <![CDATA[
@@ -193,8 +851,8 @@
 </codefragment>
 </duplication>
 <duplication lines="51" tokens="199">
-<file line="181" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="100" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="198" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="124" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		VARBINARY(Types.VARBINARY, " BLOB "),
@@ -252,8 +910,9 @@
 </codefragment>
 </duplication>
 <duplication lines="47" tokens="193">
-<file line="165" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="180" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="166" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="182" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="197" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <codefragment>
 <![CDATA[
 		DOUBLE(Types.DOUBLE, " DOUBLE "),
@@ -307,8 +966,9 @@
 </codefragment>
 </duplication>
 <duplication lines="34" tokens="189">
-<file line="183" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="215" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="196" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="216" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="232" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <codefragment>
 <![CDATA[
 	public void createTables(DbSession session) throws WaarpDatabaseNoConnectionException {
@@ -349,8 +1009,9 @@
 </codefragment>
 </duplication>
 <duplication lines="46" tokens="184">
-<file line="166" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="100" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="167" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="183" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="124" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		VARBINARY(Types.VARBINARY, " BLOB "),
@@ -403,8 +1064,8 @@
 </codefragment>
 </duplication>
 <duplication lines="31" tokens="175">
-<file line="186" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="150" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="199" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="174" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		String primaryKey = " PRIMARY KEY ";
@@ -442,8 +1103,8 @@
 </codefragment>
 </duplication>
 <duplication lines="45" tokens="163">
-<file line="262" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="225" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="275" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="249" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 			logger.warn("ResetSequences Error", e);
@@ -482,7 +1143,7 @@
 	}
 
 	@Override
-	public String validConnectionString() {
+	protected String validConnectionString() {
 		return "select 1";
 	}
 
@@ -495,10 +1156,11 @@
 </codefragment>
 </duplication>
 <duplication lines="39" tokens="159">
-<file line="134" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="168" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="183" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="102" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="147" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="169" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="185" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="200" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="126" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		BLOB(Types.BLOB, " BLOB ");
@@ -544,8 +1206,8 @@
 </codefragment>
 </duplication>
 <duplication lines="26" tokens="139">
-<file line="257" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="174" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="274" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="198" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 			return;
@@ -670,8 +1332,9 @@
 </codefragment>
 </duplication>
 <duplication lines="32" tokens="124">
-<file line="242" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="257" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="243" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="259" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="274" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <codefragment>
 <![CDATA[
 			return;
@@ -761,9 +1424,38 @@
 ]]>
 </codefragment>
 </duplication>
+<duplication lines="20" tokens="119">
+<file line="524" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\AdaptativeJsonHandler.java"/>
+<file line="423" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\JsonHandler.java"/>
+<file line="424" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\SmileJsonHandler.java"/>
+<codefragment>
+<![CDATA[
+	public final Map<String, Object> getMapFromString(String value) {
+		if (value != null && ! value.isEmpty()) {
+			Map<String, Object> info = null;
+			try {
+				info = mapper.readValue(value, new TypeReference<Map<String, Object>>() {});
+			} catch (JsonParseException e1) {
+			} catch (JsonMappingException e1) {
+			} catch (IOException e1) {
+			}
+			if (info == null) {
+				info = new HashMap<String, Object>();
+			}
+			return info;
+		} else {
+			return new HashMap<String, Object>();
+		}
+	}
+	
+	
+}
+]]>
+</codefragment>
+</duplication>
 <duplication lines="24" tokens="116">
-<file line="236" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="199" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="249" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="223" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 				" START WITH " + (DbConstant.ILLEGALVALUE + 1);
@@ -794,10 +1486,11 @@
 </codefragment>
 </duplication>
 <duplication lines="20" tokens="111">
-<file line="216" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="247" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="262" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="179" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="229" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="248" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="264" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="279" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="203" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		action = "CREATE INDEX IF NOT EXISTS IDX_RUNNER ON " + DbDataModel.table + "(";
@@ -824,7 +1517,7 @@
 </codefragment>
 </duplication>
 <duplication lines="16" tokens="111">
-<file line="250" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="252" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
 <file line="163" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
@@ -848,10 +1541,11 @@
 </codefragment>
 </duplication>
 <duplication lines="14" tokens="107">
-<file line="186" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="218" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
-<file line="232" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
-<file line="150" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
+<file line="199" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
+<file line="219" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="235" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<file line="249" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
+<file line="174" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
 <![CDATA[
 		String primaryKey = " PRIMARY KEY ";
@@ -872,7 +1566,7 @@
 </codefragment>
 </duplication>
 <duplication lines="14" tokens="105">
-<file line="285" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="287" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
 <file line="188" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
@@ -894,7 +1588,7 @@
 </codefragment>
 </duplication>
 <duplication lines="23" tokens="104">
-<file line="214" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="216" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
 <file line="130" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[

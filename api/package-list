@@ -13,6 +13,7 @@ org.waarp.common.file
 org.waarp.common.file.filesystembased
 org.waarp.common.file.filesystembased.specific
 org.waarp.common.file.passthrough
+org.waarp.common.filemonitor
 org.waarp.common.future
 org.waarp.common.json
 org.waarp.common.logging
