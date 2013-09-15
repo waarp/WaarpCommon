@@ -17,13 +17,17 @@
  */
 package org.waarp.common.crypto;
 
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+
+
 /**
- * This class handles methods to crypt and decrypt messages with DES algorithm (very efficient:
- * 40000/s).<br>
+ * This class handles methods to crypt (not decrypt) messages with HmacSha256 algorithm (very efficient:
+ * 105000/s).<br>
  * <br>
  * Usage:<br>
  * <ul>
- * <li>Create a Des object: Des key = new Des();</li>
+ * <li>Create a HmacSha256 object: HmacSha256 key = new HmacSha256();</li>
  * <li>Create a key:
  * <ul>
  * <li>Generate: key.generateKey();<br>
@@ -32,21 +36,16 @@ package org.waarp.common.crypto;
  * </ul>
  * </li>
  * <li>To crypt a String in a Base64 format: String myStringCrypt = key.cryptToString(myString);</li>
- * <li>To decrypt one string from Base64 format to the original String: String myStringDecrypt =
- * key.decryptStringInString(myStringCrypte);</li>
  * </ul>
  * 
  * @author frederic bregier
  * 
  */
-public class Des extends KeyObject {
-	/**
-	 * This value could be between 32 and 128 due to license limitation.
-	 */
-	public final static int KEY_SIZE = 56; // [32..448]
-	public final static String ALGO = "DES";
-	public final static String INSTANCE = "DES/ECB/PKCS5Padding";
-	public final static String EXTENSION = "des";
+public class HmacSha256 extends KeyObject {
+	public final static int KEY_SIZE = 128;
+	public final static String ALGO = "HmacSHA256";
+	public final static String INSTANCE = ALGO;
+	public final static String EXTENSION = "hs2";
 
 	/*
 	 * (non-Javadoc)
@@ -75,6 +74,40 @@ public class Des extends KeyObject {
 		return KEY_SIZE;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.waarp.common.crypto.KeyObject#toCrypt()
+	 */
+	@Override
+	public Cipher toCrypt() {
+		throw new IllegalArgumentException("Cannot be used for HmacSha256");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.waarp.common.crypto.KeyObject#crypt(byte[])
+	 */
+	@Override
+	public byte[] crypt(byte[] plaintext) throws Exception {
+		Mac mac = Mac.getInstance(ALGO);
+		mac.init(secretKey);
+		return mac.doFinal(plaintext);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.waarp.common.crypto.KeyObject#toDecrypt()
+	 */
+	@Override
+	public Cipher toDecrypt() {
+		throw new IllegalArgumentException("Cannot be used for HmacSha256");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.waarp.common.crypto.KeyObject#decrypt(byte[])
+	 */
+	@Override
+	public byte[] decrypt(byte[] ciphertext) throws Exception {
+		throw new IllegalArgumentException("Cannot be used for HmacSha256");
+	}
+
 	/**
 	 * This method allows to test the correctness of this class
 	 * 
@@ -90,39 +123,31 @@ public class Des extends KeyObject {
 			plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
 		}
 		System.out.println("plaintext = " + plaintext);
-		Des des = new Des();
+		HmacSha256 hmacSha256 = new HmacSha256();
 		// Generate a key
-		des.generateKey();
+		hmacSha256.generateKey();
 		// get the generated key
-		byte[] secretKey = des.getSecretKeyInBytes();
+		byte[] secretKey = hmacSha256.getSecretKeyInBytes();
 		// crypt one text
-		byte[] ciphertext = des.crypt(plaintext);
+		byte[] ciphertext = hmacSha256.crypt(plaintext);
 		// print the cipher
-		System.out.println("ciphertext = " + des.encodeHex(ciphertext));
+		System.out.println("ciphertext = " + hmacSha256.encodeHex(ciphertext));
 
 		// Test the set Key
-		des.setSecretKey(secretKey);
-		// decrypt the cipher
-		String plaintext2 = des.decryptInString(ciphertext);
-		// print the result
-		System.out.println("plaintext2 = " + plaintext2);
-		if (!plaintext2.equals(plaintext))
-			System.out.println("Error: plaintext2 != plaintext");
+		hmacSha256.setSecretKey(secretKey);
 
 		// same on String only
 		int nb = 100000;
+		int k = 0;
 		long time1 = System.currentTimeMillis();
 		for (int i = 0; i < nb; i++) {
-			String cipherString = des.cryptToHex(plaintext);
+			String cipherString = hmacSha256.cryptToHex(plaintext);
+			k += cipherString.length();
 			// System.out.println("cipherString = " + cipherString);
-			String plaintext3 = des.decryptHexInString(cipherString);
-			// System.out.println("plaintext3 = " + plaintext3);
-			if (!plaintext3.equals(plaintext))
-				System.out.println("Error: plaintext3 != plaintext");
 		}
 		long time2 = System.currentTimeMillis();
 		System.out.println("Total time in ms: " + (time2 - time1) + " or "
-				+ (nb * 1000 / (time2 - time1)) + " crypt or decrypt/s");
+				+ (nb * 1000 / (time2 - time1)) + " crypt/s for "+ (k/nb));
 	}
 
 }

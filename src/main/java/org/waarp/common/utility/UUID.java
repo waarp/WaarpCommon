@@ -104,11 +104,10 @@ public final class UUID {
      * Constructor that generates a new UUID using the current process id, MAC address, and timestamp
      */
     public UUID() {
-        //long time = new Date().getTime();
     	final long time = System.currentTimeMillis();
         uuid = new byte[16];
 
-        // atomically add a large prime number to the count and get the previous value
+        // atomically
         final int count = COUNTER.incrementAndGet();
 
         // switch the order of the count in 3 bit segments and place into uuid
@@ -131,7 +130,7 @@ public final class UUID {
         uuid[8]  = MAC[4];
         uuid[9]  = MAC[5];
 
-        // copy timestamp into uuid
+        // copy timestamp into uuid (up to 48 bits so up to 8900 years after Time 0)
         uuid[10] = (byte) (time >> 40);
         uuid[11] = (byte) (time >> 32);
         uuid[12] = (byte) (time >> 24);
@@ -356,13 +355,13 @@ public final class UUID {
             }
             // if the machine is not connected to a network it has no active MAC address
             if (mac == null || mac.length < 6) {
-            	System.err.println("No MAC Address found");
+            	//System.err.println("No MAC Address found");
                 mac = getRandom(6);
             }
             return mac;
         } catch (Exception e) {
-        	System.err.println("Could not get MAC address");
-        	e.printStackTrace();
+        	//System.err.println("Could not get MAC address");
+        	//e.printStackTrace();
             return getRandom(6);
         }
     }
@@ -376,14 +375,14 @@ public final class UUID {
 
         if (index < 1) {
         	System.err.println("Could not get JVMPID");
-        	return RANDOM.nextInt();
+        	return RANDOM.nextInt(MAX_PID);
         }
         try {
             return Integer.parseInt(jvmName.substring(0, index)) % MAX_PID;
         } catch (NumberFormatException e) {
         	System.err.println("Could not get JVMPID");
         	e.printStackTrace();
-        	return RANDOM.nextInt();
+        	return RANDOM.nextInt(MAX_PID);
         }
     }
     
