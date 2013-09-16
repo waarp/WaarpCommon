@@ -128,9 +128,9 @@ public class DbAdmin {
 		this.passwd = passwd;
 		this.typeDriver = driver;
 		if (typeDriver == null) {
-			logger.error("Cannot find TypeDriver:" + driver.name());
+			logger.error("Cannot find TypeDriver");
 			throw new WaarpDatabaseNoConnectionException(
-					"Cannot find database drive:" + driver.name());
+					"Cannot find database drive");
 		}
 		session = new DbSession(this.server, this.user, this.passwd, false);
 		session.admin = this;

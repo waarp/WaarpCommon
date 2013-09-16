@@ -336,7 +336,8 @@ public class FileMonitor {
 
 		@Override
 		public boolean equals(Object obj) {
-			return (file.equals(((FileItem) obj).file));
+			return (obj != null && obj instanceof FileItem && 
+					file.equals(((FileItem) obj).file));
 		}
 	}
 
