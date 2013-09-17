@@ -69,7 +69,7 @@ public class UUIDTest {
         }
 
         for (int i = 1; i < n; i++) {
-            assertTrue(! ids[i-1].equals(ids[i].charAt(0)));
+            assertTrue(! ids[i-1].equals(ids[i]));
         }
     }
 

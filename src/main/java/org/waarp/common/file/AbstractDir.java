@@ -123,9 +123,17 @@ public abstract class AbstractDir implements DirInterface {
 		if (isAbsolute(path)) {
 			extDir = path;
 			File newDir = new File(extDir);
-			return validatePath(newDir);
+			try {
+				return validatePath(newDir);
+			} catch (Reply553Exception e) {
+				// ignore and continue as it could be not absolute
+			}
 		}
-		extDir = consolidatePath(path);
+		if (path.charAt(0) == SEPARATORCHAR) {
+			extDir = path;
+		} else {
+			extDir = currentDir + SEPARATOR + path;
+		}
 		// Get the baseDir (mount point)
 		String baseDir = getSession().getAuth().getBaseDirectory();
 		// Get the translated real file path (removing '..')
@@ -145,7 +153,7 @@ public abstract class AbstractDir implements DirInterface {
 			return file.isAbsolute();
 		} else {
 			file = file.getParentFile();
-			return (file != null && file.isAbsolute() && file.isDirectory() && file.getAbsolutePath().equals(File.separator));
+			return (file != null && file.isAbsolute() && file.isDirectory() && ! file.getAbsolutePath().equals(File.separator));
 		}
 	}
 
