@@ -20,6 +20,10 @@
  */
 package org.waarp.common.utility;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -227,6 +231,115 @@ public abstract class WaarpShutdownHook extends Thread {
 			} catch (InterruptedException e) {}
 		}
 	}
+	
+	private static String applArgs = null;
+	private static volatile boolean shouldRestart = false;
+	
+	/** 
+	 * Sun property pointing the main class and its arguments. 
+	 * Might not be defined on non Hotspot VM implementations.
+	 */
+	private static final String SUN_JAVA_COMMAND = "sun.java.command";
+	
+	/**
+	 * Try to return the application arguments (for Oracle VM)
+	 * @return null if it cannot
+	 */
+	private static String getArgs() {
+		String test = System.getProperty(SUN_JAVA_COMMAND);
+		if (test != null && ! test.isEmpty()) {
+			// compute args directly
+			// program main and program arguments
+			String[] mainCommand = test.split(" ");
+			// program main is a jar
+			StringBuilder args = new StringBuilder();
+			if (mainCommand[0].endsWith(".jar")) {
+				// if it's a jar, add -jar mainJar
+				args.append("-jar ");
+				args.append(new File(mainCommand[0]).getPath());
+			} else {
+				// else it's a .class, add the classpath and mainClass
+				args.append("-cp \"");
+				args.append(System.getProperty("java.class.path"));
+				args.append("\" ");
+				args.append(mainCommand[0]);
+			}
+			// finally add program arguments
+			for (int i = 1; i < mainCommand.length; i++) {
+				args.append(" ");
+				args.append(mainCommand[i]);
+			}
+			return args.toString();
+		}
+		return null;
+	}
+	
+	/**
+	 * Called to setup main class and args to enable restart
+	 * @param main
+	 * @param args
+	 */
+	public static void registerMain(Class<?> main, String[] args) {
+		if (main == null) {
+			applArgs = getArgs();
+			return;
+		}
+		applArgs = ManagementFactory.getRuntimeMXBean().getClassPath();
+		if (applArgs != null && ! applArgs.isEmpty()) {
+			applArgs = "-cp "+applArgs;
+		}
+		applArgs += " "+main.getName();
+		for (int i = 0; i < args.length; i++) {
+			applArgs += " " + args[i];
+		}
+	}
+	/**
+	 * Restart the application using the preset applArgs and computing the jvmArgs.
+	 * execute the command in a shutdown hook, to be sure that all the
+	 * resources have been disposed before restarting the application
+	 * @throws IOException 
+	 */
+	private static void restartApplication() throws IOException {
+		if (shouldRestart) {
+		try {
+			// java binary
+			String java = System.getProperty("java.home") + "/bin/java";
+			// vm arguments
+			List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+			StringBuilder vmArgsOneLine = new StringBuilder();
+			for (String arg : vmArguments) {
+				// if it's the agent argument : we ignore it otherwise the
+				// address of the old application and the new one will be in conflict
+				if (!arg.contains("-agentlib")) {
+					vmArgsOneLine.append(arg);
+					vmArgsOneLine.append(" ");
+				}
+			}
+			// init the command to execute, add the vm args
+			final StringBuilder cmd = new StringBuilder("\"" + java + "\" " + vmArgsOneLine);
+			if (applArgs == null) {
+				applArgs = getArgs();
+			}
+			if (applArgs == null) {
+				// big issue then
+				System.err.println("Cannot restart!");
+			}
+			cmd.append(applArgs);
+			//System.err.println("Could restart with:\n"+cmd.toString());
+			Runtime.getRuntime().exec(cmd.toString());
+			} catch (Exception e) {
+				// something went wrong
+				throw new IOException("Error while trying to restart the application", e);
+			}
+		}
+	}
+	/**
+	 * Set the way software should shutdown: with (true) or without restart (false)
+	 * @param toRestart
+	 */
+	public static void setRestart(boolean toRestart) {
+		shouldRestart = toRestart;
+	}
 	/**
 	 * Intermdediary exit function
 	 */
@@ -247,6 +360,12 @@ public abstract class WaarpShutdownHook extends Thread {
 				}
 			}
 			isShutdownOver = true;
+			try {
+				restartApplication();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			shutdownHook.serviceStopped();
 			System.err.println("Halt System");
 			try {
@@ -259,6 +378,12 @@ public abstract class WaarpShutdownHook extends Thread {
 			immediate = true;
 			shutdownHook.exit();
 			isShutdownOver = true;
+			try {
+				restartApplication();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			shutdownHook.serviceStopped();
 			System.err.println("Exit System");
 			//Runtime.getRuntime().halt(0);
