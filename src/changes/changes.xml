@@ -6,6 +6,9 @@
 	</properties>
 	<body>
 		<release version="1.2.16" date="2013-09-16" description="Fix release">
+		    <action dev="Frederic Bregier" type="fix">Fix File getBasename</action>
+		    <action dev="Frederic Bregier" type="add">Add Dos2Unix Unix2Dos FileConvert method</action>
+		    <action dev="Frederic Bregier" type="fix">Fix FileMonitor</action>
 		    <action dev="Frederic Bregier" type="add">Add support for restart JVM process through ShutdownHook</action>
 		</release>
 	    <release version="1.2.15" date="2013-09-16" description="Fix release">

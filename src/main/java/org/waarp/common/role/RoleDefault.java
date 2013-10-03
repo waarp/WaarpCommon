@@ -84,8 +84,11 @@ public class RoleDefault {
 				this.role |= role.role;
 			}
 		}
-		private boolean isContained(byte value) {
+		public boolean isContained(byte value) {
 			return (value & role) != 0;
+		}
+		public byte getAsByte() {
+			return role;
 		}
 		public final static String toString(byte fromRole) {
 			StringBuilder result = new StringBuilder("[ ");
@@ -109,6 +112,10 @@ public class RoleDefault {
 
 	public RoleDefault(ROLE role) {
 		this.role = role.role;
+	}
+	
+	public byte getRoleAsByte() {
+		return role;
 	}
 
 	@Override

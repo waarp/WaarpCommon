@@ -243,6 +243,11 @@ public class FileMonitor {
 			// now check Hash or third time
 			try {
 				byte [] hash = FilesystemBasedDigest.getHash(fileItem.file, true, digest);
+				if (hash == null || fileItem.hash == null) {
+					fileItem.hash = hash;
+					fileItemsChanged = true;
+					continue;
+				}
 				if (! Arrays.equals(hash, fileItem.hash)) {
 					fileItem.hash = hash;
 					fileItemsChanged = true;
