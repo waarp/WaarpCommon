@@ -60,6 +60,9 @@ public class FileConvert extends Thread {
 	 * @param tmpDir if not null, specific tmp directory
 	 */
 	public FileConvert(List<File> files, boolean unix2dos, boolean recursive, File tmpDir) {
+		if (logger == null) {
+			logger = WaarpInternalLoggerFactory.getLogger(FileConvert.class);
+		}
 		this.files = files;
 		this.unix2dos = unix2dos;
 		this.recursive = recursive;
