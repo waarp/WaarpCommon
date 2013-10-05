@@ -306,7 +306,7 @@ public abstract class FilesystemBasedFileImpl implements
 		return getFileFromPath(currentFile).delete();
 	}
 
-	@SuppressWarnings("resource")
+
 	public boolean renameTo(String path) throws CommandAbstractException {
 		checkIdentify();
 		if (!isReady) {
@@ -318,25 +318,34 @@ public abstract class FilesystemBasedFileImpl implements
 			File newFile = getFileFromPath(path);
 			if (newFile.getParentFile().canWrite()) {
 				if (!file.renameTo(newFile)) {
-					FileOutputStream fileOutputStream;
+					FileOutputStream fileOutputStream = null;
 					try {
-						fileOutputStream = new FileOutputStream(newFile);
-					} catch (FileNotFoundException e) {
-						logger
-								.warn("Cannot find file: " + newFile.getName(),
-										e);
-						return false;
-					}
-					FileChannel fileChannelOut = fileOutputStream.getChannel();
-					if (get(fileChannelOut)) {
-						delete();
-					} else {
 						try {
-							fileChannelOut.close();
+							fileOutputStream = new FileOutputStream(newFile);
+						} catch (FileNotFoundException e) {
+							logger
+									.warn("Cannot find file: " + newFile.getName(),
+											e);
+							return false;
+						}
+						FileChannel fileChannelOut = fileOutputStream.getChannel();
+						if (get(fileChannelOut)) {
+							delete();
+						} else {
+							try {
+								fileChannelOut.close();
+							} catch (IOException e) {
+							}
+							logger.warn("Cannot write file: {}", newFile);
+							return false;
+						}
+					} finally {
+						try {
+							if (fileOutputStream != null) {
+								fileOutputStream.close();
+							}
 						} catch (IOException e) {
 						}
-						logger.warn("Cannot write file: {}", newFile);
-						return false;
 					}
 				}
 				currentFile = getRelativePath(newFile);

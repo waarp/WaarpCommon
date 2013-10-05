@@ -36,6 +36,7 @@ import org.waarp.common.command.exception.CommandAbstractException;
 import org.waarp.common.command.exception.Reply550Exception;
 import org.waarp.common.command.exception.Reply553Exception;
 import org.waarp.common.digest.FilesystemBasedDigest;
+import org.waarp.common.digest.FilesystemBasedDigest.DigestAlgo;
 import org.waarp.common.file.AbstractDir;
 import org.waarp.common.file.FileInterface;
 import org.waarp.common.file.OptsMLSxInterface;
@@ -744,4 +745,21 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 		}
 	}
 
+	public byte[] getSHA256(String path) throws CommandAbstractException {
+		File file = getTrueFile(path);
+		try {
+			return FilesystemBasedDigest.getHash(file, FilesystemBasedFileParameterImpl.useNio, DigestAlgo.SHA256);
+		} catch (IOException e1) {
+			throw new Reply550Exception("Error while reading file: " + path);
+		}
+	}
+	
+	public byte[] getSHA512(String path) throws CommandAbstractException {
+		File file = getTrueFile(path);
+		try {
+			return FilesystemBasedDigest.getHash(file, FilesystemBasedFileParameterImpl.useNio, DigestAlgo.SHA512);
+		} catch (IOException e1) {
+			throw new Reply550Exception("Error while reading file: " + path);
+		}
+	}
 }
