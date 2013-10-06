@@ -259,7 +259,6 @@ public class SmileJsonHandler {
 	 * 
 	 * @param node
 	 * @param field
-	 * @param value
 	 * @return True if all fields exist
 	 */
 	public final static boolean exist(ObjectNode node, String ...field) {
@@ -405,7 +404,6 @@ public class SmileJsonHandler {
 	 * 
 	 * @param node
 	 * @param field
-	 * @param value
 	 * @return True if all fields exist
 	 */
 	public final static boolean exist(ObjectNode node, Enum<?> ...field) {

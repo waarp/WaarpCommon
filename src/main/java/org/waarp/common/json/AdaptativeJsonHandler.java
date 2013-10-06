@@ -359,7 +359,6 @@ public class AdaptativeJsonHandler {
 	 * 
 	 * @param node
 	 * @param field
-	 * @param value
 	 * @return True if all fields exist
 	 */
 	public final boolean exist(ObjectNode node, String ...field) {
@@ -505,7 +504,6 @@ public class AdaptativeJsonHandler {
 	 * 
 	 * @param node
 	 * @param field
-	 * @param value
 	 * @return True if all fields exist
 	 */
 	public final boolean exist(ObjectNode node, Enum<?> ...field) {
