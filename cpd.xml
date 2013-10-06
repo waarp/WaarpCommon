@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd-cpd>
-<duplication lines="396" tokens="1245">
+<duplication lines="394" tokens="1245">
 <file line="47" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\JsonHandler.java"/>
 <file line="48" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\SmileJsonHandler.java"/>
 <codefragment>
@@ -219,7 +219,6 @@
 	 * 
 	 * @param node
 	 * @param field
-	 * @param value
 	 * @return True if all fields exist
 	 */
 	public final static boolean exist(ObjectNode node, String ...field) {
@@ -365,7 +364,6 @@
 	 * 
 	 * @param node
 	 * @param field
-	 * @param value
 	 * @return True if all fields exist
 	 */
 	public final static boolean exist(ObjectNode node, Enum<?> ...field) {
@@ -723,7 +721,7 @@
 </codefragment>
 </duplication>
 <duplication lines="65" tokens="250">
-<file line="362" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
+<file line="371" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedFileImpl.java"/>
 <file line="302" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedFileImpl.java"/>
 <codefragment>
 <![CDATA[
@@ -1425,9 +1423,9 @@
 </codefragment>
 </duplication>
 <duplication lines="20" tokens="119">
-<file line="524" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\AdaptativeJsonHandler.java"/>
-<file line="423" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\JsonHandler.java"/>
-<file line="424" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\SmileJsonHandler.java"/>
+<file line="522" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\AdaptativeJsonHandler.java"/>
+<file line="421" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\JsonHandler.java"/>
+<file line="422" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\json\SmileJsonHandler.java"/>
 <codefragment>
 <![CDATA[
 	public final Map<String, Object> getMapFromString(String value) {
@@ -1517,7 +1515,7 @@
 </codefragment>
 </duplication>
 <duplication lines="16" tokens="111">
-<file line="252" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="253" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
 <file line="163" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
@@ -1566,7 +1564,7 @@
 </codefragment>
 </duplication>
 <duplication lines="14" tokens="105">
-<file line="287" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="288" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
 <file line="188" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
@@ -1588,7 +1586,7 @@
 </codefragment>
 </duplication>
 <duplication lines="23" tokens="104">
-<file line="216" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
+<file line="217" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\filesystembased\FilesystemBasedDirImpl.java"/>
 <file line="130" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\file\passthrough\PassthroughBasedDirImpl.java"/>
 <codefragment>
 <![CDATA[
