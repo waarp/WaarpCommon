@@ -28,6 +28,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 
@@ -378,16 +379,26 @@ public class DbValue {
 				break;
 			case Types.DATE:
 				try {
-					value = DateFormat.getDateTimeInstance().parse(svalue);
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+					value = format.parse(svalue);
 				} catch (ParseException e) {
-					throw new WaarpDatabaseSqlException("Error in Date: " + svalue, e);
+					try {
+						value = DateFormat.getDateTimeInstance().parse(svalue);
+					} catch (ParseException e1) {
+						throw new WaarpDatabaseSqlException("Error in Date: " + svalue, e);
+					}
 				}
 				break;
 			case Types.TIMESTAMP:
 				try {
-					value = DateFormat.getDateTimeInstance().parse(svalue);
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+					value = new Timestamp(format.parse(svalue).getTime());
 				} catch (ParseException e) {
-					throw new WaarpDatabaseSqlException("Error in Timestamp: " + svalue, e);
+					try {
+						value = new Timestamp(DateFormat.getDateTimeInstance().parse(svalue).getTime());
+					} catch (ParseException e1) {
+						throw new WaarpDatabaseSqlException("Error in Timestamp: " + svalue, e);
+					}
 				}
 				break;
 			case Types.CLOB:
