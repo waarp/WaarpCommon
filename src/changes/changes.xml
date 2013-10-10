@@ -7,6 +7,9 @@
 	<body>
 		<release version="1.2.17" date="2013-10-06" description="Fix release">
 		    <action dev="Frederic Bregier" type="add">Add check is InCurrentDirectory</action>
+		    <action dev="Frederic Bregier" type="fix">Fix Timestamp in DbValue</action>
+		    <action dev="Frederic Bregier" type="add">Add support for recursive and multiple directories in FileMonitor</action>
+		    <action dev="Frederic Bregier" type="add">Add support for action from FileMonitor each iteration</action>
 		</release>
 	    <release version="1.2.16" date="2013-10-06" description="Fix release">
 		    <action dev="Frederic Bregier" type="fix">Fix File getBasename</action>
