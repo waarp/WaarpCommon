@@ -347,11 +347,12 @@ public class FileMonitor {
 					continue;
 				}
 				// now time and hash are the same so act on it
-				fileItem.used = true;
 				fileItem.timeUsed = System.currentTimeMillis();
-				fileItem.hash = null;
 				if (commandValidFile != null) {
-					commandValidFile.run(fileItem.file);
+					if (commandValidFile.run(fileItem.file)) {
+						fileItem.used = true;
+						fileItem.hash = null;
+					}
 				} else {
 					toUse.add(fileItem);
 				}
@@ -489,16 +490,19 @@ public class FileMonitor {
     	FileMonitor monitor = new FileMonitor("test", file, stopfile, dir, null, 0, 
     			new RegexFileFilter(RegexFileFilter.REGEX_XML_EXTENSION), 
     			false, new FileMonitorCommand() {
-			public void run(File file) {
+			public boolean run(File file) {
 				System.out.println("File New: "+file.getAbsolutePath());
+				return true;
 			}
 		}, new FileMonitorCommand() {
-			public void run(File file) {
+			public boolean run(File file) {
 				System.err.println("File Del: "+file.getAbsolutePath());
+				return true;
 			}
 		}, new FileMonitorCommand() {
-			public void run(File unused) {
+			public boolean run(File unused) {
 				System.err.println("Check done");
+				return true;
 			}
 		});
     	monitor.start();
