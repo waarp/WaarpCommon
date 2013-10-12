@@ -260,7 +260,7 @@ public class DbAdmin {
 		if (session != null) {
 			session.endUseConnection(); // default since this is the top
 										// connection
-			session.disconnect();
+			session.forceDisconnect();
 			session = null;
 		}
 		isConnected = false;

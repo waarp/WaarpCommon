@@ -365,7 +365,7 @@ public class FileMonitor {
 			files = directory.listFiles();
 			for (File file : files) {
 				if (file.isDirectory()) {
-					return checkOneDir(fileItemsChanged, file);
+					fileItemsChanged = checkOneDir(fileItemsChanged, file);
 				}
 			}
 		}
