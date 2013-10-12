@@ -5,7 +5,7 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
-		<release version="1.2.17" date="2013-10-06" description="Fix release">
+		<release version="1.2.17" date="2013-10-12" description="Fix release">
 		    <action dev="Frederic Bregier" type="add">Add check is InCurrentDirectory</action>
 		    <action dev="Frederic Bregier" type="fix">Fix Timestamp in DbValue</action>
 		    <action dev="Frederic Bregier" type="add">Add support for recursive and multiple directories in FileMonitor</action>
