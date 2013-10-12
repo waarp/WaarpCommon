@@ -122,6 +122,12 @@ public class DbSession {
 			// handle any errors
 			logger.error("Cannot set properties on connection!");
 			error(ex);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			conn = null;
 			isDisconnected = true;
 			throw new WaarpDatabaseNoConnectionException(
@@ -148,6 +154,7 @@ public class DbSession {
 			this.isReadOnly = isReadOnly;
 			conn.setReadOnly(this.isReadOnly);
 			setInternalId(this);
+			logger.debug("Open Db Conn: "+internalId);
 			DbAdmin.addConnection(internalId, this);
 			isDisconnected = false;
 			checkConnection();
@@ -156,6 +163,12 @@ public class DbSession {
 			// handle any errors
 			logger.error("Cannot create Connection");
 			error(ex);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			conn = null;
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot create Connection", ex);
@@ -201,7 +214,14 @@ public class DbSession {
 			this.admin = admin;
 		} catch (NullPointerException ex) {
 			// handle any errors
+			isDisconnected = true;
 			logger.error("Cannot create Connection:" + (admin == null), ex);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			conn = null;
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot create Connection", ex);
@@ -249,6 +269,13 @@ public class DbSession {
 		} catch (NullPointerException ex) {
 			// handle any errors
 			logger.error("Cannot create Connection:" + (admin == null), ex);
+			isDisconnected = true;
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			conn = null;
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot create Connection", ex);
@@ -271,6 +298,12 @@ public class DbSession {
 				// handle any errors
 				logger.error("Cannot create Connection");
 				error(e);
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e1) {
+					}
+				}
 				conn = null;
 				isDisconnected = true;
 				throw new WaarpDatabaseNoConnectionException(
@@ -357,10 +390,10 @@ public class DbSession {
 		DbAdmin.removeConnection(internalId);
 		isDisconnected = true;
 		try {
+			logger.debug("Fore close Db Conn: "+internalId);
 			if (conn != null) {
 				conn.close();
 			}
-			conn = null;
 		} catch (SQLException e) {
 			logger.warn("Disconnection not OK");
 			error(e);
@@ -376,7 +409,7 @@ public class DbSession {
 	 * 
 	 */
 	public synchronized void disconnect() {
-		if (conn == null) {
+		if (conn == null || isDisconnected) {
 			logger.debug("Connection already closed");
 			return;
 		}
@@ -395,10 +428,10 @@ public class DbSession {
 		DbAdmin.removeConnection(internalId);
 		isDisconnected = true;
 		try {
+			logger.debug("Close Db Conn: "+internalId);
 			if (conn != null) {
 				conn.close();
 			}
-			conn = null;
 		} catch (SQLException e) {
 			logger.warn("Disconnection not OK");
 			error(e);
