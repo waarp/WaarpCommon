@@ -306,7 +306,7 @@ public class FileMonitor {
 	/**
 	 * @param fileItemsChanged
 	 * @param directory
-	 * @return
+	 * @return True if one file at least has changed
 	 */
 	protected boolean checkOneDir(boolean fileItemsChanged, File directory) {
 		File [] files = directory.listFiles(filter);
@@ -420,7 +420,6 @@ public class FileMonitor {
 		 * @param directories
 		 * @param stopFile
 		 * @param statusFile
-		 * @param filter
 		 * @param elapseTime
 		 * @param scanSubDir
 		 */
