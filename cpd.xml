@@ -402,26 +402,11 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="245" tokens="1130">
-<file line="138" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
-<file line="155" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
+<duplication lines="230" tokens="1056">
+<file line="164" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="170" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <codefragment>
 <![CDATA[
-				mysqlConnectionPoolDataSource = new MySQLDataSource();
-				mysqlConnectionPoolDataSource.setUrl(server);
-				mysqlConnectionPoolDataSource.setUser(user);
-				mysqlConnectionPoolDataSource.setPassword(passwd);
-				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
-				try {
-					return pool.getConnection();
-				} catch (SQLException e2) {
-					pool.dispose();
-					pool = null;
-					return super.getDbConnection(server, user, passwd);
-				}
-			}
-		}
-		return super.getDbConnection(server, user, passwd);
 	}
 
 
@@ -656,7 +641,7 @@
 </codefragment>
 </duplication>
 <duplication lines="56" tokens="287">
-<file line="219" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="230" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="235" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <file line="174" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
@@ -908,7 +893,7 @@
 </codefragment>
 </duplication>
 <duplication lines="47" tokens="193">
-<file line="166" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="177" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="182" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <file line="197" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <codefragment>
@@ -965,7 +950,7 @@
 </duplication>
 <duplication lines="34" tokens="189">
 <file line="196" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="216" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="227" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="232" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <codefragment>
 <![CDATA[
@@ -1007,7 +992,7 @@
 </codefragment>
 </duplication>
 <duplication lines="46" tokens="184">
-<file line="167" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="178" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="183" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <file line="124" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
@@ -1155,7 +1140,7 @@
 </duplication>
 <duplication lines="39" tokens="159">
 <file line="147" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="169" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="180" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="185" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <file line="200" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <file line="126" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
@@ -1330,7 +1315,7 @@
 </codefragment>
 </duplication>
 <duplication lines="32" tokens="124">
-<file line="243" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="254" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="259" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <file line="274" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <codefragment>
@@ -1485,7 +1470,7 @@
 </duplication>
 <duplication lines="20" tokens="111">
 <file line="229" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="248" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="259" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="264" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <file line="279" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <file line="203" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
@@ -1540,7 +1525,7 @@
 </duplication>
 <duplication lines="14" tokens="107">
 <file line="199" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
-<file line="219" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
+<file line="230" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="235" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <file line="249" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelOracle.java"/>
 <file line="174" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
