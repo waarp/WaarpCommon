@@ -260,7 +260,7 @@ public class DbAdmin {
 		if (session != null) {
 			session.endUseConnection(); // default since this is the top
 										// connection
-			session.disconnect();
+			session.forceDisconnect();
 			session = null;
 		}
 		isConnected = false;
@@ -349,6 +349,7 @@ public class DbAdmin {
 	 */
 	public static void closeAllConnection() {
 		for (DbSession session : listConnection.values()) {
+			logger.debug("Close (all) Db Conn: "+session.internalId);
 			try {
 				session.conn.close();
 			} catch (SQLException e) {

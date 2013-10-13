@@ -19,19 +19,10 @@ package org.waarp.common.utility;
 
 import java.util.Properties;
 
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
-
 /**
  * A collection of utility methods to retrieve and parse the values of the Java system properties.
  */
 public final class SystemPropertyUtil {
-	/**
-	 * Internal Logger
-	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
-			.getLogger(SystemPropertyUtil.class);
-
 	private static final Properties props = new Properties();
 
     // Retrieve all system properties at once so that there's no need to deal with
@@ -50,7 +41,8 @@ public final class SystemPropertyUtil {
         try {
             newProps = System.getProperties();
         } catch (SecurityException e) {
-            logger.warn("Unable to retrieve the system properties; default values will be used.", e);
+            System.err.println("Unable to retrieve the system properties; default values will be used.");
+            e.printStackTrace();
             newProps = new Properties();
         }
 
@@ -135,7 +127,7 @@ public final class SystemPropertyUtil {
             return false;
         }
 
-        logger.warn(
+        System.err.println(
                 "Unable to parse the boolean system property '" + key + "':" + value + " - " +
                 "using the default value: " + def);
 
@@ -170,7 +162,7 @@ public final class SystemPropertyUtil {
             }
         }
 
-        logger.warn(
+        System.err.println(
                 "Unable to parse the integer system property '" + key + "':" + value + " - " +
                 "using the default value: " + def);
 
@@ -205,7 +197,7 @@ public final class SystemPropertyUtil {
             }
         }
 
-        logger.warn(
+        System.err.println(
                 "Unable to parse the long integer system property '" + key + "':" + value + " - " +
                 "using the default value: " + def);
 

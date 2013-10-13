@@ -23,6 +23,7 @@ import java.sql.Savepoint;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
@@ -75,7 +76,7 @@ public class DbSession {
 	/**
 	 * Number of threads using this connection
 	 */
-	public int nbThread = 0;
+	public AtomicInteger nbThread = new AtomicInteger(0);
 
 	/**
 	 * To be used when a local Channel is over
@@ -88,15 +89,8 @@ public class DbSession {
 	 */
 	private final List<DbPreparedStatement> listPreparedStatement = new LinkedList<DbPreparedStatement>();
 
-	//static synchronized void setInternalId(DbSession session) {
 	void setInternalId(DbSession session) {
 		session.internalId = new UUID();
-		/*session.internalId = System.currentTimeMillis();
-		try {
-			Thread.sleep(1);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}*/
 	}
 
 	/**
@@ -128,6 +122,12 @@ public class DbSession {
 			// handle any errors
 			logger.error("Cannot set properties on connection!");
 			error(ex);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			conn = null;
 			isDisconnected = true;
 			throw new WaarpDatabaseNoConnectionException(
@@ -154,6 +154,7 @@ public class DbSession {
 			this.isReadOnly = isReadOnly;
 			conn.setReadOnly(this.isReadOnly);
 			setInternalId(this);
+			logger.debug("Open Db Conn: "+internalId);
 			DbAdmin.addConnection(internalId, this);
 			isDisconnected = false;
 			checkConnection();
@@ -162,6 +163,12 @@ public class DbSession {
 			// handle any errors
 			logger.error("Cannot create Connection");
 			error(ex);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			conn = null;
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot create Connection", ex);
@@ -207,7 +214,14 @@ public class DbSession {
 			this.admin = admin;
 		} catch (NullPointerException ex) {
 			// handle any errors
+			isDisconnected = true;
 			logger.error("Cannot create Connection:" + (admin == null), ex);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			conn = null;
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot create Connection", ex);
@@ -255,6 +269,13 @@ public class DbSession {
 		} catch (NullPointerException ex) {
 			// handle any errors
 			logger.error("Cannot create Connection:" + (admin == null), ex);
+			isDisconnected = true;
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+				}
+			}
 			conn = null;
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot create Connection", ex);
@@ -277,6 +298,12 @@ public class DbSession {
 				// handle any errors
 				logger.error("Cannot create Connection");
 				error(e);
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e1) {
+					}
+				}
 				conn = null;
 				isDisconnected = true;
 				throw new WaarpDatabaseNoConnectionException(
@@ -323,7 +350,7 @@ public class DbSession {
 				return;
 			}
 		}
-		nbThread++;
+		nbThread.incrementAndGet();
 		logger.info("ThreadUsing: "+nbThread);
 	}
 
@@ -331,9 +358,9 @@ public class DbSession {
 	 * To be called when a client will stop to use this DbSession (once by client)
 	 */
 	public void endUseConnection() {
-		nbThread--;
+		nbThread.decrementAndGet();
 		logger.info("ThreadUsing: "+nbThread);
-		if (nbThread <= 0) {
+		if (nbThread.get() <= 0) {
 			disconnect();
 		}
 	}
@@ -345,12 +372,12 @@ public class DbSession {
     }
 
 	/**
-	 * Close the connection
-	 * 
+	 * Force the close of the connection
 	 */
-	public void disconnect() {
+	public synchronized void forceDisconnect() {
+		this.nbThread.set(0);
 		if (conn == null) {
-			logger.warn("Connection already closed");
+			logger.debug("Connection already closed");
 			return;
 		}
 		try {
@@ -358,7 +385,41 @@ public class DbSession {
 		} catch (InterruptedException e1) {
 			Thread.currentThread().interrupt();
 		}
-		if (nbThread > 0) {
+		logger.debug("DbConnection still in use: "+nbThread);
+		removeLongTermPreparedStatements();
+		DbAdmin.removeConnection(internalId);
+		isDisconnected = true;
+		try {
+			logger.debug("Fore close Db Conn: "+internalId);
+			if (conn != null) {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			logger.warn("Disconnection not OK");
+			error(e);
+		} catch (ConcurrentModificationException e) {
+			// ignore
+		}
+		logger.info("Current cached connection: "
+				+ DbModelFactory.dbModel.currentNumberOfPooledConnections());
+	}
+	
+	/**
+	 * Close the connection
+	 * 
+	 */
+	public synchronized void disconnect() {
+		if (conn == null || isDisconnected) {
+			logger.debug("Connection already closed");
+			return;
+		}
+		try {
+			Thread.sleep(DbAdmin.WAITFORNETOP);
+		} catch (InterruptedException e1) {
+			Thread.currentThread().interrupt();
+		}
+		logger.debug("DbConnection still in use: "+nbThread);
+		if (nbThread.get() > 0) {
 			logger.info("Still some clients could use this Database Session: " +
 					nbThread, new Exception("trace"));
 			return;
@@ -367,7 +428,10 @@ public class DbSession {
 		DbAdmin.removeConnection(internalId);
 		isDisconnected = true;
 		try {
-			conn.close();
+			logger.debug("Close Db Conn: "+internalId);
+			if (conn != null) {
+				conn.close();
+			}
 		} catch (SQLException e) {
 			logger.warn("Disconnection not OK");
 			error(e);

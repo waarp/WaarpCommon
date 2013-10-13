@@ -255,6 +255,44 @@ public abstract class AbstractDir implements DirInterface {
 		}
 		throw new Reply553Exception("Pathname not allowed");
 	}
+	
+	public boolean isPathInCurrentDir(String path) {
+		String extDir;
+		if (isAbsolute(path)) {
+			extDir = path;
+			File newDir = new File(extDir);
+			return isPathInCurrentDir(newDir);
+		}
+		if (path.charAt(0) == SEPARATORCHAR) {
+			extDir = path;
+		} else {
+			extDir = currentDir + SEPARATOR + path;
+		}
+		// Get the baseDir (mount point)
+		String baseDir = getSession().getAuth().getBaseDirectory();
+		// Get the translated real file path (removing '..')
+		File newDir = new File(baseDir, extDir);
+		return isPathInCurrentDir(newDir);
+	}
+	/**
+	 * Validate a file according to the current Directory
+	 * 
+	 * @param dir
+	 * @return True if validated
+	 * @throws CommandAbstractException
+	 */
+	protected boolean isPathInCurrentDir(File dir) {
+		String extDir = null;
+		extDir = normalizePath(getCanonicalPath(dir));
+		// Get the relative business path
+		extDir = getSession().getAuth().getRelativePath(extDir);
+		// Check if this business path is valid
+		if (extDir.startsWith(currentDir)) {
+			return true;
+		}
+		logger.warn("File not OK: {} not in {}", extDir, currentDir);
+		return false;
+	}
 
 	/**
 	 * Finds all files matching a wildcard expression (based on '?', '~' or '*').

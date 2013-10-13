@@ -81,6 +81,13 @@ public interface DirInterface {
 	 */
 	public abstract String validatePath(String path)
 			throws CommandAbstractException;
+	/**
+	 * Check if the given path is valid in the sens starting from the current directory
+	 * 
+	 * @param path
+	 * @return True if OK
+	 */
+	public abstract boolean isPathInCurrentDir(String path);
 
 	/**
 	 * @return the current PWD

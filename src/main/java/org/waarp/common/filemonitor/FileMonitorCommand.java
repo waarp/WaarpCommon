@@ -32,7 +32,8 @@ public interface FileMonitorCommand {
 	/**
 	 * 
 	 * @param file file on which the command will be executed.
+	 * @return True if the execution is sucessful
 	 */
-	public void run(File file);
+	public boolean run(File file);
 
 }

@@ -152,6 +152,17 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 		return super.getDbConnection(server, user, passwd);
 	}
 
+	@Override
+	public void releaseResources() {
+		if (pool != null) {
+			try {
+				pool.dispose();
+			} catch (SQLException e) {
+			}
+			pool = null;
+		}
+	}
+
 
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),

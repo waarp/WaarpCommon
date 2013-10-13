@@ -23,6 +23,7 @@ package org.waarp.common.filemonitor;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,13 +37,16 @@ import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
 import org.waarp.common.digest.FilesystemBasedDigest;
 import org.waarp.common.digest.FilesystemBasedDigest.DigestAlgo;
+import org.waarp.common.file.AbstractDir;
 import org.waarp.common.future.WaarpFuture;
 import org.waarp.common.json.AdaptativeJsonHandler;
 import org.waarp.common.json.AdaptativeJsonHandler.JsonCodec;
 import org.waarp.common.utility.WaarpThreadFactory;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -61,12 +65,14 @@ public class FileMonitor {
 	
 	protected WaarpFuture future = null;
 	protected WaarpFuture internalfuture = null;
+	protected final String name;
 	protected final File statusFile;
 	protected final File stopFile;
-	protected final File directory;
+	protected final List<File> directories = new ArrayList<File>();
 	protected final DigestAlgo digest;
 	protected long elapseTime = defaultDelay; // default to 1s
 	protected Timer timer = null;
+	protected boolean scanSubDir = false;
 	
 	protected final HashMap<String, FileItem> fileItems = 
 			new HashMap<String, FileMonitor.FileItem>();
@@ -79,12 +85,15 @@ public class FileMonitor {
 	};
 	protected FileMonitorCommand commandValidFile = null;
 	protected FileMonitorCommand commandRemovedFile = null;
+	protected FileMonitorCommand commandCheckIteration = null;
 	
 	protected ConcurrentLinkedQueue<FileItem> toUse = 
 			new ConcurrentLinkedQueue<FileMonitor.FileItem>();
 	protected final AdaptativeJsonHandler handler = new AdaptativeJsonHandler(JsonCodec.JSON);
 	
+	public final FileMonitorInformation fileMonitorInformation;
 	/**
+	 * @param name name of this daemon
 	 * @param statusFile the file where the current status is saved (current files)
 	 * @param stopFile the file when created (.exists()) will stop the daemon
 	 * @param directory the directory where files will be monitored
@@ -93,15 +102,19 @@ public class FileMonitor {
 	 * @param filter the filter to be applied on selected files (default is isFile())
 	 * @param commandValidFile the commandValidFile to run (may be null, which means poll() commandValidFile has to be used)
 	 * @param commandRemovedFile the commandRemovedFile to run (may be null)
+	 * @param commandCheckIteration the commandCheckIteration to run (may be null), runs after each check (elapseTime)
 	 */
-	public FileMonitor(File statusFile, File stopFile,
+	public FileMonitor(String name, File statusFile, File stopFile,
 			File directory, DigestAlgo digest, long elapseTime, 
-			FileFilter filter,
+			FileFilter filter, boolean scanSubdir,
 			FileMonitorCommand commandValidFile, 
-			FileMonitorCommand commandRemovedFile) {
+			FileMonitorCommand commandRemovedFile,
+			FileMonitorCommand commandCheckIteration) {
+		this.name = name;
 		this.statusFile = statusFile;
 		this.stopFile = stopFile;
-		this.directory = directory;
+		this.directories.add(directory);
+		this.scanSubDir = scanSubdir;
 		if (digest == null) {
 			this.digest = defaultDigestAlgo;
 		} else {
@@ -115,7 +128,33 @@ public class FileMonitor {
 		}
 		this.commandValidFile = commandValidFile;
 		this.commandRemovedFile = commandRemovedFile;
+		this.commandCheckIteration = commandCheckIteration;
 		this.reloadStatus();
+		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir);
+	}
+
+	/**
+	 * @param commandCheckIteration the commandCheckIteration to run (may be null), runs after each check (elapseTime)
+	 */
+	public void setCommandCheckIteration(FileMonitorCommand commandCheckIteration) {
+		this.commandCheckIteration = commandCheckIteration;
+	}
+
+	/**
+	 * Add a directory to scan
+	 * @param directory
+	 */
+	public void addDirectory(File directory) {
+		if (! this.directories.contains(directory)) {
+			this.directories.add(directory);
+		}
+	}
+	/**
+	 * Add a directory to scan
+	 * @param directory
+	 */
+	public void removeDirectory(File directory) {
+		this.directories.remove(directory);
 	}
 
 	protected void reloadStatus() {
@@ -139,6 +178,18 @@ public class FileMonitor {
 		} catch (JsonMappingException e) {
 		} catch (IOException e) {
 		}
+	}
+	/**
+	 * 
+	 * @return the status in JSON format
+	 */
+	public String getStatus() {
+		if (fileMonitorInformation == null) return "{}";
+		try {
+			return handler.mapper.writeValueAsString(fileMonitorInformation);
+		} catch (JsonProcessingException e) {
+		}
+		return "{}";
 	}
 	/**
 	 * @return the elapseTime
@@ -219,9 +270,51 @@ public class FileMonitor {
 		if (stopFile.exists()) {
 			return false;
 		}
+		for (File directory : directories) {
+			fileItemsChanged = checkOneDir(fileItemsChanged, directory);
+		}
+		// now check that all existing items are still valid
+		List<FileItem> todel = new LinkedList<FileItem>();
+		for (FileItem item : fileItems.values()) {
+			if (item.file.isFile()) {
+				continue;
+			}
+			todel.add(item);
+		}
+		// remove invalid files
+		for (FileItem fileItem : todel) {
+			String name = AbstractDir.normalizePath(fileItem.file.getAbsolutePath());
+			fileItems.remove(name);
+			toUse.remove(fileItem);
+			if (commandRemovedFile != null) {
+				commandRemovedFile.run(fileItem.file);
+			}
+			fileItem.file = null;
+			fileItem.hash = null;
+			fileItem = null;
+			fileItemsChanged = true;
+		}
+		if (fileItemsChanged) {
+			this.saveStatus();
+		}
+		if (commandCheckIteration != null) {
+			commandCheckIteration.run(null);
+		}
+		return true;
+	}
+
+	/**
+	 * @param fileItemsChanged
+	 * @param directory
+	 * @return
+	 */
+	protected boolean checkOneDir(boolean fileItemsChanged, File directory) {
 		File [] files = directory.listFiles(filter);
 		for (File file : files) {
-			String name = file.getName();
+			if (file.isDirectory()) {
+				continue;
+			}
+			String name = AbstractDir.normalizePath(file.getAbsolutePath());
 			FileItem fileItem = fileItems.get(name);
 			if (fileItem == null) {
 				// never seen until now
@@ -254,11 +347,12 @@ public class FileMonitor {
 					continue;
 				}
 				// now time and hash are the same so act on it
-				fileItem.used = true;
 				fileItem.timeUsed = System.currentTimeMillis();
-				fileItem.hash = null;
 				if (commandValidFile != null) {
-					commandValidFile.run(fileItem.file);
+					if (commandValidFile.run(fileItem.file)) {
+						fileItem.used = true;
+						fileItem.hash = null;
+					}
 				} else {
 					toUse.add(fileItem);
 				}
@@ -267,30 +361,15 @@ public class FileMonitor {
 				continue;
 			}
 		}
-		// now check that all existing items are still valid
-		List<FileItem> todel = new LinkedList<FileItem>();
-		for (FileItem item : fileItems.values()) {
-			if (item.file.isFile()) {
-				continue;
+		if (scanSubDir) {
+			files = directory.listFiles();
+			for (File file : files) {
+				if (file.isDirectory()) {
+					fileItemsChanged = checkOneDir(fileItemsChanged, file);
+				}
 			}
-			todel.add(item);
 		}
-		// remove invalid files
-		for (FileItem fileItem : todel) {
-			fileItems.remove(fileItem.file.getName());
-			toUse.remove(fileItem);
-			if (commandRemovedFile != null) {
-				commandRemovedFile.run(fileItem.file);
-			}
-			fileItem.file = null;
-			fileItem.hash = null;
-			fileItem = null;
-			fileItemsChanged = true;
-		}
-		if (fileItemsChanged) {
-			this.saveStatus();
-		}
-		return true;
+		return fileItemsChanged;
 	}
 	
 	/**
@@ -318,18 +397,59 @@ public class FileMonitor {
 	}
 	
 	/**
+	 * Used by Waarp Business information
+	 * @author "Frederic Bregier"
+	 *
+	 */
+	@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
+	public static class FileMonitorInformation {
+		public String name;
+		public HashMap<String, FileItem> fileItems;
+		public List<File> directories;
+		public File stopFile;
+		public File statusFile;
+		public long elapseTime;
+		public boolean scanSubDir;
+		
+		public FileMonitorInformation() {
+			// empty constructor for JSON
+		}
+		/**
+		 * @param name
+		 * @param fileItems
+		 * @param directories
+		 * @param stopFile
+		 * @param statusFile
+		 * @param filter
+		 * @param elapseTime
+		 * @param scanSubDir
+		 */
+		protected FileMonitorInformation(String name, HashMap<String, FileItem> fileItems,
+				List<File> directories, File stopFile, File statusFile, 
+				long elapseTime, boolean scanSubDir) {
+			this.name = name;
+			this.fileItems = fileItems;
+			this.directories = directories;
+			this.stopFile = stopFile;
+			this.statusFile = statusFile;
+			this.elapseTime = elapseTime;
+			this.scanSubDir = scanSubDir;
+		}
+		
+	}
+	/**
 	 * One element in the directory
 	 * @author "Frederic Bregier"
 	 *
 	 */
-	protected static class FileItem {
+	public static class FileItem {
 		public File file;
 		public byte[] hash = null;
 		public long lastTime = Long.MIN_VALUE;
 		public long timeUsed = Long.MIN_VALUE;
 		public boolean used = false;
-		@SuppressWarnings("unused")
-		private FileItem() {
+
+		public FileItem() {
 			// empty constructor for JSON
 		}
 		/**
@@ -367,15 +487,22 @@ public class FileMonitor {
     		System.err.println("Not a directory");
     		return;
     	}
-    	FileMonitor monitor = new FileMonitor(file, stopfile, dir, null, 0, 
+    	FileMonitor monitor = new FileMonitor("test", file, stopfile, dir, null, 0, 
     			new RegexFileFilter(RegexFileFilter.REGEX_XML_EXTENSION), 
-    			new FileMonitorCommand() {
-			public void run(File file) {
-				System.out.println("File: "+file.getAbsolutePath());
+    			false, new FileMonitorCommand() {
+			public boolean run(File file) {
+				System.out.println("File New: "+file.getAbsolutePath());
+				return true;
 			}
 		}, new FileMonitorCommand() {
-			public void run(File file) {
-				System.err.println("File: "+file.getAbsolutePath());
+			public boolean run(File file) {
+				System.err.println("File Del: "+file.getAbsolutePath());
+				return true;
+			}
+		}, new FileMonitorCommand() {
+			public boolean run(File unused) {
+				System.err.println("Check done");
+				return true;
 			}
 		});
     	monitor.start();
