@@ -374,7 +374,7 @@ public class DbSession {
 	/**
 	 * Force the close of the connection
 	 */
-	public synchronized void forceDisconnect() {
+	public void forceDisconnect() {
 		this.nbThread.set(0);
 		if (conn == null) {
 			logger.debug("Connection already closed");
@@ -408,7 +408,7 @@ public class DbSession {
 	 * Close the connection
 	 * 
 	 */
-	public synchronized void disconnect() {
+	public void disconnect() {
 		if (conn == null || isDisconnected) {
 			logger.debug("Connection already closed");
 			return;
