@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2013-10-13T11:42:41.268">
+<pmd version="4.3" timestamp="2013-10-18T23:19:02.844">
 <file name="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\command\ReplyCode.java">
 <violation beginline="351" endline="353" begincolumn="43" endcolumn="41" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.command" method="getFinalMsg" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
@@ -222,14 +222,8 @@ Ensure you override both equals() and hashCode()
 <violation beginline="370" endline="370" begincolumn="13" endcolumn="50" rule="SimplifyConditional" ruleset="Design Rules" package="org.waarp.common.database" class="DbSession" method="equals" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#SimplifyConditional" priority="3">
 No need to check for null before an instanceof
 </violation>
-<violation beginline="377" endline="405" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbSession" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
-Use block level rather than method level synchronization
-</violation>
 <violation beginline="400" endline="402" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database" class="DbSession" method="forceDisconnect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
-</violation>
-<violation beginline="411" endline="443" begincolumn="29" endcolumn="9" rule="AvoidSynchronizedAtMethodLevel" ruleset="Design Rules" package="org.waarp.common.database" class="DbSession" externalInfoUrl="http://pmd.sourceforge.net/rules/design.html#AvoidSynchronizedAtMethodLevel" priority="3">
-Use block level rather than method level synchronization
 </violation>
 <violation beginline="438" endline="440" begincolumn="19" endcolumn="17" rule="EmptyCatchBlock" ruleset="Basic Rules" package="org.waarp.common.database" class="DbSession" method="disconnect" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#EmptyCatchBlock" priority="3">
 Avoid empty catch blocks
