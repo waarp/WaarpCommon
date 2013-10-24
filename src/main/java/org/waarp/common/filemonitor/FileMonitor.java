@@ -76,7 +76,9 @@ public class FileMonitor {
 	protected final List<File> directories = new ArrayList<File>();
 	protected final DigestAlgo digest;
 	protected long elapseTime = defaultDelay; // default to 1s
+	protected long elapseWaarpTime = -1; // default set to run after each run
 	protected Timer timer = null;
+	protected Timer timerWaarp = null; // used only if elapseWaarpTime > defaultDelay (1s)
 	protected boolean scanSubDir = false;
 	
 	protected final HashMap<String, FileItem> fileItems = 
@@ -97,7 +99,7 @@ public class FileMonitor {
 	protected ConcurrentLinkedQueue<FileItem> toUse = 
 			new ConcurrentLinkedQueue<FileMonitor.FileItem>();
 	protected final AdaptativeJsonHandler handler = new AdaptativeJsonHandler(JsonCodec.JSON);
-	protected final ConcurrentLinkedQueue<Future<FileMonitorResult>> results = new ConcurrentLinkedQueue<Future<FileMonitorResult>>();
+	protected final ConcurrentLinkedQueue<Future<?>> results = new ConcurrentLinkedQueue<Future<?>>();
 	
 	public final FileMonitorInformation fileMonitorInformation;
 	/**
@@ -156,6 +158,25 @@ public class FileMonitor {
 		this.commandValidFileFactory = factory;
 	}
 	
+	/**
+	 * @return the elapseWaarpTime
+	 */
+	public long getElapseWaarpTime() {
+		return elapseWaarpTime;
+	}
+
+	/**
+	 * if set greater than 1000 ms, will be parallel, 
+	 * else will be sequential after each check and ignoring this timer
+	 * 
+	 * @param elapseWaarpTime the elapseWaarpTime to set 
+	 */
+	public void setElapseWaarpTime(long elapseWaarpTime) {
+		if (elapseWaarpTime >= defaultDelay) {
+			this.elapseWaarpTime = (elapseWaarpTime/10)*10;
+		}
+	}
+
 	/**
 	 * Add a directory to scan
 	 * @param directory
@@ -238,17 +259,27 @@ public class FileMonitor {
 				executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
 			}
 		}// else already started
+		if (elapseWaarpTime >= defaultDelay && timerWaarp == null && commandCheckIteration != null) {
+			timerWaarp = new HashedWheelTimer(
+					new WaarpThreadFactory("TimerFileMonitorWaarp"),
+					100, TimeUnit.MILLISECONDS, 8);
+			timerWaarp.newTimeout(new FileMonitorTimerInformationTask(commandCheckIteration), elapseWaarpTime, TimeUnit.MILLISECONDS);
+		}
 	}
 	
 	public void stop() {
 		if (timer != null) {
 			timer.stop();
 		}
+		if (timerWaarp != null) {
+			timerWaarp.stop();
+		}
 		if (internalfuture != null) {
 			internalfuture.awaitUninterruptibly();
 			internalfuture = null;
 		}
 		timer = null;
+		timerWaarp = null;
 		if (executor != null) {
 			executor.shutdown();
 			executor = null;
@@ -296,23 +327,11 @@ public class FileMonitor {
 		for (File directory : directories) {
 			fileItemsChanged = checkOneDir(fileItemsChanged, directory);
 		}
-		//System.err.println("FileItemsChanged: "+fileItemsChanged);
 		boolean error = false;
-		for (Future<FileMonitorResult> future : results) {
+		// Wait for all commands to finish before continuing
+		for (Future<?> future : results) {
 			try {
-				FileMonitorResult result = future.get();
-				if (result == null) {
-					System.err.println("RESULT EMPTY !!!");
-				} else if (result.status) {
-					//System.err.println("RESULT: "+result.status+" for "+result.fileItem.file);
-					result.fileItem.used = true;
-					result.fileItem.hash = null;
-				} else {
-					// execution in error, will retry later on
-					//System.err.println("RESULT: "+result.status+" for "+result.fileItem.file);
-					result.fileItem.used = false;
-					result.fileItem.hash = null;
-				}
+				future.get();
 			} catch (InterruptedException e) {
 				System.err.println("Interruption so exit");
 				e.printStackTrace();
@@ -353,7 +372,7 @@ public class FileMonitor {
 		if (fileItemsChanged) {
 			this.saveStatus();
 		}
-		if (commandCheckIteration != null) {
+		if (commandCheckIteration != null && timerWaarp == null) {
 			commandCheckIteration.run(null);
 		}
 		return true;
@@ -406,7 +425,7 @@ public class FileMonitor {
 				fileItem.timeUsed = System.currentTimeMillis();
 				if (commandValidFileFactory != null) {
 					FileMonitorCommandRunnableFuture torun = commandValidFileFactory.create(fileItem);
-					Future<FileMonitorResult> torunFuture = (Future<FileMonitorResult>) executor.submit(torun);
+					Future<?> torunFuture = executor.submit(torun);
 					results.add(torunFuture);
 				} else if (commandValidFile != null) {
 					commandValidFile.specialId = fileItem.specialId;
@@ -455,12 +474,37 @@ public class FileMonitor {
 
 		public void run(Timeout timeout) throws Exception {
 			if (fileMonitor.checkFiles()) {
-				fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
+				if (fileMonitor.timer != null) {
+					fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
+				}
 			} else {
 				fileMonitor.internalfuture.setSuccess();
 			}
 		}
 		
+	}
+	/**
+	 * Class to run Waarp Business information in fixed delay rather than after each check
+	 * @author "Frederic Bregier"
+	 *
+	 */
+	protected class FileMonitorTimerInformationTask implements TimerTask {
+		protected final FileMonitorCommand informationMonitorCommand;
+		/**
+		 * @param informationMonitorCommand
+		 */
+		protected FileMonitorTimerInformationTask(FileMonitorCommand informationMonitorCommand) {
+			this.informationMonitorCommand = informationMonitorCommand;
+		}
+
+		public void run(Timeout timeout) throws Exception {
+			if (! stopFile.exists()) {
+				informationMonitorCommand.run(null);
+				if (timerWaarp != null) {
+					timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
+				}
+			}
+		}
 	}
 	
 	/**

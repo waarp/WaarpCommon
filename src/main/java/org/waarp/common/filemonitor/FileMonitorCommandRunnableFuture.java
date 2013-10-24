@@ -20,22 +20,15 @@
  */
 package org.waarp.common.filemonitor;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.waarp.common.filemonitor.FileMonitor.FileItem;
-import org.waarp.common.future.WaarpFuture;
 
 /**
  * Command run when a new file item is validated
  * @author "Frederic Bregier"
  *
  */
-public abstract class FileMonitorCommandRunnableFuture implements Callable<FileMonitorResult> {
-	public FileMonitorResult result;
-	private WaarpFuture monitorFuture = new WaarpFuture(true);
+public abstract class FileMonitorCommandRunnableFuture implements Runnable {
+	public FileItem fileItem;
 	private Thread currentThread;
 	
 	/**
@@ -44,53 +37,31 @@ public abstract class FileMonitorCommandRunnableFuture implements Callable<FileM
 	 * @param fileItem
 	 */
 	public FileMonitorCommandRunnableFuture(FileItem fileItem) {
-		result = new FileMonitorResult(fileItem);
+		this.fileItem = fileItem;
 	}
 	
 	/**
 	 * This must be overridden and calling super.run() in the very beginning
-	 * @see java.util.concurrent.RunnableFuture#run()
 	 */
 	@Override
-	public FileMonitorResult call() {
+	public void run() {
 		currentThread = Thread.currentThread();
-		return result;
 	}
 
-	public void invalidate(Exception cause) {
-		monitorFuture.setFailure(cause);
+	protected void finalize(boolean status) {
+		if (status) {
+			fileItem.used = true;
+			fileItem.hash = null;
+		} else {
+			// execution in error, will retry later on
+			fileItem.used = false;
+			fileItem.hash = null;
+		}
 	}
 	
-	public void validate() {
-		monitorFuture.setSuccess();
-	}
-	
-	public boolean cancel(boolean interrupt) {
-		if (currentThread != null && interrupt) {
+	public void cancel() {
+		if (currentThread != null) {
 			currentThread.interrupt();
 		}
-		return monitorFuture.cancel();
-	}
-
-	public FileMonitorResult get() throws InterruptedException, ExecutionException {
-		monitorFuture.await();
-		return result;
-	}
-
-	public FileMonitorResult get(long arg0, TimeUnit arg1) throws InterruptedException,
-			ExecutionException, TimeoutException {
-		monitorFuture.await(arg0, arg1);
-		if (monitorFuture.isDone()) {
-			return result;
-		}
-		return null;
-	}
-
-	public boolean isCancelled() {
-		return monitorFuture.isCancelled();
-	}
-
-	public boolean isDone() {
-		return monitorFuture.isDone();
 	}
 }
