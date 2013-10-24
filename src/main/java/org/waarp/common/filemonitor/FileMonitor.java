@@ -29,12 +29,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
+import org.waarp.common.database.DbConstant;
 import org.waarp.common.digest.FilesystemBasedDigest;
 import org.waarp.common.digest.FilesystemBasedDigest.DigestAlgo;
 import org.waarp.common.file.AbstractDir;
@@ -84,12 +89,15 @@ public class FileMonitor {
 		}
 	};
 	protected FileMonitorCommand commandValidFile = null;
+	protected FileMonitorCommandFactory commandValidFileFactory = null;
+	protected ExecutorService executor = null;
 	protected FileMonitorCommand commandRemovedFile = null;
 	protected FileMonitorCommand commandCheckIteration = null;
 	
 	protected ConcurrentLinkedQueue<FileItem> toUse = 
 			new ConcurrentLinkedQueue<FileMonitor.FileItem>();
 	protected final AdaptativeJsonHandler handler = new AdaptativeJsonHandler(JsonCodec.JSON);
+	protected final ConcurrentLinkedQueue<Future<FileMonitorResult>> results = new ConcurrentLinkedQueue<Future<FileMonitorResult>>();
 	
 	public final FileMonitorInformation fileMonitorInformation;
 	/**
@@ -140,6 +148,14 @@ public class FileMonitor {
 		this.commandCheckIteration = commandCheckIteration;
 	}
 
+	/**
+	 * 
+	 * @param factory the factory to used instead of simple instance (enables parallelism)
+	 */
+	public void setCommandValidFileFactory(FileMonitorCommandFactory factory) {
+		this.commandValidFileFactory = factory;
+	}
+	
 	/**
 	 * Add a directory to scan
 	 * @param directory
@@ -218,6 +234,9 @@ public class FileMonitor {
 			timer.newTimeout(new FileMonitorTimerTask(this), elapseTime, TimeUnit.MILLISECONDS);
 			future = new WaarpFuture(true);
 			internalfuture = new WaarpFuture(true);
+			if (commandValidFileFactory != null && executor == null) {
+				executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
+			}
 		}// else already started
 	}
 	
@@ -230,6 +249,10 @@ public class FileMonitor {
 			internalfuture = null;
 		}
 		timer = null;
+		if (executor != null) {
+			executor.shutdown();
+			executor = null;
+		}
 		if (future != null) {
 			future.setSuccess();
 		}
@@ -272,6 +295,39 @@ public class FileMonitor {
 		}
 		for (File directory : directories) {
 			fileItemsChanged = checkOneDir(fileItemsChanged, directory);
+		}
+		//System.err.println("FileItemsChanged: "+fileItemsChanged);
+		boolean error = false;
+		for (Future<FileMonitorResult> future : results) {
+			try {
+				FileMonitorResult result = future.get();
+				if (result == null) {
+					System.err.println("RESULT EMPTY !!!");
+				} else if (result.status) {
+					//System.err.println("RESULT: "+result.status+" for "+result.fileItem.file);
+					result.fileItem.used = true;
+					result.fileItem.hash = null;
+				} else {
+					// execution in error, will retry later on
+					//System.err.println("RESULT: "+result.status+" for "+result.fileItem.file);
+					result.fileItem.used = false;
+					result.fileItem.hash = null;
+				}
+			} catch (InterruptedException e) {
+				System.err.println("Interruption so exit");
+				e.printStackTrace();
+				error = true;
+			} catch (ExecutionException e) {
+				System.err.println("Exception during execution");
+				e.printStackTrace();
+				error = true;
+			}
+		}
+		results.clear();
+		if (error) {
+			// do not save ?
+			//this.saveStatus();
+			return false;
 		}
 		// now check that all existing items are still valid
 		List<FileItem> todel = new LinkedList<FileItem>();
@@ -348,10 +404,21 @@ public class FileMonitor {
 				}
 				// now time and hash are the same so act on it
 				fileItem.timeUsed = System.currentTimeMillis();
-				if (commandValidFile != null) {
+				if (commandValidFileFactory != null) {
+					FileMonitorCommandRunnableFuture torun = commandValidFileFactory.create(fileItem);
+					Future<FileMonitorResult> torunFuture = (Future<FileMonitorResult>) executor.submit(torun);
+					results.add(torunFuture);
+				} else if (commandValidFile != null) {
+					commandValidFile.specialId = fileItem.specialId;
 					if (commandValidFile.run(fileItem.file)) {
 						fileItem.used = true;
 						fileItem.hash = null;
+						fileItem.specialId = commandValidFile.specialId;
+					} else {
+						// execution in error, will retry later on
+						fileItem.used = false;
+						fileItem.hash = null;
+						fileItem.specialId = commandValidFile.specialId;
 					}
 				} else {
 					toUse.add(fileItem);
@@ -447,6 +514,7 @@ public class FileMonitor {
 		public long lastTime = Long.MIN_VALUE;
 		public long timeUsed = Long.MIN_VALUE;
 		public boolean used = false;
+		public long specialId = DbConstant.ILLEGALVALUE;
 
 		public FileItem() {
 			// empty constructor for JSON
@@ -489,7 +557,7 @@ public class FileMonitor {
     	FileMonitor monitor = new FileMonitor("test", file, stopfile, dir, null, 0, 
     			new RegexFileFilter(RegexFileFilter.REGEX_XML_EXTENSION), 
     			false, new FileMonitorCommand() {
-			public boolean run(File file) {
+    		public boolean run(File file) {
 				System.out.println("File New: "+file.getAbsolutePath());
 				return true;
 			}

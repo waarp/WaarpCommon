@@ -5,6 +5,10 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+	    <release version="1.2.19" date="2013-11-01" description="Fix release">
+		    <action dev="Frederic Bregier" type="fix">Fix Minimal bandwidth in WaarpConstraintLimitHandler</action>
+		    <action dev="Frederic Bregier" type="fix">Improve FileMonitor by allowing parallelism in main action</action>
+		</release>
 	    <release version="1.2.18" date="2013-10-18" description="Fix release">
 		    <action dev="Frederic Bregier" type="fix">Fix Database close corruption</action>
 		</release>

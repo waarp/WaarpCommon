@@ -41,6 +41,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 			.getLogger(WaarpConstraintLimitHandler.class);
 
 	private static final String NOALERT = "noAlert";
+	public static final long LOWBANDWIDTH_DEFAULT = 1048576;
 	public String lastAlert = NOALERT;
 	private boolean constraintInactive = true;
 	private boolean useCpuLimits = false;
@@ -61,7 +62,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 	private double lowCpuLimit = 0.5;
 	private double percentageDecreaseRatio = 0.25;
 	private long delay = 1000;
-	private long limitLowBandwidth = 10000;
+	private long limitLowBandwidth = LOWBANDWIDTH_DEFAULT;
 	private GlobalTrafficShapingHandler handler;
 	private ScheduledThreadPoolExecutor executor = null;
 
@@ -140,7 +141,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 	public WaarpConstraintLimitHandler(long WAITFORNETOP2, long TIMEOUTCON2, boolean useCpuLimit,
 			boolean useJdKCpuLimit, double cpulimit, int channellimit) {
 		this(WAITFORNETOP2, TIMEOUTCON2, useCpuLimit, useJdKCpuLimit, cpulimit, channellimit,
-				0, 0, 0.01, null, 1000000, 4096);
+				0, 0, 0.01, null, 1000000, LOWBANDWIDTH_DEFAULT);
 	}
 
 	/**
@@ -187,8 +188,8 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 		lowCpuLimit = lowcpuLimit;
 		highCpuLimit = highcpuLimit;
 		this.limitLowBandwidth = limitLowBandwidth;
-		if (this.limitLowBandwidth < 4096) {
-			this.limitLowBandwidth = 4096;
+		if (this.limitLowBandwidth < LOWBANDWIDTH_DEFAULT) {
+			this.limitLowBandwidth = LOWBANDWIDTH_DEFAULT;
 		}
 		this.delay = delay;
 		if (lowCpuLimit <= 0) {
@@ -196,7 +197,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 		}
 		percentageDecreaseRatio = percentageDecrease;
 		if (percentageDecreaseRatio <= 0) {
-			percentageDecreaseRatio = 0.25;
+			percentageDecreaseRatio = 0.01;
 		} else if (percentageDecreaseRatio >= 1) {
 			percentageDecreaseRatio /= 100;
 		}

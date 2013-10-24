@@ -20,26 +20,19 @@
  */
 package org.waarp.common.filemonitor;
 
-import java.io.File;
-
-import org.waarp.common.database.DbConstant;
+import org.waarp.common.filemonitor.FileMonitor.FileItem;
 
 /**
- * Command run when a new file item is validated
+ * Factory for FileMonitorCommandRunnableFuture
  * @author "Frederic Bregier"
  *
  */
-public abstract class FileMonitorCommand {
-	/**
-	 * This value could contain special Id (but could be left to illegalValue = Long.MinimalValue)
-	 */
-	public long specialId = DbConstant.ILLEGALVALUE;
-	
+public abstract class FileMonitorCommandFactory {
+
 	/**
 	 * 
-	 * @param file file on which the command will be executed.
-	 * @return True if the execution is sucessful
+	 * @return a new FileMonitorCommandRunnableFuture
 	 */
-	public abstract boolean run(File file);
-
+	public abstract FileMonitorCommandRunnableFuture create(FileItem fileItem);
+	
 }
