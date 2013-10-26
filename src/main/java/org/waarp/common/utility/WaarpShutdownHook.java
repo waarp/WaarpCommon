@@ -146,6 +146,7 @@ public abstract class WaarpShutdownHook extends Thread {
 	public void run() {
 		if (isShutdownOver) {
 			// Already stopped
+			System.err.println("Halt System now - services already stopped -");
 			Runtime.getRuntime().halt(0);
 			return;
 		}
@@ -198,6 +199,7 @@ public abstract class WaarpShutdownHook extends Thread {
 
 		@Override
 		public void run() {
+			System.err.println("Halt System now - time waiting is over");
 			logger.error("System will force EXIT");
 			if (logger.isDebugEnabled()) {
 				Map<Thread, StackTraceElement[]> map = Thread
@@ -301,32 +303,38 @@ public abstract class WaarpShutdownHook extends Thread {
 	 */
 	private static void restartApplication() throws IOException {
 		if (shouldRestart) {
-		try {
-			// java binary
-			String java = System.getProperty("java.home") + "/bin/java";
-			// vm arguments
-			List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-			StringBuilder vmArgsOneLine = new StringBuilder();
-			for (String arg : vmArguments) {
-				// if it's the agent argument : we ignore it otherwise the
-				// address of the old application and the new one will be in conflict
-				if (!arg.contains("-agentlib")) {
-					vmArgsOneLine.append(arg);
-					vmArgsOneLine.append(" ");
+			try {
+				// java binary
+				String java = System.getProperty("java.home") + "/bin/java";
+				// vm arguments
+				List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+				StringBuilder vmArgsOneLine = new StringBuilder();
+				for (String arg : vmArguments) {
+					// if it's the agent argument : we ignore it otherwise the
+					// address of the old application and the new one will be in conflict
+					if (!arg.contains("-agentlib")) {
+						vmArgsOneLine.append(arg);
+						vmArgsOneLine.append(" ");
+					}
 				}
-			}
-			// init the command to execute, add the vm args
-			final StringBuilder cmd = new StringBuilder("\"" + java + "\" " + vmArgsOneLine);
-			if (applArgs == null) {
-				applArgs = getArgs();
-			}
-			if (applArgs == null) {
-				// big issue then
-				System.err.println("Cannot restart!");
-			}
-			cmd.append(applArgs);
-			//System.err.println("Could restart with:\n"+cmd.toString());
-			Runtime.getRuntime().exec(cmd.toString());
+				// init the command to execute, add the vm args
+				final StringBuilder cmd;
+				if (DetectionUtils.isWindows()) {
+					cmd = new StringBuilder("\"" + java + "\" " + vmArgsOneLine);
+				} else {
+					cmd = new StringBuilder(java + " " + vmArgsOneLine);
+				}
+				
+				if (applArgs == null) {
+					applArgs = getArgs();
+				}
+				if (applArgs == null) {
+					// big issue then
+					System.err.println("Cannot restart!");
+				}
+				cmd.append(applArgs);
+				logger.debug("Should restart with:\n"+cmd.toString());
+				Runtime.getRuntime().exec(cmd.toString());
 			} catch (Exception e) {
 				// something went wrong
 				throw new IOException("Error while trying to restart the application", e);
@@ -339,6 +347,13 @@ public abstract class WaarpShutdownHook extends Thread {
 	 */
 	public static void setRestart(boolean toRestart) {
 		shouldRestart = toRestart;
+	}
+	/**
+	 * 
+	 * @return True if the shutdown should be followed by a restart
+	 */
+	public static boolean isRestart() {
+		return shouldRestart;
 	}
 	/**
 	 * Intermdediary exit function
@@ -360,6 +375,7 @@ public abstract class WaarpShutdownHook extends Thread {
 				}
 			}
 			isShutdownOver = true;
+			logger.info("Should restart? "+isRestart());
 			try {
 				restartApplication();
 			} catch (IOException e1) {
@@ -378,6 +394,7 @@ public abstract class WaarpShutdownHook extends Thread {
 			immediate = true;
 			shutdownHook.exit();
 			isShutdownOver = true;
+			logger.info("Should restart? "+isRestart());
 			try {
 				restartApplication();
 			} catch (IOException e1) {

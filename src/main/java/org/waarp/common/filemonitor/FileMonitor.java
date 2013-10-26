@@ -93,6 +93,7 @@ public class FileMonitor {
 	protected FileMonitorCommand commandValidFile = null;
 	protected FileMonitorCommandFactory commandValidFileFactory = null;
 	protected ExecutorService executor = null;
+	protected int fixedThreadPool = 0;
 	protected FileMonitorCommand commandRemovedFile = null;
 	protected FileMonitorCommand commandCheckIteration = null;
 	
@@ -153,9 +154,11 @@ public class FileMonitor {
 	/**
 	 * 
 	 * @param factory the factory to used instead of simple instance (enables parallelism)
+	 * @param fixedPool if > 0, set the number of parallel threads allowed
 	 */
-	public void setCommandValidFileFactory(FileMonitorCommandFactory factory) {
+	public void setCommandValidFileFactory(FileMonitorCommandFactory factory, int fixedPool) {
 		this.commandValidFileFactory = factory;
+		this.fixedThreadPool = fixedPool;
 	}
 	
 	/**
@@ -256,7 +259,11 @@ public class FileMonitor {
 			future = new WaarpFuture(true);
 			internalfuture = new WaarpFuture(true);
 			if (commandValidFileFactory != null && executor == null) {
-				executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
+				if (fixedThreadPool > 0) {
+					executor = Executors.newFixedThreadPool(fixedThreadPool, new WaarpThreadFactory("FileMonitorRunner"));
+				} else {
+					executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
+				}
 			}
 		}// else already started
 		if (elapseWaarpTime >= defaultDelay && timerWaarp == null && commandCheckIteration != null) {
