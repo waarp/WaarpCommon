@@ -70,6 +70,7 @@ public class FileMonitor {
 	
 	protected WaarpFuture future = null;
 	protected WaarpFuture internalfuture = null;
+	protected boolean stopped = false;
 	protected final String name;
 	protected final File statusFile;
 	protected final File stopFile;
@@ -90,12 +91,12 @@ public class FileMonitor {
 			return pathname.isFile();
 		}
 	};
-	protected FileMonitorCommand commandValidFile = null;
+	protected FileMonitorCommandRunnableFuture commandValidFile = null;
 	protected FileMonitorCommandFactory commandValidFileFactory = null;
 	protected ExecutorService executor = null;
 	protected int fixedThreadPool = 0;
-	protected FileMonitorCommand commandRemovedFile = null;
-	protected FileMonitorCommand commandCheckIteration = null;
+	protected FileMonitorCommandRunnableFuture commandRemovedFile = null;
+	protected FileMonitorCommandRunnableFuture commandCheckIteration = null;
 	
 	protected ConcurrentLinkedQueue<FileItem> toUse = 
 			new ConcurrentLinkedQueue<FileMonitor.FileItem>();
@@ -118,9 +119,9 @@ public class FileMonitor {
 	public FileMonitor(String name, File statusFile, File stopFile,
 			File directory, DigestAlgo digest, long elapseTime, 
 			FileFilter filter, boolean scanSubdir,
-			FileMonitorCommand commandValidFile, 
-			FileMonitorCommand commandRemovedFile,
-			FileMonitorCommand commandCheckIteration) {
+			FileMonitorCommandRunnableFuture commandValidFile, 
+			FileMonitorCommandRunnableFuture commandRemovedFile,
+			FileMonitorCommandRunnableFuture commandCheckIteration) {
 		this.name = name;
 		this.statusFile = statusFile;
 		this.stopFile = stopFile;
@@ -147,7 +148,7 @@ public class FileMonitor {
 	/**
 	 * @param commandCheckIteration the commandCheckIteration to run (may be null), runs after each check (elapseTime)
 	 */
-	public void setCommandCheckIteration(FileMonitorCommand commandCheckIteration) {
+	public void setCommandCheckIteration(FileMonitorCommandRunnableFuture commandCheckIteration) {
 		this.commandCheckIteration = commandCheckIteration;
 	}
 
@@ -275,15 +276,16 @@ public class FileMonitor {
 	}
 	
 	public void stop() {
-		if (timer != null) {
-			timer.stop();
-		}
+		stopped = true;
 		if (timerWaarp != null) {
 			timerWaarp.stop();
 		}
 		if (internalfuture != null) {
-			internalfuture.awaitUninterruptibly();
-			internalfuture = null;
+			internalfuture.awaitUninterruptibly(elapseTime*2, TimeUnit.MILLISECONDS);
+			internalfuture.setSuccess();
+		}
+		if (timer != null) {
+			timer.stop();
 		}
 		timer = null;
 		timerWaarp = null;
@@ -322,13 +324,21 @@ public class FileMonitor {
 		internalfuture.awaitUninterruptibly();
 		stop();
 	}
+	
+	private boolean checkStop() {
+		if (stopped || stopFile.exists()) {
+			internalfuture.setSuccess();
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * Check Files
 	 * @return False to stop
 	 */
 	protected boolean checkFiles() {
 		boolean fileItemsChanged = false;
-		if (stopFile.exists()) {
+		if (checkStop()) {
 			return false;
 		}
 		for (File directory : directories) {
@@ -369,7 +379,7 @@ public class FileMonitor {
 			fileItems.remove(name);
 			toUse.remove(fileItem);
 			if (commandRemovedFile != null) {
-				commandRemovedFile.run(fileItem.file);
+				commandRemovedFile.run(fileItem);
 			}
 			fileItem.file = null;
 			fileItem.hash = null;
@@ -378,6 +388,9 @@ public class FileMonitor {
 		}
 		if (fileItemsChanged) {
 			this.saveStatus();
+		}
+		if (checkStop()) {
+			return false;
 		}
 		if (commandCheckIteration != null && timerWaarp == null) {
 			commandCheckIteration.run(null);
@@ -393,6 +406,9 @@ public class FileMonitor {
 	protected boolean checkOneDir(boolean fileItemsChanged, File directory) {
 		File [] files = directory.listFiles(filter);
 		for (File file : files) {
+			if (checkStop()) {
+				return false;
+			}
 			if (file.isDirectory()) {
 				continue;
 			}
@@ -435,17 +451,7 @@ public class FileMonitor {
 					Future<?> torunFuture = executor.submit(torun);
 					results.add(torunFuture);
 				} else if (commandValidFile != null) {
-					commandValidFile.specialId = fileItem.specialId;
-					if (commandValidFile.run(fileItem.file)) {
-						fileItem.used = true;
-						fileItem.hash = null;
-						fileItem.specialId = commandValidFile.specialId;
-					} else {
-						// execution in error, will retry later on
-						fileItem.used = false;
-						fileItem.hash = null;
-						fileItem.specialId = commandValidFile.specialId;
-					}
+					commandValidFile.run(fileItem);
 				} else {
 					toUse.add(fileItem);
 				}
@@ -457,6 +463,9 @@ public class FileMonitor {
 		if (scanSubDir) {
 			files = directory.listFiles();
 			for (File file : files) {
+				if (checkStop()) {
+					return false;
+				}
 				if (file.isDirectory()) {
 					fileItemsChanged = checkOneDir(fileItemsChanged, file);
 				}
@@ -482,7 +491,14 @@ public class FileMonitor {
 		public void run(Timeout timeout) throws Exception {
 			if (fileMonitor.checkFiles()) {
 				if (fileMonitor.timer != null) {
-					fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
+					try {
+						fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
+					} catch (Exception e) {
+						// ignore and stop
+						fileMonitor.internalfuture.setSuccess();
+					}
+				} else {
+					fileMonitor.internalfuture.setSuccess();
 				}
 			} else {
 				fileMonitor.internalfuture.setSuccess();
@@ -496,20 +512,28 @@ public class FileMonitor {
 	 *
 	 */
 	protected class FileMonitorTimerInformationTask implements TimerTask {
-		protected final FileMonitorCommand informationMonitorCommand;
+		protected final FileMonitorCommandRunnableFuture informationMonitorCommand;
 		/**
 		 * @param informationMonitorCommand
 		 */
-		protected FileMonitorTimerInformationTask(FileMonitorCommand informationMonitorCommand) {
+		protected FileMonitorTimerInformationTask(FileMonitorCommandRunnableFuture informationMonitorCommand) {
 			this.informationMonitorCommand = informationMonitorCommand;
 		}
 
 		public void run(Timeout timeout) throws Exception {
-			if (! stopFile.exists()) {
+			if (!checkStop()) {
 				informationMonitorCommand.run(null);
-				if (timerWaarp != null) {
-					timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
+				if (timerWaarp != null && ! checkStop()) {
+					try {
+						timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
+					} catch (Exception e) {
+						// stop and ignore
+					}
+				} else {
+					internalfuture.setSuccess();
 				}
+			} else {
+				internalfuture.setSuccess();
 			}
 		}
 	}
@@ -579,8 +603,21 @@ public class FileMonitor {
 
 		@Override
 		public boolean equals(Object obj) {
+			// equality is based on file itself
 			return (obj != null && obj instanceof FileItem && 
 					file.equals(((FileItem) obj).file));
+		}
+		/**
+		 * To be called when the call of primary action is OK
+		 */
+		public void valid() {
+			
+		}
+		/**
+		 * To be called when the call of primary action is KO
+		 */
+		public void invalid() {
+			
 		}
 	}
 
@@ -607,20 +644,18 @@ public class FileMonitor {
     	}
     	FileMonitor monitor = new FileMonitor("test", file, stopfile, dir, null, 0, 
     			new RegexFileFilter(RegexFileFilter.REGEX_XML_EXTENSION), 
-    			false, new FileMonitorCommand() {
-    		public boolean run(File file) {
-				System.out.println("File New: "+file.getAbsolutePath());
-				return true;
+    			false, new FileMonitorCommandRunnableFuture() {
+    		public void run(FileItem file) {
+				System.out.println("File New: "+file.file.getAbsolutePath());
+				finalize(true, 0);
 			}
-		}, new FileMonitorCommand() {
-			public boolean run(File file) {
-				System.err.println("File Del: "+file.getAbsolutePath());
-				return true;
+		}, new FileMonitorCommandRunnableFuture() {
+			public void run(FileItem file) {
+				System.err.println("File Del: "+file.file.getAbsolutePath());
 			}
-		}, new FileMonitorCommand() {
-			public boolean run(File unused) {
+		}, new FileMonitorCommandRunnableFuture() {
+			public void run(FileItem unused) {
 				System.err.println("Check done");
-				return true;
 			}
 		});
     	monitor.start();

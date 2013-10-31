@@ -145,6 +145,13 @@ public abstract class WaarpShutdownHook extends Thread {
 	@Override
 	public void run() {
 		if (isShutdownOver) {
+			if (shutdownHook != null) {
+				if (shutdownHook.serviceStopped()) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {}
+				}
+			}
 			// Already stopped
 			System.err.println("Halt System now - services already stopped -");
 			Runtime.getRuntime().halt(0);
@@ -153,7 +160,11 @@ public abstract class WaarpShutdownHook extends Thread {
 		try {
 			terminate();
 		} catch (Throwable t) {
-			shutdownHook.serviceStopped();
+			if (shutdownHook != null && shutdownHook.serviceStopped()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {}
+			}
 		}
 		System.err.println("Halt System now");
 		Runtime.getRuntime().halt(0);
@@ -201,6 +212,11 @@ public abstract class WaarpShutdownHook extends Thread {
 		public void run() {
 			System.err.println("Halt System now - time waiting is over");
 			logger.error("System will force EXIT");
+			if (shutdownHook != null && shutdownHook.serviceStopped()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {}
+			}
 			if (logger.isDebugEnabled()) {
 				Map<Thread, StackTraceElement[]> map = Thread
 						.getAllStackTraces();
@@ -208,13 +224,13 @@ public abstract class WaarpShutdownHook extends Thread {
 					printStackTrace(thread, map.get(thread));
 				}
 			}
-			if (shutdownHook != null) {
-				shutdownHook.serviceStopped();
-			}
 			Runtime.getRuntime().halt(0);
 		}
 	}
 
+	/**
+	 * Extra call to ensure exit after long delay
+	 */
 	public void launchFinalExit() {
 		Timer timer = new Timer("R66FinalExit", true);
 		ShutdownTimerTask timerTask = new ShutdownTimerTask();
@@ -225,13 +241,13 @@ public abstract class WaarpShutdownHook extends Thread {
 	 */
 	protected abstract void exit();
 	
-	private void serviceStopped() {
+	private boolean serviceStopped() {
 		if (shutdownConfiguration.serviceFuture != null) {
+			logger.info("Service will be stopped");
 			shutdownConfiguration.serviceFuture.setSuccess();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {}
+			return true;
 		}
+		return false;
 	}
 	
 	private static String applArgs = null;
@@ -334,6 +350,7 @@ public abstract class WaarpShutdownHook extends Thread {
 				}
 				cmd.append(applArgs);
 				logger.debug("Should restart with:\n"+cmd.toString());
+				logger.warn("Should restart");
 				Runtime.getRuntime().exec(cmd.toString());
 			} catch (Exception e) {
 				// something went wrong
@@ -394,6 +411,7 @@ public abstract class WaarpShutdownHook extends Thread {
 			immediate = true;
 			shutdownHook.exit();
 			isShutdownOver = true;
+			shutdownHook.serviceStopped();
 			logger.info("Should restart? "+isRestart());
 			try {
 				restartApplication();
@@ -401,7 +419,7 @@ public abstract class WaarpShutdownHook extends Thread {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			shutdownHook.serviceStopped();
+			logger.info("Exit System");
 			System.err.println("Exit System");
 			//Runtime.getRuntime().halt(0);
 		}

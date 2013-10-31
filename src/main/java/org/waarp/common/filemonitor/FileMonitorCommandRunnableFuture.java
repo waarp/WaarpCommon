@@ -32,30 +32,49 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
 	private Thread currentThread;
 	
 	/**
-	 * @param specialId
-	 * @param file
+	 */
+	public FileMonitorCommandRunnableFuture() {
+	}
+
+	/**
 	 * @param fileItem
 	 */
 	public FileMonitorCommandRunnableFuture(FileItem fileItem) {
 		this.fileItem = fileItem;
 	}
-	
-	/**
-	 * This must be overridden and calling super.run() in the very beginning
-	 */
+
+	public void setFileItem(FileItem fileItem) {
+		this.fileItem = fileItem;
+	}
+
 	@Override
 	public void run() {
 		currentThread = Thread.currentThread();
+		if (fileItem != null) {
+			run(fileItem);
+		}
 	}
-
-	protected void finalize(boolean status) {
+	/**
+	 * 
+	 * @param fileItem fileItem on which the command will be executed.
+	 * @return True if the execution is successful
+	 */
+	public abstract void run(FileItem fileItem);
+	/**
+	 * To be called at the end of the primary action (only for commandValidFile).
+	 * @param status
+	 * @param specialId the specialId associated with the task
+	 */
+	protected void finalize(boolean status, long specialId) {
 		if (status) {
 			fileItem.used = true;
 			fileItem.hash = null;
+			fileItem.specialId = specialId;
 		} else {
 			// execution in error, will retry later on
 			fileItem.used = false;
 			fileItem.hash = null;
+			fileItem.specialId = specialId;
 		}
 	}
 	
