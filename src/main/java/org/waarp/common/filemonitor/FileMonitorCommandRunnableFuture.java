@@ -20,6 +20,8 @@
  */
 package org.waarp.common.filemonitor;
 
+import java.util.Date;
+
 import org.waarp.common.filemonitor.FileMonitor.FileItem;
 
 /**
@@ -30,6 +32,7 @@ import org.waarp.common.filemonitor.FileMonitor.FileItem;
 public abstract class FileMonitorCommandRunnableFuture implements Runnable {
 	public FileItem fileItem;
 	private Thread currentThread;
+	public FileMonitor monitor;
 	
 	/**
 	 */
@@ -66,15 +69,32 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
 	 * @param specialId the specialId associated with the task
 	 */
 	protected void finalize(boolean status, long specialId) {
+		if (monitor != null) {
+			Date date = new Date();
+			if (date.after(monitor.nextDay)) {
+				// midnight is after last check
+				monitor.setNextDay();
+				monitor.todayok.set(0);
+				monitor.todayerror.set(0);
+			}
+		}
 		if (status) {
 			fileItem.used = true;
 			fileItem.hash = null;
 			fileItem.specialId = specialId;
+			if (monitor != null) {
+				monitor.globalok.incrementAndGet();
+				monitor.todayok.incrementAndGet();
+			}
 		} else {
 			// execution in error, will retry later on
 			fileItem.used = false;
 			fileItem.hash = null;
 			fileItem.specialId = specialId;
+			if (monitor != null) {
+				monitor.globalerror.incrementAndGet();
+				monitor.todayerror.incrementAndGet();
+			}
 		}
 	}
 	

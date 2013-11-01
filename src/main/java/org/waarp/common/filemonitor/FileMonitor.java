@@ -25,6 +25,9 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
@@ -103,7 +107,13 @@ public class FileMonitor {
 	protected final AdaptativeJsonHandler handler = new AdaptativeJsonHandler(JsonCodec.JSON);
 	protected final ConcurrentLinkedQueue<Future<?>> results = new ConcurrentLinkedQueue<Future<?>>();
 	
-	public final FileMonitorInformation fileMonitorInformation;
+	protected final FileMonitorInformation fileMonitorInformation;
+	protected AtomicLong globalok = new AtomicLong(0);
+	protected AtomicLong globalerror = new AtomicLong(0);
+	protected AtomicLong todayok = new AtomicLong(0);
+	protected AtomicLong todayerror = new AtomicLong(0);
+	protected Date nextDay;
+	
 	/**
 	 * @param name name of this daemon
 	 * @param statusFile the file where the current status is saved (current files)
@@ -142,7 +152,19 @@ public class FileMonitor {
 		this.commandRemovedFile = commandRemovedFile;
 		this.commandCheckIteration = commandCheckIteration;
 		this.reloadStatus();
-		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir);
+		this.setNextDay();
+		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir,
+				globalok, globalerror, todayok, todayerror);
+	}
+	
+	protected void setNextDay() {
+		Calendar c = new GregorianCalendar();
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		c.add(Calendar.DAY_OF_MONTH, 1);
+		nextDay = c.getTime();
 	}
 
 	/**
@@ -552,22 +574,18 @@ public class FileMonitor {
 		public File statusFile;
 		public long elapseTime;
 		public boolean scanSubDir;
+		public AtomicLong globalok;
+		public AtomicLong globalerror;
+		public AtomicLong todayok;
+		public AtomicLong todayerror;
 		
 		public FileMonitorInformation() {
 			// empty constructor for JSON
 		}
-		/**
-		 * @param name
-		 * @param fileItems
-		 * @param directories
-		 * @param stopFile
-		 * @param statusFile
-		 * @param elapseTime
-		 * @param scanSubDir
-		 */
 		protected FileMonitorInformation(String name, HashMap<String, FileItem> fileItems,
 				List<File> directories, File stopFile, File statusFile, 
-				long elapseTime, boolean scanSubDir) {
+				long elapseTime, boolean scanSubDir, 
+				AtomicLong globalok, AtomicLong globalerror, AtomicLong todayok, AtomicLong todayerror) {
 			this.name = name;
 			this.fileItems = fileItems;
 			this.directories = directories;
@@ -575,6 +593,10 @@ public class FileMonitor {
 			this.statusFile = statusFile;
 			this.elapseTime = elapseTime;
 			this.scanSubDir = scanSubDir;
+			this.globalok = globalok;
+			this.globalerror = globalerror;
+			this.todayok = todayok;
+			this.todayerror = todayerror;
 		}
 		
 	}
