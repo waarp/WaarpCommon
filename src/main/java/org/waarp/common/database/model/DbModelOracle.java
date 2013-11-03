@@ -367,6 +367,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	}
 
 	public String limitRequest(String allfields, String request, int nb) {
+		if (nb == 0) return request;
 		return "select " + allfields + " from ( " + request + " ) where rownum <= " + nb;
 	}
 }
