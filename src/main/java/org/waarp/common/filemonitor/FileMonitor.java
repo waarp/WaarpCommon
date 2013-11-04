@@ -664,14 +664,16 @@ public class FileMonitor {
     		System.err.println("Not a directory");
     		return;
     	}
-    	FileMonitor monitor = new FileMonitor("test", file, stopfile, dir, null, 0, 
-    			new RegexFileFilter(RegexFileFilter.REGEX_XML_EXTENSION), 
-    			false, new FileMonitorCommandRunnableFuture() {
+    	FileMonitorCommandRunnableFuture filemonitor =
+    			new FileMonitorCommandRunnableFuture() {
     		public void run(FileItem file) {
 				System.out.println("File New: "+file.file.getAbsolutePath());
 				finalize(true, 0);
 			}
-		}, new FileMonitorCommandRunnableFuture() {
+		};
+    	FileMonitor monitor = new FileMonitor("test", file, stopfile, dir, null, 0, 
+    			new RegexFileFilter(RegexFileFilter.REGEX_XML_EXTENSION), 
+    			false, filemonitor, new FileMonitorCommandRunnableFuture() {
 			public void run(FileItem file) {
 				System.err.println("File Del: "+file.file.getAbsolutePath());
 			}
@@ -680,6 +682,7 @@ public class FileMonitor {
 				System.err.println("Check done");
 			}
 		});
+    	filemonitor.setMonitor(monitor);
     	monitor.start();
     	monitor.waitForStopFile();
 	}

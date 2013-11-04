@@ -39,6 +39,10 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
 	public FileMonitorCommandRunnableFuture() {
 	}
 
+	public void setMonitor(FileMonitor monitor) {
+		this.monitor = monitor;
+	}
+	
 	/**
 	 * @param fileItem
 	 */
