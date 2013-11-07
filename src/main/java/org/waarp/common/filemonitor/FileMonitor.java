@@ -379,6 +379,10 @@ public class FileMonitor {
 				System.err.println("Exception during execution");
 				e.printStackTrace();
 				error = true;
+			} catch (NullPointerException e) {
+				System.err.println("Exception during execution");
+				e.printStackTrace();
+				error = true;
 			}
 		}
 		results.clear();

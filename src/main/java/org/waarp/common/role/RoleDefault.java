@@ -85,7 +85,7 @@ public class RoleDefault {
 			}
 		}
 		public boolean isContained(byte value) {
-			return (value & role) != 0;
+			return (value & role) == role;
 		}
 		public byte getAsByte() {
 			return role;
