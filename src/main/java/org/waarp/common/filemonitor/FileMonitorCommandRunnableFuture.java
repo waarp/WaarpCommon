@@ -64,7 +64,6 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
 	/**
 	 * 
 	 * @param fileItem fileItem on which the command will be executed.
-	 * @return True if the execution is successful
 	 */
 	public abstract void run(FileItem fileItem);
 	/**
