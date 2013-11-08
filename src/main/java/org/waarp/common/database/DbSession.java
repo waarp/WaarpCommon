@@ -342,25 +342,27 @@ public class DbSession {
 	 * To be called when a client will start to use this DbSession (once by client)
 	 */
 	public void useConnection() {
-		if (isDisconnected) {
-			try {
-				initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
-			} catch (WaarpDatabaseNoConnectionException e) {
-				logger.error("ThreadUsing: "+nbThread+" but not connected");
-				return;
+		synchronized (this) {
+			if (isDisconnected) {
+				try {
+					initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
+				} catch (WaarpDatabaseNoConnectionException e) {
+					logger.error("ThreadUsing: "+nbThread+" but not connected");
+					return;
+				}
 			}
 		}
-		nbThread.incrementAndGet();
-		logger.info("ThreadUsing: "+nbThread);
+		int val = nbThread.incrementAndGet();
+		logger.debug("ThreadUsing: "+val);
 	}
 
 	/**
 	 * To be called when a client will stop to use this DbSession (once by client)
 	 */
 	public void endUseConnection() {
-		nbThread.decrementAndGet();
-		logger.info("ThreadUsing: "+nbThread);
-		if (nbThread.get() <= 0) {
+		int val = nbThread.decrementAndGet();
+		logger.debug("ThreadUsing: "+val);
+		if (val <= 0) {
 			disconnect();
 		}
 	}
@@ -421,7 +423,7 @@ public class DbSession {
 		logger.debug("DbConnection still in use: "+nbThread);
 		if (nbThread.get() > 0) {
 			logger.info("Still some clients could use this Database Session: " +
-					nbThread, new Exception("trace"));
+					nbThread);
 			return;
 		}
 		removeLongTermPreparedStatements();
