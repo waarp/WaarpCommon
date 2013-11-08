@@ -402,7 +402,7 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="230" tokens="1056">
+<duplication lines="231" tokens="1064">
 <file line="164" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMariadb.java"/>
 <file line="170" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelMysql.java"/>
 <codefragment>
@@ -633,6 +633,7 @@
 	}
 
 	public String limitRequest(String allfields, String request, int nb) {
+		if (nb == 0) return request;
 		return request + " LIMIT " + nb;
 	}
 
@@ -1085,7 +1086,7 @@
 ]]>
 </codefragment>
 </duplication>
-<duplication lines="45" tokens="163">
+<duplication lines="46" tokens="171">
 <file line="275" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelH2.java"/>
 <file line="249" path="J:\Git\github\waarp-digest\WaarpCommon\src\main\java\org\waarp\common\database\model\DbModelPostgresql.java"/>
 <codefragment>
@@ -1131,6 +1132,7 @@
 	}
 
 	public String limitRequest(String allfields, String request, int nb) {
+		if (nb == 0) return request;
 		return request + " LIMIT " + nb;
 	}
 
