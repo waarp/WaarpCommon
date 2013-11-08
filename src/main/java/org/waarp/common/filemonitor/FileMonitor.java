@@ -25,16 +25,25 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.Timer;
 import org.jboss.netty.util.TimerTask;
+import org.waarp.common.database.DbConstant;
 import org.waarp.common.digest.FilesystemBasedDigest;
 import org.waarp.common.digest.FilesystemBasedDigest.DigestAlgo;
 import org.waarp.common.file.AbstractDir;
@@ -65,13 +74,16 @@ public class FileMonitor {
 	
 	protected WaarpFuture future = null;
 	protected WaarpFuture internalfuture = null;
+	protected boolean stopped = false;
 	protected final String name;
 	protected final File statusFile;
 	protected final File stopFile;
 	protected final List<File> directories = new ArrayList<File>();
 	protected final DigestAlgo digest;
 	protected long elapseTime = defaultDelay; // default to 1s
+	protected long elapseWaarpTime = -1; // default set to run after each run
 	protected Timer timer = null;
+	protected Timer timerWaarp = null; // used only if elapseWaarpTime > defaultDelay (1s)
 	protected boolean scanSubDir = false;
 	
 	protected final HashMap<String, FileItem> fileItems = 
@@ -83,15 +95,25 @@ public class FileMonitor {
 			return pathname.isFile();
 		}
 	};
-	protected FileMonitorCommand commandValidFile = null;
-	protected FileMonitorCommand commandRemovedFile = null;
-	protected FileMonitorCommand commandCheckIteration = null;
+	protected FileMonitorCommandRunnableFuture commandValidFile = null;
+	protected FileMonitorCommandFactory commandValidFileFactory = null;
+	protected ExecutorService executor = null;
+	protected int fixedThreadPool = 0;
+	protected FileMonitorCommandRunnableFuture commandRemovedFile = null;
+	protected FileMonitorCommandRunnableFuture commandCheckIteration = null;
 	
 	protected ConcurrentLinkedQueue<FileItem> toUse = 
 			new ConcurrentLinkedQueue<FileMonitor.FileItem>();
 	protected final AdaptativeJsonHandler handler = new AdaptativeJsonHandler(JsonCodec.JSON);
+	protected final ConcurrentLinkedQueue<Future<?>> results = new ConcurrentLinkedQueue<Future<?>>();
 	
-	public final FileMonitorInformation fileMonitorInformation;
+	protected final FileMonitorInformation fileMonitorInformation;
+	protected AtomicLong globalok = new AtomicLong(0);
+	protected AtomicLong globalerror = new AtomicLong(0);
+	protected AtomicLong todayok = new AtomicLong(0);
+	protected AtomicLong todayerror = new AtomicLong(0);
+	protected Date nextDay;
+	
 	/**
 	 * @param name name of this daemon
 	 * @param statusFile the file where the current status is saved (current files)
@@ -107,9 +129,9 @@ public class FileMonitor {
 	public FileMonitor(String name, File statusFile, File stopFile,
 			File directory, DigestAlgo digest, long elapseTime, 
 			FileFilter filter, boolean scanSubdir,
-			FileMonitorCommand commandValidFile, 
-			FileMonitorCommand commandRemovedFile,
-			FileMonitorCommand commandCheckIteration) {
+			FileMonitorCommandRunnableFuture commandValidFile, 
+			FileMonitorCommandRunnableFuture commandRemovedFile,
+			FileMonitorCommandRunnableFuture commandCheckIteration) {
 		this.name = name;
 		this.statusFile = statusFile;
 		this.stopFile = stopFile;
@@ -130,14 +152,55 @@ public class FileMonitor {
 		this.commandRemovedFile = commandRemovedFile;
 		this.commandCheckIteration = commandCheckIteration;
 		this.reloadStatus();
-		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir);
+		this.setNextDay();
+		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir,
+				globalok, globalerror, todayok, todayerror);
+	}
+	
+	protected void setNextDay() {
+		Calendar c = new GregorianCalendar();
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		c.add(Calendar.DAY_OF_MONTH, 1);
+		nextDay = c.getTime();
 	}
 
 	/**
 	 * @param commandCheckIteration the commandCheckIteration to run (may be null), runs after each check (elapseTime)
 	 */
-	public void setCommandCheckIteration(FileMonitorCommand commandCheckIteration) {
+	public void setCommandCheckIteration(FileMonitorCommandRunnableFuture commandCheckIteration) {
 		this.commandCheckIteration = commandCheckIteration;
+	}
+
+	/**
+	 * 
+	 * @param factory the factory to used instead of simple instance (enables parallelism)
+	 * @param fixedPool if > 0, set the number of parallel threads allowed
+	 */
+	public void setCommandValidFileFactory(FileMonitorCommandFactory factory, int fixedPool) {
+		this.commandValidFileFactory = factory;
+		this.fixedThreadPool = fixedPool;
+	}
+	
+	/**
+	 * @return the elapseWaarpTime
+	 */
+	public long getElapseWaarpTime() {
+		return elapseWaarpTime;
+	}
+
+	/**
+	 * if set greater than 1000 ms, will be parallel, 
+	 * else will be sequential after each check and ignoring this timer
+	 * 
+	 * @param elapseWaarpTime the elapseWaarpTime to set 
+	 */
+	public void setElapseWaarpTime(long elapseWaarpTime) {
+		if (elapseWaarpTime >= defaultDelay) {
+			this.elapseWaarpTime = (elapseWaarpTime/10)*10;
+		}
 	}
 
 	/**
@@ -218,18 +281,40 @@ public class FileMonitor {
 			timer.newTimeout(new FileMonitorTimerTask(this), elapseTime, TimeUnit.MILLISECONDS);
 			future = new WaarpFuture(true);
 			internalfuture = new WaarpFuture(true);
+			if (commandValidFileFactory != null && executor == null) {
+				if (fixedThreadPool > 0) {
+					executor = Executors.newFixedThreadPool(fixedThreadPool, new WaarpThreadFactory("FileMonitorRunner"));
+				} else {
+					executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
+				}
+			}
 		}// else already started
+		if (elapseWaarpTime >= defaultDelay && timerWaarp == null && commandCheckIteration != null) {
+			timerWaarp = new HashedWheelTimer(
+					new WaarpThreadFactory("TimerFileMonitorWaarp"),
+					100, TimeUnit.MILLISECONDS, 8);
+			timerWaarp.newTimeout(new FileMonitorTimerInformationTask(commandCheckIteration), elapseWaarpTime, TimeUnit.MILLISECONDS);
+		}
 	}
 	
 	public void stop() {
+		stopped = true;
+		if (timerWaarp != null) {
+			timerWaarp.stop();
+		}
+		if (internalfuture != null) {
+			internalfuture.awaitUninterruptibly(elapseTime*2, TimeUnit.MILLISECONDS);
+			internalfuture.setSuccess();
+		}
 		if (timer != null) {
 			timer.stop();
 		}
-		if (internalfuture != null) {
-			internalfuture.awaitUninterruptibly();
-			internalfuture = null;
-		}
 		timer = null;
+		timerWaarp = null;
+		if (executor != null) {
+			executor.shutdown();
+			executor = null;
+		}
 		if (future != null) {
 			future.setSuccess();
 		}
@@ -261,17 +346,50 @@ public class FileMonitor {
 		internalfuture.awaitUninterruptibly();
 		stop();
 	}
+	
+	private boolean checkStop() {
+		if (stopped || stopFile.exists()) {
+			internalfuture.setSuccess();
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * Check Files
 	 * @return False to stop
 	 */
 	protected boolean checkFiles() {
 		boolean fileItemsChanged = false;
-		if (stopFile.exists()) {
+		if (checkStop()) {
 			return false;
 		}
 		for (File directory : directories) {
 			fileItemsChanged = checkOneDir(fileItemsChanged, directory);
+		}
+		boolean error = false;
+		// Wait for all commands to finish before continuing
+		for (Future<?> future : results) {
+			try {
+				future.get();
+			} catch (InterruptedException e) {
+				System.err.println("Interruption so exit");
+				e.printStackTrace();
+				error = true;
+			} catch (ExecutionException e) {
+				System.err.println("Exception during execution");
+				e.printStackTrace();
+				error = true;
+			} catch (NullPointerException e) {
+				System.err.println("Exception during execution");
+				e.printStackTrace();
+				error = true;
+			}
+		}
+		results.clear();
+		if (error) {
+			// do not save ?
+			//this.saveStatus();
+			return false;
 		}
 		// now check that all existing items are still valid
 		List<FileItem> todel = new LinkedList<FileItem>();
@@ -287,7 +405,7 @@ public class FileMonitor {
 			fileItems.remove(name);
 			toUse.remove(fileItem);
 			if (commandRemovedFile != null) {
-				commandRemovedFile.run(fileItem.file);
+				commandRemovedFile.run(fileItem);
 			}
 			fileItem.file = null;
 			fileItem.hash = null;
@@ -297,7 +415,10 @@ public class FileMonitor {
 		if (fileItemsChanged) {
 			this.saveStatus();
 		}
-		if (commandCheckIteration != null) {
+		if (checkStop()) {
+			return false;
+		}
+		if (commandCheckIteration != null && timerWaarp == null) {
 			commandCheckIteration.run(null);
 		}
 		return true;
@@ -311,6 +432,9 @@ public class FileMonitor {
 	protected boolean checkOneDir(boolean fileItemsChanged, File directory) {
 		File [] files = directory.listFiles(filter);
 		for (File file : files) {
+			if (checkStop()) {
+				return false;
+			}
 			if (file.isDirectory()) {
 				continue;
 			}
@@ -348,11 +472,12 @@ public class FileMonitor {
 				}
 				// now time and hash are the same so act on it
 				fileItem.timeUsed = System.currentTimeMillis();
-				if (commandValidFile != null) {
-					if (commandValidFile.run(fileItem.file)) {
-						fileItem.used = true;
-						fileItem.hash = null;
-					}
+				if (commandValidFileFactory != null) {
+					FileMonitorCommandRunnableFuture torun = commandValidFileFactory.create(fileItem);
+					Future<?> torunFuture = executor.submit(torun);
+					results.add(torunFuture);
+				} else if (commandValidFile != null) {
+					commandValidFile.run(fileItem);
 				} else {
 					toUse.add(fileItem);
 				}
@@ -364,6 +489,9 @@ public class FileMonitor {
 		if (scanSubDir) {
 			files = directory.listFiles();
 			for (File file : files) {
+				if (checkStop()) {
+					return false;
+				}
 				if (file.isDirectory()) {
 					fileItemsChanged = checkOneDir(fileItemsChanged, file);
 				}
@@ -388,12 +516,52 @@ public class FileMonitor {
 
 		public void run(Timeout timeout) throws Exception {
 			if (fileMonitor.checkFiles()) {
-				fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
+				if (fileMonitor.timer != null) {
+					try {
+						fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
+					} catch (Exception e) {
+						// ignore and stop
+						fileMonitor.internalfuture.setSuccess();
+					}
+				} else {
+					fileMonitor.internalfuture.setSuccess();
+				}
 			} else {
 				fileMonitor.internalfuture.setSuccess();
 			}
 		}
 		
+	}
+	/**
+	 * Class to run Waarp Business information in fixed delay rather than after each check
+	 * @author "Frederic Bregier"
+	 *
+	 */
+	protected class FileMonitorTimerInformationTask implements TimerTask {
+		protected final FileMonitorCommandRunnableFuture informationMonitorCommand;
+		/**
+		 * @param informationMonitorCommand
+		 */
+		protected FileMonitorTimerInformationTask(FileMonitorCommandRunnableFuture informationMonitorCommand) {
+			this.informationMonitorCommand = informationMonitorCommand;
+		}
+
+		public void run(Timeout timeout) throws Exception {
+			if (!checkStop()) {
+				informationMonitorCommand.run(null);
+				if (timerWaarp != null && ! checkStop()) {
+					try {
+						timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
+					} catch (Exception e) {
+						// stop and ignore
+					}
+				} else {
+					internalfuture.setSuccess();
+				}
+			} else {
+				internalfuture.setSuccess();
+			}
+		}
 	}
 	
 	/**
@@ -410,22 +578,18 @@ public class FileMonitor {
 		public File statusFile;
 		public long elapseTime;
 		public boolean scanSubDir;
+		public AtomicLong globalok;
+		public AtomicLong globalerror;
+		public AtomicLong todayok;
+		public AtomicLong todayerror;
 		
 		public FileMonitorInformation() {
 			// empty constructor for JSON
 		}
-		/**
-		 * @param name
-		 * @param fileItems
-		 * @param directories
-		 * @param stopFile
-		 * @param statusFile
-		 * @param elapseTime
-		 * @param scanSubDir
-		 */
 		protected FileMonitorInformation(String name, HashMap<String, FileItem> fileItems,
 				List<File> directories, File stopFile, File statusFile, 
-				long elapseTime, boolean scanSubDir) {
+				long elapseTime, boolean scanSubDir, 
+				AtomicLong globalok, AtomicLong globalerror, AtomicLong todayok, AtomicLong todayerror) {
 			this.name = name;
 			this.fileItems = fileItems;
 			this.directories = directories;
@@ -433,6 +597,10 @@ public class FileMonitor {
 			this.statusFile = statusFile;
 			this.elapseTime = elapseTime;
 			this.scanSubDir = scanSubDir;
+			this.globalok = globalok;
+			this.globalerror = globalerror;
+			this.todayok = todayok;
+			this.todayerror = todayerror;
 		}
 		
 	}
@@ -447,6 +615,7 @@ public class FileMonitor {
 		public long lastTime = Long.MIN_VALUE;
 		public long timeUsed = Long.MIN_VALUE;
 		public boolean used = false;
+		public long specialId = DbConstant.ILLEGALVALUE;
 
 		public FileItem() {
 			// empty constructor for JSON
@@ -460,8 +629,21 @@ public class FileMonitor {
 
 		@Override
 		public boolean equals(Object obj) {
+			// equality is based on file itself
 			return (obj != null && obj instanceof FileItem && 
 					file.equals(((FileItem) obj).file));
+		}
+		/**
+		 * To be called when the call of primary action is OK
+		 */
+		public void valid() {
+			
+		}
+		/**
+		 * To be called when the call of primary action is KO
+		 */
+		public void invalid() {
+			
 		}
 	}
 
@@ -486,24 +668,25 @@ public class FileMonitor {
     		System.err.println("Not a directory");
     		return;
     	}
+    	FileMonitorCommandRunnableFuture filemonitor =
+    			new FileMonitorCommandRunnableFuture() {
+    		public void run(FileItem file) {
+				System.out.println("File New: "+file.file.getAbsolutePath());
+				finalize(true, 0);
+			}
+		};
     	FileMonitor monitor = new FileMonitor("test", file, stopfile, dir, null, 0, 
     			new RegexFileFilter(RegexFileFilter.REGEX_XML_EXTENSION), 
-    			false, new FileMonitorCommand() {
-			public boolean run(File file) {
-				System.out.println("File New: "+file.getAbsolutePath());
-				return true;
+    			false, filemonitor, new FileMonitorCommandRunnableFuture() {
+			public void run(FileItem file) {
+				System.err.println("File Del: "+file.file.getAbsolutePath());
 			}
-		}, new FileMonitorCommand() {
-			public boolean run(File file) {
-				System.err.println("File Del: "+file.getAbsolutePath());
-				return true;
-			}
-		}, new FileMonitorCommand() {
-			public boolean run(File unused) {
+		}, new FileMonitorCommandRunnableFuture() {
+			public void run(FileItem unused) {
 				System.err.println("Check done");
-				return true;
 			}
 		});
+    	filemonitor.setMonitor(monitor);
     	monitor.start();
     	monitor.waitForStopFile();
 	}

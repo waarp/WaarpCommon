@@ -387,6 +387,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 	}
 
 	public String limitRequest(String allfields, String request, int nb) {
+		if (nb == 0) return request;
 		return request + " LIMIT " + nb;
 	}
 

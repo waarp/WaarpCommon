@@ -34,6 +34,7 @@ public class WaarpThreadFactory implements ThreadFactory {
 
 	public Thread newThread(Runnable arg0) {
 		Thread thread = new Thread(arg0, GlobalName + counter.incrementAndGet());
+		thread.setDaemon(true);
 		return thread;
 	}
 }

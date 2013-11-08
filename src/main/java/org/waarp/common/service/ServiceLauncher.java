@@ -31,6 +31,7 @@ import org.jboss.netty.logging.InternalLoggerFactory;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
 import org.waarp.common.logging.WaarpSlf4JLoggerFactory;
+import org.waarp.common.utility.WaarpThreadFactory;
 
 /**
  * Launch the Engine from a variety of sources, either through a main() or invoked through
@@ -67,7 +68,7 @@ public abstract class ServiceLauncher implements Daemon {
     		logger = WaarpInternalLoggerFactory.getLogger(ServiceLauncher.class);
     	}
     	if (executor == null) {
-    		executor = Executors.newSingleThreadExecutor();
+    		executor = Executors.newSingleThreadExecutor(new WaarpThreadFactory("ServiceLauncher"));
     	}
     	engineLauncherInstance = this;
     	if (engine == null) {
@@ -192,10 +193,7 @@ public abstract class ServiceLauncher implements Daemon {
 		}
         if (!status || !stopCalledCorrectly) {
         	// Was stopped outside service management
-    		if (executor != null) {
-        		executor.shutdown();
-        		executor = null;
-        	}
+        	terminate();
         	if (controller != null) {
         		controller.fail("Service stopped abnormally");
         	} else {
@@ -208,7 +206,7 @@ public abstract class ServiceLauncher implements Daemon {
      * Internal command
      */
     protected void windowsStop() {
-        logger.info("windowsStop called");
+        logger.info("windowsStop called from Service: "+stopCalledCorrectly);
         terminate();
         // should we force Future to be cancelled there?
     }
@@ -231,13 +229,7 @@ public abstract class ServiceLauncher implements Daemon {
 
     public void destroy() {
     	logger.info("Daemon destroy");
-    	if (engine != null && !engine.isShutdown()) {
-    		terminate();
-    	}
-    	if (executor != null) {
-    		executor.shutdown();
-    		executor = null;
-    	}
+    	terminate();
     }
 
     /**
