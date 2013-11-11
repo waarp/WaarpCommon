@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>WaarpCommon</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.19</version>
+  <version>1.2.20</version>
   <name>Waarp Common</name>
   <description>
 	  The Waarp Common project contains several classes that are common with different
@@ -83,7 +83,7 @@
     <dependency>
       <groupId>Waarp</groupId>
       <artifactId>WaarpDigest</artifactId>
-      <version>1.1.7</version>
+      <version>1.1.8</version>
     </dependency>
     <dependency>
     	<groupId>org.slf4j</groupId>
