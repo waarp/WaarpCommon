@@ -32,6 +32,7 @@ import org.waarp.common.digest.FilesystemBasedDigest;
 import org.waarp.common.exception.CryptoException;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.utility.WaarpStringUtils;
 
 /**
  * This class handles method to crypt and decrypt using the chosen algorithm.<br>
@@ -257,7 +258,7 @@ public abstract class KeyObject {
 	 * @throws Exception
 	 */
 	public byte[] crypt(String plaintext) throws Exception {
-		return crypt(plaintext.getBytes());
+		return crypt(plaintext.getBytes(WaarpStringUtils.UTF8));
 	}
 
 	/**
@@ -268,7 +269,7 @@ public abstract class KeyObject {
 	 * @throws Exception
 	 */
 	public String cryptToHex(String plaintext) throws Exception {
-		return cryptToHex(plaintext.getBytes());
+		return cryptToHex(plaintext.getBytes(WaarpStringUtils.UTF8));
 	}
 
 	/**
@@ -317,7 +318,7 @@ public abstract class KeyObject {
 	 * @throws Exception
 	 */
 	public String decryptInString(byte[] ciphertext) throws Exception {
-		return new String(decrypt(ciphertext));
+		return new String(decrypt(ciphertext), WaarpStringUtils.UTF8);
 	}
 
 	/**
@@ -342,7 +343,7 @@ public abstract class KeyObject {
 	 * @throws Exception
 	 */
 	public byte[] decryptHexInBytes(byte[] ciphertext) throws Exception {
-		byte[] arrayBytes = decodeHex(new String(ciphertext));
+		byte[] arrayBytes = decodeHex(new String(ciphertext, WaarpStringUtils.UTF8));
 		return decrypt(arrayBytes);
 	}
 
@@ -355,7 +356,7 @@ public abstract class KeyObject {
 	 * @throws Exception
 	 */
 	public String decryptHexInString(String ciphertext) throws Exception {
-		return new String(decryptHexInBytes(ciphertext));
+		return new String(decryptHexInBytes(ciphertext), WaarpStringUtils.UTF8);
 	}
 
 	/**
@@ -374,7 +375,7 @@ public abstract class KeyObject {
 			dis = new DataInputStream(inputStream);
 			dis.readFully(byteKeys);
 			dis.close();
-			String skey = new String(byteKeys);
+			String skey = new String(byteKeys, WaarpStringUtils.UTF8);
 			// decrypt it
 			byteKeys = decryptHexInBytes(skey);
 			return byteKeys;

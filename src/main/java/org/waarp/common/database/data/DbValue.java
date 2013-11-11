@@ -31,6 +31,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
+import org.waarp.common.utility.WaarpStringUtils;
 
 /**
  * Database Value to help getting and setting value from and to database
@@ -305,7 +306,7 @@ public class DbValue {
 			case Types.DOUBLE:
 				return ((Double) value).toString();
 			case Types.VARBINARY:
-				return new String((byte[]) value);
+				return new String((byte[]) value, WaarpStringUtils.UTF8);
 			case Types.DATE:
 				return ((Date) value).toString();
 			case Types.TIMESTAMP:
@@ -375,7 +376,7 @@ public class DbValue {
 				value = Double.parseDouble(svalue);
 				break;
 			case Types.VARBINARY:
-				value = svalue.getBytes();
+				value = svalue.getBytes(WaarpStringUtils.UTF8);
 				break;
 			case Types.DATE:
 				try {

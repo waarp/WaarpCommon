@@ -60,23 +60,21 @@ public abstract class AbstractDir implements DirInterface {
 	/**
 	 * Hack to say Windows or Unix (root like X:\ or /)
 	 */
-	protected static Boolean ISUNIX = null;
+	protected static final Boolean ISUNIX;
 	/**
 	 * Roots for Windows system
 	 */
-	protected static File[] roots = null;
+	protected static final File[] roots;
 
 	/**
 	 * Init Windows Support
 	 */
 	static {
-		if (ISUNIX == null) {
-			ISUNIX = ! DetectionUtils.isWindows();
-		}
-		if (roots == null) {
-			if (!ISUNIX) {
-				roots = File.listRoots();
-			}
+		ISUNIX = ! DetectionUtils.isWindows();
+		if (!ISUNIX) {
+			roots = File.listRoots();
+		} else {
+			roots = new File[] {new File("/")};
 		}
 	}
 

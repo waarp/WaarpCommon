@@ -368,6 +368,11 @@ public class DbSession {
 	}
 	
 	@Override
+	public int hashCode() {
+		return this.internalId.hashCode();
+		
+	}
+	@Override
     public boolean equals(Object o) {
     	if (o == null || !(o instanceof DbSession)) return false;
         return (this == o) || this.internalId.equals(((DbSession) o).internalId);

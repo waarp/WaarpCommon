@@ -51,7 +51,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
 			.getLogger(DbModelMariadb.class);
 
-	public static DbType type = DbType.MariaDB;
+	public static final DbType type = DbType.MariaDB;
 
 	protected static MySQLDataSource mysqlConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
@@ -130,22 +130,24 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
-		if (pool != null) {
-			try {
-				return pool.getConnection();
-			} catch (SQLException e) {
-				// try to renew the pool
-				mysqlConnectionPoolDataSource = new MySQLDataSource();
-				mysqlConnectionPoolDataSource.setUrl(server);
-				mysqlConnectionPoolDataSource.setUser(user);
-				mysqlConnectionPoolDataSource.setPassword(passwd);
-				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+		synchronized (this) {
+			if (pool != null) {
 				try {
 					return pool.getConnection();
-				} catch (SQLException e2) {
-					pool.dispose();
-					pool = null;
-					return super.getDbConnection(server, user, passwd);
+				} catch (SQLException e) {
+					// try to renew the pool
+					mysqlConnectionPoolDataSource = new MySQLDataSource();
+					mysqlConnectionPoolDataSource.setUrl(server);
+					mysqlConnectionPoolDataSource.setUser(user);
+					mysqlConnectionPoolDataSource.setPassword(passwd);
+					pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+					try {
+						return pool.getConnection();
+					} catch (SQLException e2) {
+						pool.dispose();
+						pool = null;
+						return super.getDbConnection(server, user, passwd);
+					}
 				}
 			}
 		}

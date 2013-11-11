@@ -51,7 +51,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
 			.getLogger(DbModelOracle.class);
 
-	public static DbType type = DbType.Oracle;
+	public static final DbType type = DbType.Oracle;
 
 	protected static OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
@@ -165,21 +165,23 @@ public abstract class DbModelOracle extends DbModelAbstract {
 		if (pool == null) {
 			return super.getDbConnection(server, user, passwd);
 		}
-		try {
-			return pool.getConnection();
-		} catch (SQLException e) {
-			// try to renew the pool
-			oracleConnectionPoolDataSource = new OracleConnectionPoolDataSource();
-			oracleConnectionPoolDataSource.setURL(server);
-			oracleConnectionPoolDataSource.setUser(user);
-			oracleConnectionPoolDataSource.setPassword(passwd);
-			pool.resetPoolDataSource(oracleConnectionPoolDataSource);
+		synchronized (this) {
 			try {
 				return pool.getConnection();
-			} catch (SQLException e2) {
-				pool.dispose();
-				pool = null;
-				return super.getDbConnection(server, user, passwd);
+			} catch (SQLException e) {
+				// try to renew the pool
+				oracleConnectionPoolDataSource = new OracleConnectionPoolDataSource();
+				oracleConnectionPoolDataSource.setURL(server);
+				oracleConnectionPoolDataSource.setUser(user);
+				oracleConnectionPoolDataSource.setPassword(passwd);
+				pool.resetPoolDataSource(oracleConnectionPoolDataSource);
+				try {
+					return pool.getConnection();
+				} catch (SQLException e2) {
+					pool.dispose();
+					pool = null;
+					return super.getDbConnection(server, user, passwd);
+				}
 			}
 		}
 	}

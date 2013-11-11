@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.waarp.common.exception.CryptoException;
+import org.waarp.common.utility.WaarpStringUtils;
 
 /**
  * 
@@ -171,7 +172,7 @@ public class DynamicKeyManager extends KeyManager {
 				return null;
 			}
 		}
-		return new String(readbyte);
+		return new String(readbyte, WaarpStringUtils.UTF8);
 	}
 
 	@Override
@@ -189,9 +190,9 @@ public class DynamicKeyManager extends KeyManager {
 				String algo = key.getAlgorithm();
 				String instance = key.getInstance();
 				outputStream.write(algo.length());
-				outputStream.write(algo.getBytes());
+				outputStream.write(algo.getBytes(WaarpStringUtils.UTF8));
 				outputStream.write(instance.length());
-				outputStream.write(instance.getBytes());
+				outputStream.write(instance.getBytes(WaarpStringUtils.UTF8));
 				outputStream.close();
 			} finally {
 				outputStream.close();

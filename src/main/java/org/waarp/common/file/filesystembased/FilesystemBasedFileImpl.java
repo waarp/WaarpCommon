@@ -30,15 +30,12 @@ import java.nio.channels.FileChannel;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.waarp.common.command.exception.CommandAbstractException;
-import org.waarp.common.command.exception.Reply502Exception;
-import org.waarp.common.command.exception.Reply530Exception;
 import org.waarp.common.command.exception.Reply550Exception;
 import org.waarp.common.exception.FileEndOfTransferException;
 import org.waarp.common.exception.FileTransferException;
-import org.waarp.common.exception.NoRestartException;
+import org.waarp.common.file.AbstractFile;
 import org.waarp.common.file.DataBlock;
 import org.waarp.common.file.DirInterface;
-import org.waarp.common.file.Restart;
 import org.waarp.common.file.SessionInterface;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
@@ -49,8 +46,7 @@ import org.waarp.common.logging.WaarpInternalLoggerFactory;
  * @author Frederic Bregier
  * 
  */
-public abstract class FilesystemBasedFileImpl implements
-		org.waarp.common.file.FileInterface {
+public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	/**
 	 * Internal Logger
 	 */
@@ -77,11 +73,6 @@ public abstract class FilesystemBasedFileImpl implements
 	 * Current file if any
 	 */
 	protected String currentFile = null;
-
-	/**
-	 * Is this Document ready to be accessed
-	 */
-	protected boolean isReady = false;
 
 	/**
 	 * Is this file in append mode
@@ -141,16 +132,9 @@ public abstract class FilesystemBasedFileImpl implements
 	}
 
 	public void clear() throws CommandAbstractException {
-		closeFile();
-		isReady = false;
+		super.clear();
 		currentFile = null;
 		isAppend = false;
-	}
-
-	public void checkIdentify() throws Reply530Exception {
-		if (!getSession().getAuth().isIdentified()) {
-			throw new Reply530Exception("User not authentified");
-		}
 	}
 
 	public SessionInterface getSession() {
@@ -358,44 +342,6 @@ public abstract class FilesystemBasedFileImpl implements
 			}
 		}
 		logger.warn("Cannot read file: {}", file);
-		return false;
-	}
-
-	public DataBlock getMarker() throws CommandAbstractException {
-		throw new Reply502Exception("No marker implemented");
-	}
-
-	public boolean restartMarker(Restart restart)
-			throws CommandAbstractException {
-		try {
-			long newposition = ((FilesystemBasedRestartImpl) restart)
-					.getPosition();
-			try {
-				setPosition(newposition);
-			} catch (IOException e) {
-				throw new Reply502Exception("Cannot set the marker position");
-			}
-			return true;
-		} catch (NoRestartException e) {
-		}
-		return false;
-	}
-
-	public boolean retrieve() throws CommandAbstractException {
-		checkIdentify();
-		if (isReady) {
-			restartMarker(getSession().getRestart());
-			return canRead();
-		}
-		return false;
-	}
-
-	public boolean store() throws CommandAbstractException {
-		checkIdentify();
-		if (isReady) {
-			restartMarker(getSession().getRestart());
-			return canWrite();
-		}
 		return false;
 	}
 

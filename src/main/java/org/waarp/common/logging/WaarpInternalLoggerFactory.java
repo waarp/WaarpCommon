@@ -27,7 +27,7 @@ import org.jboss.netty.logging.InternalLoggerFactory;
  * 
  */
 public abstract class WaarpInternalLoggerFactory extends
-		org.jboss.netty.logging.InternalLoggerFactory implements WaarpInternalLoggerInterface {
+		InternalLoggerFactory implements WaarpInternalLoggerInterface {
 	/**
 	 * 
 	 * @param clazz

@@ -373,7 +373,9 @@ public class WaarpFuture {
 	 * Experimental: try to re-enable the future
 	 */
 	public void reset() {
-		this.done = false;
-		this.cause = null;
+		synchronized (this) {
+			this.done = false;
+			this.cause = null;
+		}
 	}
 }

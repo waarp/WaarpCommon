@@ -145,12 +145,10 @@ public abstract class WaarpShutdownHook extends Thread {
 	@Override
 	public void run() {
 		if (isShutdownOver) {
-			if (shutdownHook != null) {
-				if (shutdownHook.serviceStopped()) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {}
-				}
+			if (shutdownHook != null && shutdownHook.serviceStopped()) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {}
 			}
 			// Already stopped
 			System.err.println("Halt System now - services already stopped -");

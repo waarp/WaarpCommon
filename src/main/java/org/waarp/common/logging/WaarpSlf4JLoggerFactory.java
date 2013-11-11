@@ -50,7 +50,7 @@ public class WaarpSlf4JLoggerFactory extends
 
 	@Override
 	public InternalLogger newInstance(String name) {
-		final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(name);
+		final org.slf4j.Logger logger = LoggerFactory.getLogger(name);
 		return new WaarpSlf4JLogger(logger);
 	}
 }

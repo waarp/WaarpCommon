@@ -17,6 +17,8 @@
  */
 package org.waarp.common.file;
 
+import java.io.IOException;
+
 import org.waarp.common.command.exception.CommandAbstractException;
 import org.waarp.common.command.exception.Reply530Exception;
 import org.waarp.common.exception.FileEndOfTransferException;
@@ -192,6 +194,15 @@ public interface FileInterface {
 	 */
 	public abstract boolean delete() throws CommandAbstractException;
 
+	/**
+	 * Change the position in the file.
+	 * 
+	 * @param position
+	 *            the position to set
+	 * @throws IOException
+	 */
+	public abstract void setPosition(long position) throws IOException;
+	
 	/**
 	 * Function called by the DataNetworkHandler when it receives one DataBlock (Store like command)
 	 * 

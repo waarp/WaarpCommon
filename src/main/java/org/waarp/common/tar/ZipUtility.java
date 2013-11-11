@@ -130,41 +130,7 @@ public class ZipUtility {
 	 * @return True if OK
 	 */
 	public static boolean createZipFromFiles(List<File> files, String filename) {
-		File saveFile = new File(filename);
-		ZipArchiveOutputStream zaos;
-		try {
-			zaos = new ZipArchiveOutputStream(new FileOutputStream(saveFile));
-		} catch (FileNotFoundException e) {
-			return false;
-		}
-		for (File file : files) {
-			try {
-				addFile(file, zaos);
-			} catch (IOException e) {
-				try {
-					zaos.close();
-				} catch (IOException e1) {
-					// ignore
-				}
-				return false;
-			}
-		}
-		try {
-			zaos.finish();
-		} catch (IOException e1) {
-			// ignore
-		}
-		try {
-			zaos.flush();
-		} catch (IOException e) {
-			// ignore
-		}
-		try {
-			zaos.close();
-		} catch (IOException e) {
-			// ignore
-		}
-		return true;
+		return createZipFromFiles(files.toArray(new File[]{}), filename);
 	}
 
 	/**

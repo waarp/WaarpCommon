@@ -51,8 +51,7 @@ public class WaarpJdkLoggerFactory extends JdkLoggerFactory implements WaarpInte
 
 	@Override
 	public InternalLogger newInstance(String name) {
-		final java.util.logging.Logger logger = java.util.logging.Logger
-				.getLogger(name);
+		final Logger logger = Logger.getLogger(name);
 		return new WaarpJdkLogger(logger, name);
 	}
 }

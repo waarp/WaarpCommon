@@ -154,7 +154,7 @@ public class WaarpSecureKeyStore {
 			logger.error("Cannot create KeyStore Instance", e);
 			throw new CryptoException("Cannot create KeyStore Instance", e);
 		}
-		FileInputStream inputStream;
+		FileInputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(keyStoreFilename);
 			keyStore.load(inputStream, getKeyStorePassword());
@@ -170,10 +170,13 @@ public class WaarpSecureKeyStore {
 		} catch (IOException e) {
 			logger.error("Cannot create KeyStore Instance", e);
 			throw new CryptoException("Cannot create KeyStore Instance", e);
-		}
-		try {
-			inputStream.close();
-		} catch (IOException e) {
+		} finally {
+			try {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			} catch (IOException e) {
+			}
 		}
 		initKeyManagerFactory();
 	}
@@ -247,31 +250,34 @@ public class WaarpSecureKeyStore {
 	 * @return True if keyStore is saved to file
 	 */
 	public boolean saveKeyStore(String filename) {
-		FileOutputStream fos;
+		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(filename);
+			try {
+				keyStore.store(fos, getKeyStorePassword());
+			} catch (KeyStoreException e) {
+				logger.error("Cannot save to file KeyStore Instance", e);
+				return false;
+			} catch (NoSuchAlgorithmException e) {
+				logger.error("Cannot save to file KeyStore Instance", e);
+				return false;
+			} catch (CertificateException e) {
+				logger.error("Cannot save to file KeyStore Instance", e);
+				return false;
+			} catch (IOException e) {
+				logger.error("Cannot save to file KeyStore Instance", e);
+				return false;
+			}
 		} catch (FileNotFoundException e) {
 			logger.error("Cannot save to file KeyStore Instance", e);
 			return false;
-		}
-		try {
-			keyStore.store(fos, getKeyStorePassword());
-		} catch (KeyStoreException e) {
-			logger.error("Cannot save to file KeyStore Instance", e);
-			return false;
-		} catch (NoSuchAlgorithmException e) {
-			logger.error("Cannot save to file KeyStore Instance", e);
-			return false;
-		} catch (CertificateException e) {
-			logger.error("Cannot save to file KeyStore Instance", e);
-			return false;
-		} catch (IOException e) {
-			logger.error("Cannot save to file KeyStore Instance", e);
-			return false;
-		}
-		try {
-			fos.close();
-		} catch (IOException e) {
+		} finally {
+			try {
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (IOException e) {
+			}
 		}
 		return true;
 	}
@@ -294,7 +300,7 @@ public class WaarpSecureKeyStore {
 			logger.error("Cannot create TrustManagerFactory Instance", e);
 			throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
 		}
-		FileInputStream inputStream;
+		FileInputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(trustStoreFilename);
 			keyTrustStore.load(inputStream, getKeyTrustStorePassword());
@@ -310,10 +316,13 @@ public class WaarpSecureKeyStore {
 		} catch (IOException e) {
 			logger.error("Cannot create TrustManagerFactory Instance", e);
 			throw new CryptoException("Cannot create TrustManagerFactory Instance", e);
-		}
-		try {
-			inputStream.close();
-		} catch (IOException e2) {
+		} finally {
+			try {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			} catch (IOException e2) {
+			}
 		}
 		TrustManagerFactory trustManagerFactory = null;
 		try {
@@ -412,31 +421,34 @@ public class WaarpSecureKeyStore {
 	 * @return True if keyTrustStore is saved to file
 	 */
 	public boolean saveTrustStore(String filename) {
-		FileOutputStream fos;
+		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(filename);
+			try {
+				keyTrustStore.store(fos, getKeyTrustStorePassword());
+			} catch (KeyStoreException e) {
+				logger.error("Cannot save to file keyTrustStore Instance", e);
+				return false;
+			} catch (NoSuchAlgorithmException e) {
+				logger.error("Cannot save to file keyTrustStore Instance", e);
+				return false;
+			} catch (CertificateException e) {
+				logger.error("Cannot save to file keyTrustStore Instance", e);
+				return false;
+			} catch (IOException e) {
+				logger.error("Cannot save to file keyTrustStore Instance", e);
+				return false;
+			}
 		} catch (FileNotFoundException e) {
 			logger.error("Cannot save to file keyTrustStore Instance", e);
 			return false;
-		}
-		try {
-			keyTrustStore.store(fos, getKeyTrustStorePassword());
-		} catch (KeyStoreException e) {
-			logger.error("Cannot save to file keyTrustStore Instance", e);
-			return false;
-		} catch (NoSuchAlgorithmException e) {
-			logger.error("Cannot save to file keyTrustStore Instance", e);
-			return false;
-		} catch (CertificateException e) {
-			logger.error("Cannot save to file keyTrustStore Instance", e);
-			return false;
-		} catch (IOException e) {
-			logger.error("Cannot save to file keyTrustStore Instance", e);
-			return false;
-		}
-		try {
-			fos.close();
-		} catch (IOException e) {
+		} finally {
+			try {
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (IOException e) {
+			}
 		}
 		return true;
 	}
@@ -453,7 +465,14 @@ public class WaarpSecureKeyStore {
 			throws CertificateException, FileNotFoundException {
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		FileInputStream in = new FileInputStream(filename);
-		return cf.generateCertificate(in);
+		try {
+			return cf.generateCertificate(in);
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 
 	/**

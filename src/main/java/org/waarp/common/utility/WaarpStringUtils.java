@@ -112,11 +112,6 @@ public class WaarpStringUtils {
 	}
 
 	/**
-	 * Simple Date format
-	 */
-	private static final SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-
-	/**
 	 * Get a date in String and return the corresponding Timestamp
 	 * 
 	 * @param date
@@ -130,6 +125,7 @@ public class WaarpStringUtils {
 				int len = ndate.length();
 				ndate += "000000000000000".substring(len);
 			}
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 			try {
 				Date ddate = format.parse(ndate);
 				tdate = new Timestamp(ddate.getTime());
@@ -158,6 +154,7 @@ public class WaarpStringUtils {
 				int len = ndate.length();
 				ndate += "000000000000000".substring(len);
 			}
+			SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 			try {
 				Date ddate = format.parse(ndate);
 				if (before != null) {

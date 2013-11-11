@@ -52,7 +52,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
 	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
 			.getLogger(DbModelMysql.class);
 
-	public static DbType type = DbType.MySQL;
+	public static final DbType type = DbType.MySQL;
 
 	protected static MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
 	protected static DbConnectionPool pool;
@@ -147,22 +147,24 @@ public abstract class DbModelMysql extends DbModelAbstract {
 	@Override
 	public Connection getDbConnection(String server, String user, String passwd)
 			throws SQLException {
-		if (pool != null) {
-			try {
-				return pool.getConnection();
-			} catch (SQLException e) {
-				// try to renew the pool
-				mysqlConnectionPoolDataSource = new MysqlConnectionPoolDataSource();
-				mysqlConnectionPoolDataSource.setUrl(server);
-				mysqlConnectionPoolDataSource.setUser(user);
-				mysqlConnectionPoolDataSource.setPassword(passwd);
-				pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+		synchronized (this) {
+			if (pool != null) {
 				try {
 					return pool.getConnection();
-				} catch (SQLException e2) {
-					pool.dispose();
-					pool = null;
-					return super.getDbConnection(server, user, passwd);
+				} catch (SQLException e) {
+					// try to renew the pool
+					mysqlConnectionPoolDataSource = new MysqlConnectionPoolDataSource();
+					mysqlConnectionPoolDataSource.setUrl(server);
+					mysqlConnectionPoolDataSource.setUser(user);
+					mysqlConnectionPoolDataSource.setPassword(passwd);
+					pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+					try {
+						return pool.getConnection();
+					} catch (SQLException e2) {
+						pool.dispose();
+						pool = null;
+						return super.getDbConnection(server, user, passwd);
+					}
 				}
 			}
 		}
