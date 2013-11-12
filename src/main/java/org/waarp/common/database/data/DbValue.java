@@ -404,7 +404,7 @@ public class DbValue {
 				break;
 			case Types.CLOB:
 				try {
-					value = new InputStreamReader(new FileInputStream(svalue));
+					value = new InputStreamReader(new FileInputStream(svalue), WaarpStringUtils.UTF8);
 				} catch (FileNotFoundException e) {
 					throw new WaarpDatabaseSqlException("Error in CLOB: " + svalue, e);
 				}
