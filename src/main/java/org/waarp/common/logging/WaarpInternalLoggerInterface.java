@@ -25,4 +25,7 @@ package org.waarp.common.logging;
  */
 public interface WaarpInternalLoggerInterface {
 
+	public static enum WaarpLevel {DEBUG, INFO, WARN, ERROR};
+	
+	public void setDefaultLevel(WaarpLevel level);
 }

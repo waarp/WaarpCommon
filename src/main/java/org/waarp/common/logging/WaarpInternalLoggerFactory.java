@@ -28,6 +28,7 @@ import org.jboss.netty.logging.InternalLoggerFactory;
  */
 public abstract class WaarpInternalLoggerFactory extends
 		InternalLoggerFactory implements WaarpInternalLoggerInterface {
+	public static WaarpLevel currentLevel = WaarpLevel.WARN; // default if not set
 	/**
 	 * 
 	 * @param clazz
@@ -45,4 +46,8 @@ public abstract class WaarpInternalLoggerFactory extends
 		}
 	}
 
+	public static void setLogLevel(WaarpLevel level) {
+		currentLevel = level;
+		((WaarpInternalLoggerInterface) getDefaultFactory()).setDefaultLevel(level);
+	}
 }
