@@ -7,6 +7,7 @@
 	<body>
 	    <release version="1.2.20" date="2013-10-18" description="Fix release">
 		    <action dev="Frederic Bregier" type="fix">Fix Database logging</action>
+			<action dev="Frederic Bregier" type="fix">Fix following FindBugs process</action>
 		</release>
 	    <release version="1.2.19" date="2013-11-09" description="Fix release">
 		    <action dev="Frederic Bregier" type="fix">Fix Minimal bandwidth in WaarpConstraintLimitHandler</action>
