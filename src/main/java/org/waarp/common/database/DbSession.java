@@ -383,7 +383,7 @@ public class DbSession {
 	 */
 	public void forceDisconnect() {
 		if (this.internalId.equals(DbConstant.admin.session.internalId)) {
-			logger.warn("Closing internal db connection", new Exception("trace"));
+			logger.debug("Closing internal db connection");
 		}
 		this.nbThread.set(0);
 		if (conn == null) {
@@ -420,7 +420,7 @@ public class DbSession {
 	 */
 	public void disconnect() {
 		if (this.internalId.equals(DbConstant.admin.session.internalId)) {
-			logger.warn("Closing internal db connection: "+nbThread.get(), new Exception("trace"));
+			logger.debug("Closing internal db connection: "+nbThread.get());
 		}
 		if (conn == null || isDisconnected) {
 			logger.debug("Connection already closed");
