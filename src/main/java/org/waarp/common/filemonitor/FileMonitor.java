@@ -628,6 +628,11 @@ public class FileMonitor {
 		}
 
 		@Override
+		public int hashCode() {
+			return file.hashCode();
+		}
+		
+		@Override
 		public boolean equals(Object obj) {
 			// equality is based on file itself
 			return (obj != null && obj instanceof FileItem && 

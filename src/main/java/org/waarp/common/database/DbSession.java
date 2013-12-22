@@ -368,6 +368,11 @@ public class DbSession {
 	}
 	
 	@Override
+	public int hashCode() {
+		return this.internalId.hashCode();
+		
+	}
+	@Override
     public boolean equals(Object o) {
     	if (o == null || !(o instanceof DbSession)) return false;
         return (this == o) || this.internalId.equals(((DbSession) o).internalId);
@@ -377,6 +382,9 @@ public class DbSession {
 	 * Force the close of the connection
 	 */
 	public void forceDisconnect() {
+		if (this.internalId.equals(DbConstant.admin.session.internalId)) {
+			logger.debug("Closing internal db connection");
+		}
 		this.nbThread.set(0);
 		if (conn == null) {
 			logger.debug("Connection already closed");
@@ -411,6 +419,9 @@ public class DbSession {
 	 * 
 	 */
 	public void disconnect() {
+		if (this.internalId.equals(DbConstant.admin.session.internalId)) {
+			logger.debug("Closing internal db connection: "+nbThread.get());
+		}
 		if (conn == null || isDisconnected) {
 			logger.debug("Connection already closed");
 			return;

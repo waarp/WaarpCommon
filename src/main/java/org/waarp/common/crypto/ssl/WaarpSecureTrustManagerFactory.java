@@ -89,7 +89,7 @@ public class WaarpSecureTrustManagerFactory extends TrustManagerFactorySpi {
 	 * @return The TrustManager arrays
 	 */
 	public TrustManager[] getTrustManagers() {
-		return trustManager;
+		return trustManager.clone();
 	}
 
 	/*

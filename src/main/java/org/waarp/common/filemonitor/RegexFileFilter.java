@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  *
  */
 public class RegexFileFilter implements FileFilter {
-	public static String REGEX_XML_EXTENSION = ".*\\.[xX][mM][lL]$";
+	public static final String REGEX_XML_EXTENSION = ".*\\.[xX][mM][lL]$";
 	
 	protected Pattern pattern;
 	

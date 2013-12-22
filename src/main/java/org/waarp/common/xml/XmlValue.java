@@ -694,7 +694,7 @@ public class XmlValue {
 			} else if (type.equals(Float.TYPE)) {
 				return Float.valueOf(value);
 			} else if (type.equals(Character.TYPE)) {
-				return new Character(value.charAt(0));
+				return Character.valueOf(value.charAt(0));
 			} else if (type.equals(Byte.TYPE)) {
 				return Byte.valueOf(value);
 			} else if (type.equals(Long.TYPE)) {
@@ -714,7 +714,7 @@ public class XmlValue {
 				}
 			} else if (Character.class.isAssignableFrom(type)) {
 				if (value.length() == 1) {
-					return new Character(value.charAt(0));
+					return Character.valueOf(value.charAt(0));
 				} else {
 					throw new IllegalArgumentException(
 							"Can not convert value " + value + " to type " +

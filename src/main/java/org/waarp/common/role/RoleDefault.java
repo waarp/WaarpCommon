@@ -175,35 +175,35 @@ public class RoleDefault {
 		return ROLE.LOGCONTROL.isContained(role);
 	}
 
-	public final static boolean HasReadOnly(byte role) {
+	public final static boolean hasReadOnly(byte role) {
 		return ROLE.READONLY.isContained(role);
 	}
 
-	public final static boolean HasTransfer(byte role) {
+	public final static boolean hasTransfer(byte role) {
 		return ROLE.TRANSFER.isContained(role);
 	}
 
-	public final static boolean HasRule(byte role) {
+	public final static boolean hasRule(byte role) {
 		return ROLE.RULE.isContained(role);
 	}
 
-	public final static boolean HasHost(byte role) {
+	public final static boolean hasHost(byte role) {
 		return ROLE.HOST.isContained(role);
 	}
 
-	public final static boolean HasLimit(byte role) {
+	public final static boolean hasLimit(byte role) {
 		return ROLE.LIMIT.isContained(role);
 	}
 
-	public final static boolean HasSystem(byte role) {
+	public final static boolean hasSystem(byte role) {
 		return ROLE.SYSTEM.isContained(role);
 	}
 
-	public final static boolean HasUnused(byte role) {
+	public final static boolean hasUnused(byte role) {
 		return ROLE.UNUSED.isContained(role);
 	}
 
-	public final static boolean HasLogControl(byte role) {
+	public final static boolean hasLogControl(byte role) {
 		return ROLE.LOGCONTROL.isContained(role);
 	}
 

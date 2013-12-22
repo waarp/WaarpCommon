@@ -31,6 +31,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.waarp.common.exception.InvalidArgumentException;
+import org.waarp.common.utility.WaarpStringUtils;
 
 /**
  * XML utility that handles simple cases as:<br>
@@ -146,6 +147,7 @@ public class XmlUtil {
 			throw new IOException("File is not writable: " + file.getPath());
 		}
 		OutputFormat format = OutputFormat.createPrettyPrint();
+		format.setEncoding(WaarpStringUtils.UTF8.name());
 		XMLWriter writer = new XMLWriter(new FileWriter(file), format);
 		writer.write(document);
 		writer.flush();
@@ -178,6 +180,7 @@ public class XmlUtil {
 			throw new IOException("File is not writable: " + file.getPath());
 		}
 		OutputFormat format = OutputFormat.createPrettyPrint();
+		format.setEncoding(WaarpStringUtils.UTF8.name());
 		XMLWriter writer = new XMLWriter(new FileWriter(file), format);
 		writer.write(element);
 		writer.flush();
@@ -1003,7 +1006,7 @@ public class XmlUtil {
 	 * 
 	 * @param filename
 	 * @param encoding
-	 *            if null, default encoding ISO-8859-1 will be used
+	 *            if null, default encoding UTF-8 will be used
 	 * @param document
 	 * @throws IOException
 	 */
@@ -1013,7 +1016,7 @@ public class XmlUtil {
 		if (encoding != null) {
 			format.setEncoding(encoding);
 		} else {
-			format.setEncoding("ISO-8859-1");
+			format.setEncoding(WaarpStringUtils.UTF8.name());
 		}
 		XMLWriter writer = null;
 		writer = new XMLWriter(new FileWriter(filename), format);

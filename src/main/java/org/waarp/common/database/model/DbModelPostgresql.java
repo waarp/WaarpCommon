@@ -46,7 +46,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
 			.getLogger(DbModelPostgresql.class);
 
-	public static DbType type = DbType.PostGreSQL;
+	public static final DbType type = DbType.PostGreSQL;
 
 	protected Boolean useIsValid = null;
 	

@@ -146,7 +146,7 @@ public abstract class KeyManager {
 	 */
 	public String crypt(String keyName, String toBeCrypted) throws Exception {
 		KeyObject keyObject = this.getKey(keyName);
-		if (keyName == null) {
+		if (keyObject == null) {
 			throw new NoSuchAlgorithmException("Key does not exist: " + keyName);
 		}
 		return keyObject.cryptToHex(toBeCrypted);
@@ -162,7 +162,7 @@ public abstract class KeyManager {
 	 */
 	public String decrypt(String keyName, String toBeDecrypted) throws Exception {
 		KeyObject keyObject = this.getKey(keyName);
-		if (keyName == null) {
+		if (keyObject == null) {
 			throw new NoSuchAlgorithmException("Key does not exist: " + keyName);
 		}
 		return keyObject.decryptHexInString(toBeDecrypted);

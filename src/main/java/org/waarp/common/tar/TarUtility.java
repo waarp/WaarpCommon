@@ -132,43 +132,7 @@ public class TarUtility {
 	 * @return True if OK
 	 */
 	public static boolean createTarFromFiles(List<File> files, String filename) {
-		File saveFile = new File(filename);
-		// recursive call
-		TarArchiveOutputStream taos;
-		try {
-			taos = new TarArchiveOutputStream(new FileOutputStream(saveFile));
-		} catch (FileNotFoundException e) {
-			return false;
-		}
-		taos.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
-		for (File file : files) {
-			try {
-				addFile(file, taos);
-			} catch (IOException e) {
-				try {
-					taos.close();
-				} catch (IOException e1) {
-					// ignore
-				}
-				return false;
-			}
-		}
-		try {
-			taos.finish();
-		} catch (IOException e1) {
-			// ignore
-		}
-		try {
-			taos.flush();
-		} catch (IOException e) {
-			// ignore
-		}
-		try {
-			taos.close();
-		} catch (IOException e) {
-			// ignore
-		}
-		return true;
+		return createTarFromFiles(files.toArray(new File[]{}), filename);
 	}
 
 	/**
