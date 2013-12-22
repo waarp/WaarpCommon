@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_javadoccomment"> * @author frederic bregier</em>
 <a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="43" href="#43">43</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/waarp/common/crypto/HmacSha256.html">HmacSha256</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../org/waarp/common/crypto/KeyObject.html">KeyObject</a> {
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> HmacSha256 <strong class="jxr_keyword">extends</strong> <a href="../../../../org/waarp/common/crypto/KeyObject.html">KeyObject</a> {
 <a class="jxr_linenumber" name="45" href="#45">45</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> KEY_SIZE = 128;
 <a class="jxr_linenumber" name="46" href="#46">46</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> String ALGO = <span class="jxr_string">"HmacSHA256"</span>;
 <a class="jxr_linenumber" name="47" href="#47">47</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> String INSTANCE = ALGO;
@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="123" href="#123">123</a> 			plaintext = <span class="jxr_string">"This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String"</span>;
 <a class="jxr_linenumber" name="124" href="#124">124</a> 		}
 <a class="jxr_linenumber" name="125" href="#125">125</a> 		System.out.println(<span class="jxr_string">"plaintext = "</span> + plaintext);
-<a class="jxr_linenumber" name="126" href="#126">126</a> 		HmacSha256 hmacSha256 = <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/crypto/HmacSha256.html">HmacSha256</a>();
+<a class="jxr_linenumber" name="126" href="#126">126</a> 		HmacSha256 hmacSha256 = <strong class="jxr_keyword">new</strong> HmacSha256();
 <a class="jxr_linenumber" name="127" href="#127">127</a> 		<em class="jxr_comment">// Generate a key</em>
 <a class="jxr_linenumber" name="128" href="#128">128</a> 		hmacSha256.generateKey();
 <a class="jxr_linenumber" name="129" href="#129">129</a> 		<em class="jxr_comment">// get the generated key</em>

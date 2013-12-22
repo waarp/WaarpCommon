@@ -638,69 +638,74 @@
 <a class="jxr_linenumber" name="628" href="#628">628</a> 		}
 <a class="jxr_linenumber" name="629" href="#629">629</a> 
 <a class="jxr_linenumber" name="630" href="#630">630</a> 		@Override
-<a class="jxr_linenumber" name="631" href="#631">631</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(Object obj) {
-<a class="jxr_linenumber" name="632" href="#632">632</a> 			<em class="jxr_comment">// equality is based on file itself</em>
-<a class="jxr_linenumber" name="633" href="#633">633</a> 			<strong class="jxr_keyword">return</strong> (obj != <strong class="jxr_keyword">null</strong> &amp;&amp; obj instanceof FileItem &amp;&amp; 
-<a class="jxr_linenumber" name="634" href="#634">634</a> 					file.equals(((FileItem) obj).file));
-<a class="jxr_linenumber" name="635" href="#635">635</a> 		}
-<a class="jxr_linenumber" name="636" href="#636">636</a> 		<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="637" href="#637">637</a> <em class="jxr_javadoccomment">		 * To be called when the call of primary action is OK</em>
-<a class="jxr_linenumber" name="638" href="#638">638</a> <em class="jxr_javadoccomment">		 */</em>
-<a class="jxr_linenumber" name="639" href="#639">639</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> valid() {
-<a class="jxr_linenumber" name="640" href="#640">640</a> 			
-<a class="jxr_linenumber" name="641" href="#641">641</a> 		}
-<a class="jxr_linenumber" name="642" href="#642">642</a> 		<em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="643" href="#643">643</a> <em class="jxr_javadoccomment">		 * To be called when the call of primary action is KO</em>
-<a class="jxr_linenumber" name="644" href="#644">644</a> <em class="jxr_javadoccomment">		 */</em>
-<a class="jxr_linenumber" name="645" href="#645">645</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> invalid() {
-<a class="jxr_linenumber" name="646" href="#646">646</a> 			
-<a class="jxr_linenumber" name="647" href="#647">647</a> 		}
-<a class="jxr_linenumber" name="648" href="#648">648</a> 	}
-<a class="jxr_linenumber" name="649" href="#649">649</a> 
-<a class="jxr_linenumber" name="650" href="#650">650</a> 	
-<a class="jxr_linenumber" name="651" href="#651">651</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) {
-<a class="jxr_linenumber" name="652" href="#652">652</a>     	<strong class="jxr_keyword">if</strong> (args.length &lt; 3) {
-<a class="jxr_linenumber" name="653" href="#653">653</a>     		System.err.println(<span class="jxr_string">"Need a statusfile, a stopfile and a directory to test"</span>);
-<a class="jxr_linenumber" name="654" href="#654">654</a>     		<strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="655" href="#655">655</a>     	}
-<a class="jxr_linenumber" name="656" href="#656">656</a>     	File file = <strong class="jxr_keyword">new</strong> File(args[0]);
-<a class="jxr_linenumber" name="657" href="#657">657</a>     	<strong class="jxr_keyword">if</strong> (file.exists() &amp;&amp; ! file.isFile()) {
-<a class="jxr_linenumber" name="658" href="#658">658</a>     		System.err.println(<span class="jxr_string">"Not a correct status file"</span>);
+<a class="jxr_linenumber" name="631" href="#631">631</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
+<a class="jxr_linenumber" name="632" href="#632">632</a> 			<strong class="jxr_keyword">return</strong> file.hashCode();
+<a class="jxr_linenumber" name="633" href="#633">633</a> 		}
+<a class="jxr_linenumber" name="634" href="#634">634</a> 		
+<a class="jxr_linenumber" name="635" href="#635">635</a> 		@Override
+<a class="jxr_linenumber" name="636" href="#636">636</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(Object obj) {
+<a class="jxr_linenumber" name="637" href="#637">637</a> 			<em class="jxr_comment">// equality is based on file itself</em>
+<a class="jxr_linenumber" name="638" href="#638">638</a> 			<strong class="jxr_keyword">return</strong> (obj != <strong class="jxr_keyword">null</strong> &amp;&amp; obj instanceof FileItem &amp;&amp; 
+<a class="jxr_linenumber" name="639" href="#639">639</a> 					file.equals(((FileItem) obj).file));
+<a class="jxr_linenumber" name="640" href="#640">640</a> 		}
+<a class="jxr_linenumber" name="641" href="#641">641</a> 		<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="642" href="#642">642</a> <em class="jxr_javadoccomment">		 * To be called when the call of primary action is OK</em>
+<a class="jxr_linenumber" name="643" href="#643">643</a> <em class="jxr_javadoccomment">		 */</em>
+<a class="jxr_linenumber" name="644" href="#644">644</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> valid() {
+<a class="jxr_linenumber" name="645" href="#645">645</a> 			
+<a class="jxr_linenumber" name="646" href="#646">646</a> 		}
+<a class="jxr_linenumber" name="647" href="#647">647</a> 		<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="648" href="#648">648</a> <em class="jxr_javadoccomment">		 * To be called when the call of primary action is KO</em>
+<a class="jxr_linenumber" name="649" href="#649">649</a> <em class="jxr_javadoccomment">		 */</em>
+<a class="jxr_linenumber" name="650" href="#650">650</a> 		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> invalid() {
+<a class="jxr_linenumber" name="651" href="#651">651</a> 			
+<a class="jxr_linenumber" name="652" href="#652">652</a> 		}
+<a class="jxr_linenumber" name="653" href="#653">653</a> 	}
+<a class="jxr_linenumber" name="654" href="#654">654</a> 
+<a class="jxr_linenumber" name="655" href="#655">655</a> 	
+<a class="jxr_linenumber" name="656" href="#656">656</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) {
+<a class="jxr_linenumber" name="657" href="#657">657</a>     	<strong class="jxr_keyword">if</strong> (args.length &lt; 3) {
+<a class="jxr_linenumber" name="658" href="#658">658</a>     		System.err.println(<span class="jxr_string">"Need a statusfile, a stopfile and a directory to test"</span>);
 <a class="jxr_linenumber" name="659" href="#659">659</a>     		<strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="660" href="#660">660</a>     	}
-<a class="jxr_linenumber" name="661" href="#661">661</a>     	File stopfile = <strong class="jxr_keyword">new</strong> File(args[1]);
+<a class="jxr_linenumber" name="661" href="#661">661</a>     	File file = <strong class="jxr_keyword">new</strong> File(args[0]);
 <a class="jxr_linenumber" name="662" href="#662">662</a>     	<strong class="jxr_keyword">if</strong> (file.exists() &amp;&amp; ! file.isFile()) {
-<a class="jxr_linenumber" name="663" href="#663">663</a>     		System.err.println(<span class="jxr_string">"Not a correct stop file"</span>);
+<a class="jxr_linenumber" name="663" href="#663">663</a>     		System.err.println(<span class="jxr_string">"Not a correct status file"</span>);
 <a class="jxr_linenumber" name="664" href="#664">664</a>     		<strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="665" href="#665">665</a>     	}
-<a class="jxr_linenumber" name="666" href="#666">666</a>     	File dir = <strong class="jxr_keyword">new</strong> File(args[2]);
-<a class="jxr_linenumber" name="667" href="#667">667</a>     	<strong class="jxr_keyword">if</strong> (! dir.isDirectory()) {
-<a class="jxr_linenumber" name="668" href="#668">668</a>     		System.err.println(<span class="jxr_string">"Not a directory"</span>);
+<a class="jxr_linenumber" name="666" href="#666">666</a>     	File stopfile = <strong class="jxr_keyword">new</strong> File(args[1]);
+<a class="jxr_linenumber" name="667" href="#667">667</a>     	<strong class="jxr_keyword">if</strong> (file.exists() &amp;&amp; ! file.isFile()) {
+<a class="jxr_linenumber" name="668" href="#668">668</a>     		System.err.println(<span class="jxr_string">"Not a correct stop file"</span>);
 <a class="jxr_linenumber" name="669" href="#669">669</a>     		<strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="670" href="#670">670</a>     	}
-<a class="jxr_linenumber" name="671" href="#671">671</a>     	FileMonitorCommandRunnableFuture filemonitor =
-<a class="jxr_linenumber" name="672" href="#672">672</a>     			<strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/FileMonitorCommandRunnableFuture.html">FileMonitorCommandRunnableFuture</a>() {
-<a class="jxr_linenumber" name="673" href="#673">673</a>     		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run(<a href="../../../../org/waarp/common/filemonitor/FileMonitor.html">FileItem</a> file) {
-<a class="jxr_linenumber" name="674" href="#674">674</a> 				System.out.println(<span class="jxr_string">"File New: "</span>+file.file.getAbsolutePath());
-<a class="jxr_linenumber" name="675" href="#675">675</a> 				finalize(<strong class="jxr_keyword">true</strong>, 0);
-<a class="jxr_linenumber" name="676" href="#676">676</a> 			}
-<a class="jxr_linenumber" name="677" href="#677">677</a> 		};
-<a class="jxr_linenumber" name="678" href="#678">678</a>     	FileMonitor monitor = <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/FileMonitor.html">FileMonitor</a>(<span class="jxr_string">"test"</span>, file, stopfile, dir, <strong class="jxr_keyword">null</strong>, 0, 
-<a class="jxr_linenumber" name="679" href="#679">679</a>     			<strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/RegexFileFilter.html">RegexFileFilter</a>(RegexFileFilter.REGEX_XML_EXTENSION), 
-<a class="jxr_linenumber" name="680" href="#680">680</a>     			false, filemonitor, <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/FileMonitorCommandRunnableFuture.html">FileMonitorCommandRunnableFuture</a>() {
-<a class="jxr_linenumber" name="681" href="#681">681</a> 			<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run(<a href="../../../../org/waarp/common/filemonitor/FileMonitor.html">FileItem</a> file) {
-<a class="jxr_linenumber" name="682" href="#682">682</a> 				System.err.println(<span class="jxr_string">"File Del: "</span>+file.file.getAbsolutePath());
-<a class="jxr_linenumber" name="683" href="#683">683</a> 			}
-<a class="jxr_linenumber" name="684" href="#684">684</a> 		}, <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/FileMonitorCommandRunnableFuture.html">FileMonitorCommandRunnableFuture</a>() {
-<a class="jxr_linenumber" name="685" href="#685">685</a> 			<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run(<a href="../../../../org/waarp/common/filemonitor/FileMonitor.html">FileItem</a> unused) {
-<a class="jxr_linenumber" name="686" href="#686">686</a> 				System.err.println(<span class="jxr_string">"Check done"</span>);
-<a class="jxr_linenumber" name="687" href="#687">687</a> 			}
-<a class="jxr_linenumber" name="688" href="#688">688</a> 		});
-<a class="jxr_linenumber" name="689" href="#689">689</a>     	filemonitor.setMonitor(monitor);
-<a class="jxr_linenumber" name="690" href="#690">690</a>     	monitor.start();
-<a class="jxr_linenumber" name="691" href="#691">691</a>     	monitor.waitForStopFile();
-<a class="jxr_linenumber" name="692" href="#692">692</a> 	}
-<a class="jxr_linenumber" name="693" href="#693">693</a> }
+<a class="jxr_linenumber" name="671" href="#671">671</a>     	File dir = <strong class="jxr_keyword">new</strong> File(args[2]);
+<a class="jxr_linenumber" name="672" href="#672">672</a>     	<strong class="jxr_keyword">if</strong> (! dir.isDirectory()) {
+<a class="jxr_linenumber" name="673" href="#673">673</a>     		System.err.println(<span class="jxr_string">"Not a directory"</span>);
+<a class="jxr_linenumber" name="674" href="#674">674</a>     		<strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="675" href="#675">675</a>     	}
+<a class="jxr_linenumber" name="676" href="#676">676</a>     	FileMonitorCommandRunnableFuture filemonitor =
+<a class="jxr_linenumber" name="677" href="#677">677</a>     			<strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/FileMonitorCommandRunnableFuture.html">FileMonitorCommandRunnableFuture</a>() {
+<a class="jxr_linenumber" name="678" href="#678">678</a>     		<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run(<a href="../../../../org/waarp/common/filemonitor/FileMonitor.html">FileItem</a> file) {
+<a class="jxr_linenumber" name="679" href="#679">679</a> 				System.out.println(<span class="jxr_string">"File New: "</span>+file.file.getAbsolutePath());
+<a class="jxr_linenumber" name="680" href="#680">680</a> 				finalize(<strong class="jxr_keyword">true</strong>, 0);
+<a class="jxr_linenumber" name="681" href="#681">681</a> 			}
+<a class="jxr_linenumber" name="682" href="#682">682</a> 		};
+<a class="jxr_linenumber" name="683" href="#683">683</a>     	FileMonitor monitor = <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/FileMonitor.html">FileMonitor</a>(<span class="jxr_string">"test"</span>, file, stopfile, dir, <strong class="jxr_keyword">null</strong>, 0, 
+<a class="jxr_linenumber" name="684" href="#684">684</a>     			<strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/RegexFileFilter.html">RegexFileFilter</a>(RegexFileFilter.REGEX_XML_EXTENSION), 
+<a class="jxr_linenumber" name="685" href="#685">685</a>     			false, filemonitor, <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/FileMonitorCommandRunnableFuture.html">FileMonitorCommandRunnableFuture</a>() {
+<a class="jxr_linenumber" name="686" href="#686">686</a> 			<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run(<a href="../../../../org/waarp/common/filemonitor/FileMonitor.html">FileItem</a> file) {
+<a class="jxr_linenumber" name="687" href="#687">687</a> 				System.err.println(<span class="jxr_string">"File Del: "</span>+file.file.getAbsolutePath());
+<a class="jxr_linenumber" name="688" href="#688">688</a> 			}
+<a class="jxr_linenumber" name="689" href="#689">689</a> 		}, <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/filemonitor/FileMonitorCommandRunnableFuture.html">FileMonitorCommandRunnableFuture</a>() {
+<a class="jxr_linenumber" name="690" href="#690">690</a> 			<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> run(<a href="../../../../org/waarp/common/filemonitor/FileMonitor.html">FileItem</a> unused) {
+<a class="jxr_linenumber" name="691" href="#691">691</a> 				System.err.println(<span class="jxr_string">"Check done"</span>);
+<a class="jxr_linenumber" name="692" href="#692">692</a> 			}
+<a class="jxr_linenumber" name="693" href="#693">693</a> 		});
+<a class="jxr_linenumber" name="694" href="#694">694</a>     	filemonitor.setMonitor(monitor);
+<a class="jxr_linenumber" name="695" href="#695">695</a>     	monitor.start();
+<a class="jxr_linenumber" name="696" href="#696">696</a>     	monitor.waitForStopFile();
+<a class="jxr_linenumber" name="697" href="#697">697</a> 	}
+<a class="jxr_linenumber" name="698" href="#698">698</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

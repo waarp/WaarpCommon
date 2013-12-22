@@ -704,7 +704,7 @@
 <a class="jxr_linenumber" name="694" href="#694">694</a> 			} <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (type.equals(Float.TYPE)) {
 <a class="jxr_linenumber" name="695" href="#695">695</a> 				<strong class="jxr_keyword">return</strong> Float.valueOf(value);
 <a class="jxr_linenumber" name="696" href="#696">696</a> 			} <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (type.equals(Character.TYPE)) {
-<a class="jxr_linenumber" name="697" href="#697">697</a> 				<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Character(value.charAt(0));
+<a class="jxr_linenumber" name="697" href="#697">697</a> 				<strong class="jxr_keyword">return</strong> Character.valueOf(value.charAt(0));
 <a class="jxr_linenumber" name="698" href="#698">698</a> 			} <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (type.equals(Byte.TYPE)) {
 <a class="jxr_linenumber" name="699" href="#699">699</a> 				<strong class="jxr_keyword">return</strong> Byte.valueOf(value);
 <a class="jxr_linenumber" name="700" href="#700">700</a> 			} <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (type.equals(Long.TYPE)) {
@@ -724,7 +724,7 @@
 <a class="jxr_linenumber" name="714" href="#714">714</a> 				}
 <a class="jxr_linenumber" name="715" href="#715">715</a> 			} <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (Character.<strong class="jxr_keyword">class</strong>.isAssignableFrom(type)) {
 <a class="jxr_linenumber" name="716" href="#716">716</a> 				<strong class="jxr_keyword">if</strong> (value.length() == 1) {
-<a class="jxr_linenumber" name="717" href="#717">717</a> 					<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Character(value.charAt(0));
+<a class="jxr_linenumber" name="717" href="#717">717</a> 					<strong class="jxr_keyword">return</strong> Character.valueOf(value.charAt(0));
 <a class="jxr_linenumber" name="718" href="#718">718</a> 				} <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="719" href="#719">719</a> 					<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(
 <a class="jxr_linenumber" name="720" href="#720">720</a> 							<span class="jxr_string">"Can not convert value "</span> + value + <span class="jxr_string">" to type "</span> +
