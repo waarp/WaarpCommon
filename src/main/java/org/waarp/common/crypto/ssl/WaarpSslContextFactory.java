@@ -179,7 +179,7 @@ public class WaarpSslContextFactory {
 			ExecutorService executorService) {
 		// Add SSL handler first to encrypt and decrypt everything.
 		SSLEngine engine;
-		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode);
+		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode + " IsRenegotiation enable? "+renegotiationEnable);
 		if (serverMode) {
 			engine = getServerContext().createSSLEngine();
 			engine.setUseClientMode(false);

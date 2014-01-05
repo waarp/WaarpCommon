@@ -83,7 +83,7 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
 		}
 		if (status) {
 			fileItem.used = true;
-			fileItem.hash = null;
+			// Keep the hash: fileItem.hash = null;
 			fileItem.specialId = specialId;
 			if (monitor != null) {
 				monitor.globalok.incrementAndGet();

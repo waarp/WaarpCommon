@@ -381,7 +381,7 @@ public class DbPreparedStatement {
 		try {
 			return rs.next();
 		} catch (SQLException e) {
-			logger.error("SQL Exception to getNextRow" + " " + e.getMessage());
+			logger.error("SQL Exception to getNextRow" + (request != null ? " ["+request+"]" : "") + " " + e.getMessage());
 			DbSession.error(e);
 			ls.checkConnectionNoException();
 			throw new WaarpDatabaseSqlException(
