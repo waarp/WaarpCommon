@@ -190,7 +190,9 @@ public class WaarpSslContextFactory {
 		}
 		SslHandler handler = null;
 		if (executorService != null) {
-			handler = new SslHandler(engine, executorService);
+			// XXX FIXLE temporary
+			handler = new SslHandler(engine);
+			//handler = new SslHandler(engine, executorService);
 		} else {
 			handler = new SslHandler(engine);
 		}
