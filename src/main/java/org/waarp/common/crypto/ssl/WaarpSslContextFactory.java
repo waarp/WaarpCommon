@@ -18,8 +18,6 @@
 package org.waarp.common.crypto.ssl;
 
 import java.security.Security;
-import java.util.concurrent.ExecutorService;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -170,13 +168,10 @@ public class WaarpSslContextFactory {
 	 *            True if the client needs to be authenticated (only if serverMode is True)
 	 * @param renegotiationEnable
 	 *            True if you want to enable renegotiation (security issue CVE-2009-3555)
-	 * @param executorService
-	 *            if not Null, gives a specific executorService
 	 * @return the sslhandler
 	 */
 	public SslHandler initPipelineFactory(boolean serverMode,
-			boolean needClientAuth, boolean renegotiationEnable,
-			ExecutorService executorService) {
+			boolean needClientAuth, boolean renegotiationEnable) {
 		// Add SSL handler first to encrypt and decrypt everything.
 		SSLEngine engine;
 		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode + " IsRenegotiation enable? "+renegotiationEnable);
@@ -188,14 +183,7 @@ public class WaarpSslContextFactory {
 			engine = getClientContext().createSSLEngine();
 			engine.setUseClientMode(true);
 		}
-		SslHandler handler = null;
-		if (executorService != null) {
-			// XXX FIXLE temporary
-			handler = new SslHandler(engine);
-			//handler = new SslHandler(engine, executorService);
-		} else {
-			handler = new SslHandler(engine);
-		}
+		SslHandler handler = new SslHandler(engine);
 		// Set the RenegotiationEnable or not
 		handler.setEnableRenegotiation(renegotiationEnable);
 		return handler;
@@ -215,14 +203,11 @@ public class WaarpSslContextFactory {
 	 * 			Host for which a resume is allowed
 	 * @param port
 	 * 			port associated with the host for which a resume is allowed
-	 * @param executorService
-	 *            if not Null, gives a specific executorService
 	 * @return the sslhandler
 	 */
 	public SslHandler initPipelineFactory(boolean serverMode,
 			boolean needClientAuth, boolean renegotiationEnable,
-			String host, int port,
-			ExecutorService executorService) {
+			String host, int port) {
 		// Add SSL handler first to encrypt and decrypt everything.
 		SSLEngine engine;
 		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode);
@@ -234,12 +219,7 @@ public class WaarpSslContextFactory {
 			engine = getClientContext().createSSLEngine(host, port);
 			engine.setUseClientMode(true);
 		}
-		SslHandler handler = null;
-		if (executorService != null) {
-			handler = new SslHandler(engine, executorService);
-		} else {
-			handler = new SslHandler(engine);
-		}
+		SslHandler handler = new SslHandler(engine);
 		// Set the RenegotiationEnable or not
 		handler.setEnableRenegotiation(renegotiationEnable);
 		return handler;
