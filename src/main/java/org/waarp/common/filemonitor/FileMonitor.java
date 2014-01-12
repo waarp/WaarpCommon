@@ -373,7 +373,7 @@ public class FileMonitor {
 				future.get();
 			} catch (InterruptedException e) {
 				System.err.println("Interruption so exit");
-				e.printStackTrace();
+				//e.printStackTrace();
 				error = true;
 			} catch (ExecutionException e) {
 				System.err.println("Exception during execution");
