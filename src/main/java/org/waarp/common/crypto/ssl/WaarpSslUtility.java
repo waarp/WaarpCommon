@@ -108,6 +108,7 @@ public class WaarpSslUtility {
     public static boolean runHandshake(Channel channel) {
 		final ChannelHandler handler = channel.getPipeline().getFirst();
 		if (handler instanceof SslHandler) {
+			logger.debug("Start handshake SSL");
 			final SslHandler sslHandler = (SslHandler) handler;
 			// Get the SslHandler and begin handshake ASAP.
 			// Get notified when SSL handshake is done.
@@ -157,7 +158,7 @@ public class WaarpSslUtility {
             return null;
         }
         Channel channel = future.getChannel();
-        WaarpFuture sslFuture = WaarpSslUtility.getFutureSslHandshake(channel);
+        WaarpFuture sslFuture = getFutureSslHandshake(channel);
         if (sslFuture != null) {
         	try {
 				sslFuture.await();

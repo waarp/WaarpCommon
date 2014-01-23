@@ -105,7 +105,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 	public void debug(String format, String arg1) {
 		if (logger.isLoggable(Level.FINE)) {
 			logger.logp(Level.FINE, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst("{}",
+					getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
 							arg1));
 		}
 	}
@@ -119,8 +119,8 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 	public void debug(String format, String arg1, String arg2) {
 		if (logger.isLoggable(Level.FINE)) {
 			logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst("{}",
-							arg1).replaceFirst("{}", arg2));
+					+ format.replaceFirst("\\{\\}",
+							arg1).replaceFirst("\\{\\}", arg2));
 		}
 	}
 
@@ -133,8 +133,8 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 	public void debug(String format, Object arg1, Object arg2) {
 		if (logger.isLoggable(Level.FINE)) {
 			logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst("{}",
-							arg1.toString()).replaceFirst("{}", arg2.toString()));
+					+ format.replaceFirst("\\{\\}",
+							arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
 		}
 	}
 
@@ -146,7 +146,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 	public void debug(String format, Object arg1) {
 		if (logger.isLoggable(Level.FINE)) {
 			logger.logp(Level.FINE, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst("{}",
+					getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
 							arg1.toString()));
 		}
 	}
@@ -160,7 +160,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 		if (logger.isLoggable(Level.SEVERE)) {
 			logger.logp(Level.SEVERE, loggerName, null,
 					getLoggerMethodAndLine() + format.replaceFirst(
-							"{}", arg1));
+							"\\{\\}", arg1));
 		}
 	}
 
@@ -174,7 +174,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 		if (logger.isLoggable(Level.SEVERE)) {
 			logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine()
 					+ format.replaceFirst(
-							"{}", arg1).replaceFirst("{}", arg2));
+							"\\{\\}", arg1).replaceFirst("\\{\\}", arg2));
 		}
 	}
 
@@ -188,7 +188,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 		if (logger.isLoggable(Level.SEVERE)) {
 			logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine()
 					+ format.replaceFirst(
-							"{}", arg1.toString()).replaceFirst("{}", arg2.toString()));
+							"\\{\\}", arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
 		}
 	}
 
@@ -201,7 +201,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 		if (logger.isLoggable(Level.SEVERE)) {
 			logger.logp(Level.SEVERE, loggerName, null,
 					getLoggerMethodAndLine() + format.replaceFirst(
-							"{}", arg1.toString()));
+							"\\{\\}", arg1.toString()));
 		}
 	}
 
@@ -213,7 +213,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 	public void info(String format, String arg1) {
 		if (logger.isLoggable(Level.INFO)) {
 			logger.logp(Level.INFO, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst("{}",
+					getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
 							arg1));
 		}
 	}
@@ -227,8 +227,8 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 	public void info(String format, String arg1, String arg2) {
 		if (logger.isLoggable(Level.INFO)) {
 			logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst("{}",
-							arg1).replaceFirst("{}", arg2));
+					+ format.replaceFirst("\\{\\}",
+							arg1).replaceFirst("\\{\\}", arg2));
 		}
 	}
 
@@ -241,8 +241,8 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 	public void info(String format, Object arg1, Object arg2) {
 		if (logger.isLoggable(Level.INFO)) {
 			logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst("{}",
-							arg1.toString()).replaceFirst("{}", arg2.toString()));
+					+ format.replaceFirst("\\{\\}",
+							arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
 		}
 	}
 
@@ -254,7 +254,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 	public void info(String format, Object arg1) {
 		if (logger.isLoggable(Level.INFO)) {
 			logger.logp(Level.INFO, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst("{}",
+					getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
 							arg1.toString()));
 		}
 	}
@@ -268,7 +268,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 		if (logger.isLoggable(Level.WARNING)) {
 			logger.logp(Level.WARNING, loggerName, null,
 					getLoggerMethodAndLine() + format.replaceFirst(
-							"{}", arg1));
+							"\\{\\}", arg1));
 		}
 	}
 
@@ -282,7 +282,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 		if (logger.isLoggable(Level.WARNING)) {
 			logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine()
 					+ format.replaceFirst(
-							"{}", arg1).replaceFirst("{}", arg2));
+							"\\{\\}", arg1).replaceFirst("\\{\\}", arg2));
 		}
 	}
 
@@ -296,7 +296,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 		if (logger.isLoggable(Level.WARNING)) {
 			logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine()
 					+ format.replaceFirst(
-							"{}", arg1.toString()).replaceFirst("{}", arg2.toString()));
+							"\\{\\}", arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
 		}
 	}
 
@@ -309,7 +309,7 @@ public class WaarpJdkLogger extends WaarpInternalLogger {
 		if (logger.isLoggable(Level.WARNING)) {
 			logger.logp(Level.WARNING, loggerName, null,
 					getLoggerMethodAndLine() + format.replaceFirst(
-							"{}", arg1.toString()));
+							"\\{\\}", arg1.toString()));
 		}
 	}
 }

@@ -21,20 +21,27 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * Thread Factory that build named threads, by default daemon threads.
  * @author Frederic Bregier
  * 
  */
 public class WaarpThreadFactory implements ThreadFactory {
 	private String GlobalName;
 	private AtomicLong counter = new AtomicLong();
-
+	private boolean isDaemon = true;
+	
 	public WaarpThreadFactory(String globalName) {
 		GlobalName = globalName + "-";
 	}
 
+	public WaarpThreadFactory(String globalName, boolean isDaemon) {
+		GlobalName = globalName + "-";
+		this.isDaemon = isDaemon;
+	}
+	
 	public Thread newThread(Runnable arg0) {
 		Thread thread = new Thread(arg0, GlobalName + counter.incrementAndGet());
-		thread.setDaemon(true);
+		thread.setDaemon(isDaemon);
 		return thread;
 	}
 }

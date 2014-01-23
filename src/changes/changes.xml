@@ -5,6 +5,13 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+	    <release version="1.2.21" date="2014-01-05" description="Fix release">
+			<action dev="Frederic Bregier" type="fix">Fix Space available not correctly computed with some JDK</action>
+			<action dev="Frederic Bregier" type="fix">Fix information on FileMonitor (digest kept)</action>
+			<action dev="Frederic Bregier" type="fix">Improve ThreadFactory by enabling special Non Daemon factory</action>
+			<action dev="Frederic Bregier" type="fix">Fix JdkLogger</action>
+			<action dev="Frederic Bregier" type="fix">Fix Ssl following evolution of Netty 3.9.1</action>
+		</release>
 	    <release version="1.2.20" date="2013-12-14" description="Fix release">
 		    <action dev="Frederic Bregier" type="fix">Fix Database logging</action>
 			<action dev="Frederic Bregier" type="fix">Fix following FindBugs process</action>
