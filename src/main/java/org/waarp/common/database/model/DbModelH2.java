@@ -248,6 +248,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
 
 		// example sequence
 		action = "CREATE SEQUENCE IF NOT EXISTS " + DbDataModel.fieldseq +
+				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1) +
 				" START WITH " + (DbConstant.ILLEGALVALUE + 1);
 		logger.warn(action);
 		try {
@@ -256,8 +257,19 @@ public abstract class DbModelH2 extends DbModelAbstract {
 			logger.warn("CreateTables Error", e);
 			return;
 		} catch (WaarpDatabaseSqlException e) {
-			logger.warn("CreateTables Error", e);
-			return;
+			// version 1.3.173
+			action = "CREATE SEQUENCE IF NOT EXISTS " + DbDataModel.fieldseq +
+					" START WITH " + (DbConstant.ILLEGALVALUE + 1);
+			logger.warn(action);
+			try {
+				request.query(action);
+			} catch (WaarpDatabaseNoConnectionException e2) {
+				logger.warn("CreateTables Error", e2);
+				return;
+			} catch (WaarpDatabaseSqlException e2) {
+				logger.warn("CreateTables Error", e2);
+				return;
+			}
 		} finally {
 			request.close();
 		}

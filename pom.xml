@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>WaarpCommon</artifactId>
   <packaging>jar</packaging>
-  <version>1.2.21</version>
+  <version>1.2.22</version>
   <name>Waarp Common</name>
   <description>
 	  The Waarp Common project contains several classes that are common with different
