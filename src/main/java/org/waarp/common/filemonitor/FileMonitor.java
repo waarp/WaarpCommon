@@ -31,6 +31,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -86,8 +87,8 @@ public class FileMonitor {
 	protected Timer timerWaarp = null; // used only if elapseWaarpTime > defaultDelay (1s)
 	protected boolean scanSubDir = false;
 	
-	protected final HashMap<String, FileItem> fileItems = 
-			new HashMap<String, FileMonitor.FileItem>();
+	protected final ConcurrentHashMap<String, FileItem> fileItems = 
+			new ConcurrentHashMap<String, FileMonitor.FileItem>();
 	
 	protected FileFilter filter = 
 			new FileFilter() {
@@ -233,6 +234,7 @@ public class FileMonitor {
 		} catch (IOException e) {
 		}
 	}
+	
 	protected void saveStatus() {
 		if (statusFile == null) return;
 		try {
@@ -572,7 +574,7 @@ public class FileMonitor {
 	@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
 	public static class FileMonitorInformation {
 		public String name;
-		public HashMap<String, FileItem> fileItems;
+		public ConcurrentHashMap<String, FileItem> fileItems;
 		public List<File> directories;
 		public File stopFile;
 		public File statusFile;
@@ -586,7 +588,7 @@ public class FileMonitor {
 		public FileMonitorInformation() {
 			// empty constructor for JSON
 		}
-		protected FileMonitorInformation(String name, HashMap<String, FileItem> fileItems,
+		protected FileMonitorInformation(String name, ConcurrentHashMap<String, FileItem> fileItems,
 				List<File> directories, File stopFile, File statusFile, 
 				long elapseTime, boolean scanSubDir, 
 				AtomicLong globalok, AtomicLong globalerror, AtomicLong todayok, AtomicLong todayerror) {
