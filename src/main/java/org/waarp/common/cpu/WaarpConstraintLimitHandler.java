@@ -49,8 +49,8 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 	
 	private final Random random = new Random();
 	private CpuManagementInterface cpuManagement;
-	private double cpuLimit = 0.8;
-	private int channelLimit = 1000;
+	private double cpuLimit = 1.0; // was 0.8;
+	private int channelLimit = 0; // was 1000;
 	private boolean isServer = false;
 	private double lastLA = 0.0;
 	private long lastTime;
@@ -58,8 +58,8 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 	// Dynamic throttling
 	private long WAITFORNETOP = 1000;
 	private long TIMEOUTCON = 10000;
-	private double highCpuLimit = 0.8;
-	private double lowCpuLimit = 0.5;
+	private double highCpuLimit = 0.0; // was 0.8;
+	private double lowCpuLimit = 0.0; // was 0.5;
 	private double percentageDecreaseRatio = 0.25;
 	private long delay = 1000;
 	private long limitLowBandwidth = LOWBANDWIDTH_DEFAULT;
@@ -201,7 +201,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 		} else if (percentageDecreaseRatio >= 1) {
 			percentageDecreaseRatio /= 100;
 		}
-		if (delay < WAITFORNETOP >> 1) {
+		if (delay < (WAITFORNETOP >> 1)) {
 			this.delay = WAITFORNETOP;
 		}
 		this.handler = handler;
