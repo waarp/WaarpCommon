@@ -246,6 +246,16 @@ public class FileMonitor {
 	}
 	/**
 	 * 
+	 * @return the number of fileItems in the current history (active, in error or past)
+	 */
+	public long getCurrentHistoryNb() {
+		if (fileItems != null) {
+			return fileItems.size();
+		}
+		return -1;
+	}
+	/**
+	 * 
 	 * @return the status in JSON format
 	 */
 	public String getStatus() {
