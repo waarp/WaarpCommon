@@ -228,7 +228,17 @@ public class FileMonitor {
 	}
 	
 	private boolean testChkFile() {
-		return checkFile.exists();
+		if (checkFile.exists()) {
+			deleteChkFile();
+			long time = (elapseTime)*10;
+			System.err.println("Waiting to check if another Monitor is running with the same configuration: "+(time/1000)+"s");
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+			}
+			return checkFile.exists();
+		}
+		return false;
 	}
 	
 	private void createChkFile() {
@@ -246,16 +256,9 @@ public class FileMonitor {
 		if (statusFile == null) return;
 		if (! statusFile.exists()) return;
 		if (testChkFile()) {
-			deleteChkFile();
-			try {
-				Thread.sleep((elapseTime > elapseWaarpTime ? elapseTime : elapseWaarpTime)*10);
-			} catch (InterruptedException e) {
-			}
-			if (testChkFile()) {
-				// error ! one other monitor is running using the same status file
-				System.err.println("Error: One other monitor is probably running using the same status file: "+statusFile);
-				return;
-			}
+			// error ! one other monitor is running using the same status file
+			System.err.println("Error: One other monitor is probably running using the same status file: "+statusFile);
+			return;
 		}
 		try {
 			HashMap<String, FileItem> newHashMap = 
