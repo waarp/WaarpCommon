@@ -87,6 +87,9 @@ public class FileMonitor {
 	protected Timer timerWaarp = null; // used only if elapseWaarpTime > defaultDelay (1s)
 	protected boolean scanSubDir = false;
 	
+	protected boolean initialized = false;
+	protected File checkFile = null;
+	
 	protected final ConcurrentHashMap<String, FileItem> fileItems = 
 			new ConcurrentHashMap<String, FileMonitor.FileItem>();
 	
@@ -152,6 +155,9 @@ public class FileMonitor {
 		this.commandValidFile = commandValidFile;
 		this.commandRemovedFile = commandRemovedFile;
 		this.commandCheckIteration = commandCheckIteration;
+		if (statusFile != null) {
+			checkFile = new File(statusFile.getAbsolutePath()+".chk");
+		}
 		this.reloadStatus();
 		this.setNextDay();
 		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir,
@@ -220,25 +226,62 @@ public class FileMonitor {
 	public void removeDirectory(File directory) {
 		this.directories.remove(directory);
 	}
+	
+	private boolean testChkFile() {
+		return checkFile.exists();
+	}
+	
+	private void createChkFile() {
+		try {
+			checkFile.createNewFile();
+		} catch (IOException e) {
+		}
+	}
 
+	private void deleteChkFile() {
+		checkFile.delete();
+	}
+	
 	protected void reloadStatus() {
 		if (statusFile == null) return;
 		if (! statusFile.exists()) return;
+		if (testChkFile()) {
+			deleteChkFile();
+			try {
+				Thread.sleep((elapseTime > elapseWaarpTime ? elapseTime : elapseWaarpTime)*10);
+			} catch (InterruptedException e) {
+			}
+			if (testChkFile()) {
+				// error ! one other monitor is running using the same status file
+				System.err.println("Error: One other monitor is probably running using the same status file: "+statusFile);
+				return;
+			}
+		}
 		try {
 			HashMap<String, FileItem> newHashMap = 
 					handler.mapper.readValue(statusFile, 
 							new TypeReference<HashMap<String, FileItem>>() {});
 			fileItems.putAll(newHashMap);
+			initialized = true;
 		} catch (JsonParseException e) {
 		} catch (JsonMappingException e) {
 		} catch (IOException e) {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return True if the FileMonitor is correctly initialized
+	 */
+	public boolean initialized() {
+		return initialized;
+	}
+	
 	protected void saveStatus() {
 		if (statusFile == null) return;
 		try {
 			handler.mapper.writeValue(statusFile, fileItems);
+			createChkFile();
 		} catch (JsonGenerationException e) {
 		} catch (JsonMappingException e) {
 		} catch (IOException e) {
@@ -261,6 +304,7 @@ public class FileMonitor {
 	public String getStatus() {
 		if (fileMonitorInformation == null) return "{}";
 		try {
+			createChkFile();
 			return handler.mapper.writeValueAsString(fileMonitorInformation);
 		} catch (JsonProcessingException e) {
 		}
@@ -290,7 +334,6 @@ public class FileMonitor {
 			timer = new HashedWheelTimer(
 						new WaarpThreadFactory("TimerFileMonitor"),
 						100, TimeUnit.MILLISECONDS, 8);
-			timer.newTimeout(new FileMonitorTimerTask(this), elapseTime, TimeUnit.MILLISECONDS);
 			future = new WaarpFuture(true);
 			internalfuture = new WaarpFuture(true);
 			if (commandValidFileFactory != null && executor == null) {
@@ -300,6 +343,7 @@ public class FileMonitor {
 					executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
 				}
 			}
+			timer.newTimeout(new FileMonitorTimerTask(this), elapseTime, TimeUnit.MILLISECONDS);
 		}// else already started
 		if (elapseWaarpTime >= defaultDelay && timerWaarp == null && commandCheckIteration != null) {
 			timerWaarp = new HashedWheelTimer(
@@ -310,6 +354,7 @@ public class FileMonitor {
 	}
 	
 	public void stop() {
+		initialized = false;
 		stopped = true;
 		if (timerWaarp != null) {
 			timerWaarp.stop();
@@ -327,6 +372,7 @@ public class FileMonitor {
 			executor.shutdown();
 			executor = null;
 		}
+		deleteChkFile();
 		if (future != null) {
 			future.setSuccess();
 		}
@@ -381,6 +427,7 @@ public class FileMonitor {
 		boolean error = false;
 		// Wait for all commands to finish before continuing
 		for (Future<?> future : results) {
+			createChkFile();
 			try {
 				future.get();
 			} catch (InterruptedException e) {
@@ -426,6 +473,8 @@ public class FileMonitor {
 		}
 		if (fileItemsChanged) {
 			this.saveStatus();
+		} else {
+			createChkFile();
 		}
 		if (checkStop()) {
 			return false;
@@ -539,6 +588,7 @@ public class FileMonitor {
 					fileMonitor.internalfuture.setSuccess();
 				}
 			} else {
+				fileMonitor.deleteChkFile();
 				fileMonitor.internalfuture.setSuccess();
 			}
 		}
