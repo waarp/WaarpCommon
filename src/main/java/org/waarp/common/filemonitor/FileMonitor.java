@@ -161,7 +161,7 @@ public class FileMonitor {
 		this.reloadStatus();
 		this.setNextDay();
 		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir,
-				globalok, globalerror, todayok, todayerror);
+					globalok, globalerror, todayok, todayerror);
 	}
 	
 	protected void setNextDay() {
@@ -254,7 +254,10 @@ public class FileMonitor {
 	
 	protected void reloadStatus() {
 		if (statusFile == null) return;
-		if (! statusFile.exists()) return;
+		if (! statusFile.exists()) {
+			initialized = true;
+			return;
+		}
 		if (testChkFile()) {
 			// error ! one other monitor is running using the same status file
 			System.err.println("Error: One other monitor is probably running using the same status file: "+statusFile);
