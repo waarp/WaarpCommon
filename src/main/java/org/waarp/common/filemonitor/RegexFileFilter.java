@@ -51,9 +51,9 @@ public class RegexFileFilter implements FileFilter {
 	public boolean accept(File pathname) {
 		if (pathname.isFile()) {
 			if (pattern != null) {
-				return pattern.matcher(pathname.getName()).matches() && pathname.length() >= minimalSize;
+				return pattern.matcher(pathname.getName()).matches() && (minimalSize == 0 || pathname.length() >= minimalSize);
 			}
-			return pathname.length() >= minimalSize;
+			return minimalSize == 0 || pathname.length() >= minimalSize;
 		}
 		return false;
 	}
