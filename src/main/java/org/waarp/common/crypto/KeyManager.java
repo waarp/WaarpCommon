@@ -39,7 +39,7 @@ import org.waarp.common.exception.CryptoException;
 public abstract class KeyManager {
 	ConcurrentHashMap<String, KeyObject> keysConcurrentHashMap =
 			new ConcurrentHashMap<String, KeyObject>();
-	volatile AtomicBoolean isInitialized = new AtomicBoolean(false);
+	AtomicBoolean isInitialized = new AtomicBoolean(false);
 
 	public abstract KeyObject createKeyObject();
 
