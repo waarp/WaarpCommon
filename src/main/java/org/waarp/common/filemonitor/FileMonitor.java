@@ -51,6 +51,8 @@ import org.waarp.common.file.AbstractDir;
 import org.waarp.common.future.WaarpFuture;
 import org.waarp.common.json.AdaptativeJsonHandler;
 import org.waarp.common.json.AdaptativeJsonHandler.JsonCodec;
+import org.waarp.common.logging.WaarpInternalLogger;
+import org.waarp.common.logging.WaarpInternalLoggerFactory;
 import org.waarp.common.utility.WaarpThreadFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -69,6 +71,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  *
  */
 public class FileMonitor {
+	/**
+	 * Internal Logger
+	 */
+	static protected volatile WaarpInternalLogger logger;
 	protected static final DigestAlgo defaultDigestAlgo = DigestAlgo.MD5;
 	protected static final long minimalDelay = 100;
 	protected static final long defaultDelay = 1000;
@@ -136,6 +142,9 @@ public class FileMonitor {
 			FileMonitorCommandRunnableFuture commandValidFile, 
 			FileMonitorCommandRunnableFuture commandRemovedFile,
 			FileMonitorCommandRunnableFuture commandCheckIteration) {
+		if (logger == null) {
+			logger = WaarpInternalLoggerFactory.getLogger(FileMonitor.class);
+		}
 		this.name = name;
 		this.statusFile = statusFile;
 		this.stopFile = stopFile;
@@ -231,7 +240,7 @@ public class FileMonitor {
 		if (checkFile.exists()) {
 			deleteChkFile();
 			long time = (elapseTime)*10;
-			System.err.println("Waiting to check if another Monitor is running with the same configuration: "+(time/1000)+"s");
+			logger.warn("Waiting to check if another Monitor is running with the same configuration: "+(time/1000)+"s");
 			try {
 				Thread.sleep(time);
 			} catch (InterruptedException e) {
@@ -260,7 +269,7 @@ public class FileMonitor {
 		}
 		if (testChkFile()) {
 			// error ! one other monitor is running using the same status file
-			System.err.println("Error: One other monitor is probably running using the same status file: "+statusFile);
+			logger.warn("Error: One other monitor is probably running using the same status file: "+statusFile);
 			return;
 		}
 		try {
@@ -437,16 +446,14 @@ public class FileMonitor {
 			try {
 				future.get();
 			} catch (InterruptedException e) {
-				System.err.println("Interruption so exit");
+				logger.warn("Interruption so exit");
 				//e.printStackTrace();
 				error = true;
 			} catch (ExecutionException e) {
-				System.err.println("Exception during execution");
-				e.printStackTrace();
+				logger.warn("Exception during execution", e);
 				error = true;
-			} catch (NullPointerException e) {
-				System.err.println("Exception during execution");
-				e.printStackTrace();
+			} catch (Throwable e) {
+				logger.warn("Exception during execution", e);
 				error = true;
 			}
 		}
@@ -497,72 +504,77 @@ public class FileMonitor {
 	 * @return True if one file at least has changed
 	 */
 	protected boolean checkOneDir(boolean fileItemsChanged, File directory) {
-		File [] files = directory.listFiles(filter);
-		for (File file : files) {
-			if (checkStop()) {
-				return false;
-			}
-			if (file.isDirectory()) {
-				continue;
-			}
-			String name = AbstractDir.normalizePath(file.getAbsolutePath());
-			FileItem fileItem = fileItems.get(name);
-			if (fileItem == null) {
-				// never seen until now
-				fileItems.put(name, new FileItem(file));
-				fileItemsChanged = true;
-				continue;
-			}
-			if (fileItem.used) {
-				// already used so ignore
-				continue;
-			}
-			long lastTimeModified = fileItem.file.lastModified();
-			if (lastTimeModified != fileItem.lastTime) {
-				// changed or second time check
-				fileItem.lastTime = lastTimeModified;
-				fileItemsChanged = true;
-				continue;
-			}
-			// now check Hash or third time
-			try {
-				byte [] hash = FilesystemBasedDigest.getHash(fileItem.file, true, digest);
-				if (hash == null || fileItem.hash == null) {
-					fileItem.hash = hash;
-					fileItemsChanged = true;
-					continue;
-				}
-				if (! Arrays.equals(hash, fileItem.hash)) {
-					fileItem.hash = hash;
-					fileItemsChanged = true;
-					continue;
-				}
-				// now time and hash are the same so act on it
-				fileItem.timeUsed = System.currentTimeMillis();
-				if (commandValidFileFactory != null) {
-					FileMonitorCommandRunnableFuture torun = commandValidFileFactory.create(fileItem);
-					Future<?> torunFuture = executor.submit(torun);
-					results.add(torunFuture);
-				} else if (commandValidFile != null) {
-					commandValidFile.run(fileItem);
-				} else {
-					toUse.add(fileItem);
-				}
-				fileItemsChanged = true;
-			} catch (IOException e) {
-				continue;
-			}
-		}
-		if (scanSubDir) {
-			files = directory.listFiles();
+		try {
+			File [] files = directory.listFiles(filter);
 			for (File file : files) {
 				if (checkStop()) {
 					return false;
 				}
 				if (file.isDirectory()) {
-					fileItemsChanged = checkOneDir(fileItemsChanged, file);
+					continue;
+				}
+				String name = AbstractDir.normalizePath(file.getAbsolutePath());
+				FileItem fileItem = fileItems.get(name);
+				if (fileItem == null) {
+					// never seen until now
+					fileItems.put(name, new FileItem(file));
+					fileItemsChanged = true;
+					continue;
+				}
+				if (fileItem.used) {
+					// already used so ignore
+					continue;
+				}
+				long lastTimeModified = fileItem.file.lastModified();
+				if (lastTimeModified != fileItem.lastTime) {
+					// changed or second time check
+					fileItem.lastTime = lastTimeModified;
+					fileItemsChanged = true;
+					continue;
+				}
+				// now check Hash or third time
+				try {
+					byte [] hash = FilesystemBasedDigest.getHash(fileItem.file, true, digest);
+					if (hash == null || fileItem.hash == null) {
+						fileItem.hash = hash;
+						fileItemsChanged = true;
+						continue;
+					}
+					if (! Arrays.equals(hash, fileItem.hash)) {
+						fileItem.hash = hash;
+						fileItemsChanged = true;
+						continue;
+					}
+					// now time and hash are the same so act on it
+					fileItem.timeUsed = System.currentTimeMillis();
+					if (commandValidFileFactory != null) {
+						FileMonitorCommandRunnableFuture torun = commandValidFileFactory.create(fileItem);
+						Future<?> torunFuture = executor.submit(torun);
+						results.add(torunFuture);
+					} else if (commandValidFile != null) {
+						commandValidFile.run(fileItem);
+					} else {
+						toUse.add(fileItem);
+					}
+					fileItemsChanged = true;
+				} catch (Throwable e) {
+					continue;
 				}
 			}
+			if (scanSubDir) {
+				files = directory.listFiles();
+				for (File file : files) {
+					if (checkStop()) {
+						return false;
+					}
+					if (file.isDirectory()) {
+						fileItemsChanged = checkOneDir(fileItemsChanged, file);
+					}
+				}
+			}
+		} catch (Throwable e) {
+			logger.warn("Issue during Directory and File Checking", e);
+			// ignore
 		}
 		return fileItemsChanged;
 	}
@@ -582,19 +594,24 @@ public class FileMonitor {
 		}
 
 		public void run(Timeout timeout) throws Exception {
-			if (fileMonitor.checkFiles()) {
-				if (fileMonitor.timer != null) {
-					try {
-						fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
-					} catch (Exception e) {
-						// ignore and stop
+			try {
+				if (fileMonitor.checkFiles()) {
+					if (fileMonitor.timer != null) {
+						try {
+							fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
+						} catch (Throwable e) {
+							// ignore and stop
+							fileMonitor.internalfuture.setSuccess();
+						}
+					} else {
 						fileMonitor.internalfuture.setSuccess();
 					}
 				} else {
+					fileMonitor.deleteChkFile();
 					fileMonitor.internalfuture.setSuccess();
 				}
-			} else {
-				fileMonitor.deleteChkFile();
+			} catch (Throwable e) {
+				logger.warn("Issue during Directory and File Checking", e);
 				fileMonitor.internalfuture.setSuccess();
 			}
 		}
@@ -620,8 +637,9 @@ public class FileMonitor {
 				if (timerWaarp != null && ! checkStop()) {
 					try {
 						timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
-					} catch (Exception e) {
+					} catch (Throwable e) {
 						// stop and ignore
+						internalfuture.setSuccess();
 					}
 				} else {
 					internalfuture.setSuccess();

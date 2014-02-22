@@ -350,7 +350,7 @@ public abstract class WaarpShutdownHook extends Thread {
 				logger.debug("Should restart with:\n"+cmd.toString());
 				logger.warn("Should restart");
 				Runtime.getRuntime().exec(cmd.toString());
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				// something went wrong
 				throw new IOException("Error while trying to restart the application", e);
 			}

@@ -87,7 +87,7 @@ public abstract class ServiceLauncher implements Daemon {
     	logger.debug("Engine " + className);
     	try {
 			engineLauncherInstance = (ServiceLauncher) Class.forName(className).newInstance();
-		} catch (Exception e) {
+		} catch (Throwable e) {
         	logger.error("Engine not correctly initialized", e);
         	System.exit(2);
 		}
