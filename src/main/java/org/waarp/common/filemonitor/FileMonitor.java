@@ -450,10 +450,10 @@ public class FileMonitor {
 				//e.printStackTrace();
 				error = true;
 			} catch (ExecutionException e) {
-				logger.warn("Exception during execution", e);
+				logger.error("Exception during execution", e);
 				error = true;
 			} catch (Throwable e) {
-				logger.warn("Exception during execution", e);
+				logger.error("Exception during execution", e);
 				error = true;
 			}
 		}
@@ -558,6 +558,7 @@ public class FileMonitor {
 					}
 					fileItemsChanged = true;
 				} catch (Throwable e) {
+					logger.error("Error during final file check", e);
 					continue;
 				}
 			}
@@ -573,7 +574,7 @@ public class FileMonitor {
 				}
 			}
 		} catch (Throwable e) {
-			logger.warn("Issue during Directory and File Checking", e);
+			logger.error("Issue during Directory and File Checking", e);
 			// ignore
 		}
 		return fileItemsChanged;
@@ -600,6 +601,7 @@ public class FileMonitor {
 						try {
 							fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
 						} catch (Throwable e) {
+							logger.error("Error while pushing next filemonitor step", e);
 							// ignore and stop
 							fileMonitor.internalfuture.setSuccess();
 						}
@@ -611,7 +613,7 @@ public class FileMonitor {
 					fileMonitor.internalfuture.setSuccess();
 				}
 			} catch (Throwable e) {
-				logger.warn("Issue during Directory and File Checking", e);
+				logger.error("Issue during Directory and File Checking", e);
 				fileMonitor.internalfuture.setSuccess();
 			}
 		}
@@ -632,19 +634,26 @@ public class FileMonitor {
 		}
 
 		public void run(Timeout timeout) throws Exception {
-			if (!checkStop()) {
-				informationMonitorCommand.run(null);
-				if (timerWaarp != null && ! checkStop()) {
-					try {
-						timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
-					} catch (Throwable e) {
-						// stop and ignore
+			try {
+				if (!checkStop()) {
+					informationMonitorCommand.run(null);
+					if (timerWaarp != null && ! checkStop()) {
+						try {
+							timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
+						} catch (Throwable e) {
+							// stop and ignore
+							logger.error("Error during nex filemonitor information step", e);
+							internalfuture.setSuccess();
+						}
+					} else {
 						internalfuture.setSuccess();
 					}
 				} else {
 					internalfuture.setSuccess();
 				}
-			} else {
+			} catch (Throwable e) {
+				// stop and ignore
+				logger.error("Error during nex filemonitor information step", e);
 				internalfuture.setSuccess();
 			}
 		}
