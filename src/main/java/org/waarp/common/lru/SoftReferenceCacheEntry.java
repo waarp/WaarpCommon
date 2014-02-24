@@ -29,7 +29,7 @@ class SoftReferenceCacheEntry<V> implements InterfaceLruCacheEntry<V> {
 
 	private final SoftReference<V> valueReference;
 
-	private final long expirationTime;
+	private long expirationTime;
 
 	/**
 	 * Creates LruCacheEntry with desired ttl
@@ -73,4 +73,8 @@ class SoftReferenceCacheEntry<V> implements InterfaceLruCacheEntry<V> {
 		return (timeRef <= expirationTime);
 	}
 
+	public boolean resetTime(long ttl) {
+		expirationTime = System.currentTimeMillis() + ttl;
+		return true;
+	}
 }

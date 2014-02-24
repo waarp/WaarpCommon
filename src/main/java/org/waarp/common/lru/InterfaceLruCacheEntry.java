@@ -38,4 +38,10 @@ public interface InterfaceLruCacheEntry<V> {
 	 * @return True if this entry is still valid
 	 */
 	public boolean isStillValid(long timeRef);
+	
+	/**
+	 * Reset the time of overtime
+	 * @return True if this entry has its time reset
+	 */
+	public boolean resetTime(long ttl);
 }

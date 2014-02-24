@@ -64,7 +64,11 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 	}
 
 	public V get(K key) {
-		return getValue(key);
+		return getValue(key, false);
+	}
+
+	public V getSetUsed(K key) {
+		return getValue(key, true);
 	}
 
 	public V get(K key, Callable<V> callback) throws Exception {
@@ -100,19 +104,22 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 	 * (LruCacheEntry.getValue() returns null)
 	 * 
 	 * @param key
+	 * @param used
 	 * @return Value
 	 */
-	protected V getValue(K key) {
+	protected V getValue(K key, boolean used) {
 		V value = null;
 
 		InterfaceLruCacheEntry<V> cacheEntry = getEntry(key);
 
 		if (cacheEntry != null) {
+			cacheEntry.resetTime(ttl);
 			value = cacheEntry.getValue();
 
 			// autoremove entry from cache if it's not valid
-			if (value == null)
+			if (value == null) {
 				remove(key);
+			}
 		}
 
 		return value;

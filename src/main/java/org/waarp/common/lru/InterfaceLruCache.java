@@ -54,6 +54,14 @@ public interface InterfaceLruCache<K, V> {
 	public V get(K key);
 
 	/**
+	 * Returns value cached with key. The corresponding object, if found, will have its time validation reset.
+	 * 
+	 * @param key
+	 * @return value or null if key doesn't exist or entry is not valid
+	 */
+	public V getSetUsed(K key);
+
+	/**
 	 * Tries to get element from cache. If get fails callback is used to create element and returned
 	 * value is stored in cache.
 	 * 
