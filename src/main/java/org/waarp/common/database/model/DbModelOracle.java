@@ -188,7 +188,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),
-		VARCHAR(Types.VARCHAR, " VARCHAR2(254) "),
+		VARCHAR(Types.VARCHAR, " VARCHAR2(8096) "),
 		LONGVARCHAR(Types.LONGVARCHAR, " CLOB "),
 		BIT(Types.BIT, " CHAR(1) "),
 		TINYINT(Types.TINYINT, " SMALLINT "),

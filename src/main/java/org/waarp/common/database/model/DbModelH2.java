@@ -133,7 +133,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
 
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),
-		VARCHAR(Types.VARCHAR, " VARCHAR(254) "),
+		VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
 		LONGVARCHAR(Types.LONGVARCHAR, " LONGVARCHAR "),
 		BIT(Types.BIT, " BOOLEAN "),
 		TINYINT(Types.TINYINT, " TINYINT "),
