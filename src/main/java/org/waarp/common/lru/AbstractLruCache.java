@@ -113,7 +113,9 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 		InterfaceLruCacheEntry<V> cacheEntry = getEntry(key);
 
 		if (cacheEntry != null) {
-			cacheEntry.resetTime(ttl);
+			if (used) {
+				cacheEntry.resetTime(ttl);
+			}
 			value = cacheEntry.getValue();
 
 			// autoremove entry from cache if it's not valid
