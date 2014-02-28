@@ -5,7 +5,17 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
-	    <release version="1.2.21" date="2014-01-05" description="Fix release">
+        <release version="1.2.22" date="2014-03-01" description="Fix release">
+            <action dev="Frederic Bregier" type="fix">Fix H2 Database CREATE SEQUENCE command</action>
+            <action dev="Frederic Bregier" type="fix">Improve concurrency in FileMonitor</action>
+            <action dev="Frederic Bregier" type="fix">Fix ConstraintLimitHandler with correct default values</action>
+            <action dev="Frederic Bregier" type="add">Improve FileMonitor startup checking for another same FileMonitor daemon already running</action>
+            <action dev="Frederic Bregier" type="add">Improve FileMonitor by adding minimalSize option to control file candidat</action>
+            <action dev="Frederic Bregier" type="fix">Improve logging in FileMonitor, Crypto, Shutdown hook, Ssl</action>
+            <action dev="Frederic Bregier" type="add">LRU implementation improved and a SimpleLRUCache (not in Concurrency) created</action>
+            <action dev="Frederic Bregier" type="fix">All VARCHAR are changed from 256 to 8096 maximum length</action>
+        </release>
+        <release version="1.2.21" date="2014-01-23" description="Fix release">
 			<action dev="Frederic Bregier" type="fix">Fix Space available not correctly computed with some JDK</action>
 			<action dev="Frederic Bregier" type="fix">Fix information on FileMonitor (digest kept)</action>
 			<action dev="Frederic Bregier" type="fix">Improve ThreadFactory by enabling special Non Daemon factory</action>

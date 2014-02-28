@@ -212,6 +212,7 @@ public abstract class KeyObject {
 			cipher = Cipher.getInstance(getInstance());
 			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 		} catch (Exception e) {
+			logger.warn("Crypt Error", e);
 			return null;
 		}
 		return cipher;
@@ -284,6 +285,7 @@ public abstract class KeyObject {
 			cipher = Cipher.getInstance(getAlgorithm());
 			cipher.init(Cipher.DECRYPT_MODE, secretKey);
 		} catch (Exception e) {
+			logger.warn("Uncrypt Error", e);
 			return null;
 		}
 		return cipher;

@@ -31,6 +31,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -50,6 +51,8 @@ import org.waarp.common.file.AbstractDir;
 import org.waarp.common.future.WaarpFuture;
 import org.waarp.common.json.AdaptativeJsonHandler;
 import org.waarp.common.json.AdaptativeJsonHandler.JsonCodec;
+import org.waarp.common.logging.WaarpInternalLogger;
+import org.waarp.common.logging.WaarpInternalLoggerFactory;
 import org.waarp.common.utility.WaarpThreadFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -68,6 +71,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  *
  */
 public class FileMonitor {
+	/**
+	 * Internal Logger
+	 */
+	static protected volatile WaarpInternalLogger logger;
 	protected static final DigestAlgo defaultDigestAlgo = DigestAlgo.MD5;
 	protected static final long minimalDelay = 100;
 	protected static final long defaultDelay = 1000;
@@ -86,8 +93,11 @@ public class FileMonitor {
 	protected Timer timerWaarp = null; // used only if elapseWaarpTime > defaultDelay (1s)
 	protected boolean scanSubDir = false;
 	
-	protected final HashMap<String, FileItem> fileItems = 
-			new HashMap<String, FileMonitor.FileItem>();
+	protected boolean initialized = false;
+	protected File checkFile = null;
+	
+	protected final ConcurrentHashMap<String, FileItem> fileItems = 
+			new ConcurrentHashMap<String, FileMonitor.FileItem>();
 	
 	protected FileFilter filter = 
 			new FileFilter() {
@@ -132,6 +142,9 @@ public class FileMonitor {
 			FileMonitorCommandRunnableFuture commandValidFile, 
 			FileMonitorCommandRunnableFuture commandRemovedFile,
 			FileMonitorCommandRunnableFuture commandCheckIteration) {
+		if (logger == null) {
+			logger = WaarpInternalLoggerFactory.getLogger(FileMonitor.class);
+		}
 		this.name = name;
 		this.statusFile = statusFile;
 		this.stopFile = stopFile;
@@ -151,10 +164,13 @@ public class FileMonitor {
 		this.commandValidFile = commandValidFile;
 		this.commandRemovedFile = commandRemovedFile;
 		this.commandCheckIteration = commandCheckIteration;
+		if (statusFile != null) {
+			checkFile = new File(statusFile.getAbsolutePath()+".chk");
+		}
 		this.reloadStatus();
 		this.setNextDay();
 		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir,
-				globalok, globalerror, todayok, todayerror);
+					globalok, globalerror, todayok, todayerror);
 	}
 	
 	protected void setNextDay() {
@@ -219,28 +235,82 @@ public class FileMonitor {
 	public void removeDirectory(File directory) {
 		this.directories.remove(directory);
 	}
+	
+	private boolean testChkFile() {
+		if (checkFile.exists()) {
+			deleteChkFile();
+			long time = (elapseTime)*10;
+			logger.warn("Waiting to check if another Monitor is running with the same configuration: "+(time/1000)+"s");
+			try {
+				Thread.sleep(time);
+			} catch (InterruptedException e) {
+			}
+			return checkFile.exists();
+		}
+		return false;
+	}
+	
+	private void createChkFile() {
+		try {
+			checkFile.createNewFile();
+		} catch (IOException e) {
+		}
+	}
 
+	private void deleteChkFile() {
+		checkFile.delete();
+	}
+	
 	protected void reloadStatus() {
 		if (statusFile == null) return;
-		if (! statusFile.exists()) return;
+		if (! statusFile.exists()) {
+			initialized = true;
+			return;
+		}
+		if (testChkFile()) {
+			// error ! one other monitor is running using the same status file
+			logger.warn("Error: One other monitor is probably running using the same status file: "+statusFile);
+			return;
+		}
 		try {
 			HashMap<String, FileItem> newHashMap = 
 					handler.mapper.readValue(statusFile, 
 							new TypeReference<HashMap<String, FileItem>>() {});
 			fileItems.putAll(newHashMap);
+			initialized = true;
 		} catch (JsonParseException e) {
 		} catch (JsonMappingException e) {
 		} catch (IOException e) {
 		}
 	}
+	
+	/**
+	 * 
+	 * @return True if the FileMonitor is correctly initialized
+	 */
+	public boolean initialized() {
+		return initialized;
+	}
+	
 	protected void saveStatus() {
 		if (statusFile == null) return;
 		try {
 			handler.mapper.writeValue(statusFile, fileItems);
+			createChkFile();
 		} catch (JsonGenerationException e) {
 		} catch (JsonMappingException e) {
 		} catch (IOException e) {
 		}
+	}
+	/**
+	 * 
+	 * @return the number of fileItems in the current history (active, in error or past)
+	 */
+	public long getCurrentHistoryNb() {
+		if (fileItems != null) {
+			return fileItems.size();
+		}
+		return -1;
 	}
 	/**
 	 * 
@@ -249,6 +319,7 @@ public class FileMonitor {
 	public String getStatus() {
 		if (fileMonitorInformation == null) return "{}";
 		try {
+			createChkFile();
 			return handler.mapper.writeValueAsString(fileMonitorInformation);
 		} catch (JsonProcessingException e) {
 		}
@@ -278,7 +349,6 @@ public class FileMonitor {
 			timer = new HashedWheelTimer(
 						new WaarpThreadFactory("TimerFileMonitor"),
 						100, TimeUnit.MILLISECONDS, 8);
-			timer.newTimeout(new FileMonitorTimerTask(this), elapseTime, TimeUnit.MILLISECONDS);
 			future = new WaarpFuture(true);
 			internalfuture = new WaarpFuture(true);
 			if (commandValidFileFactory != null && executor == null) {
@@ -288,6 +358,7 @@ public class FileMonitor {
 					executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
 				}
 			}
+			timer.newTimeout(new FileMonitorTimerTask(this), elapseTime, TimeUnit.MILLISECONDS);
 		}// else already started
 		if (elapseWaarpTime >= defaultDelay && timerWaarp == null && commandCheckIteration != null) {
 			timerWaarp = new HashedWheelTimer(
@@ -298,6 +369,7 @@ public class FileMonitor {
 	}
 	
 	public void stop() {
+		initialized = false;
 		stopped = true;
 		if (timerWaarp != null) {
 			timerWaarp.stop();
@@ -315,6 +387,7 @@ public class FileMonitor {
 			executor.shutdown();
 			executor = null;
 		}
+		deleteChkFile();
 		if (future != null) {
 			future.setSuccess();
 		}
@@ -369,19 +442,18 @@ public class FileMonitor {
 		boolean error = false;
 		// Wait for all commands to finish before continuing
 		for (Future<?> future : results) {
+			createChkFile();
 			try {
 				future.get();
 			} catch (InterruptedException e) {
-				System.err.println("Interruption so exit");
+				logger.info("Interruption so exit");
 				//e.printStackTrace();
 				error = true;
 			} catch (ExecutionException e) {
-				System.err.println("Exception during execution");
-				e.printStackTrace();
+				logger.error("Exception during execution", e);
 				error = true;
-			} catch (NullPointerException e) {
-				System.err.println("Exception during execution");
-				e.printStackTrace();
+			} catch (Throwable e) {
+				logger.error("Exception during execution", e);
 				error = true;
 			}
 		}
@@ -414,6 +486,8 @@ public class FileMonitor {
 		}
 		if (fileItemsChanged) {
 			this.saveStatus();
+		} else {
+			createChkFile();
 		}
 		if (checkStop()) {
 			return false;
@@ -430,72 +504,78 @@ public class FileMonitor {
 	 * @return True if one file at least has changed
 	 */
 	protected boolean checkOneDir(boolean fileItemsChanged, File directory) {
-		File [] files = directory.listFiles(filter);
-		for (File file : files) {
-			if (checkStop()) {
-				return false;
-			}
-			if (file.isDirectory()) {
-				continue;
-			}
-			String name = AbstractDir.normalizePath(file.getAbsolutePath());
-			FileItem fileItem = fileItems.get(name);
-			if (fileItem == null) {
-				// never seen until now
-				fileItems.put(name, new FileItem(file));
-				fileItemsChanged = true;
-				continue;
-			}
-			if (fileItem.used) {
-				// already used so ignore
-				continue;
-			}
-			long lastTimeModified = fileItem.file.lastModified();
-			if (lastTimeModified != fileItem.lastTime) {
-				// changed or second time check
-				fileItem.lastTime = lastTimeModified;
-				fileItemsChanged = true;
-				continue;
-			}
-			// now check Hash or third time
-			try {
-				byte [] hash = FilesystemBasedDigest.getHash(fileItem.file, true, digest);
-				if (hash == null || fileItem.hash == null) {
-					fileItem.hash = hash;
-					fileItemsChanged = true;
-					continue;
-				}
-				if (! Arrays.equals(hash, fileItem.hash)) {
-					fileItem.hash = hash;
-					fileItemsChanged = true;
-					continue;
-				}
-				// now time and hash are the same so act on it
-				fileItem.timeUsed = System.currentTimeMillis();
-				if (commandValidFileFactory != null) {
-					FileMonitorCommandRunnableFuture torun = commandValidFileFactory.create(fileItem);
-					Future<?> torunFuture = executor.submit(torun);
-					results.add(torunFuture);
-				} else if (commandValidFile != null) {
-					commandValidFile.run(fileItem);
-				} else {
-					toUse.add(fileItem);
-				}
-				fileItemsChanged = true;
-			} catch (IOException e) {
-				continue;
-			}
-		}
-		if (scanSubDir) {
-			files = directory.listFiles();
+		try {
+			File [] files = directory.listFiles(filter);
 			for (File file : files) {
 				if (checkStop()) {
 					return false;
 				}
 				if (file.isDirectory()) {
-					fileItemsChanged = checkOneDir(fileItemsChanged, file);
+					continue;
+				}
+				String name = AbstractDir.normalizePath(file.getAbsolutePath());
+				FileItem fileItem = fileItems.get(name);
+				if (fileItem == null) {
+					// never seen until now
+					fileItems.put(name, new FileItem(file));
+					fileItemsChanged = true;
+					continue;
+				}
+				if (fileItem.used) {
+					// already used so ignore
+					continue;
+				}
+				long lastTimeModified = fileItem.file.lastModified();
+				if (lastTimeModified != fileItem.lastTime) {
+					// changed or second time check
+					fileItem.lastTime = lastTimeModified;
+					fileItemsChanged = true;
+					continue;
+				}
+				// now check Hash or third time
+				try {
+					byte [] hash = FilesystemBasedDigest.getHash(fileItem.file, true, digest);
+					if (hash == null || fileItem.hash == null) {
+						fileItem.hash = hash;
+						fileItemsChanged = true;
+						continue;
+					}
+					if (! Arrays.equals(hash, fileItem.hash)) {
+						fileItem.hash = hash;
+						fileItemsChanged = true;
+						continue;
+					}
+					// now time and hash are the same so act on it
+					fileItem.timeUsed = System.currentTimeMillis();
+					if (commandValidFileFactory != null) {
+						FileMonitorCommandRunnableFuture torun = commandValidFileFactory.create(fileItem);
+						Future<?> torunFuture = executor.submit(torun);
+						results.add(torunFuture);
+					} else if (commandValidFile != null) {
+						commandValidFile.run(fileItem);
+					} else {
+						toUse.add(fileItem);
+					}
+					fileItemsChanged = true;
+				} catch (Throwable e) {
+					logger.error("Error during final file check", e);
+					continue;
 				}
 			}
+			if (scanSubDir) {
+				files = directory.listFiles();
+				for (File file : files) {
+					if (checkStop()) {
+						return false;
+					}
+					if (file.isDirectory()) {
+						fileItemsChanged = checkOneDir(fileItemsChanged, file);
+					}
+				}
+			}
+		} catch (Throwable e) {
+			logger.error("Issue during Directory and File Checking", e);
+			// ignore
 		}
 		return fileItemsChanged;
 	}
@@ -515,18 +595,25 @@ public class FileMonitor {
 		}
 
 		public void run(Timeout timeout) throws Exception {
-			if (fileMonitor.checkFiles()) {
-				if (fileMonitor.timer != null) {
-					try {
-						fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
-					} catch (Exception e) {
-						// ignore and stop
+			try {
+				if (fileMonitor.checkFiles()) {
+					if (fileMonitor.timer != null) {
+						try {
+							fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
+						} catch (Throwable e) {
+							logger.error("Error while pushing next filemonitor step", e);
+							// ignore and stop
+							fileMonitor.internalfuture.setSuccess();
+						}
+					} else {
 						fileMonitor.internalfuture.setSuccess();
 					}
 				} else {
+					fileMonitor.deleteChkFile();
 					fileMonitor.internalfuture.setSuccess();
 				}
-			} else {
+			} catch (Throwable e) {
+				logger.error("Issue during Directory and File Checking", e);
 				fileMonitor.internalfuture.setSuccess();
 			}
 		}
@@ -547,18 +634,26 @@ public class FileMonitor {
 		}
 
 		public void run(Timeout timeout) throws Exception {
-			if (!checkStop()) {
-				informationMonitorCommand.run(null);
-				if (timerWaarp != null && ! checkStop()) {
-					try {
-						timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
-					} catch (Exception e) {
-						// stop and ignore
+			try {
+				if (!checkStop()) {
+					informationMonitorCommand.run(null);
+					if (timerWaarp != null && ! checkStop()) {
+						try {
+							timerWaarp.newTimeout(this, elapseWaarpTime, TimeUnit.MILLISECONDS);
+						} catch (Throwable e) {
+							// stop and ignore
+							logger.error("Error during nex filemonitor information step", e);
+							internalfuture.setSuccess();
+						}
+					} else {
+						internalfuture.setSuccess();
 					}
 				} else {
 					internalfuture.setSuccess();
 				}
-			} else {
+			} catch (Throwable e) {
+				// stop and ignore
+				logger.error("Error during nex filemonitor information step", e);
 				internalfuture.setSuccess();
 			}
 		}
@@ -572,7 +667,7 @@ public class FileMonitor {
 	@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
 	public static class FileMonitorInformation {
 		public String name;
-		public HashMap<String, FileItem> fileItems;
+		public ConcurrentHashMap<String, FileItem> fileItems;
 		public List<File> directories;
 		public File stopFile;
 		public File statusFile;
@@ -586,7 +681,7 @@ public class FileMonitor {
 		public FileMonitorInformation() {
 			// empty constructor for JSON
 		}
-		protected FileMonitorInformation(String name, HashMap<String, FileItem> fileItems,
+		protected FileMonitorInformation(String name, ConcurrentHashMap<String, FileItem> fileItems,
 				List<File> directories, File stopFile, File statusFile, 
 				long elapseTime, boolean scanSubDir, 
 				AtomicLong globalok, AtomicLong globalerror, AtomicLong todayok, AtomicLong todayerror) {

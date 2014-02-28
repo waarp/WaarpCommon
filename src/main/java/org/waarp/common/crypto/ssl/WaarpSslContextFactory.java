@@ -115,7 +115,7 @@ public class WaarpSslContextFactory {
 							null, null);
 				}
 				return serverContext;
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				logger.error("Failed to initialize the server-side SSLContext", e);
 				throw new Error("Failed to initialize the server-side SSLContext",
 						e);
@@ -136,7 +136,7 @@ public class WaarpSslContextFactory {
 							null, null);
 				}
 				return clientContext;
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				logger.error("Failed to initialize the client-side SSLContext", e);
 				throw new Error("Failed to initialize the client-side SSLContext",
 						e);

@@ -112,7 +112,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),
-		VARCHAR(Types.VARCHAR, " VARCHAR(254) "),
+		VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
 		LONGVARCHAR(Types.LONGVARCHAR, " TEXT "),
 		BIT(Types.BIT, " BOOLEAN "),
 		TINYINT(Types.TINYINT, " INT2 "),
@@ -220,7 +220,8 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 
 		// example of sequence
 		action = "CREATE SEQUENCE " + DbDataModel.fieldseq +
-				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1);
+				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1) +
+				" RESTART WITH " + (DbConstant.ILLEGALVALUE + 1);
 		logger.warn(action);
 		try {
 			request.query(action);
@@ -238,6 +239,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 	public void resetSequence(DbSession session, long newvalue)
 			throws WaarpDatabaseNoConnectionException {
 		String action = "ALTER SEQUENCE " + DbDataModel.fieldseq +
+				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1) +
 				" RESTART WITH " + newvalue;
 		DbRequest request = new DbRequest(session);
 		try {

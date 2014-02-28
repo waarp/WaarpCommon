@@ -25,7 +25,7 @@ package org.waarp.common.lru;
 class StrongReferenceCacheEntry<V> implements InterfaceLruCacheEntry<V> {
 	private final V value;
 
-	private final long expirationTime;
+	private long expirationTime;
 
 	/**
 	 * Creates StrongReferencyCacheEntry with desired ttl
@@ -61,5 +61,9 @@ class StrongReferenceCacheEntry<V> implements InterfaceLruCacheEntry<V> {
 	public boolean isStillValid(long timeRef) {
 		return (timeRef <= expirationTime);
 	}
-
+	
+	public boolean resetTime(long ttl) {
+		expirationTime = System.currentTimeMillis() + ttl;
+		return true;
+	}
 }
