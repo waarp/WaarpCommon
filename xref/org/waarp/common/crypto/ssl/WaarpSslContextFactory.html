@@ -125,7 +125,7 @@
 <a class="jxr_linenumber" name="115" href="#115">115</a> 							<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="116" href="#116">116</a> 				}
 <a class="jxr_linenumber" name="117" href="#117">117</a> 				<strong class="jxr_keyword">return</strong> serverContext;
-<a class="jxr_linenumber" name="118" href="#118">118</a> 			} <strong class="jxr_keyword">catch</strong> (Exception e) {
+<a class="jxr_linenumber" name="118" href="#118">118</a> 			} <strong class="jxr_keyword">catch</strong> (Throwable e) {
 <a class="jxr_linenumber" name="119" href="#119">119</a> 				logger.error(<span class="jxr_string">"Failed to initialize the server-side SSLContext"</span>, e);
 <a class="jxr_linenumber" name="120" href="#120">120</a> 				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> Error(<span class="jxr_string">"Failed to initialize the server-side SSLContext"</span>,
 <a class="jxr_linenumber" name="121" href="#121">121</a> 						e);
@@ -146,7 +146,7 @@
 <a class="jxr_linenumber" name="136" href="#136">136</a> 							<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="137" href="#137">137</a> 				}
 <a class="jxr_linenumber" name="138" href="#138">138</a> 				<strong class="jxr_keyword">return</strong> clientContext;
-<a class="jxr_linenumber" name="139" href="#139">139</a> 			} <strong class="jxr_keyword">catch</strong> (Exception e) {
+<a class="jxr_linenumber" name="139" href="#139">139</a> 			} <strong class="jxr_keyword">catch</strong> (Throwable e) {
 <a class="jxr_linenumber" name="140" href="#140">140</a> 				logger.error(<span class="jxr_string">"Failed to initialize the client-side SSLContext"</span>, e);
 <a class="jxr_linenumber" name="141" href="#141">141</a> 				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> Error(<span class="jxr_string">"Failed to initialize the client-side SSLContext"</span>,
 <a class="jxr_linenumber" name="142" href="#142">142</a> 						e);
