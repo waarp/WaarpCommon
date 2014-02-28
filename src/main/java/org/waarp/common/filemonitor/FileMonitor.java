@@ -446,7 +446,7 @@ public class FileMonitor {
 			try {
 				future.get();
 			} catch (InterruptedException e) {
-				logger.warn("Interruption so exit");
+				logger.info("Interruption so exit");
 				//e.printStackTrace();
 				error = true;
 			} catch (ExecutionException e) {
