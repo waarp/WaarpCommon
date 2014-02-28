@@ -220,7 +220,8 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 
 		// example of sequence
 		action = "CREATE SEQUENCE " + DbDataModel.fieldseq +
-				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1);
+				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1) +
+				" RESTART WITH " + (DbConstant.ILLEGALVALUE + 1);
 		logger.warn(action);
 		try {
 			request.query(action);
@@ -238,6 +239,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 	public void resetSequence(DbSession session, long newvalue)
 			throws WaarpDatabaseNoConnectionException {
 		String action = "ALTER SEQUENCE " + DbDataModel.fieldseq +
+				" MINVALUE " + (DbConstant.ILLEGALVALUE + 1) +
 				" RESTART WITH " + newvalue;
 		DbRequest request = new DbRequest(session);
 		try {
