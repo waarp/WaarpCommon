@@ -101,7 +101,7 @@ public interface InterfaceLruCache<K, V> {
 	 * 
 	 * @return number of entries
 	 */
-	public int getSize();
+	public int size();
 
 	/**
 	 * Returns cache TTL
@@ -137,6 +137,21 @@ public interface InterfaceLruCache<K, V> {
 	 */
 	public void put(K key, V value, long ttl);
 
+	/**
+	 * Puts value under key if not already there. Default TTL is used
+	 * @param key
+	 * @param value
+	 */
+	public void putIfAbsent(K key, V value);
+
+	/**
+	 * Puts value under key if not already there with desired TTL
+	 * @param key
+	 * @param value
+	 * @param ttl
+	 */
+	public void putIfAbsent(K key, V value, long ttl);
+	
 	/**
 	 * Removes entry from cache (if exists)
 	 * 
