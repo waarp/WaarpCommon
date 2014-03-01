@@ -99,7 +99,7 @@ public class SynchronizedLruCache<K, V> extends AbstractLruCache<K, V> {
 		return cacheMap.get(key);
 	}
 
-	synchronized public int getSize() {
+	synchronized public int size() {
 		return cacheMap.size();
 	}
 

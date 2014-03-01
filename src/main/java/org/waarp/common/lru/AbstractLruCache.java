@@ -121,6 +121,9 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 			// autoremove entry from cache if it's not valid
 			if (value == null) {
 				remove(key);
+			} else {
+				// reput it to prevent its removing
+				putEntry(key, cacheEntry);
 			}
 		}
 
@@ -128,7 +131,7 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 	}
 
 	public boolean isEmpty() {
-		return getSize() == 0;
+		return size() == 0;
 	}
 
 	public void put(K key, V value) {
@@ -138,6 +141,19 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 	public void put(K key, V value, long ttl) {
 		if (value != null)
 			putEntry(key, createEntry(value, ttl));
+	}
+
+	public void putIfAbsent(K key, V value) {
+		if (getSetUsed(key) == null) {
+			put(key, value, ttl);
+		}
+	}
+
+	public void putIfAbsent(K key, V value, long ttl) {
+		if (getSetUsed(key) == null) {
+			if (value != null)
+				putEntry(key, createEntry(value, ttl));
+		}
 	}
 
 	/**

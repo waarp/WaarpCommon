@@ -34,8 +34,8 @@ public class SimpleLRUCache<K, V> extends LinkedHashMap<K, V> {
 	private static final long serialVersionUID = -3505777964745783339L;
 	private int capacity; // Maximum number of items in the cache.
 
-	public static Map<?, ?> create(int capacity) {
-		return Collections.synchronizedMap(new SimpleLRUCache<Object, Object>(capacity));
+	public static <K, V> Map<K, V> create(int capacity) {
+		return Collections.synchronizedMap(new SimpleLRUCache<K, V>(capacity));
 	}
     public SimpleLRUCache(int capacity) { 
         super(capacity+1, 1.0f, true); // Pass 'true' for accessOrder.
