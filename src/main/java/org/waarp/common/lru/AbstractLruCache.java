@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
  * 
  */
 public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> {
-	private final long ttl;
+	private long ttl;
 
 	/**
 	 * Constructs BaseLruCache
@@ -85,6 +85,13 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 
 	public long getTtl() {
 		return ttl;
+	}
+
+	
+	public void setNewTtl(long ttl) {
+		if (ttl <= 0)
+			throw new IllegalArgumentException("ttl must be positive");
+		this.ttl = ttl;
 	}
 
 	/**

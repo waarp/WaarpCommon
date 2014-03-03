@@ -50,7 +50,6 @@ public class SynchronizedLruCache<K, V> extends AbstractLruCache<K, V> {
 	public SynchronizedLruCache(int capacity, long ttl, int initialCapacity,
 			float loadFactor) {
 		super(ttl);
-
 		cacheMap = new CapacityLruLinkedHashMap<K, InterfaceLruCacheEntry<V>>(
 				capacity, initialCapacity, loadFactor);
 	}
@@ -131,8 +130,4 @@ public class SynchronizedLruCache<K, V> extends AbstractLruCache<K, V> {
 		return nb;
 	}
 
-	@Override
-	synchronized public void updateTtl(K key) {
-		super.updateTtl(key);
-	}
 }

@@ -104,6 +104,12 @@ public interface InterfaceLruCache<K, V> {
 	public long getTtl();
 
 	/**
+	 * Set a new TTL (for newly set objects only, not changing old values).
+	 * @param ttl
+	 */
+	public void setNewTtl(long ttl);
+	
+	/**
 	 * Checks whether cache is empty.
 	 * 
 	 * If any entry exists (including invalid one) this method will return true
