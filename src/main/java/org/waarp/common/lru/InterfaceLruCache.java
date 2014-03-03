@@ -34,8 +34,9 @@ public interface InterfaceLruCache<K, V> {
 
 	/**
 	 * Removes all oldest entries from cache (ttl based)
+	 * @return the number of removed entries
 	 */
-	public void forceClearOldest();
+	public int forceClearOldest();
 
 	/**
 	 * Checks whether cache contains valid entry for key
@@ -52,14 +53,6 @@ public interface InterfaceLruCache<K, V> {
 	 * @return value or null if key doesn't exist or entry is not valid
 	 */
 	public V get(K key);
-
-	/**
-	 * Returns value cached with key. The corresponding object, if found, will have its time validation reset.
-	 * 
-	 * @param key
-	 * @return value or null if key doesn't exist or entry is not valid
-	 */
-	public V getSetUsed(K key);
 
 	/**
 	 * Tries to get element from cache. If get fails callback is used to create element and returned
@@ -138,24 +131,15 @@ public interface InterfaceLruCache<K, V> {
 	public void put(K key, V value, long ttl);
 
 	/**
-	 * Puts value under key if not already there. Default TTL is used
-	 * @param key
-	 * @param value
-	 */
-	public void putIfAbsent(K key, V value);
-
-	/**
-	 * Puts value under key if not already there with desired TTL
-	 * @param key
-	 * @param value
-	 * @param ttl
-	 */
-	public void putIfAbsent(K key, V value, long ttl);
-	
-	/**
 	 * Removes entry from cache (if exists)
 	 * 
 	 * @param key
 	 */
 	public void remove(K key);
+	/**
+	 * Update the TTL of the associated object if it still exists
+	 * 
+	 * @param key
+	 */
+	public void updateTtl(K key);
 }

@@ -116,16 +116,23 @@ public class SynchronizedLruCache<K, V> extends AbstractLruCache<K, V> {
 		cacheMap.remove(key);
 	}
 
-	synchronized public void forceClearOldest() {
+	synchronized public int forceClearOldest() {
 		long timeRef = System.currentTimeMillis();
 		Collection<InterfaceLruCacheEntry<V>> collection = cacheMap.values();
 		Iterator<InterfaceLruCacheEntry<V>> iterator = collection.iterator();
+		int nb = 0;
 		while (iterator.hasNext()) {
 			InterfaceLruCacheEntry<V> v = iterator.next();
 			if (!v.isStillValid(timeRef)) {
 				iterator.remove();
+				nb++;
 			}
 		}
+		return nb;
 	}
 
+	@Override
+	synchronized public void updateTtl(K key) {
+		super.updateTtl(key);
+	}
 }
