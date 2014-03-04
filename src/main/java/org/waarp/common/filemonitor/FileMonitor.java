@@ -422,6 +422,7 @@ public class FileMonitor {
 	
 	private boolean checkStop() {
 		if (stopped || stopFile.exists()) {
+			logger.warn("STOPPING the FileMonitor since condition is fullfilled: stop file found ({}): "+stopFile.exists(), stopFile);
 			internalfuture.setSuccess();
 			return true;
 		}
