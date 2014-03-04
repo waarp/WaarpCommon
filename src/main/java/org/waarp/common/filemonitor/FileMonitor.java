@@ -607,9 +607,11 @@ public class FileMonitor {
 							fileMonitor.internalfuture.setSuccess();
 						}
 					} else {
+						logger.warn("No Timer found");
 						fileMonitor.internalfuture.setSuccess();
 					}
 				} else {
+					logger.warn("Stop file found");
 					fileMonitor.deleteChkFile();
 					fileMonitor.internalfuture.setSuccess();
 				}
@@ -647,9 +649,15 @@ public class FileMonitor {
 							internalfuture.setSuccess();
 						}
 					} else {
+						if (timerWaarp != null) {
+							logger.warn("Stop file found");
+						} else {
+							logger.warn("No Timer found");
+						}
 						internalfuture.setSuccess();
 					}
 				} else {
+					logger.warn("Stop file found");
 					internalfuture.setSuccess();
 				}
 			} catch (Throwable e) {
