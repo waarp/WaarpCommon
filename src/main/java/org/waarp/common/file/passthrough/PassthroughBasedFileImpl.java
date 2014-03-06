@@ -147,6 +147,9 @@ public abstract class PassthroughBasedFileImpl extends AbstractFile {
 	 */
 	protected File getFileFromPath(String path) throws CommandAbstractException {
 		String newdir = getDir().validatePath(path);
+		if (dir.isAbsolute(newdir)) {
+			return new File(newdir);
+		}
 		String truedir = auth.getAbsolutePath(newdir);
 		return new File(truedir);
 	}

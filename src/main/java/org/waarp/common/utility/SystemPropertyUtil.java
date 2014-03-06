@@ -204,6 +204,10 @@ public final class SystemPropertyUtil {
         return def;
     }
 
+    public static void debug() {
+    	props.list(System.out);
+    }
+    
     private SystemPropertyUtil() {
         // Unused
     }
