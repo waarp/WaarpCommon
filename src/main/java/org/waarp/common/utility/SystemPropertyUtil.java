@@ -17,12 +17,15 @@
  */
 package org.waarp.common.utility;
 
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 /**
  * A collection of utility methods to retrieve and parse the values of the Java system properties.
  */
 public final class SystemPropertyUtil {
+	private static final String FILE_ENCODING = "file.encoding";
 	private static final Properties props = new Properties();
 
     // Retrieve all system properties at once so that there's no need to deal with
@@ -49,6 +52,19 @@ public final class SystemPropertyUtil {
         synchronized (props) {
             props.clear();
             props.putAll(newProps);
+        }
+        if (! contains(FILE_ENCODING) || ! get(FILE_ENCODING).equalsIgnoreCase("UTF-8")) {
+    		try {
+    			System.err.println("Try to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument to ensure correctness");
+                System.setProperty(FILE_ENCODING,"UTF-8");
+                Field charset = Charset.class.getDeclaredField("defaultCharset");
+    	        charset.setAccessible(true);
+    	        charset.set(null,null);
+    		} catch (Exception e1) {
+    			// ignore since it is a security issue and -Dfile.encoding=UTF-8 should be used
+    			System.err.println("Issue while trying to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument");
+    			System.err.println("Currently file.encoding is: "+ get(FILE_ENCODING));
+    		}
         }
     }
 
