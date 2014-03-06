@@ -347,22 +347,22 @@ public class FileMonitor {
 	public void start() {
 		if (timer == null) {
 			timer = new HashedWheelTimer(
-						new WaarpThreadFactory("TimerFileMonitor"),
+						new WaarpThreadFactory("TimerFileMonitor_"+name),
 						100, TimeUnit.MILLISECONDS, 8);
 			future = new WaarpFuture(true);
 			internalfuture = new WaarpFuture(true);
 			if (commandValidFileFactory != null && executor == null) {
 				if (fixedThreadPool > 0) {
-					executor = Executors.newFixedThreadPool(fixedThreadPool, new WaarpThreadFactory("FileMonitorRunner"));
+					executor = Executors.newFixedThreadPool(fixedThreadPool, new WaarpThreadFactory("FileMonitorRunner_"+name));
 				} else {
-					executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
+					executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner_"+name));
 				}
 			}
 			timer.newTimeout(new FileMonitorTimerTask(this), elapseTime, TimeUnit.MILLISECONDS);
 		}// else already started
 		if (elapseWaarpTime >= defaultDelay && timerWaarp == null && commandCheckIteration != null) {
 			timerWaarp = new HashedWheelTimer(
-					new WaarpThreadFactory("TimerFileMonitorWaarp"),
+					new WaarpThreadFactory("TimerFileMonitorWaarp_"+name),
 					100, TimeUnit.MILLISECONDS, 8);
 			timerWaarp.newTimeout(new FileMonitorTimerInformationTask(commandCheckIteration), elapseWaarpTime, TimeUnit.MILLISECONDS);
 		}
@@ -545,6 +545,9 @@ public class FileMonitor {
 						fileItem.hash = hash;
 						fileItemsChanged = true;
 						continue;
+					}
+					if (checkStop()) {
+						return false;
 					}
 					// now time and hash are the same so act on it
 					fileItem.timeUsed = System.currentTimeMillis();
