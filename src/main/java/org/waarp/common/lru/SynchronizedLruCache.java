@@ -111,8 +111,12 @@ public class SynchronizedLruCache<K, V> extends AbstractLruCache<K, V> {
 		cacheMap.put(key, entry);
 	}
 
-	synchronized public void remove(K key) {
-		cacheMap.remove(key);
+	synchronized public V remove(K key) {
+		InterfaceLruCacheEntry<V> cv = cacheMap.remove(key);
+		if (cv != null) {
+			return cv.getValue();
+		}
+		return null;
 	}
 
 	synchronized public int forceClearOldest() {

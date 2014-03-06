@@ -140,8 +140,9 @@ public interface InterfaceLruCache<K, V> {
 	 * Removes entry from cache (if exists)
 	 * 
 	 * @param key
+	 * @return the value if it still exists
 	 */
-	public void remove(K key);
+	public V remove(K key);
 	/**
 	 * Update the TTL of the associated object if it still exists
 	 * 

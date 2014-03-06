@@ -57,6 +57,10 @@ public abstract class WaarpShutdownHook extends Thread {
 	 * Set if the program is in shutdown
 	 */
 	private static volatile boolean shutdown = false;
+	/**
+	 * Set if the program will start shutdown process
+	 */
+	private static volatile boolean shutdownStarted = false;
 
 	/**
 	 * Set if the program is in shutdown
@@ -121,7 +125,19 @@ public abstract class WaarpShutdownHook extends Thread {
 	public static boolean isInShutdown() {
 		return shutdown;
 	}
-	
+	/**
+	 * 
+	 * @return True if the Shutdown process will start soon
+	 */
+	public static boolean isShutdownStarting() {
+		return shutdownStarted;
+	}
+	/**
+	 * To specify that shutdown will soon start
+	 */
+	public static void shutdownWillStart() {
+		shutdownStarted = true;
+	}
 	/**
 	 * This function is the top function to be called when the process is to be shutdown.
 	 * 
@@ -371,9 +387,10 @@ public abstract class WaarpShutdownHook extends Thread {
 		return shouldRestart;
 	}
 	/**
-	 * Intermdediary exit function
+	 * Intermediary exit function
 	 */
 	private static void terminate() {
+		shutdownStarted = true;
 		shutdown = true;
 		if (immediate) {
 			shutdownHook.exit();
