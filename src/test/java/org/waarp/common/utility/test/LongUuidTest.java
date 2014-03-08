@@ -30,7 +30,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class LongUuidTest {
-	private static int NB = 500000;
+	private static int NB = 1000000;
 	
     @Test
     public void testStructure() {
@@ -105,7 +105,7 @@ public class LongUuidTest {
     @Test
     public void testForDuplicates() {
         int n = NB;
-        Set<LongUuid> uuids = new HashSet<LongUuid>();
+        Set<Long> uuids = new HashSet<Long>();
         LongUuid[] uuidArray = new LongUuid[n];
 
         long start = System.currentTimeMillis();
@@ -115,27 +115,30 @@ public class LongUuidTest {
         System.out.println("Time = "+(stop-start)+" so "+(n*1000/(stop-start))+" Uuids/s");
 
         for (int i = 0; i < n; i++)
-            uuids.add(uuidArray[i]);
+            uuids.add(uuidArray[i].getLong());
 
         System.out.println("Create "+n+" and get: "+uuids.size());
         assertEquals(n, uuids.size());
         int i = 1;
         int largest = 0;
         for (; i < n ; i++) {
-        	if (uuidArray[i].getTimestamp() > uuidArray[i-1].getTimestamp()) {
+        	if (uuidArray[i].getTimestamp() != uuidArray[i-1].getTimestamp()) {
                 int j = i+1;
                 long time = uuidArray[i].getTimestamp();
                 for (; j < n ; j++) {
-                	if (uuidArray[j].getTimestamp() > time) {
-                		if (largest < j-i) {
-                			largest = j-i;
-                			i = j;
-                			break;
+                	if (uuidArray[j].getTimestamp() != time) {
+                		if (largest < j-i+1) {
+                			largest = j-i+1;
                 		}
+            			i = j;
+            			break;
                 	}
                 }
         	}
         }
+        if (largest == 0)
+        	largest = n;
+        System.out.println(uuidArray[0]+"("+uuidArray[0].getTimestamp()+") - "+uuidArray[n-1]+"("+uuidArray[n-1].getTimestamp()+")");
         System.out.println(largest+" different consecutive elements");
     }
 
@@ -167,6 +170,7 @@ public class LongUuidTest {
         int n = NB;
         LongUuid[] uuids = new LongUuid[n];
 
+        long start = System.currentTimeMillis();
         for (int i = 0; i < numThreads; i++) {
             threads[i] = new Generator(n / numThreads, uuids, i, numThreads);
             threads[i].start();
@@ -174,6 +178,8 @@ public class LongUuidTest {
 
         for (int i = 0; i < numThreads; i++)
             threads[i].join();
+        long stop = System.currentTimeMillis();
+        System.out.println("Time = "+(stop-start)+" so "+(n*1000/(stop-start))+" Uuids/s");
 
         Set<LongUuid> uuidSet = new HashSet<LongUuid>();
 

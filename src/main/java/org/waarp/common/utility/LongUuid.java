@@ -82,22 +82,19 @@ public final class LongUuid {
         // atomically
         final int count = COUNTER.incrementAndGet();
 
-        // switch the order of the count in 3 bit segments and place into uuid
-        uuid[0] = (byte) (((count & 0x0F) << 4) | ((count & 0xF0) >> 4));
-        uuid[1] = (byte) (((count & 0xF00) >> 4) | ((count & 0xF000) >> 12));
-        uuid[2] = (byte) (((count & 0xF0000) >> 12) | ((count & 0xF00000) >> 20));
-        //uuid[3] = (byte) (((count & 0xF000000) >> 20) | ((count & 0xF0000000) >> 28));
+        // copy timestamp into uuid (up to 2^34 s = 1/2 year rolling)
+        uuid[0] = (byte) (time >> 26);
+        uuid[1] = (byte) (time >> 18);
+        uuid[2] = (byte) (time >> 10);
 
         // copy pid to uuid
         uuid[3]  = (byte) (JVMPID >> 8);
         uuid[4]  = (byte) (JVMPID);
 
-        // copy timestamp into uuid (up to 32 bits so up to 8900 years after Time 0)
-        //uuid[3] = (byte) (time >> 32);
-        //uuid[4] = (byte) (time >> 24);
-        uuid[5] = (byte) (time >> 16);
-        uuid[6] = (byte) (time >> 8);
-        uuid[7] = (byte) (time);
+        // Keep 5 first bytes, 3 bytes coming from Timestamp => 2^21 (at most 4M / 1/2s)
+        uuid[5] = (byte) (((count >> 16) & 0x3F) | ((time >> 2) & 0xC0));
+        uuid[6] = (byte) (count >> 8);
+        uuid[7] = (byte) (count);
     }
 
     /**
@@ -132,14 +129,14 @@ public final class LongUuid {
         uuid = new byte[UUIDSIZE];
         final char[] chars = id.toCharArray();
 
-        // Counter
+        // Timestamp
         uuid[0]  = asByte(chars[0],  chars[1]);
         uuid[1]  = asByte(chars[2],  chars[3]);
         uuid[2]  = asByte(chars[4],  chars[5]);
         // PID
         uuid[3]  = asByte(chars[7],  chars[8]);
         uuid[4]  = asByte(chars[9], chars[10]);
-        // Timestamp
+        // Counter
         uuid[5]  = asByte(chars[12], chars[13]);
         uuid[6]  = asByte(chars[14], chars[15]);
         uuid[7]  = asByte(chars[16], chars[17]);
@@ -164,7 +161,7 @@ public final class LongUuid {
     	final char[] id = new char[18];
 
         // split each byte into 4 bit numbers and map to hex characters
-        // Counter
+        // TimeStamp
         id[0]  = HEX_CHARS[(uuid[0]  & 0xF0) >> 4];
         id[1]  = HEX_CHARS[(uuid[0]  & 0x0F)];
         id[2]  = HEX_CHARS[(uuid[1]  & 0xF0) >> 4];
@@ -178,7 +175,7 @@ public final class LongUuid {
         id[9]  = HEX_CHARS[(uuid[4]  & 0xF0) >> 4];
         id[10] = HEX_CHARS[(uuid[4]  & 0x0F)];
         id[11] = '-';
-        // Timestamp
+        // Counter
         id[12] = HEX_CHARS[(uuid[5]  & 0xF0) >> 4];
         id[13] = HEX_CHARS[(uuid[5]  & 0x0F)];
         id[14] = HEX_CHARS[(uuid[6]  & 0xF0) >> 4];
@@ -211,9 +208,10 @@ public final class LongUuid {
      */
     public long getTimestamp() {
         long time;
-        time  = ((long)uuid[5] & 0xFF) << 16;
-        time |= ((long)uuid[6] & 0xFF) << 8;
-        time |= ((long)uuid[7] & 0xFF);
+        time = ((long)uuid[0] & 0xFF) << 26;
+        time |= ((long)uuid[1] & 0xFF) << 18;
+        time |= ((long)uuid[2] & 0xFF) << 10;
+        time |= ((long)uuid[5] & 0xC0) << 2;
         return time;
     }
 
@@ -281,7 +279,20 @@ public final class LongUuid {
     	long pseudoMax = Long.MAX_VALUE >> 16;
     	System.out.println(new Date(pseudoMax));
         System.out.println(new LongUuid().toString());
-        
+
+        for (int i = 0; i < 10; i++) {
+            LongUuid uuid = new LongUuid();
+            System.out.println(System.currentTimeMillis()+" "+uuid+"="+uuid.getLong()+":"+uuid.getProcessId()+":"+uuid.getTimestamp());
+        }
+        for (int i = 0; i < 10; i++) {
+            LongUuid uuid = new LongUuid();
+            System.out.println(System.currentTimeMillis()+" "+uuid+"="+uuid.getLong()+":"+uuid.getProcessId()+":"+uuid.getTimestamp());
+            try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+        }
+
         final int n = 100000000;
 
         for (int i = 0; i < n; i++) {
