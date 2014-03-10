@@ -42,6 +42,8 @@ import org.waarp.common.logging.WaarpInternalLoggerFactory;
  * 
  */
 public class WaarpStringUtils {
+	public static final String UTF_8 = "UTF-8";
+
 	/**
 	 * Internal Logger
 	 */
@@ -51,7 +53,7 @@ public class WaarpStringUtils {
 	/**
 	 * Format used for Files
 	 */
-	public static final Charset UTF8 = Charset.forName("UTF-8");
+	public static final Charset UTF8 = Charset.forName(UTF_8);
 
 	/**
 	 * Read a file and return its content in String format

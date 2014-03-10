@@ -30,7 +30,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class LongUuidTest {
-	private static int NB = 1000000;
+	private static int NB = 4000000;
 	
     @Test
     public void testStructure() {
