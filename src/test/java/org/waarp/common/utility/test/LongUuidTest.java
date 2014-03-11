@@ -30,15 +30,15 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class LongUuidTest {
-	private static int NB = 4000000;
+	private static int NB = 1000000;
 	
     @Test
     public void testStructure() {
         LongUuid id = new LongUuid();
         String str = id.toString();
 
-        assertEquals(str.charAt(6) , '-');
-        assertEquals(str.charAt(11), '-');
+        assertEquals(str.charAt(4) , '-');
+        assertEquals(str.charAt(12), '-');
         assertEquals(str.length(), 18);
     }
 
@@ -138,7 +138,8 @@ public class LongUuidTest {
         }
         if (largest == 0)
         	largest = n;
-        System.out.println(uuidArray[0]+"("+uuidArray[0].getTimestamp()+") - "+uuidArray[n-1]+"("+uuidArray[n-1].getTimestamp()+")");
+        System.out.println(uuidArray[0]+"("+uuidArray[0].getTimestamp()+":"+uuidArray[0].getLong()+") - "+
+        	uuidArray[n-1]+"("+uuidArray[n-1].getTimestamp()+":"+uuidArray[n-1].getLong()+") = "+(uuidArray[n-1].getLong()-uuidArray[0].getLong()+1));
         System.out.println(largest+" different consecutive elements");
     }
 

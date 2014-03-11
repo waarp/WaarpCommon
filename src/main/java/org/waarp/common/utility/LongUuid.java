@@ -28,10 +28,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
- * UUID Generator (also Global UUID Generator) but limited to 1 LONG <br>
+ * UUID Generator (also Global UUID Generator) but limited to 1 Long (64 bits) <br>
  * <br>
  * Inspired from com.groupon locality-uuid which used combination of internal counter value - process id - 
- * fragment of MAC address and Timestamp. see https://github.com/groupon/locality-uuid.java <br>
+ * and Timestamp. see https://github.com/groupon/locality-uuid.java <br>
  * <br>
  * But force sequence and take care of errors and improves some performance issues
  *  
@@ -82,17 +82,17 @@ public final class LongUuid {
         // atomically
         final int count = COUNTER.incrementAndGet();
 
-        // copy timestamp into uuid (up to 2^34 s = 1/2 year rolling)
-        uuid[0] = (byte) (time >> 26);
-        uuid[1] = (byte) (time >> 18);
-        uuid[2] = (byte) (time >> 10);
-
         // copy pid to uuid
-        uuid[3]  = (byte) (JVMPID >> 8);
-        uuid[4]  = (byte) (JVMPID);
+        uuid[0]  = (byte) (JVMPID >> 8);
+        uuid[1]  = (byte) (JVMPID);
 
-        // Keep 5 first bytes, 3 bytes coming from Timestamp => 2^21 (at most 4M / 1/2s)
-        uuid[5] = (byte) (((count >> 16) & 0x3F) | ((time >> 2) & 0xC0));
+        // copy timestamp into uuid (up to 2^36 s = 2 years rolling)
+        uuid[2] = (byte) (time >> 28);
+        uuid[3] = (byte) (time >> 20);
+        uuid[4] = (byte) (time >> 12);
+
+        // Keep 4 first bytes, 4 bytes coming from Timestamp => 2^20 (at most 1M / 1/2s)
+        uuid[5] = (byte) (((count >> 16) & 0x0F) | ((time >> 4) & 0xF0));
         uuid[6] = (byte) (count >> 8);
         uuid[7] = (byte) (count);
     }
@@ -129,15 +129,15 @@ public final class LongUuid {
         uuid = new byte[UUIDSIZE];
         final char[] chars = id.toCharArray();
 
-        // Timestamp
-        uuid[0]  = asByte(chars[0],  chars[1]);
-        uuid[1]  = asByte(chars[2],  chars[3]);
-        uuid[2]  = asByte(chars[4],  chars[5]);
         // PID
+        uuid[0]  = asByte(chars[0],  chars[1]);
+        uuid[1]  = asByte(chars[2], chars[3]);
+        // Timestamp
+        uuid[2]  = asByte(chars[5],  chars[6]);
         uuid[3]  = asByte(chars[7],  chars[8]);
-        uuid[4]  = asByte(chars[9], chars[10]);
+        uuid[4]  = asByte(chars[9],  chars[10]);
         // Counter
-        uuid[5]  = asByte(chars[12], chars[13]);
+        uuid[5]  = asByte(chars[11], chars[13]);
         uuid[6]  = asByte(chars[14], chars[15]);
         uuid[7]  = asByte(chars[16], chars[17]);
     }
@@ -161,22 +161,22 @@ public final class LongUuid {
     	final char[] id = new char[18];
 
         // split each byte into 4 bit numbers and map to hex characters
-        // TimeStamp
+        // PID
         id[0]  = HEX_CHARS[(uuid[0]  & 0xF0) >> 4];
         id[1]  = HEX_CHARS[(uuid[0]  & 0x0F)];
         id[2]  = HEX_CHARS[(uuid[1]  & 0xF0) >> 4];
         id[3]  = HEX_CHARS[(uuid[1]  & 0x0F)];
-        id[4]  = HEX_CHARS[(uuid[2]  & 0xF0) >> 4];
-        id[5]  = HEX_CHARS[(uuid[2]  & 0x0F)];
-        id[6]  = '-';
-        // PID
+        id[4]  = '-';
+        // TimeStamp
+        id[5]  = HEX_CHARS[(uuid[2]  & 0xF0) >> 4];
+        id[6]  = HEX_CHARS[(uuid[2]  & 0x0F)];
         id[7]  = HEX_CHARS[(uuid[3]  & 0xF0) >> 4];
         id[8]  = HEX_CHARS[(uuid[3]  & 0x0F)];
         id[9]  = HEX_CHARS[(uuid[4]  & 0xF0) >> 4];
         id[10] = HEX_CHARS[(uuid[4]  & 0x0F)];
-        id[11] = '-';
+        id[11] = HEX_CHARS[(uuid[5]  & 0xF0) >> 4];
         // Counter
-        id[12] = HEX_CHARS[(uuid[5]  & 0xF0) >> 4];
+        id[12] = '-';
         id[13] = HEX_CHARS[(uuid[5]  & 0x0F)];
         id[14] = HEX_CHARS[(uuid[6]  & 0xF0) >> 4];
         id[15] = HEX_CHARS[(uuid[6]  & 0x0F)];
@@ -199,7 +199,7 @@ public final class LongUuid {
      * @return id of process that generated the UUID
      */
     public int getProcessId() {
-        return ((uuid[3] & 0xFF) << 8) | (uuid[4] & 0xFF);
+        return ((uuid[0] & 0xFF) << 8) | (uuid[1] & 0xFF);
     }
 
     /**
@@ -208,10 +208,10 @@ public final class LongUuid {
      */
     public long getTimestamp() {
         long time;
-        time = ((long)uuid[0] & 0xFF) << 26;
-        time |= ((long)uuid[1] & 0xFF) << 18;
-        time |= ((long)uuid[2] & 0xFF) << 10;
-        time |= ((long)uuid[5] & 0xC0) << 2;
+        time = ((long)uuid[2] & 0xFF) << 28;
+        time |= ((long)uuid[3] & 0xFF) << 20;
+        time |= ((long)uuid[4] & 0xFF) << 12;
+        time |= ((long)uuid[5] & 0xF0) << 4;
         return time;
     }
 
