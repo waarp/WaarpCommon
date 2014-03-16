@@ -154,8 +154,13 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	 */
 	protected File getFileFromPath(String path) throws CommandAbstractException {
 		String newdir = getDir().validatePath(path);
+		if (dir.isAbsolute(newdir)) {
+			return new File(newdir);
+		}
 		String truedir = auth.getAbsolutePath(newdir);
-		return new File(truedir);
+		File file = new File(truedir);
+		logger.debug("Final File: "+truedir+" CanRead: "+file.canRead());
+		return file;
 	}
 
 	/**

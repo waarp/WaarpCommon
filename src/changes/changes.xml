@@ -5,6 +5,14 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+        <release version="1.2.23" date="2014-03-15" description="Fix release">
+            <action dev="Frederic Bregier" type="fix">Fix and improve LRU cache</action>
+            <action dev="Frederic Bregier" type="fix">Improve Log in FileMonitor</action>
+            <action dev="Frederic Bregier" type="fix">Improve Directory and File implementation</action>
+            <action dev="Frederic Bregier" type="fix">Improve ShutdownHook</action>
+            <action dev="Frederic Bregier" type="add">Add programmatic support of equivalent of -Dfile.encoding=UTF-8</action>
+            <action dev="Frederic Bregier" type="add">Add LongUuid support (a pseudo UUID in Long format)</action>
+        </release>
         <release version="1.2.22" date="2014-03-01" description="Fix release">
             <action dev="Frederic Bregier" type="fix">Fix H2 Database CREATE SEQUENCE command</action>
             <action dev="Frederic Bregier" type="fix">Improve concurrency in FileMonitor</action>

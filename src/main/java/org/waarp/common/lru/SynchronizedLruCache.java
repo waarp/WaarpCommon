@@ -50,7 +50,6 @@ public class SynchronizedLruCache<K, V> extends AbstractLruCache<K, V> {
 	public SynchronizedLruCache(int capacity, long ttl, int initialCapacity,
 			float loadFactor) {
 		super(ttl);
-
 		cacheMap = new CapacityLruLinkedHashMap<K, InterfaceLruCacheEntry<V>>(
 				capacity, initialCapacity, loadFactor);
 	}
@@ -112,20 +111,27 @@ public class SynchronizedLruCache<K, V> extends AbstractLruCache<K, V> {
 		cacheMap.put(key, entry);
 	}
 
-	synchronized public void remove(K key) {
-		cacheMap.remove(key);
+	synchronized public V remove(K key) {
+		InterfaceLruCacheEntry<V> cv = cacheMap.remove(key);
+		if (cv != null) {
+			return cv.getValue();
+		}
+		return null;
 	}
 
-	synchronized public void forceClearOldest() {
+	synchronized public int forceClearOldest() {
 		long timeRef = System.currentTimeMillis();
 		Collection<InterfaceLruCacheEntry<V>> collection = cacheMap.values();
 		Iterator<InterfaceLruCacheEntry<V>> iterator = collection.iterator();
+		int nb = 0;
 		while (iterator.hasNext()) {
 			InterfaceLruCacheEntry<V> v = iterator.next();
 			if (!v.isStillValid(timeRef)) {
 				iterator.remove();
+				nb++;
 			}
 		}
+		return nb;
 	}
 
 }

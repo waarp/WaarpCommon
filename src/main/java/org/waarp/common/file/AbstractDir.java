@@ -169,13 +169,11 @@ public abstract class AbstractDir implements DirInterface {
 		}
 		// First check if the path is relative or absolute
 		if (isAbsolute(path)) {
-			return path;
+			return normalizePath(path);
 		}
-		String extDir = null;
-		if (path.charAt(0) == SEPARATORCHAR) {
-			extDir = path;
-		} else {
-			extDir = currentDir + SEPARATOR + path;
+		String extDir = normalizePath(path);
+		if (extDir.charAt(0) != SEPARATORCHAR) {
+			extDir = currentDir + SEPARATOR + extDir;
 		}
 		return extDir;
 	}
@@ -249,6 +247,7 @@ public abstract class AbstractDir implements DirInterface {
 		extDir = getSession().getAuth().getRelativePath(extDir);
 		// Check if this business path is valid
 		if (getSession().getAuth().isBusinessPathValid(extDir)) {
+			logger.debug("final path: "+extDir);
 			return extDir;
 		}
 		throw new Reply553Exception("Pathname not allowed");

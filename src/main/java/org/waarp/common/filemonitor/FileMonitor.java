@@ -236,6 +236,10 @@ public class FileMonitor {
 		this.directories.remove(directory);
 	}
 	
+	protected void setThreadName() {
+		Thread.currentThread().setName("FileMonitor_"+name);
+	}
+	
 	private boolean testChkFile() {
 		if (checkFile.exists()) {
 			deleteChkFile();
@@ -347,22 +351,22 @@ public class FileMonitor {
 	public void start() {
 		if (timer == null) {
 			timer = new HashedWheelTimer(
-						new WaarpThreadFactory("TimerFileMonitor"),
+						new WaarpThreadFactory("TimerFileMonitor_"+name),
 						100, TimeUnit.MILLISECONDS, 8);
 			future = new WaarpFuture(true);
 			internalfuture = new WaarpFuture(true);
 			if (commandValidFileFactory != null && executor == null) {
-				if (fixedThreadPool > 0) {
-					executor = Executors.newFixedThreadPool(fixedThreadPool, new WaarpThreadFactory("FileMonitorRunner"));
-				} else {
-					executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner"));
+				if (fixedThreadPool > 1) {
+					executor = Executors.newFixedThreadPool(fixedThreadPool, new WaarpThreadFactory("FileMonitorRunner_"+name));
+				} else if (fixedThreadPool == 0) {
+					executor = Executors.newCachedThreadPool(new WaarpThreadFactory("FileMonitorRunner_"+name));
 				}
 			}
 			timer.newTimeout(new FileMonitorTimerTask(this), elapseTime, TimeUnit.MILLISECONDS);
 		}// else already started
 		if (elapseWaarpTime >= defaultDelay && timerWaarp == null && commandCheckIteration != null) {
 			timerWaarp = new HashedWheelTimer(
-					new WaarpThreadFactory("TimerFileMonitorWaarp"),
+					new WaarpThreadFactory("TimerFileMonitorWaarp_"+name),
 					100, TimeUnit.MILLISECONDS, 8);
 			timerWaarp.newTimeout(new FileMonitorTimerInformationTask(commandCheckIteration), elapseWaarpTime, TimeUnit.MILLISECONDS);
 		}
@@ -422,6 +426,7 @@ public class FileMonitor {
 	
 	private boolean checkStop() {
 		if (stopped || stopFile.exists()) {
+			logger.warn("STOPPING the FileMonitor {} since condition is fullfilled: stop file found ({}): "+stopFile.exists(), name, stopFile);
 			internalfuture.setSuccess();
 			return true;
 		}
@@ -432,13 +437,16 @@ public class FileMonitor {
 	 * @return False to stop
 	 */
 	protected boolean checkFiles() {
+		setThreadName();
 		boolean fileItemsChanged = false;
 		if (checkStop()) {
 			return false;
 		}
 		for (File directory : directories) {
+			logger.info("Scan: "+directory);
 			fileItemsChanged = checkOneDir(fileItemsChanged, directory);
 		}
+		setThreadName();
 		boolean error = false;
 		// Wait for all commands to finish before continuing
 		for (Future<?> future : results) {
@@ -457,6 +465,7 @@ public class FileMonitor {
 				error = true;
 			}
 		}
+		logger.debug("Scan over");
 		results.clear();
 		if (error) {
 			// do not save ?
@@ -492,6 +501,8 @@ public class FileMonitor {
 		if (checkStop()) {
 			return false;
 		}
+		logger.debug("Finishing step");
+
 		if (commandCheckIteration != null && timerWaarp == null) {
 			commandCheckIteration.run(null);
 		}
@@ -545,12 +556,19 @@ public class FileMonitor {
 						fileItemsChanged = true;
 						continue;
 					}
+					if (checkStop()) {
+						return false;
+					}
 					// now time and hash are the same so act on it
 					fileItem.timeUsed = System.currentTimeMillis();
 					if (commandValidFileFactory != null) {
 						FileMonitorCommandRunnableFuture torun = commandValidFileFactory.create(fileItem);
-						Future<?> torunFuture = executor.submit(torun);
-						results.add(torunFuture);
+						if (executor != null) {
+							Future<?> torunFuture = executor.submit(torun);
+							results.add(torunFuture);
+						} else {
+							torun.run(fileItem);
+						}
 					} else if (commandValidFile != null) {
 						commandValidFile.run(fileItem);
 					} else {
@@ -558,6 +576,7 @@ public class FileMonitor {
 					}
 					fileItemsChanged = true;
 				} catch (Throwable e) {
+					setThreadName();
 					logger.error("Error during final file check", e);
 					continue;
 				}
@@ -574,6 +593,7 @@ public class FileMonitor {
 				}
 			}
 		} catch (Throwable e) {
+			setThreadName();
 			logger.error("Issue during Directory and File Checking", e);
 			// ignore
 		}
@@ -597,6 +617,7 @@ public class FileMonitor {
 		public void run(Timeout timeout) throws Exception {
 			try {
 				if (fileMonitor.checkFiles()) {
+					fileMonitor.setThreadName();
 					if (fileMonitor.timer != null) {
 						try {
 							fileMonitor.timer.newTimeout(this, fileMonitor.elapseTime, TimeUnit.MILLISECONDS);
@@ -606,13 +627,17 @@ public class FileMonitor {
 							fileMonitor.internalfuture.setSuccess();
 						}
 					} else {
+						logger.warn("No Timer found");
 						fileMonitor.internalfuture.setSuccess();
 					}
 				} else {
+					fileMonitor.setThreadName();
+					logger.warn("Stop file found");
 					fileMonitor.deleteChkFile();
 					fileMonitor.internalfuture.setSuccess();
 				}
 			} catch (Throwable e) {
+				fileMonitor.setThreadName();
 				logger.error("Issue during Directory and File Checking", e);
 				fileMonitor.internalfuture.setSuccess();
 			}
@@ -635,6 +660,7 @@ public class FileMonitor {
 
 		public void run(Timeout timeout) throws Exception {
 			try {
+				Thread.currentThread().setName("FileMonitorInformation_"+name);
 				if (!checkStop()) {
 					informationMonitorCommand.run(null);
 					if (timerWaarp != null && ! checkStop()) {
@@ -646,13 +672,20 @@ public class FileMonitor {
 							internalfuture.setSuccess();
 						}
 					} else {
+						if (timerWaarp != null) {
+							logger.warn("Stop file found");
+						} else {
+							logger.warn("No Timer found");
+						}
 						internalfuture.setSuccess();
 					}
 				} else {
+					logger.warn("Stop file found");
 					internalfuture.setSuccess();
 				}
 			} catch (Throwable e) {
 				// stop and ignore
+				Thread.currentThread().setName("FileMonitorInformation_"+name);
 				logger.error("Error during nex filemonitor information step", e);
 				internalfuture.setSuccess();
 			}

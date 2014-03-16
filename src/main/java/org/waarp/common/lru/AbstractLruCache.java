@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
  * 
  */
 public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> {
-	private final long ttl;
+	private long ttl;
 
 	/**
 	 * Constructs BaseLruCache
@@ -64,11 +64,7 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 	}
 
 	public V get(K key) {
-		return getValue(key, false);
-	}
-
-	public V getSetUsed(K key) {
-		return getValue(key, true);
+		return getValue(key);
 	}
 
 	public V get(K key, Callable<V> callback) throws Exception {
@@ -91,6 +87,13 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 		return ttl;
 	}
 
+	
+	public void setNewTtl(long ttl) {
+		if (ttl <= 0)
+			throw new IllegalArgumentException("ttl must be positive");
+		this.ttl = ttl;
+	}
+
 	/**
 	 * Returns LruCacheEntry mapped by key or null if it does not exist
 	 * 
@@ -99,31 +102,31 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 	 */
 	abstract protected InterfaceLruCacheEntry<V> getEntry(K key);
 
+	public void updateTtl(K key) {
+		InterfaceLruCacheEntry<V> cacheEntry = getEntry(key);
+		if (cacheEntry != null) {
+			cacheEntry.resetTime(ttl);
+		}
+	}
+	
 	/**
 	 * Tries to retrieve value by it's key. Automatically removes entry if it's not valid
 	 * (LruCacheEntry.getValue() returns null)
 	 * 
 	 * @param key
-	 * @param used
 	 * @return Value
 	 */
-	protected V getValue(K key, boolean used) {
+	protected V getValue(K key) {
 		V value = null;
 
 		InterfaceLruCacheEntry<V> cacheEntry = getEntry(key);
 
 		if (cacheEntry != null) {
-			if (used) {
-				cacheEntry.resetTime(ttl);
-			}
 			value = cacheEntry.getValue();
 
 			// autoremove entry from cache if it's not valid
 			if (value == null) {
 				remove(key);
-			} else {
-				// reput it to prevent its removing
-				putEntry(key, cacheEntry);
 			}
 		}
 
@@ -141,19 +144,6 @@ public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> 
 	public void put(K key, V value, long ttl) {
 		if (value != null)
 			putEntry(key, createEntry(value, ttl));
-	}
-
-	public void putIfAbsent(K key, V value) {
-		if (getSetUsed(key) == null) {
-			put(key, value, ttl);
-		}
-	}
-
-	public void putIfAbsent(K key, V value, long ttl) {
-		if (getSetUsed(key) == null) {
-			if (value != null)
-				putEntry(key, createEntry(value, ttl));
-		}
 	}
 
 	/**
