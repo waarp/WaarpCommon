@@ -44,8 +44,8 @@
 <a class="jxr_linenumber" name="34" href="#34">34</a>  	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -3505777964745783339L;
 <a class="jxr_linenumber" name="35" href="#35">35</a>  	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> capacity; <em class="jxr_comment">// Maximum number of items in the cache.</em>
 <a class="jxr_linenumber" name="36" href="#36">36</a>  
-<a class="jxr_linenumber" name="37" href="#37">37</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Map&lt;?, ?&gt; create(<strong class="jxr_keyword">int</strong> capacity) {
-<a class="jxr_linenumber" name="38" href="#38">38</a>  		<strong class="jxr_keyword">return</strong> Collections.synchronizedMap(<strong class="jxr_keyword">new</strong> SimpleLRUCache&lt;Object, Object&gt;(capacity));
+<a class="jxr_linenumber" name="37" href="#37">37</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> &lt;K, V&gt; Map&lt;K, V&gt; create(<strong class="jxr_keyword">int</strong> capacity) {
+<a class="jxr_linenumber" name="38" href="#38">38</a>  		<strong class="jxr_keyword">return</strong> Collections.synchronizedMap(<strong class="jxr_keyword">new</strong> SimpleLRUCache&lt;K, V&gt;(capacity));
 <a class="jxr_linenumber" name="39" href="#39">39</a>  	}
 <a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/waarp/common/lru/SimpleLRUCache.html">SimpleLRUCache</a>(<strong class="jxr_keyword">int</strong> capacity) { 
 <a class="jxr_linenumber" name="41" href="#41">41</a>          <strong class="jxr_keyword">super</strong>(capacity+1, 1.0f, <strong class="jxr_keyword">true</strong>); <em class="jxr_comment">// Pass 'true' for accessOrder.</em>
