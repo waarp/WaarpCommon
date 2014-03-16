@@ -21,20 +21,11 @@ import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
-
 /**
  * A collection of utility methods to retrieve and parse the values of the Java system properties.
  */
 public final class SystemPropertyUtil {
 	public static final String FILE_ENCODING = "file.encoding";
-	
-	/**
-	 * Internal Logger
-	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
-			.getLogger(SystemPropertyUtil.class);
 	
 	private static final Properties props = new Properties();
 
@@ -54,7 +45,7 @@ public final class SystemPropertyUtil {
         try {
             newProps = System.getProperties();
         } catch (SecurityException e) {
-        	logger.error("Unable to retrieve the system properties; default values will be used.", e);
+        	System.err.println("Unable to retrieve the system properties; default values will be used: "+e.getMessage());
             newProps = new Properties();
         }
 
@@ -64,17 +55,28 @@ public final class SystemPropertyUtil {
         }
         if (! contains(FILE_ENCODING) || ! get(FILE_ENCODING).equalsIgnoreCase(WaarpStringUtils.UTF_8)) {
     		try {
-    			logger.info("Try to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument to ensure correctness");
+    			//logger.info("Try to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument to ensure correctness");
                 System.setProperty(FILE_ENCODING, WaarpStringUtils.UTF_8);
                 Field charset = Charset.class.getDeclaredField("defaultCharset");
     	        charset.setAccessible(true);
     	        charset.set(null,null);
+    	        synchronized (props) {
+    	            props.clear();
+    	            props.putAll(newProps);
+    	        }
     		} catch (Exception e1) {
     			// ignore since it is a security issue and -Dfile.encoding=UTF-8 should be used
-    			logger.error("Issue while trying to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument", e1);
-    			logger.warn("Currently file.encoding is: "+ get(FILE_ENCODING));
+    			System.err.println("Issue while trying to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument: "+e1.getMessage());
+    			System.err.println("Currently file.encoding is: "+ get(FILE_ENCODING));
     		}
         }
+    }
+    /**
+     * 
+     * @return True if Encoding is Correct
+     */
+    public static boolean isFileEncodingCorrect() {
+    	return (contains(FILE_ENCODING) && get(FILE_ENCODING).equalsIgnoreCase(WaarpStringUtils.UTF_8));
     }
 
     /**
@@ -152,7 +154,7 @@ public final class SystemPropertyUtil {
             return false;
         }
 
-        logger.warn(
+        System.err.println(
                 "Unable to parse the boolean system property '" + key + "':" + value + " - " +
                 "using the default value: " + def);
 
@@ -187,7 +189,7 @@ public final class SystemPropertyUtil {
             }
         }
 
-        logger.warn(
+        System.err.println(
                 "Unable to parse the integer system property '" + key + "':" + value + " - " +
                 "using the default value: " + def);
 
@@ -222,7 +224,7 @@ public final class SystemPropertyUtil {
             }
         }
 
-        logger.warn(
+        System.err.println(
                 "Unable to parse the long integer system property '" + key + "':" + value + " - " +
                 "using the default value: " + def);
 
