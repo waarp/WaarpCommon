@@ -5,7 +5,13 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
-        <release version="1.2.23" date="2014-03-15" description="Fix release">
+        <release version="1.2.24" date="2014-05-15" description="Fix release">
+            <action dev="Frederic Bregier" type="fix">Change to JsonHandler fix handler</action>
+            <action dev="Frederic Bregier" type="fix">Fix support for NON ASCII in Json string</action>
+            <action dev="Frederic Bregier" type="add">Add 2 Junit tests for Json</action>
+            <action dev="Frederic Bregier" type="add">Add support for Json in DbData</action>
+        </release>
+	    <release version="1.2.23" date="2014-03-15" description="Fix release">
             <action dev="Frederic Bregier" type="fix">Fix and improve LRU cache</action>
             <action dev="Frederic Bregier" type="fix">Improve Log in FileMonitor</action>
             <action dev="Frederic Bregier" type="fix">Improve Directory and File implementation</action>

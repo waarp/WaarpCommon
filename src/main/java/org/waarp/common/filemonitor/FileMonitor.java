@@ -49,8 +49,7 @@ import org.waarp.common.digest.FilesystemBasedDigest;
 import org.waarp.common.digest.FilesystemBasedDigest.DigestAlgo;
 import org.waarp.common.file.AbstractDir;
 import org.waarp.common.future.WaarpFuture;
-import org.waarp.common.json.AdaptativeJsonHandler;
-import org.waarp.common.json.AdaptativeJsonHandler.JsonCodec;
+import org.waarp.common.json.JsonHandler;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
 import org.waarp.common.utility.WaarpThreadFactory;
@@ -58,7 +57,6 @@ import org.waarp.common.utility.WaarpThreadFactory;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -114,7 +112,6 @@ public class FileMonitor {
 	
 	protected ConcurrentLinkedQueue<FileItem> toUse = 
 			new ConcurrentLinkedQueue<FileMonitor.FileItem>();
-	protected final AdaptativeJsonHandler handler = new AdaptativeJsonHandler(JsonCodec.JSON);
 	protected final ConcurrentLinkedQueue<Future<?>> results = new ConcurrentLinkedQueue<Future<?>>();
 	
 	protected final FileMonitorInformation fileMonitorInformation;
@@ -278,7 +275,7 @@ public class FileMonitor {
 		}
 		try {
 			HashMap<String, FileItem> newHashMap = 
-					handler.mapper.readValue(statusFile, 
+					JsonHandler.mapper.readValue(statusFile, 
 							new TypeReference<HashMap<String, FileItem>>() {});
 			fileItems.putAll(newHashMap);
 			initialized = true;
@@ -299,7 +296,7 @@ public class FileMonitor {
 	protected void saveStatus() {
 		if (statusFile == null) return;
 		try {
-			handler.mapper.writeValue(statusFile, fileItems);
+			JsonHandler.mapper.writeValue(statusFile, fileItems);
 			createChkFile();
 		} catch (JsonGenerationException e) {
 		} catch (JsonMappingException e) {
@@ -322,12 +319,8 @@ public class FileMonitor {
 	 */
 	public String getStatus() {
 		if (fileMonitorInformation == null) return "{}";
-		try {
-			createChkFile();
-			return handler.mapper.writeValueAsString(fileMonitorInformation);
-		} catch (JsonProcessingException e) {
-		}
-		return "{}";
+		createChkFile();
+		return JsonHandler.writeAsString(fileMonitorInformation);
 	}
 	/**
 	 * @return the elapseTime

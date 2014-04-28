@@ -264,6 +264,44 @@ public class DbValue {
 		this.value = value;
 	}
 
+	/**
+	 * 
+	 * @return the type in full string format
+	 */
+	public String getType() {
+		switch (type) {
+			case Types.VARCHAR:
+				return "VARCHAR";
+			case Types.LONGVARCHAR:
+				return "LONGVARCHAR";
+			case Types.BIT:
+				return "BIT";
+			case Types.TINYINT:
+				return "TINYINT";
+			case Types.SMALLINT:
+				return "SMALLINT";
+			case Types.INTEGER:
+				return "INTEGER";
+			case Types.BIGINT:
+				return "BIGINT";
+			case Types.REAL:
+				return "REAL";
+			case Types.DOUBLE:
+				return "DOUBLE";
+			case Types.VARBINARY:
+				return "VARBINARY";
+			case Types.DATE:
+				return "DATE";
+			case Types.TIMESTAMP:
+				return "TIMESTAMP";
+			case Types.CLOB:
+				return "CLOB";
+			case Types.BLOB:
+				return "BLOB";
+			default:
+				return "UNKNOWN:"+type;
+		}
+	}
 	public Object getValue() throws WaarpDatabaseSqlException {
 		switch (type) {
 			case Types.VARCHAR:

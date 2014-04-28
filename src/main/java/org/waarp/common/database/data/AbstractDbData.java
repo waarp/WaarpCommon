@@ -17,6 +17,7 @@
  */
 package org.waarp.common.database.data;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.sql.Date;
@@ -32,6 +33,10 @@ import org.waarp.common.database.exception.WaarpDatabaseException;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseNoDataException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
+import org.waarp.common.json.JsonHandler;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Abstract database table implementation without explicit COMMIT.<br>
@@ -565,5 +570,133 @@ public abstract class AbstractDbData {
 		}
 		isSaved = true;
 		return true;
+	}
+	/**
+	 * 
+	 * @return the runner as Json
+	 * @throws OpenR66ProtocolBusinessException
+	 */
+	public String asJson() throws WaarpDatabaseSqlException {
+		ObjectNode node;
+		try {
+			node = getJson();
+		} catch (WaarpDatabaseSqlException e) {
+			throw new WaarpDatabaseSqlException("Cannot read Data: " + e.getMessage());
+		}
+		return JsonHandler.writeAsString(node);
+	}
+	/**
+	 * Create the equivalent object in Json (no database access)
+	 * @return The ObjectNode Json equivalent
+	 * @throws WaarpDatabaseSqlException
+	 */
+	public ObjectNode getJson() throws WaarpDatabaseSqlException {
+		ObjectNode node = JsonHandler.createObjectNode();
+		for (DbValue value : allFields) {
+			if (value.column.equalsIgnoreCase("UPDATEDINFO")) {
+				continue;
+			}
+			switch (value.type) {
+				case Types.VARCHAR:
+				case Types.LONGVARCHAR:
+					node.put(value.column, (String) value.value);
+					break;
+				case Types.BIT:
+					node.put(value.column, (Boolean) value.value);
+					break;
+				case Types.TINYINT:
+					node.put(value.column, (Byte) value.value);
+					break;
+				case Types.SMALLINT:
+					node.put(value.column, (Short) value.value);
+					break;
+				case Types.INTEGER:
+					node.put(value.column, (Integer) value.value);
+					break;
+				case Types.BIGINT:
+					node.put(value.column, (Long) value.value);
+					break;
+				case Types.REAL:
+					node.put(value.column, (Float) value.value);
+					break;
+				case Types.DOUBLE:
+					node.put(value.column, (Double) value.value);
+					break;
+				case Types.VARBINARY:
+					node.put(value.column, (byte []) value.value);
+					break;
+				case Types.DATE:
+					node.put(value.column, ((Date) value.value).getTime());
+					break;
+				case Types.TIMESTAMP:
+					node.put(value.column, ((Timestamp) value.value).getTime());
+					break;
+				case Types.CLOB:
+				case Types.BLOB:
+				default:
+					throw new WaarpDatabaseSqlException("Unsupported type: "+value.type);
+			}
+		}
+		return node;
+	}
+	/**
+	 * Set the values from the Json node to the current object (no database access)
+	 * @param node
+	 * @param ignorePrimaryKey True will ignore primaryKey from Json
+	 * @throws WaarpDatabaseSqlException
+	 */
+	public void setFromJson(ObjectNode node, boolean ignorePrimaryKey) throws WaarpDatabaseSqlException {
+		DbValue [] list = allFields;
+		if (ignorePrimaryKey) {
+			list = otherFields;
+		}		
+		for (DbValue value : list) {
+			if (value.column.equalsIgnoreCase("UPDATEDINFO")) {
+				continue;
+			}
+			JsonNode item = node.get(value.column);
+			if (item != null && ! item.isMissingNode()) {
+				isSaved = false;
+				switch (value.type) {
+					case Types.VARCHAR:
+					case Types.LONGVARCHAR:
+						value.setValue(item.asText());
+						break;
+					case Types.BIT:
+						value.setValue(item.asBoolean());
+						break;
+					case Types.TINYINT:
+					case Types.SMALLINT:
+					case Types.INTEGER:
+						value.setValue(item.asInt());
+						break;
+					case Types.BIGINT:
+						value.setValue(item.asLong());
+						break;
+					case Types.REAL:
+					case Types.DOUBLE:
+						value.setValue(item.asDouble());
+						break;
+					case Types.VARBINARY:
+						try {
+							value.setValue(item.binaryValue());
+						} catch (IOException e) {
+							throw new WaarpDatabaseSqlException("Issue while assigning array of bytes", e);
+						}
+						break;
+					case Types.DATE:
+						value.setValue(new Date(item.asLong()));
+						break;
+					case Types.TIMESTAMP:
+						value.setValue(new Timestamp(item.asLong()));
+						break;
+					case Types.CLOB:
+					case Types.BLOB:
+					default:
+						throw new WaarpDatabaseSqlException("Unsupported type: "+value.type);
+				}
+			}
+		}
+		setFromArray();
 	}
 }
