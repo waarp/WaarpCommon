@@ -317,6 +317,7 @@ public class DbPreparedStatement {
 		} catch (SQLException e) {
 			logger.error("SQL Exception executeUpdate:" + request + " " +
 					e.getMessage());
+			logger.debug("SQL Exception full stack trace", e);
 			DbSession.error(e);
 			ls.checkConnectionNoException();
 			throw new WaarpDatabaseSqlException(

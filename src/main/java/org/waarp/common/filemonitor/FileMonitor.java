@@ -31,6 +31,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
@@ -96,6 +98,8 @@ public class FileMonitor {
 	
 	protected final ConcurrentHashMap<String, FileItem> fileItems = 
 			new ConcurrentHashMap<String, FileMonitor.FileItem>();
+	protected ConcurrentHashMap<String, FileItem> lastFileItems = 
+			new ConcurrentHashMap<String, FileMonitor.FileItem>();
 	
 	protected FileFilter filter = 
 			new FileFilter() {
@@ -114,7 +118,6 @@ public class FileMonitor {
 			new ConcurrentLinkedQueue<FileMonitor.FileItem>();
 	protected final ConcurrentLinkedQueue<Future<?>> results = new ConcurrentLinkedQueue<Future<?>>();
 	
-	protected final FileMonitorInformation fileMonitorInformation;
 	protected AtomicLong globalok = new AtomicLong(0);
 	protected AtomicLong globalerror = new AtomicLong(0);
 	protected AtomicLong todayok = new AtomicLong(0);
@@ -166,8 +169,6 @@ public class FileMonitor {
 		}
 		this.reloadStatus();
 		this.setNextDay();
-		fileMonitorInformation = new FileMonitorInformation(name, fileItems, directories, stopFile, statusFile, elapseTime, scanSubdir,
-					globalok, globalerror, todayok, todayerror);
 	}
 	
 	protected void setNextDay() {
@@ -315,12 +316,46 @@ public class FileMonitor {
 	}
 	/**
 	 * 
-	 * @return the status in JSON format
+	 * Reset such that next status will be full (not partial)
+	 */
+	public void setNextAsFullStatus() {
+		lastFileItems.clear();
+	}
+	/**
+	 * 
+	 * @return the status (updated only) in JSON format
 	 */
 	public String getStatus() {
-		if (fileMonitorInformation == null) return "{}";
+		Set<String> removedFileItems = null;
+		ConcurrentHashMap<String, FileItem> newFileItems = 
+				new ConcurrentHashMap<String, FileMonitor.FileItem>();
+		if (! lastFileItems.isEmpty()) {
+			removedFileItems = lastFileItems.keySet();
+			removedFileItems.removeAll(fileItems.keySet());
+			for (Entry<String, FileItem> key : fileItems.entrySet()) {
+				if (!key.getValue().isStrictlySame(lastFileItems.get(key.getKey()))) {
+					newFileItems.put(key.getKey(), key.getValue());
+				}
+			}
+		} else {
+			for (Entry<String, FileItem> key : fileItems.entrySet()) {
+				newFileItems.put(key.getKey(), key.getValue());
+			}
+		}
+		FileMonitorInformation fileMonitorInformation = new FileMonitorInformation(name, newFileItems, removedFileItems, 
+				directories, stopFile, statusFile, elapseTime, scanSubDir,
+				globalok, globalerror, todayok, todayerror);
+		for (Entry<String, FileItem> key : fileItems.entrySet()) {
+			FileItem clone = key.getValue().clone();
+			lastFileItems.put(key.getKey(), clone);
+		}
 		createChkFile();
-		return JsonHandler.writeAsString(fileMonitorInformation);
+		String status = JsonHandler.writeAsString(fileMonitorInformation);
+		if (removedFileItems != null) {
+			removedFileItems.clear();
+		}
+		newFileItems.clear();
+		return status;
 	}
 	/**
 	 * @return the elapseTime
@@ -694,6 +729,7 @@ public class FileMonitor {
 	public static class FileMonitorInformation {
 		public String name;
 		public ConcurrentHashMap<String, FileItem> fileItems;
+		public Set<String> removedFileItems;
 		public List<File> directories;
 		public File stopFile;
 		public File statusFile;
@@ -708,11 +744,13 @@ public class FileMonitor {
 			// empty constructor for JSON
 		}
 		protected FileMonitorInformation(String name, ConcurrentHashMap<String, FileItem> fileItems,
+				Set<String> removedFileItems,
 				List<File> directories, File stopFile, File statusFile, 
 				long elapseTime, boolean scanSubDir, 
 				AtomicLong globalok, AtomicLong globalerror, AtomicLong todayok, AtomicLong todayerror) {
 			this.name = name;
 			this.fileItems = fileItems;
+			this.removedFileItems = removedFileItems;
 			this.directories = directories;
 			this.stopFile = stopFile;
 			this.statusFile = statusFile;
@@ -760,16 +798,26 @@ public class FileMonitor {
 					file.equals(((FileItem) obj).file));
 		}
 		/**
-		 * To be called when the call of primary action is OK
+		 * 
+		 * @param item
+		 * @return True if the fileItem is strictly the same (and not only the file as in equals)
 		 */
-		public void valid() {
-			
+		public boolean isStrictlySame(FileItem item) {
+			return (item != null) &&
+					file.equals(item.file) && (lastTime == item.lastTime) &&
+					(timeUsed == item.timeUsed) && (used == item.used) &&
+					(hash != null ? Arrays.equals(hash, item.hash) : item.hash == null);
 		}
-		/**
-		 * To be called when the call of primary action is KO
-		 */
-		public void invalid() {
-			
+
+		@Override
+		public FileItem clone() {
+			FileItem clone = new FileItem(file);
+			clone.hash = hash;
+			clone.lastTime = lastTime;
+			clone.timeUsed = timeUsed;
+			clone.used = used;
+			clone.specialId = specialId;
+			return clone;
 		}
 	}
 
