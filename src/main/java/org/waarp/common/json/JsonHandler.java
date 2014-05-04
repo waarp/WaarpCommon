@@ -98,6 +98,18 @@ public class JsonHandler {
 			return "{}";
 		}
 	}
+	/**
+	 * 
+	 * @param object
+	 * @return the Json representation of the object in Pretty Print format
+	 */
+	public static String prettyPrint(Object object) {
+		try {
+			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			return "{}";
+		}
+	}
 	
 	/**
 	 * 

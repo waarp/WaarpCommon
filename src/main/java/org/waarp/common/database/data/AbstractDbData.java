@@ -50,6 +50,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * 
  */
 public abstract class AbstractDbData {
+	public static final String JSON_MODEL = "@model";
 	/**
 	 * UpdatedInfo status
 	 * 
@@ -574,24 +575,18 @@ public abstract class AbstractDbData {
 	/**
 	 * 
 	 * @return the runner as Json
-	 * @throws OpenR66ProtocolBusinessException
 	 */
-	public String asJson() throws WaarpDatabaseSqlException {
-		ObjectNode node;
-		try {
-			node = getJson();
-		} catch (WaarpDatabaseSqlException e) {
-			throw new WaarpDatabaseSqlException("Cannot read Data: " + e.getMessage());
-		}
+	public String asJson() {
+		ObjectNode node = getJson();
 		return JsonHandler.writeAsString(node);
 	}
 	/**
 	 * Create the equivalent object in Json (no database access)
 	 * @return The ObjectNode Json equivalent
-	 * @throws WaarpDatabaseSqlException
 	 */
-	public ObjectNode getJson() throws WaarpDatabaseSqlException {
+	public ObjectNode getJson() {
 		ObjectNode node = JsonHandler.createObjectNode();
+		node.put(JSON_MODEL, this.getClass().getSimpleName());
 		for (DbValue value : allFields) {
 			if (value.column.equalsIgnoreCase("UPDATEDINFO")) {
 				continue;
@@ -634,7 +629,7 @@ public abstract class AbstractDbData {
 				case Types.CLOB:
 				case Types.BLOB:
 				default:
-					throw new WaarpDatabaseSqlException("Unsupported type: "+value.type);
+					node.put(value.column, "Unsupported type="+value.type);
 			}
 		}
 		return node;
