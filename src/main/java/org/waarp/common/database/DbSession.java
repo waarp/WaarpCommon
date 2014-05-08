@@ -23,8 +23,11 @@ import java.sql.Savepoint;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jboss.netty.util.Timeout;
+import org.jboss.netty.util.TimerTask;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.database.model.DbModelFactory;
@@ -367,6 +370,32 @@ public class DbSession {
 		}
 	}
 	
+	/**
+	 * To be called when a client will stop to use this DbSession (once by client).
+	 * This version is not blocking.
+	 */
+	public void enUseConnectionNoDisconnect() {
+		nbThread.decrementAndGet();
+		DbAdmin.dbSessionTimer.newTimeout(new TryDisconnectDbSession(this), DbAdmin.WAITFORNETOP, TimeUnit.MILLISECONDS);
+	}
+	
+	/**
+	 * To disconnect in asynchronous way the DbSession
+	 * @author "Frederic Bregier"
+	 *
+	 */
+	private static class TryDisconnectDbSession implements TimerTask {
+		private final DbSession dbSession;
+		private TryDisconnectDbSession(DbSession dbSession) {
+			this.dbSession = dbSession;
+		}
+		public void run(Timeout timeout) throws Exception {
+			if (dbSession.nbThread.get() <= 0) {
+				dbSession.disconnect();
+			}
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		return this.internalId.hashCode();
