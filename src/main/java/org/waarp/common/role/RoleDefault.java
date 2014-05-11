@@ -157,7 +157,7 @@ public class RoleDefault {
 		return this;
 	}
 
-	public RoleDefault setRole(RoleDefault newrole) {
+	public RoleDefault setRoleDefault(RoleDefault newrole) {
 		this.role = newrole.role;
 		return this;
 	}
