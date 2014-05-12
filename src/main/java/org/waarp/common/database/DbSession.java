@@ -84,7 +84,7 @@ public class DbSession {
 	/**
 	 * To be used when a local Channel is over
 	 */
-	public boolean isDisconnected = true;
+	public volatile boolean isDisconnected = true;
 
 	/**
 	 * List all DbPrepareStatement with long term usage to enable the recreation when the associated
@@ -345,6 +345,7 @@ public class DbSession {
 	 * To be called when a client will start to use this DbSession (once by client)
 	 */
 	public void useConnection() {
+		int val = nbThread.incrementAndGet();
 		synchronized (this) {
 			if (isDisconnected) {
 				try {
@@ -355,7 +356,6 @@ public class DbSession {
 				}
 			}
 		}
-		int val = nbThread.incrementAndGet();
 		logger.debug("ThreadUsing: "+val);
 	}
 
@@ -375,8 +375,11 @@ public class DbSession {
 	 * This version is not blocking.
 	 */
 	public void enUseConnectionNoDisconnect() {
-		nbThread.decrementAndGet();
-		DbAdmin.dbSessionTimer.newTimeout(new TryDisconnectDbSession(this), DbAdmin.WAITFORNETOP, TimeUnit.MILLISECONDS);
+		int val = nbThread.decrementAndGet();
+		logger.debug("ThreadUsing: "+val);
+		if (val <= 0) {
+			DbAdmin.dbSessionTimer.newTimeout(new TryDisconnectDbSession(this), DbAdmin.WAITFORNETOP*10, TimeUnit.MILLISECONDS);
+		}
 	}
 	
 	/**
@@ -390,9 +393,11 @@ public class DbSession {
 			this.dbSession = dbSession;
 		}
 		public void run(Timeout timeout) throws Exception {
-			if (dbSession.nbThread.get() <= 0) {
+			int val = dbSession.nbThread.get();
+			if (val <= 0) {
 				dbSession.disconnect();
 			}
+			logger.debug("ThreadUsing: "+val);
 		}
 	}
 
@@ -432,6 +437,7 @@ public class DbSession {
 			logger.debug("Fore close Db Conn: "+internalId);
 			if (conn != null) {
 				conn.close();
+				conn = null;
 			}
 		} catch (SQLException e) {
 			logger.warn("Disconnection not OK");
@@ -466,19 +472,22 @@ public class DbSession {
 					nbThread);
 			return;
 		}
-		removeLongTermPreparedStatements();
-		DbAdmin.removeConnection(internalId);
-		isDisconnected = true;
-		try {
-			logger.debug("Close Db Conn: "+internalId);
-			if (conn != null) {
-				conn.close();
+		synchronized (this) {
+			removeLongTermPreparedStatements();
+			DbAdmin.removeConnection(internalId);
+			isDisconnected = true;
+			try {
+				logger.debug("Close Db Conn: "+internalId);
+				if (conn != null) {
+					conn.close();
+					conn = null;
+				}
+			} catch (SQLException e) {
+				logger.warn("Disconnection not OK");
+				error(e);
+			} catch (ConcurrentModificationException e) {
+				// ignore
 			}
-		} catch (SQLException e) {
-			logger.warn("Disconnection not OK");
-			error(e);
-		} catch (ConcurrentModificationException e) {
-			// ignore
 		}
 		logger.info("Current cached connection: "
 				+ DbModelFactory.dbModel.currentNumberOfPooledConnections());

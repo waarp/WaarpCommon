@@ -158,7 +158,7 @@ public abstract class KeyObject {
 			}
 			this.setSecretKey(key);
 		} else {
-			throw new CryptoException("Cannot read crypto file");
+			throw new CryptoException("Cannot read crypto file: "+file);
 		}
 	}
 
