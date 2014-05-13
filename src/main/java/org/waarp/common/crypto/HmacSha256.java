@@ -17,8 +17,13 @@
  */
 package org.waarp.common.crypto;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
+
+import org.waarp.common.exception.CryptoException;
 
 
 /**
@@ -107,47 +112,31 @@ public class HmacSha256 extends KeyObject {
 	public byte[] decrypt(byte[] ciphertext) throws Exception {
 		throw new IllegalArgumentException("Cannot be used for HmacSha256");
 	}
-
+	
 	/**
-	 * This method allows to test the correctness of this class
-	 * 
+	 * Generates a HmacSha256 key and saves it into the file given as argument
 	 * @param args
-	 * @throws Exception
 	 */
-	public static void main(String[] args) throws Exception {
-		String plaintext = null;
-		if (args.length != 0) {
-			plaintext = args[0];
+	public static void main(String[] args) {
+		if (args.length == 0) {
+			System.err.println("Filename is needed as argument");
 		}
-		if (plaintext == null || plaintext.length() == 0) {
-			plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
+		HmacSha256 key = new HmacSha256();
+		try {
+			key.generateKey();
+		} catch (Exception e) {
+			System.err.println("Error: "+e.getMessage());
+			return;
 		}
-		System.out.println("plaintext = " + plaintext);
-		HmacSha256 hmacSha256 = new HmacSha256();
-		// Generate a key
-		hmacSha256.generateKey();
-		// get the generated key
-		byte[] secretKey = hmacSha256.getSecretKeyInBytes();
-		// crypt one text
-		byte[] ciphertext = hmacSha256.crypt(plaintext);
-		// print the cipher
-		System.out.println("ciphertext = " + hmacSha256.encodeHex(ciphertext));
-
-		// Test the set Key
-		hmacSha256.setSecretKey(secretKey);
-
-		// same on String only
-		int nb = 100000;
-		int k = 0;
-		long time1 = System.currentTimeMillis();
-		for (int i = 0; i < nb; i++) {
-			String cipherString = hmacSha256.cryptToHex(plaintext);
-			k += cipherString.length();
-			// System.out.println("cipherString = " + cipherString);
+		try {
+			key.saveSecretKey(new File(args[0]));
+		} catch (CryptoException e) {
+			System.err.println("Error: "+e.getMessage());
+			return;
+		} catch (IOException e) {
+			System.err.println("Error: "+e.getMessage());
+			return;
 		}
-		long time2 = System.currentTimeMillis();
-		System.out.println("Total time in ms: " + (time2 - time1) + " or "
-				+ (nb * 1000 / (time2 - time1)) + " crypt/s for "+ (k/nb));
+		System.out.println("New HmacSha256 key file is generated: "+args[0]);
 	}
-
 }

@@ -102,6 +102,30 @@ public class RoleDefault {
 			result.append(']');
 			return result.toString();
 		}
+		public final static ROLE fromByte(byte role) {
+			switch (role) {
+				case 0:
+					return NOACCESS;
+				case 1:
+					return READONLY;
+				case 2:
+					return TRANSFER;
+				case 4:
+					return RULE;
+				case 8:
+					return HOST;
+				case 16:
+					return LIMIT;
+				case 32:
+					return SYSTEM;
+				case 64:
+					return LOGCONTROL;
+				case -128:
+					return UNUSED;
+				default:
+					return NOACCESS;
+			}
+		}
 	};
 
 	private byte role;
@@ -123,16 +147,19 @@ public class RoleDefault {
 		return ROLE.toString(role);
 	}
 	
-	public void addRole(ROLE newrole) {
+	public RoleDefault addRole(ROLE newrole) {
 		this.role |= newrole.role;
+		return this;
 	}
 
-	public void setRole(ROLE newrole) {
+	public RoleDefault setRole(ROLE newrole) {
 		this.role = newrole.role;
+		return this;
 	}
 
-	public void setRole(RoleDefault newrole) {
+	public RoleDefault setRoleDefault(RoleDefault newrole) {
 		this.role = newrole.role;
+		return this;
 	}
 
 	public void clear() {

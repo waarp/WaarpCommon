@@ -108,46 +108,4 @@ public class HmacSha1 extends KeyObject {
 		throw new IllegalArgumentException("Cannot be used for HmacSha1");
 	}
 
-	/**
-	 * This method allows to test the correctness of this class
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String[] args) throws Exception {
-		String plaintext = null;
-		if (args.length != 0) {
-			plaintext = args[0];
-		}
-		if (plaintext == null || plaintext.length() == 0) {
-			plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
-		}
-		System.out.println("plaintext = " + plaintext);
-		HmacSha1 hmacSha1 = new HmacSha1();
-		// Generate a key
-		hmacSha1.generateKey();
-		// get the generated key
-		byte[] secretKey = hmacSha1.getSecretKeyInBytes();
-		// crypt one text
-		byte[] ciphertext = hmacSha1.crypt(plaintext);
-		// print the cipher
-		System.out.println("ciphertext = " + hmacSha1.encodeHex(ciphertext));
-
-		// Test the set Key
-		hmacSha1.setSecretKey(secretKey);
-
-		// same on String only
-		int nb = 100000;
-		int k = 0;
-		long time1 = System.currentTimeMillis();
-		for (int i = 0; i < nb; i++) {
-			String cipherString = hmacSha1.cryptToHex(plaintext);
-			k += cipherString.length();
-			// System.out.println("cipherString = " + cipherString);
-		}
-		long time2 = System.currentTimeMillis();
-		System.out.println("Total time in ms: " + (time2 - time1) + " or "
-				+ (nb * 1000 / (time2 - time1)) + " crypt/s for "+ (k/nb));
-	}
-
 }

@@ -21,7 +21,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
+import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timer;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.database.model.DbModelFactory;
@@ -29,6 +32,7 @@ import org.waarp.common.database.model.DbType;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
 import org.waarp.common.utility.UUID;
+import org.waarp.common.utility.WaarpThreadFactory;
 
 /**
  * Class for access to Database
@@ -87,6 +91,9 @@ public class DbAdmin {
 	 * session is the Session object for all type of requests
 	 */
 	public DbSession session = null;
+
+	protected static final Timer dbSessionTimer = new HashedWheelTimer(new WaarpThreadFactory("TimerClose"),
+	50, TimeUnit.MILLISECONDS, 1024);
 
 	/**
 	 * Validate connection
@@ -360,6 +367,7 @@ public class DbAdmin {
 		if (DbModelFactory.dbModel != null) {
 			DbModelFactory.dbModel.releaseResources();
 		}
+		dbSessionTimer.stop();
 	}
 
 	/**

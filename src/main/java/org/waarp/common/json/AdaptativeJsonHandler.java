@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.smile.SmileFactory;
 
@@ -61,6 +63,7 @@ public class AdaptativeJsonHandler {
 			mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 			mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
 		}
 		
 		private static List<JsonFactory> getFactories() {
@@ -159,6 +162,14 @@ public class AdaptativeJsonHandler {
 	public final ObjectNode createObjectNode() {
 		return mapper.createObjectNode();
 	}
+
+	/**
+	 * 
+	 * @return an empty ArrayNode
+	 */
+	public final ArrayNode createArrayNode() {
+		return mapper.createArrayNode();
+	}
 	
 	/**
 	 * 
@@ -183,7 +194,7 @@ public class AdaptativeJsonHandler {
 		try {
 			return mapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
-			return "";
+			return "{}";
 		}
 	}
 	
