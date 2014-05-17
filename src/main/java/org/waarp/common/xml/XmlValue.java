@@ -795,4 +795,36 @@ public class XmlValue {
 								: (subXml != null ? "subXml" : "no value"))) +
 				" " + decl.toString();
 	}
+
+	public String toFullString() {
+		String detail = "Val: " +
+				(isMultiple() ? (values.size() + " elements")
+						: (value != null ? value.toString()
+								: (subXml != null ? "subXml" : "no value"))) +
+				" " + decl.toString();
+		if (this.decl.isSubXml()) {
+			if (isMultiple()) {
+				detail += "[";
+				for(Object obj : values) {
+					if (obj instanceof XmlValue) {
+						detail += ((XmlValue) obj).toFullString()+", ";
+					} else {
+						detail += "[";
+						for(XmlValue obj2 : (XmlValue[]) obj) {
+							detail += obj2.toFullString()+", ";
+						}		
+						detail += "], ";
+					}
+				}
+				detail += "]";
+			} else {
+				detail += "[";
+				for(XmlValue obj : this.subXml) {
+					detail += obj.toFullString()+", ";
+				}
+				detail += "]";
+			}
+		}
+		return detail;
+	}
 }
