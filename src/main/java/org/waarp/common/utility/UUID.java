@@ -65,15 +65,9 @@ public final class UUID {
      */
     private static final char VERSION			= 'd';
     /**
-     * HEX_CHARS
-     */
-    private static final char[] HEX_CHARS = {
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'a', 'b', 'c', 'd', 'e', 'f', };
-    /**
      * VERSION_DEC
      */
-    private static final int VERSION_DEC = asByte(VERSION, '0');
+    private static final int VERSION_DEC = Hexa.asByte(VERSION, '0');
 
     private static final Pattern MACHINE_ID_PATTERN = Pattern.compile("^(?:[0-9a-fA-F][:-]?){6,8}$");
     private static final int MACHINE_ID_LEN = 6;
@@ -172,11 +166,7 @@ public final class UUID {
     	int len = id.length();
         if (len == KEYB16SIZE) {
         	// HEXA
-            uuid = new byte[KEYSIZE];
-            final char[] chars = id.toCharArray();
-            for (int i = 0, j = 0; i < KEYSIZE; ) {
-                uuid[i ++]  = asByte(chars[j ++],  chars[j ++]);
-            }
+        	uuid = Hexa.fromHex(id);
         } else if (len == KEYB64SIZE || len == KEYB64SIZE+1) {
         	// BASE64
     		try {
@@ -189,20 +179,6 @@ public final class UUID {
        	}
     }
 
-    private static final byte asByte(char a, char b) {
-		if (a >= HEX_CHARS[10]) {
-			a -= HEX_CHARS[10] - 10;
-		} else {
-			a -= HEX_CHARS[0];
-		}
-		if (b >= HEX_CHARS[10]) {
-			b -= HEX_CHARS[10] - 10;
-		} else {
-			b -= HEX_CHARS[0];
-		}
-		return (byte) ((a << 4) + b);
-    }
-
     public final String toBase64() {
 		try {
 			return Base64.encodeBytes(uuid, Base64.URL_SAFE);
@@ -212,15 +188,9 @@ public final class UUID {
     }
 
     public final String toHex() {
-    	final char[] id = new char[KEYB16SIZE];
-
-        // split each byte into 4 bit numbers and map to hex characters
-    	for (int i = 0, j = 0; i < KEYSIZE; i++) {
-            id[j ++]  = HEX_CHARS[(uuid[i]  & 0xF0) >> 4];
-            id[j ++]  = HEX_CHARS[(uuid[i]  & 0x0F)];
-    	}
-        return new String(id);
+    	return Hexa.toHex(uuid);
     }
+
     @Override
     public String toString() {
     	return toBase64();
@@ -239,7 +209,7 @@ public final class UUID {
      * @return version char
      */
     public char getVersion() {
-        return HEX_CHARS[(uuid[5] & 0xF0) >> 4];
+        return Hexa.getHighHex(uuid[5]);
     }
 
     /**
