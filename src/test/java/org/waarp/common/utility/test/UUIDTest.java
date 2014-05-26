@@ -32,19 +32,15 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class UUIDTest {
-	private static final char VERSION           = 'c';
-	private static int NB = 500000;
+	private static final char VERSION           = 'd';
+	private static int NB = 5000000;
 	
     @Test
     public void testStructure() {
         UUID id = new UUID();
-        String str = id.toString();
+        String str = id.toHex();
 
-        assertEquals(str.charAt(6) , '-');
-        assertEquals(str.charAt(11), '-');
-        assertEquals(str.charAt(12), VERSION);
-        assertEquals(str.charAt(14), '-');
-        assertEquals(str.charAt(23), '-');
+        assertEquals(str.charAt(10), VERSION);
         assertEquals(str.length(), 36);
     }
 
@@ -55,6 +51,14 @@ public class UUIDTest {
         assertEquals(id1, id2);
         assertEquals(id1.hashCode(), id2.hashCode());
 
+        id2 = new UUID(id1.toHex());
+        assertEquals(id1, id2);
+        assertEquals(id1.hashCode(), id2.hashCode());
+        
+        id2 = new UUID(id1.toBase64());
+        assertEquals(id1, id2);
+        assertEquals(id1.hashCode(), id2.hashCode());
+        
         UUID id3 = new UUID(id1.getBytes());
         assertEquals(id1, id3);
     }
@@ -103,14 +107,8 @@ public class UUIDTest {
         UUID generated = new UUID();
         assertEquals(VERSION, generated.getVersion());
 
-        UUID parsed1 = new UUID("682e51-1bc0-cc-7e4fa3bc-01405d4857b1");
+        UUID parsed1 = new UUID("dc9c531160d0def10bcecc00014628614b89");
         assertEquals(VERSION, parsed1.getVersion());
-
-        UUID parsed2 = new UUID("682e51-1bc0-7c-7e4fa3bc-01405d4857b1");
-        assertEquals('7', parsed2.getVersion());
-        assertEquals(-1, parsed2.getProcessId());
-        assertEquals(-1, parsed2.getTimestamp());
-        assertNull(parsed2.getMacFragment());
     }
 
     @Test
@@ -138,8 +136,8 @@ public class UUIDTest {
         }
         UUID id = new UUID();
         byte[] field = id.getMacFragment();
-        assertEquals(0, field[0]);
-        assertEquals(mac[1] & 0x0F, field[1]);
+        assertEquals(mac[0] & 0x0F, field[0]);
+        assertEquals(mac[1], field[1]);
         assertEquals(mac[2], field[2]);
         assertEquals(mac[3], field[3]);
         assertEquals(mac[4], field[4]);

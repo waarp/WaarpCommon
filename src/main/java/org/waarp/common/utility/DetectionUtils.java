@@ -74,6 +74,13 @@ public class DetectionUtils {
 		} catch (ClassNotFoundException e) {
 			// Ignore
 		}
+		
+		try {
+            Class.forName("java.time.Clock", false, Object.class.getClassLoader());
+			return 8;
+        } catch (Exception e) {
+            // Ignore
+        }
 
 		try {
 			Class.forName(
