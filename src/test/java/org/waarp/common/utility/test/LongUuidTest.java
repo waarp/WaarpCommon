@@ -37,9 +37,7 @@ public class LongUuidTest {
         LongUuid id = new LongUuid();
         String str = id.toString();
 
-        assertEquals(str.charAt(4) , '-');
-        assertEquals(str.charAt(12), '-');
-        assertEquals(str.length(), 18);
+        assertEquals(str.length(), 16);
     }
 
     @Test

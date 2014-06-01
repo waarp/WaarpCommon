@@ -650,7 +650,7 @@ public abstract class AbstractDbData {
 				continue;
 			}
 			JsonNode item = node.get(value.column);
-			if (item != null && ! item.isMissingNode()) {
+			if (item != null && ! item.isMissingNode() && ! item.isNull()) {
 				isSaved = false;
 				switch (value.type) {
 					case Types.VARCHAR:

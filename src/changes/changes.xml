@@ -5,7 +5,13 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
-        <release version="1.2.24" date="2014-05-15" description="Fix release">
+        <release version="1.2.25" date="2014-06-01" description="Fix release">
+            <action dev="Frederic Bregier" type="fix">Fix setFromJson to check if value is given in AbstractDbData</action>
+            <action dev="Frederic Bregier" type="fix">Improve DetectionUtils (inspired from Netty)</action>
+            <action dev="Frederic Bregier" type="fix">Improve UUID using Base64 (urlsafe) encoding</action>
+            <action dev="Frederic Bregier" type="add">Add Hexa and Base64 (from iharder) supports</action>
+        </release>
+	    <release version="1.2.24" date="2014-05-15" description="Fix release">
             <action dev="Frederic Bregier" type="fix">Change to JsonHandler fix handler</action>
             <action dev="Frederic Bregier" type="fix">Fix support for NON ASCII in Json string</action>
             <action dev="Frederic Bregier" type="add">Add 2 Junit tests for Json</action>

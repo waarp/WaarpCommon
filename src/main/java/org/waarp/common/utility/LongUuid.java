@@ -48,12 +48,6 @@ public final class LongUuid {
      * So MAX value on 2 bytes
      */
     private static final int MAX_PID			= 65536;
-    /**
-     * HEX_CHARS
-     */
-    private static final char[] HEX_CHARS = {
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'a', 'b', 'c', 'd', 'e', 'f', };
 	/**
 	 * 2 bytes value maximum
 	 */
@@ -123,67 +117,15 @@ public final class LongUuid {
     public LongUuid(final String idsource) {
     	final String id = idsource.trim();
 
-        if (id.length() != 18)
+        if (id.length() != UUIDSIZE*2)
             throw new RuntimeException("Attempted to parse malformed UUID: " + id);
 
-        uuid = new byte[UUIDSIZE];
-        final char[] chars = id.toCharArray();
-
-        // PID
-        uuid[0]  = asByte(chars[0],  chars[1]);
-        uuid[1]  = asByte(chars[2], chars[3]);
-        // Timestamp
-        uuid[2]  = asByte(chars[5],  chars[6]);
-        uuid[3]  = asByte(chars[7],  chars[8]);
-        uuid[4]  = asByte(chars[9],  chars[10]);
-        // Counter
-        uuid[5]  = asByte(chars[11], chars[13]);
-        uuid[6]  = asByte(chars[14], chars[15]);
-        uuid[7]  = asByte(chars[16], chars[17]);
-    }
-
-    private static final byte asByte(char a, char b) {
-		if (a >= HEX_CHARS[10]) {
-			a -= HEX_CHARS[10] - 10;
-		} else {
-			a -= HEX_CHARS[0];
-		}
-		if (b >= HEX_CHARS[10]) {
-			b -= HEX_CHARS[10] - 10;
-		} else {
-			b -= HEX_CHARS[0];
-		}
-		return (byte) ((a << 4) + b);
+        uuid = Hexa.fromHex(id);
     }
 
     @Override
     public String toString() {
-    	final char[] id = new char[18];
-
-        // split each byte into 4 bit numbers and map to hex characters
-        // PID
-        id[0]  = HEX_CHARS[(uuid[0]  & 0xF0) >> 4];
-        id[1]  = HEX_CHARS[(uuid[0]  & 0x0F)];
-        id[2]  = HEX_CHARS[(uuid[1]  & 0xF0) >> 4];
-        id[3]  = HEX_CHARS[(uuid[1]  & 0x0F)];
-        id[4]  = '-';
-        // TimeStamp
-        id[5]  = HEX_CHARS[(uuid[2]  & 0xF0) >> 4];
-        id[6]  = HEX_CHARS[(uuid[2]  & 0x0F)];
-        id[7]  = HEX_CHARS[(uuid[3]  & 0xF0) >> 4];
-        id[8]  = HEX_CHARS[(uuid[3]  & 0x0F)];
-        id[9]  = HEX_CHARS[(uuid[4]  & 0xF0) >> 4];
-        id[10] = HEX_CHARS[(uuid[4]  & 0x0F)];
-        id[11] = HEX_CHARS[(uuid[5]  & 0xF0) >> 4];
-        // Counter
-        id[12] = '-';
-        id[13] = HEX_CHARS[(uuid[5]  & 0x0F)];
-        id[14] = HEX_CHARS[(uuid[6]  & 0xF0) >> 4];
-        id[15] = HEX_CHARS[(uuid[6]  & 0x0F)];
-        id[16] = HEX_CHARS[(uuid[7]  & 0xF0) >> 4];
-        id[17] = HEX_CHARS[(uuid[7]  & 0x0F)];
-
-        return new String(id);
+    	return Hexa.toHex(uuid);
     }
 
     /**
@@ -248,9 +190,7 @@ public final class LongUuid {
      */
     public static final byte[] getRandom(final int length) {
     	final byte[] result = new byte[length];
-    	for (int i = 0; i < length; i++) {
-    		result[i] = (byte) RANDOM.nextInt(256);
-    	}
+    	RANDOM.nextBytes(result);
     	return result;
     }
 
