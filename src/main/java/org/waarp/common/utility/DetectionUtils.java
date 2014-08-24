@@ -17,6 +17,8 @@
  */
 package org.waarp.common.utility;
 
+import io.netty.util.internal.SystemPropertyUtil;
+
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
@@ -31,6 +33,8 @@ public class DetectionUtils {
 	private static final int JAVA_VERSION = javaVersion0();
 	private static final boolean IS_WINDOWS;
 	private static final boolean IS_UNIX_IBM;
+	private static final int NUMBERTHREAD;
+	
 	static {
 		String os = SystemPropertyUtil.get("os.name").toLowerCase();
 		// windows
@@ -42,6 +46,16 @@ public class DetectionUtils {
 		} else {
 			IS_UNIX_IBM = false;
 		}
+		NUMBERTHREAD = Math.max(1, SystemPropertyUtil.getInt(
+                "org.waarp.numThreads", Runtime.getRuntime().availableProcessors() * 2));
+	}
+
+	/**
+	 * 
+	 * @return the default number of threads (core * 2)
+	 */
+	public static int numberThreads() {
+	    return NUMBERTHREAD;
 	}
 
 	/**

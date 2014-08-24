@@ -23,8 +23,8 @@ import java.sql.SQLException;
 
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * Class to handle PrepareStatement
@@ -36,7 +36,7 @@ public class DbPreparedStatement {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(DbPreparedStatement.class);
 
 	/**
@@ -77,7 +77,7 @@ public class DbPreparedStatement {
 			throw new WaarpDatabaseNoConnectionException(
 					"PreparedStatement no session");
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 		}
 		this.ls = ls;
@@ -102,7 +102,7 @@ public class DbPreparedStatement {
 			throw new WaarpDatabaseNoConnectionException(
 					"PreparedStatement no session");
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 		}
 		this.ls = ls;
@@ -154,7 +154,7 @@ public class DbPreparedStatement {
 			throw new WaarpDatabaseNoConnectionException(
 					"PreparedStatement no session");
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 		}
 		this.ls = ls;
@@ -211,7 +211,7 @@ public class DbPreparedStatement {
 		if (rs != null) {
 			close();
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 		}
 		try {
@@ -268,7 +268,7 @@ public class DbPreparedStatement {
 		if (rs != null) {
 			close();
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 			throw new WaarpDatabaseSqlException(
 					"Request cannot be executed since connection was recreated between: " +
@@ -305,7 +305,7 @@ public class DbPreparedStatement {
 		if (rs != null) {
 			close();
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 			throw new WaarpDatabaseSqlException(
 					"Request cannot be executed since connection was recreated between:" +
@@ -347,7 +347,7 @@ public class DbPreparedStatement {
 	public void realClose() {
 		close();
 		if (preparedStatement != null) {
-			if (ls.isDisconnected) {
+			if (ls.isDisActive) {
 				ls.checkConnectionNoException();
 			}
 			try {
@@ -374,7 +374,7 @@ public class DbPreparedStatement {
 			throw new WaarpDatabaseNoConnectionException(
 					"SQL ResultSet is Null into getNext");
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 			throw new WaarpDatabaseSqlException(
 					"Request cannot be executed since connection was recreated between");

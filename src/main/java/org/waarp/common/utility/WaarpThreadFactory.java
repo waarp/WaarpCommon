@@ -29,11 +29,19 @@ public class WaarpThreadFactory implements ThreadFactory {
 	private String GlobalName;
 	private AtomicLong counter = new AtomicLong();
 	private boolean isDaemon = true;
-	
+	/**
+	 * Default is Daemon thread
+	 * @param globalName
+	 */
 	public WaarpThreadFactory(String globalName) {
 		GlobalName = globalName + "-";
 	}
 
+	/**
+	 * 
+	 * @param globalName
+	 * @param isDaemon (Default is True, meaning system can exit if only Daemon threads left)
+	 */
 	public WaarpThreadFactory(String globalName, boolean isDaemon) {
 		GlobalName = globalName + "-";
 		this.isDaemon = isDaemon;

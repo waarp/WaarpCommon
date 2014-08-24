@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jboss.netty.util.Timeout;
-import org.jboss.netty.util.TimerTask;
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.database.model.DbModelFactory;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.utility.UUID;
 
 // Notice, do not import com.mysql.jdbc.*
@@ -48,7 +48,7 @@ public class DbSession {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(DbSession.class);
 
 	/**
@@ -84,7 +84,7 @@ public class DbSession {
 	/**
 	 * To be used when a local Channel is over
 	 */
-	public volatile boolean isDisconnected = true;
+	public volatile boolean isDisActive = true;
 
 	/**
 	 * List all DbPrepareStatement with long term usage to enable the recreation when the associated
@@ -119,7 +119,7 @@ public class DbSession {
 			conn.setAutoCommit(true);
 			this.isReadOnly = isReadOnly;
 			conn.setReadOnly(this.isReadOnly);
-			isDisconnected = false;
+			isDisActive = false;
 			setInternalId(this);
 		} catch (SQLException ex) {
 			// handle any errors
@@ -132,7 +132,7 @@ public class DbSession {
 				}
 			}
 			conn = null;
-			isDisconnected = true;
+			isDisActive = true;
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot set properties on connection", ex);
 		}
@@ -159,10 +159,10 @@ public class DbSession {
 			setInternalId(this);
 			logger.debug("Open Db Conn: "+internalId);
 			DbAdmin.addConnection(internalId, this);
-			isDisconnected = false;
+			isDisActive = false;
 			checkConnection();
 		} catch (SQLException ex) {
-			isDisconnected = true;
+			isDisActive = true;
 			// handle any errors
 			logger.error("Cannot create Connection");
 			error(ex);
@@ -217,7 +217,7 @@ public class DbSession {
 			this.admin = admin;
 		} catch (NullPointerException ex) {
 			// handle any errors
-			isDisconnected = true;
+			isDisActive = true;
 			logger.error("Cannot create Connection:" + (admin == null), ex);
 			if (conn != null) {
 				try {
@@ -272,7 +272,7 @@ public class DbSession {
 		} catch (NullPointerException ex) {
 			// handle any errors
 			logger.error("Cannot create Connection:" + (admin == null), ex);
-			isDisconnected = true;
+			isDisActive = true;
 			if (conn != null) {
 				try {
 					conn.close();
@@ -308,7 +308,7 @@ public class DbSession {
 					}
 				}
 				conn = null;
-				isDisconnected = true;
+				isDisActive = true;
 				throw new WaarpDatabaseNoConnectionException(
 						"Cannot create Connection", e);
 			}
@@ -347,7 +347,7 @@ public class DbSession {
 	public void useConnection() {
 		int val = nbThread.incrementAndGet();
 		synchronized (this) {
-			if (isDisconnected) {
+			if (isDisActive) {
 				try {
 					initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
 				} catch (WaarpDatabaseNoConnectionException e) {
@@ -432,7 +432,7 @@ public class DbSession {
 		logger.debug("DbConnection still in use: "+nbThread);
 		removeLongTermPreparedStatements();
 		DbAdmin.removeConnection(internalId);
-		isDisconnected = true;
+		isDisActive = true;
 		try {
 			logger.debug("Fore close Db Conn: "+internalId);
 			if (conn != null) {
@@ -457,7 +457,7 @@ public class DbSession {
 		if (this.internalId.equals(DbConstant.admin.session.internalId)) {
 			logger.debug("Closing internal db connection: "+nbThread.get());
 		}
-		if (conn == null || isDisconnected) {
+		if (conn == null || isDisActive) {
 			logger.debug("Connection already closed");
 			return;
 		}
@@ -475,7 +475,7 @@ public class DbSession {
 		synchronized (this) {
 			removeLongTermPreparedStatements();
 			DbAdmin.removeConnection(internalId);
-			isDisconnected = true;
+			isDisActive = true;
 			try {
 				logger.debug("Close Db Conn: "+internalId);
 				if (conn != null) {
@@ -501,13 +501,13 @@ public class DbSession {
 	public void checkConnection() throws WaarpDatabaseNoConnectionException {
 		try {
 			DbModelFactory.dbModel.validConnection(this);
-			isDisconnected = false;
+			isDisActive = false;
 			if (admin != null)
-				admin.isConnected = true;
+				admin.isActive = true;
 		} catch (WaarpDatabaseNoConnectionException e) {
-			isDisconnected = true;
+			isDisActive = true;
 			if (admin != null)
-				admin.isConnected = false;
+				admin.isActive = false;
 			throw e;
 		}
 	}
@@ -604,7 +604,7 @@ public class DbSession {
 		if (this.autoCommit) {
 			return;
 		}
-		if (isDisconnected) {
+		if (isDisActive) {
 			checkConnection();
 		}
 		try {
@@ -631,7 +631,7 @@ public class DbSession {
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot rollback since connection is null");
 		}
-		if (isDisconnected) {
+		if (isDisActive) {
 			checkConnection();
 		}
 		try {
@@ -661,7 +661,7 @@ public class DbSession {
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot savepoint since connection is null");
 		}
-		if (isDisconnected) {
+		if (isDisActive) {
 			checkConnection();
 		}
 		try {
@@ -688,7 +688,7 @@ public class DbSession {
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot release savepoint since connection is null");
 		}
-		if (isDisconnected) {
+		if (isDisActive) {
 			checkConnection();
 		}
 		try {

@@ -36,16 +36,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.jboss.netty.logging.InternalLoggerFactory;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.logging.WaarpSlf4JLoggerFactory;
 
 public class FileConvert extends Thread {
 	/**
 	 * Internal Logger
 	 */
-	static volatile WaarpInternalLogger logger;
+	static volatile WaarpLogger logger;
 	
 	private boolean	unix2dos	= false;
 	private boolean	recursive	= false;
@@ -61,7 +60,7 @@ public class FileConvert extends Thread {
 	 */
 	public FileConvert(List<File> files, boolean unix2dos, boolean recursive, File tmpDir) {
 		if (logger == null) {
-			logger = WaarpInternalLoggerFactory.getLogger(FileConvert.class);
+			logger = WaarpLoggerFactory.getLogger(FileConvert.class);
 		}
 		this.files = files;
 		this.unix2dos = unix2dos;
@@ -75,9 +74,9 @@ public class FileConvert extends Thread {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		InternalLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
+	    WaarpLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
 		if (logger == null) {
-			logger = WaarpInternalLoggerFactory.getLogger(FileConvert.class);
+			logger = WaarpLoggerFactory.getLogger(FileConvert.class);
 		}
 		
 		ArrayList<File> files = new ArrayList<File>();

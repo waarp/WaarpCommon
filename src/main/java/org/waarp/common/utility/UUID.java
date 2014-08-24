@@ -52,6 +52,7 @@ public final class UUID {
     private static final int KEYSIZE			= 18;
     private static final int KEYB64SIZE			= 24;
     private static final int KEYB16SIZE			= KEYSIZE*2;
+    private static final int UTILUUIDKEYSIZE    = 16;
     /**
      * Random Generator 
      */
@@ -129,7 +130,7 @@ public final class UUID {
         uuid[4]  = (byte) (JVMPID);
 
 
-     // place UUID version (hex 'c') in first four bits and piece of MAC in
+     // place UUID version (hex 'd') in first four bits and piece of MAC in
         // the second four bits
         uuid[5]  = (byte) (VERSION_DEC | (0x0F & MAC[0]));
         // copy rest of mac address into uuid
@@ -139,7 +140,7 @@ public final class UUID {
         uuid[9]  = MAC[4];
         uuid[10]  = MAC[5];
 
-        // copy timestamp into uuid (up to 48 bits so up to 2 200 000 years after Time 0)
+        // copy timestamp into uuid (up to 56 bits so up to 2 200 000 years after Time 0)
         uuid[11] = (byte) (time >> 48);
         uuid[12] = (byte) (time >> 40);
         uuid[13] = (byte) (time >> 32);
@@ -148,16 +149,65 @@ public final class UUID {
         uuid[16] = (byte) (time >> 8);
         uuid[17] = (byte) (time);
     }
+    /**
+     * Create a UUID immediately compatible with a standard UUID implementation
+     * @param on128bits
+     */
+    public UUID(boolean on128bits) {
+        this();
+        if (on128bits) {
+            uuid[5] = (byte) VERSION_DEC;
+            uuid[11] = 0;
+        }
+    }
+    /**
+     * Create a UUID immediately compatible with a standard UUID implementation
+     * @param mostSigBits
+     * @param leastSigBits
+     */
+    public UUID(long mostSigBits, long leastSigBits) {
+        uuid = new byte[KEYSIZE];
+        uuid[0] = (byte) (mostSigBits >> 56);
+        uuid[1] = (byte) (mostSigBits >> 48);
+        uuid[2] = (byte) (mostSigBits >> 40);
+        uuid[3] = (byte) (mostSigBits >> 32);
+        uuid[4] = (byte) (mostSigBits >> 24);
+        uuid[5] = (byte) VERSION_DEC;
+        uuid[6] = (byte) (mostSigBits >> 16);
+        uuid[7] = (byte) (mostSigBits >> 8);
+        uuid[8] = (byte) (mostSigBits);
 
+        uuid[9] = (byte) (leastSigBits >> 56);
+        uuid[10] = (byte) (leastSigBits >> 48);
+        uuid[11] = 0;
+        uuid[12] = (byte) (leastSigBits >> 40);
+        uuid[13] = (byte) (leastSigBits >> 32);
+        uuid[14] = (byte) (leastSigBits >> 24);
+        uuid[15] = (byte) (leastSigBits >> 16);
+        uuid[16] = (byte) (leastSigBits >> 8);
+        uuid[17] = (byte) (leastSigBits);
+    }
+    /**
+     * Create a UUID immediately compatible with a standard UUID implementation
+     * @param uuid
+     */
+    public UUID(java.util.UUID uuid) {
+        this(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits());
+    }
     /**
      * Constructor that takes a byte array as this UUID's content
      * @param bytes UUID content
      */
     public UUID(final byte[] bytes) {
-        if (bytes.length != KEYSIZE)
-            throw new RuntimeException("Attempted to parse malformed UUID: " + Arrays.toString(bytes));
-
+        if (bytes.length != KEYSIZE && bytes.length != UTILUUIDKEYSIZE)
+            throw new RuntimeException("Attempted to parse malformed UUID: (" + bytes.length + ") " + Arrays.toString(bytes));
         uuid = Arrays.copyOf(bytes, KEYSIZE);
+        if (bytes.length == UTILUUIDKEYSIZE) {
+            uuid[5] = (byte) VERSION_DEC;
+            System.arraycopy(bytes, 5, uuid, 6, 5);
+            uuid[11] = 0;
+            System.arraycopy(bytes, 10, uuid, 12, 6);
+        }
     }
 
     public UUID(final String idsource) {
@@ -263,7 +313,45 @@ public final class UUID {
 
         return x;
     }
-
+    /**
+     * 
+     * @return the least significant bits (as in standard UUID implementation)
+     */
+    public long getLeastSignificantBits() {
+        long least;
+        least = ((long) uuid[9] & 0xFF) << 56;
+        least |= ((long) uuid[10] & 0xFF) << 48;
+        least |= ((long) uuid[12] & 0xFF) << 40;
+        least |= ((long) uuid[13] & 0xFF) << 32;
+        least |= ((long) uuid[14] & 0xFF) << 24;
+        least |= ((long) uuid[15] & 0xFF) << 16;
+        least |= ((long) uuid[16] & 0xFF) << 8;
+        least |= ((long) uuid[17] & 0xFF);
+        return least;
+    }
+    /**
+     * 
+     * @return the most significant bits (as in standard UUID implementation)
+     */
+    public long getMostSignificantBits() {
+        long most;
+        most = ((long) uuid[0] & 0xFF) << 56;
+        most |= ((long) uuid[1] & 0xFF) << 48;
+        most |= ((long) uuid[2] & 0xFF) << 40;
+        most |= ((long) uuid[3] & 0xFF) << 32;
+        most |= ((long) uuid[4] & 0xFF) << 24;
+        most |= ((long) uuid[6] & 0xFF) << 16;
+        most |= ((long) uuid[7] & 0xFF) << 8;
+        most |= ((long) uuid[8] & 0xFF);
+        return most;
+    }
+    /**
+     * 
+     * @return a UUID compatible with Java.Util package implementation
+     */
+    public java.util.UUID getJavaUuid() {
+        return new java.util.UUID(getMostSignificantBits(), getLeastSignificantBits());
+    }
     @Override
     public boolean equals(Object o) {
     	if (o == null || !(o instanceof UUID)) return false;

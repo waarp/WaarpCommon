@@ -17,7 +17,7 @@
  */
 package org.waarp.common.future;
 
-import org.jboss.netty.channel.Channel;
+import io.netty.channel.Channel;
 
 /**
  * Future that hold a channel as result
@@ -48,7 +48,7 @@ public class WaarpChannelFuture extends WaarpFuture {
 	/**
 	 * @return the channel as result
 	 */
-	public Channel getChannel() {
+	public Channel channel() {
 		return channel;
 	}
 

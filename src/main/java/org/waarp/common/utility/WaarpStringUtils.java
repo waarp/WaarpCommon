@@ -32,8 +32,8 @@ import java.util.GregorianCalendar;
 import org.dom4j.Node;
 import org.waarp.common.exception.FileTransferException;
 import org.waarp.common.exception.InvalidArgumentException;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * Various utilities for reading files, transforming dates, ...
@@ -47,7 +47,7 @@ public class WaarpStringUtils {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(WaarpStringUtils.class);
 
 	/**

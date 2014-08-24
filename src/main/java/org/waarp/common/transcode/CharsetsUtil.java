@@ -33,8 +33,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.Map.Entry;
 
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * Helper to print in output the Charsets available in the JVM.<br>
@@ -54,7 +54,7 @@ public class CharsetsUtil {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(CharsetsUtil.class);
 	
 	/**

@@ -34,8 +34,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.waarp.common.exception.CryptoException;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * SecureKeyStore for SLL
@@ -47,14 +47,16 @@ public class WaarpSecureKeyStore {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(WaarpSecureKeyStore.class);
 
+	private String keyStoreFilename;
 	private KeyStore keyStore;
 	private KeyManagerFactory keyManagerFactory;
 	private String keyStorePasswd;
 	private String keyPassword;
 	private WaarpSecureTrustManagerFactory secureTrustManagerFactory;
+	private String trustStoreFilename;
 	private KeyStore keyTrustStore;
 	private String trustStorePasswd;
 
@@ -138,13 +140,14 @@ public class WaarpSecureKeyStore {
 	/**
 	 * Initialize the SecureKeyStore with no TrustStore from file
 	 * 
-	 * @param keyStoreFilename
+	 * @param _keyStoreFilename
 	 * @param _keyStorePasswd
 	 * @param _keyPassword
 	 * @throws CryptoException
 	 */
-	public void initKeyStore(String keyStoreFilename, String _keyStorePasswd, String _keyPassword)
+	public void initKeyStore(String _keyStoreFilename, String _keyStorePasswd, String _keyPassword)
 			throws CryptoException {
+	    keyStoreFilename = _keyStoreFilename;
 		keyStorePasswd = _keyStorePasswd;
 		keyPassword = _keyPassword;
 		// First keyStore itself
@@ -285,14 +288,15 @@ public class WaarpSecureKeyStore {
 	/**
 	 * Initialize the TrustStore from a filename and its password
 	 * 
-	 * @param trustStoreFilename
+	 * @param _trustStoreFilename
 	 * @param _trustStorePasswd
 	 * @param needClientAuthent
 	 *            True if the TrustStore is also to authenticate clients
 	 * @throws CryptoException
 	 */
-	public void initTrustStore(String trustStoreFilename, String _trustStorePasswd,
+	public void initTrustStore(String _trustStoreFilename, String _trustStorePasswd,
 			boolean needClientAuthent) throws CryptoException {
+	    trustStoreFilename = _trustStoreFilename;
 		trustStorePasswd = _trustStorePasswd;
 		try {
 			keyTrustStore = KeyStore.getInstance("JKS");

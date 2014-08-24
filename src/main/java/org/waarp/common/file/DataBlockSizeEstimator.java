@@ -17,8 +17,10 @@
  */
 package org.waarp.common.file;
 
-import org.jboss.netty.util.DefaultObjectSizeEstimator;
-import org.jboss.netty.util.ObjectSizeEstimator;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufHolder;
+import io.netty.channel.FileRegion;
+import io.netty.channel.MessageSizeEstimator;
 
 /**
  * DataBlock size estimator
@@ -26,21 +28,43 @@ import org.jboss.netty.util.ObjectSizeEstimator;
  * @author Frederic Bregier
  * 
  */
-public class DataBlockSizeEstimator implements ObjectSizeEstimator {
+public class DataBlockSizeEstimator implements MessageSizeEstimator {
 
-	private DefaultObjectSizeEstimator internal = new DefaultObjectSizeEstimator();
+    private final Handle handle;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.jboss.netty.handler.execution.ObjectSizeEstimator#estimateSize(java .lang.Object)
-	 */
-	public int estimateSize(Object o) {
-		if (!(o instanceof DataBlock)) {
-			// Type unimplemented
-			return internal.estimateSize(o);
-		}
-		DataBlock dataBlock = (DataBlock) o;
-		return dataBlock.getByteCount();
-	}
+	/**
+     * 
+     */
+    public DataBlockSizeEstimator() {
+        handle = new HandleImpl();
+    }
+
+    private static final class HandleImpl implements Handle {
+        private HandleImpl() {
+        }
+
+        @Override
+        public int size(Object msg) {
+            if (!(msg instanceof DataBlock)) {
+                // Type unimplemented
+                if (msg instanceof ByteBuf) {
+                    return ((ByteBuf) msg).readableBytes();
+                }
+                if (msg instanceof ByteBufHolder) {
+                    return ((ByteBufHolder) msg).content().readableBytes();
+                }
+                if (msg instanceof FileRegion) {
+                    return 0;
+                }
+            }
+            DataBlock dataBlock = (DataBlock) msg;
+            return dataBlock.getByteCount();
+        }
+    }
+
+    @Override
+    public Handle newHandle() {
+        return handle;
+    }
 
 }

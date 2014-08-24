@@ -33,8 +33,8 @@ import org.waarp.common.database.data.DbDataModel;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseNoDataException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 import org.mariadb.jdbc.MySQLDataSource;
 
@@ -48,7 +48,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(DbModelMariadb.class);
 
 	public static final DbType type = DbType.MariaDB;

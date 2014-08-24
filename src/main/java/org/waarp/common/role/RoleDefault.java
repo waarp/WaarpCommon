@@ -85,6 +85,9 @@ public class RoleDefault {
 			}
 		}
 		public boolean isContained(byte value) {
+		    if (this == NOACCESS) {
+		        return value == NOACCESS.role;
+		    }
 			return (value & role) == role;
 		}
 		public byte getAsByte() {
@@ -170,6 +173,10 @@ public class RoleDefault {
 		return otherrole.isContained(role);
 	}
 
+    public boolean hasNoAccess() {
+        return role == ROLE.NOACCESS.role;
+    }
+
 	public boolean hasReadOnly() {
 		return ROLE.READONLY.isContained(role);
 	}
@@ -201,6 +208,10 @@ public class RoleDefault {
 	public boolean hasLogControl() {
 		return ROLE.LOGCONTROL.isContained(role);
 	}
+
+    public final static boolean hasNoAccess(byte role) {
+        return role == ROLE.NOACCESS.role;
+    }
 
 	public final static boolean hasReadOnly(byte role) {
 		return ROLE.READONLY.isContained(role);

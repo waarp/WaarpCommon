@@ -22,10 +22,10 @@ import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.netty.handler.traffic.GlobalTrafficShapingHandler;
+import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import org.waarp.common.database.DbAdmin;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * Abstract class for Constraint Limit Handler for Waarp project
@@ -37,7 +37,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(WaarpConstraintLimitHandler.class);
 
 	private static final String NOALERT = "noAlert";
@@ -445,14 +445,14 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 				curlimit = new CurLimits(getReadLimit(), getWriteLimit());
 				if (curlimit.read == 0) {
 					// take the current bandwidth
-					curlimit.read = handler.getTrafficCounter().getLastReadThroughput();
+					curlimit.read = handler.trafficCounter().lastReadThroughput();
 					if (curlimit.read < limitLowBandwidth) {
 						curlimit.read = 0;
 					}
 				}
 				if (curlimit.write == 0) {
 					// take the current bandwidth
-					curlimit.write = handler.getTrafficCounter().getLastWriteThroughput();
+					curlimit.write = handler.trafficCounter().lastWriteThroughput();
 					if (curlimit.write < limitLowBandwidth) {
 						curlimit.write = 0;
 					}

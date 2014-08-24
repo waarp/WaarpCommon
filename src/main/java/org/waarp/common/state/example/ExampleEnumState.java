@@ -30,7 +30,7 @@ import org.waarp.common.state.Transition;
 public enum ExampleEnumState {
 	RUNNING, PAUSED, CONFIGURING, RESET, ENDED;
 
-	public enum ExampleTransition {
+	public static enum ExampleTransition {
 		tRUNNING(RUNNING, EnumSet.of(PAUSED, ENDED)),
 		tPAUSED(PAUSED, EnumSet.of(RUNNING, RESET, CONFIGURING)),
 		tENDED(ENDED, EnumSet.of(RESET)),

@@ -23,14 +23,14 @@ import java.util.ConcurrentModificationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.netty.util.HashedWheelTimer;
-import org.jboss.netty.util.Timer;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timer;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.database.model.DbModelFactory;
 import org.waarp.common.database.model.DbType;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.utility.UUID;
 import org.waarp.common.utility.WaarpThreadFactory;
 
@@ -44,7 +44,7 @@ public class DbAdmin {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(DbAdmin.class);
 
 	public static int RETRYNB = 3;
@@ -74,7 +74,7 @@ public class DbAdmin {
 	/**
 	 * Is this DB Admin connected
 	 */
-	public boolean isConnected = false;
+	public boolean isActive = false;
 
 	/**
 	 * Is this DB Admin Read Only
@@ -104,12 +104,12 @@ public class DbAdmin {
 		try {
 			DbModelFactory.dbModel.validConnection(session);
 		} catch (WaarpDatabaseNoConnectionException e) {
-			session.isDisconnected = true;
-			isConnected = false;
+			session.isDisActive = true;
+			isActive = false;
 			throw e;
 		}
-		session.isDisconnected = false;
-		isConnected = true;
+		session.isDisActive = false;
+		isActive = true;
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class DbAdmin {
 			}
 		}
 		session = null;
-		isConnected = false;
+		isActive = false;
 		logger.error("Cannot connect to Database!");
 		throw new WaarpDatabaseNoConnectionException(
 				"Cannot connect to database");
@@ -236,7 +236,7 @@ public class DbAdmin {
 		server = null;
 		if (conn == null) {
 			session = null;
-			isConnected = false;
+			isActive = false;
 			logger.error("Cannot Get a Connection from Datasource");
 			throw new WaarpDatabaseNoConnectionException(
 					"Cannot Get a Connection from Datasource");
@@ -244,7 +244,7 @@ public class DbAdmin {
 		session = new DbSession(conn, isread);
 		session.admin = this;
 		isReadOnly = isread;
-		isConnected = true;
+		isActive = true;
 		validConnection();
 		session.useConnection(); // default since this is the top connection
 	}
@@ -255,7 +255,7 @@ public class DbAdmin {
 	public DbAdmin() {
 		// not true but to enable pseudo database functions
 		DbModelFactory.classLoaded = true;
-		isConnected = false;
+		isActive = false;
 	}
 
 	/**
@@ -270,7 +270,7 @@ public class DbAdmin {
 			session.forceDisconnect();
 			session = null;
 		}
-		isConnected = false;
+		isActive = false;
 	}
 
 	/**
@@ -371,7 +371,7 @@ public class DbAdmin {
 	}
 
 	/**
-	 * Check all database connections and try to reopen them if disconnected
+	 * Check all database connections and try to reopen them if disActive
 	 */
 	public static void checkAllConnections() {
 		for (DbSession session : listConnection.values()) {

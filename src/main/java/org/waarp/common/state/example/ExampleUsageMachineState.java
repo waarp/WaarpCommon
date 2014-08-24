@@ -20,8 +20,8 @@ package org.waarp.common.state.example;
 import java.util.EnumSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.netty.logging.InternalLoggerFactory;
 import org.waarp.common.exception.IllegalFiniteStateException;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.logging.WaarpSlf4JLoggerFactory;
 import org.waarp.common.state.MachineState;
 import org.waarp.common.state.example.ExampleEnumState.ExampleTransition;
@@ -41,7 +41,7 @@ public class ExampleUsageMachineState {
 	@SuppressWarnings({
 			"unchecked", "rawtypes" })
 	public static void main(String[] args) {
-		InternalLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
+	    WaarpLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
 
 		// Example
 

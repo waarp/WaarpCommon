@@ -27,8 +27,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import org.waarp.common.command.exception.CommandAbstractException;
 import org.waarp.common.command.exception.Reply550Exception;
 import org.waarp.common.exception.FileEndOfTransferException;
@@ -37,8 +38,8 @@ import org.waarp.common.file.AbstractFile;
 import org.waarp.common.file.DataBlock;
 import org.waarp.common.file.DirInterface;
 import org.waarp.common.file.SessionInterface;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * File implementation for Filesystem Based
@@ -50,7 +51,7 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(FilesystemBasedFileImpl.class);
 
 	/**
@@ -354,7 +355,7 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 			FileEndOfTransferException {
 		if (isReady) {
 			DataBlock dataBlock = new DataBlock();
-			ChannelBuffer buffer = null;
+			ByteBuf buffer = null;
 			buffer = getBlock(getSession().getBlockSize());
 			if (buffer != null) {
 				dataBlock.setBlock(buffer);
@@ -435,7 +436,7 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	}
 
 	/**
-	 * Write the current FileInterface with the given ChannelBuffer. The file is not limited to 2^32
+	 * Write the current FileInterface with the given ByteBuf. The file is not limited to 2^32
 	 * bytes since this write operation is in add mode.
 	 * 
 	 * In case of error, the current already written blocks are maintained and the position is not
@@ -445,7 +446,7 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	 *            added to the file
 	 * @throws FileTransferException
 	 */
-	private void writeBlock(ChannelBuffer buffer) throws FileTransferException {
+	private void writeBlock(ByteBuf buffer) throws FileTransferException {
 		if (!isReady) {
 			throw new FileTransferException("No file is ready");
 		}
@@ -495,14 +496,14 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	}
 
 	/**
-	 * End the Write of the current FileInterface with the given ChannelBuffer. The file is not
+	 * End the Write of the current FileInterface with the given ByteBuf. The file is not
 	 * limited to 2^32 bytes since this write operation is in add mode.
 	 * 
 	 * @param buffer
 	 *            added to the file
 	 * @throws FileTransferException
 	 */
-	private void writeBlockEnd(ChannelBuffer buffer)
+	private void writeBlockEnd(ByteBuf buffer)
 			throws FileTransferException {
 		writeBlock(buffer);
 		try {
@@ -513,7 +514,7 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	}
 
 	/**
-	 * Get the current block ChannelBuffer of the current FileInterface. There is therefore no
+	 * Get the current block ByteBuf of the current FileInterface. There is therefore no
 	 * limitation of the file size to 2^32 bytes.
 	 * 
 	 * The returned block is limited to sizeblock. If the returned block is less than sizeblock
@@ -521,11 +522,11 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	 * 
 	 * @param sizeblock
 	 *            is the limit size for the block array
-	 * @return the resulting block ChannelBuffer (even empty)
+	 * @return the resulting block ByteBuf (even empty)
 	 * @throws FileTransferException
 	 * @throws FileEndOfTransferException
 	 */
-	private ChannelBuffer getBlock(int sizeblock) throws FileTransferException,
+	private ByteBuf getBlock(int sizeblock) throws FileTransferException,
 			FileEndOfTransferException {
 		if (!isReady) {
 			throw new FileTransferException("No file is ready");
@@ -573,7 +574,7 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 		}
 		bbyteBuffer.flip();
 		position += sizeout;
-		ChannelBuffer buffer = ChannelBuffers.copiedBuffer(bbyteBuffer);
+		ByteBuf buffer = Unpooled.wrappedBuffer(bbyteBuffer);
 		bbyteBuffer.clear();
 		if (sizeout < sizeblock) {// last block
 			try {

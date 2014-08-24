@@ -17,7 +17,7 @@
  */
 package org.waarp.common.file;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 
 /**
  * Main object implementing Data Block whaveter the mode, type, structure used.
@@ -52,7 +52,7 @@ public class DataBlock {
 	/**
 	 * Byte Array
 	 */
-	private ChannelBuffer block = null;
+	private ByteBuf block = null;
 
 	/**
 	 * is EOF
@@ -83,7 +83,7 @@ public class DataBlock {
 	/**
 	 * @return the block
 	 */
-	public ChannelBuffer getBlock() {
+	public ByteBuf getBlock() {
 		return block;
 	}
 
@@ -93,7 +93,7 @@ public class DataBlock {
 	 * @param block
 	 *            the block to set
 	 */
-	public void setBlock(ChannelBuffer block) {
+	public void setBlock(ByteBuf block) {
 		if (isRESTART) {
 			this.block = null;
 			markers = new int[6];

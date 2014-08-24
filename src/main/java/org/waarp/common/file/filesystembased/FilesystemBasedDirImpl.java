@@ -45,8 +45,8 @@ import org.waarp.common.file.filesystembased.specific.FilesystemBasedCommonsIo;
 import org.waarp.common.file.filesystembased.specific.FilesystemBasedDirJdk5;
 import org.waarp.common.file.filesystembased.specific.FilesystemBasedDirJdk6;
 import org.waarp.common.file.filesystembased.specific.FilesystemBasedDirJdkAbstract;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.utility.DetectionUtils;
 
 /**
@@ -59,7 +59,7 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(FilesystemBasedDirImpl.class);
 
 	/**

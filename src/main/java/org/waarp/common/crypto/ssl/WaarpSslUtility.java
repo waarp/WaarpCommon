@@ -21,20 +21,21 @@
 package org.waarp.common.crypto.ssl;
 
 import java.util.NoSuchElementException;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.SucceededChannelFuture;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.handler.ssl.SslHandler;
-import org.waarp.common.future.WaarpFuture;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.util.concurrent.DefaultEventExecutor;
+import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.Future;
+
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * Utilities for SSL support
@@ -46,102 +47,63 @@ public class WaarpSslUtility {
     /**
      * Internal Logger
      */
-    private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+    private static final WaarpLogger logger = WaarpLoggerFactory
             .getLogger(WaarpSslUtility.class);
     
     /**
-     * Waiter for SSL handshake is finished
+     * EventExecutor associated with Ssl utility
      */
-    private static final ConcurrentHashMap<Integer, WaarpFuture> waitForSsl = new ConcurrentHashMap<Integer, WaarpFuture>();
+    private static final EventExecutor SSL_EVENT_EXECUTOR = new DefaultEventExecutor();
     /**
      * ChannelGroup for SSL
      */
-    private static final ChannelGroup sslChannelGroup = new DefaultChannelGroup("SslChannelGroup");
+    private static final ChannelGroup sslChannelGroup = new DefaultChannelGroup("SslChannelGroup", SSL_EVENT_EXECUTOR);
 
-    /**
-     * Remover from SSL HashMap
-     */
-    private static final ChannelFutureListener remover = new ChannelFutureListener() {
-        public void operationComplete(ChannelFuture future) {
-            logger.debug("SSL remover");
-            waitForSsl.remove(future.getChannel().getId());
-        }
-    };
-    
     /**
      * Add the Channel as SSL handshake will start soon
      * 
      * @param channel
      */
     public static void addSslOpenedChannel(Channel channel) {
-        WaarpFuture futureSSL = new WaarpFuture(true);
-        waitForSsl.put(channel.getId(), futureSSL);
         sslChannelGroup.add(channel);
-        channel.getCloseFuture().addListener(remover);
-    }
-    
-
-    /**
-     * Set the future of SSL handshake to status
-     * 
-     * @param channel
-     * @param status
-     */
-    public static void setStatusSslConnectedChannel(Channel channel,
-            boolean status) {
-        WaarpFuture futureSSL = waitForSsl.get(channel.getId());
-        logger.debug("Set Ssl channel with status: "+status+":"+(futureSSL != null));
-        if (futureSSL != null) {
-            if (status) {
-                futureSSL.setSuccess();
-            } else {
-                futureSSL.cancel();
-            }
-        }
     }
     
     /**
-     * Run the handshake on the given channel
+     * Wait for the handshake on the given channel
      * @param channel
      * @return True if the Handshake is done correctly
      */
-    public static boolean runHandshake(Channel channel) {
-		final ChannelHandler handler = channel.getPipeline().getFirst();
+    public static boolean waitForHandshake(Channel channel) {
+		final ChannelHandler handler = channel.pipeline().first();
 		if (handler instanceof SslHandler) {
 			logger.debug("Start handshake SSL");
 			final SslHandler sslHandler = (SslHandler) handler;
 			// Get the SslHandler and begin handshake ASAP.
 			// Get notified when SSL handshake is done.
-			ChannelFuture handshakeFuture;
-			handshakeFuture = sslHandler.handshake();
+			Future<Channel> handshakeFuture;
+			handshakeFuture = sslHandler.handshakeFuture();
 			try {
 				handshakeFuture.await();
 			} catch (InterruptedException e1) {
 			}
-			logger.debug("Handshake: " + handshakeFuture.isSuccess(), handshakeFuture.getCause());
+			logger.debug("Handshake: " + handshakeFuture.isSuccess(), handshakeFuture.cause());
 			if (!handshakeFuture.isSuccess()) {
-				handshakeFuture.getChannel().close();
-				WaarpSslUtility.setStatusSslConnectedChannel(channel, false);
+				try {
+                    handshakeFuture.get().close();
+                } catch (InterruptedException e) {
+                    logger.warn(e);
+                } catch (ExecutionException e) {
+                    logger.warn(e);
+                }
 				return false;
 			}
-			WaarpSslUtility.setStatusSslConnectedChannel(channel, true);
 			return true;
 		} else {
-			logger.error("SSL Not found but connected");
-			WaarpSslUtility.setStatusSslConnectedChannel(channel, true);
+			logger.error("SSL Not found but connected: "+handler.getClass().getName());
 			return false;
 		}
     }
-    
-    /**
-     * 
-     * @param channel
-     * @return the associated WaarpFuture that validate the handshake
-     */
-    public static WaarpFuture getFutureSslHandshake(Channel channel) {
-    	return waitForSsl.get(channel.getId());
-    }
-    
+
     /**
      * Waiting for the channel to be opened and ready (Client side) (blocking call)
      * @param future
@@ -154,22 +116,13 @@ public class WaarpSslUtility {
 		} catch (InterruptedException e1) {
 		}
         if (!future.isSuccess()) {
-        	logger.error("Channel not connected", future.getCause());
+        	logger.error("Channel not connected", future.cause());
             return null;
         }
-        Channel channel = future.getChannel();
-        WaarpFuture sslFuture = getFutureSslHandshake(channel);
-        if (sslFuture != null) {
-        	try {
-				sslFuture.await();
-			} catch (InterruptedException e) {
-			}
-        	if (! sslFuture.isSuccess()) {
-            	logger.error("Channel not handshake done", future.getCause());
-            	return null;
-        	}
+        if (waitForHandshake(future.channel())) {
+            return future.channel();
         }
-    	return channel;
+        return null;
     }
     
     /**
@@ -180,14 +133,15 @@ public class WaarpSslUtility {
     		closingSslChannel(channel);
     	}
     	sslChannelGroup.close();
+    	SSL_EVENT_EXECUTOR.shutdownGracefully();
     }
 	/**
 	 * Utility method to close a channel in SSL mode correctly (if any)
 	 * @param channel
 	 */
 	public static ChannelFuture closingSslChannel(Channel channel) {
-		if (channel.isConnected()) {
-			ChannelHandler handler = channel.getPipeline().getFirst();
+		if (channel.isActive()) {
+			ChannelHandler handler = channel.pipeline().first();
 			if (handler instanceof SslHandler) {
 				SslHandler sslHandler = (SslHandler) handler;
 				logger.debug("Found SslHandler and wait for Ssl.close()");
@@ -195,13 +149,13 @@ public class WaarpSslUtility {
 					sslHandler.close().await();
 				} catch (InterruptedException e) {
 				}
-				channel.getPipeline().removeFirst();
+				channel.pipeline().removeFirst();
 			}
 			logger.debug("Close the channel and returns the ChannelFuture");
-			return Channels.close(channel);
+			return channel.close();
 		}
 		logger.debug("Already closed");
-		return new SucceededChannelFuture(channel);
+		return channel.newSucceededFuture();
 	}
 	
 	/**
@@ -209,18 +163,18 @@ public class WaarpSslUtility {
 	 * @param channel
 	 */
 	public static void removingSslHandler(Channel channel) {
-		if (channel.isConnected()) {
-			channel.setReadable(true);
-			ChannelHandler handler = channel.getPipeline().getFirst();
+		if (channel.isActive()) {
+			channel.config().setAutoRead(true);
+			ChannelHandler handler = channel.pipeline().first();
 			if (handler instanceof SslHandler) {
 				SslHandler sslHandler = (SslHandler) handler;
 				try {
 					sslHandler.close().await();
 				} catch (InterruptedException e) {
 				}
-				channel.setReadable(false);
-				channel.getPipeline().removeFirst();
-				channel.setReadable(true);
+				channel.config().setAutoRead(false);
+				channel.pipeline().removeFirst();
+				channel.config().setAutoRead(true);
 			}
 		}
 	}
@@ -259,8 +213,8 @@ public class WaarpSslUtility {
 	public static ChannelFutureListener SSLCLOSE = new ChannelFutureListener() {
 		
 		public void operationComplete(ChannelFuture future) throws Exception {
-			if (future.getChannel().isConnected()) {
-				SSLTHREAD thread = new SSLTHREAD(future.getChannel());
+			if (future.channel().isActive()) {
+				SSLTHREAD thread = new SSLTHREAD(future.channel());
 				thread.start();
 			}
 		}
@@ -273,15 +227,15 @@ public class WaarpSslUtility {
 	 */
 	public static boolean waitForClosingSslChannel(Channel channel, long delay) {
 		try {
-			if (!channel.getCloseFuture().await(delay)) {
+			if (!channel.closeFuture().await(delay)) {
 				try{
-					channel.getPipeline().remove(SslHandler.class);
+					channel.pipeline().remove(SslHandler.class);
 					logger.debug("try to close anyway");
 					channel.close().await();
 					return false;
 				} catch (NoSuchElementException e) {
 					// ignore;
-					channel.getCloseFuture().await();
+					channel.closeFuture().await();
 				}
 			}
 		} catch (InterruptedException e) {

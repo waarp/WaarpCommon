@@ -27,9 +27,8 @@ import java.util.concurrent.Executors;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonController;
-import org.jboss.netty.logging.InternalLoggerFactory;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.logging.WaarpSlf4JLoggerFactory;
 import org.waarp.common.utility.WaarpThreadFactory;
 
@@ -45,7 +44,7 @@ public abstract class ServiceLauncher implements Daemon {
 	/**
      * Internal Logger
      */
-    protected static WaarpInternalLogger logger;
+    protected static WaarpLogger logger;
 
     protected static EngineAbstract engine = null;
 
@@ -65,7 +64,7 @@ public abstract class ServiceLauncher implements Daemon {
     
     public ServiceLauncher() {
     	if (logger == null) {
-    		logger = WaarpInternalLoggerFactory.getLogger(ServiceLauncher.class);
+    		logger = WaarpLoggerFactory.getLogger(ServiceLauncher.class);
     	}
     	if (executor == null) {
     		executor = Executors.newSingleThreadExecutor(new WaarpThreadFactory("ServiceLauncher"));
@@ -77,11 +76,11 @@ public abstract class ServiceLauncher implements Daemon {
     }
     
     protected static void initStatic() {
-    	if (!(InternalLoggerFactory.getDefaultFactory() instanceof WaarpSlf4JLoggerFactory)) {
-    		InternalLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
+    	if (!(WaarpLoggerFactory.getDefaultFactory() instanceof WaarpSlf4JLoggerFactory)) {
+    		WaarpLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
     	}
     	if (logger == null) {
-    		logger = WaarpInternalLoggerFactory.getLogger(ServiceLauncher.class);
+    		logger = WaarpLoggerFactory.getLogger(ServiceLauncher.class);
     	}
     	String className = Thread.currentThread().getStackTrace()[3].getClassName();;
     	logger.debug("Engine " + className);

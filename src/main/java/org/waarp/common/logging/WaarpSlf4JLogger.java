@@ -1,18 +1,18 @@
 /**
- * This file is part of Waarp Project.
- * 
+ * This file is part of VITAM Project.
+ *
  * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the
  * COPYRIGHT.txt in the distribution for a full listing of individual contributors.
- * 
- * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of
+ *
+ * All VITAM Project is free software: you can redistribute it and/or modify it under the terms of
  * the GNU General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
- * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ *
+ * VITAM is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with Waarp . If not, see
+ *
+ * You should have received a copy of the GNU General Public License along with VITAM . If not, see
  * <http://www.gnu.org/licenses/>.
  */
 package org.waarp.common.logging;
@@ -20,205 +20,215 @@ package org.waarp.common.logging;
 import ch.qos.logback.classic.Logger;
 
 /**
- * Example of logger using SLF4J from LOGBACK
- * 
+ * logger using SLF4J from LOGBACK
+ *
  * @author Frederic Bregier
- * 
+ *
  */
-public class WaarpSlf4JLogger extends WaarpInternalLogger {
-	/**
-	 * Internal logger
-	 */
-	private final Logger logger;
+public class WaarpSlf4JLogger extends AbstractWaarpLogger {
+    private static final long serialVersionUID = -7588688826950608830L;
+    /**
+     * Internal logger
+     */
+    private final Logger logger;
 
-	/**
-	 * 
-	 * @param logger
-	 */
-	public WaarpSlf4JLogger(org.slf4j.Logger logger) {
-		super();
-		this.logger = (Logger) logger;
-	}
+    /**
+     *
+     * @param logger
+     */
+    public WaarpSlf4JLogger(final Logger logger) {
+        super(logger.getName());
+        this.logger = logger;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void debug(String format, String arg1, String arg2) {
-		if (logger.isDebugEnabled())
-			logger.debug(getLoggerMethodAndLine() + format, arg1, arg2);
-	}
+    @Override
+    public boolean isTraceEnabled() {
+        return logger.isTraceEnabled();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void debug(String format, String arg1) {
-		if (logger.isDebugEnabled())
-			logger.debug(getLoggerMethodAndLine() + format, arg1);
-	}
+    @Override
+    public void trace(final String msg) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(getLoggerMethodAndLine() + msg);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void error(String format, String arg1, String arg2) {
-		logger.error(getLoggerMethodAndLine() + format, arg1, arg2);
-	}
+    @Override
+    public void trace(final String format, final Object arg) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(getLoggerMethodAndLine() + format, arg);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void error(String format, String arg1) {
-		logger.error(getLoggerMethodAndLine() + format, arg1);
-	}
+    @Override
+    public void trace(final String format, final Object argA, final Object argB) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(getLoggerMethodAndLine() + format, argA, argB);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void info(String format, String arg1, String arg2) {
-		if (logger.isInfoEnabled())
-			logger.info(getLoggerMethodAndLine() + format, arg1, arg2);
-	}
+    @Override
+    public void trace(final String format, final Object... argArray) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(getLoggerMethodAndLine() + format, argArray);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void info(String format, String arg1) {
-		if (logger.isInfoEnabled())
-			logger.info(getLoggerMethodAndLine() + format, arg1);
-	}
+    @Override
+    public void trace(final String msg, final Throwable t) {
+        if (logger.isTraceEnabled()) {
+            logger.trace(getLoggerMethodAndLine() + msg, t);
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void warn(String format, String arg1, String arg2) {
-		logger.warn(getLoggerMethodAndLine() + format, arg1, arg2);
-	}
+    @Override
+    public boolean isDebugEnabled() {
+        return logger.isDebugEnabled();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void warn(String format, String arg1) {
-		logger.warn(getLoggerMethodAndLine() + format, arg1);
-	}
+    @Override
+    public void debug(final String msg) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(getLoggerMethodAndLine() + msg);
+        }
+    }
 
-	// original form
-	public void debug(String msg) {
-		if (logger.isDebugEnabled())
-			logger.debug(getLoggerMethodAndLine() + msg);
-	}
+    @Override
+    public void debug(final String format, final Object arg) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(getLoggerMethodAndLine() + format, arg);
+        }
+    }
 
-	public void debug(String msg, Throwable cause) {
-		if (logger.isDebugEnabled())
-			logger.debug(getLoggerMethodAndLine() + msg, cause);
-	}
+    @Override
+    public void debug(final String format, final Object argA, final Object argB) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(getLoggerMethodAndLine() + format, argA, argB);
+        }
+    }
 
-	public void error(String msg) {
-		logger.error(getLoggerMethodAndLine() + msg);
-	}
+    @Override
+    public void debug(final String format, final Object... argArray) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(getLoggerMethodAndLine() + format, argArray);
+        }
+    }
 
-	public void error(String msg, Throwable cause) {
-		logger.error(getLoggerMethodAndLine() + msg, cause);
-	}
+    @Override
+    public void debug(final String msg, final Throwable t) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(getLoggerMethodAndLine() + msg, t);
+        }
+    }
 
-	public void info(String msg) {
-		if (logger.isInfoEnabled())
-			logger.info(getLoggerMethodAndLine() + msg);
-	}
+    @Override
+    public boolean isInfoEnabled() {
+        return logger.isInfoEnabled();
+    }
 
-	public void info(String msg, Throwable cause) {
-		if (logger.isInfoEnabled())
-			logger.info(getLoggerMethodAndLine() + msg, cause);
-	}
+    @Override
+    public void info(final String msg) {
+        if (logger.isInfoEnabled()) {
+            logger.info(getLoggerMethodAndLine() + msg);
+        }
+    }
 
-	public boolean isDebugEnabled() {
-		return logger.isDebugEnabled();
-	}
+    @Override
+    public void info(final String format, final Object arg) {
+        if (logger.isInfoEnabled()) {
+            logger.info(getLoggerMethodAndLine() + format, arg);
+        }
+    }
 
-	public boolean isErrorEnabled() {
-		return logger.isErrorEnabled();
-	}
+    @Override
+    public void info(final String format, final Object argA, final Object argB) {
+        if (logger.isInfoEnabled()) {
+            logger.info(getLoggerMethodAndLine() + format, argA, argB);
+        }
+    }
 
-	public boolean isInfoEnabled() {
-		return logger.isInfoEnabled();
-	}
+    @Override
+    public void info(final String format, final Object... argArray) {
+        if (logger.isInfoEnabled()) {
+            logger.info(getLoggerMethodAndLine() + format, argArray);
+        }
+    }
 
-	public boolean isWarnEnabled() {
-		return logger.isWarnEnabled();
-	}
+    @Override
+    public void info(final String msg, final Throwable t) {
+        if (logger.isInfoEnabled()) {
+            logger.info(getLoggerMethodAndLine() + msg, t);
+        }
+    }
 
-	public void warn(String msg) {
-		logger.warn(getLoggerMethodAndLine() + msg);
-	}
+    @Override
+    public boolean isWarnEnabled() {
+        return logger.isWarnEnabled();
+    }
 
-	public void warn(String msg, Throwable cause) {
-		logger.warn(getLoggerMethodAndLine() + msg, cause);
-	}
+    @Override
+    public void warn(final String msg) {
+        if (logger.isWarnEnabled()) {
+            logger.warn(getLoggerMethodAndLine() + msg);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return String.valueOf(logger.getName());
-	}
+    @Override
+    public void warn(final String format, final Object arg) {
+        if (logger.isWarnEnabled()) {
+            logger.warn(getLoggerMethodAndLine() + format, arg);
+        }
+    }
 
-	@Override
-	public void debug(String format, Object arg1, Object arg2) {
-		if (logger.isDebugEnabled())
-			logger.debug(getLoggerMethodAndLine() + format, arg1, arg2);
-	}
+    @Override
+    public void warn(final String format, final Object... argArray) {
+        if (logger.isWarnEnabled()) {
+            logger.warn(getLoggerMethodAndLine() + format, argArray);
+        }
+    }
 
-	@Override
-	public void debug(String format, Object arg1) {
-		if (logger.isDebugEnabled())
-			logger.debug(getLoggerMethodAndLine() + format, arg1);
-	}
+    @Override
+    public void warn(final String format, final Object argA, final Object argB) {
+        if (logger.isWarnEnabled()) {
+            logger.warn(getLoggerMethodAndLine() + format, argA, argB);
+        }
+    }
 
-	@Override
-	public void error(String format, Object arg1, Object arg2) {
-		logger.error(getLoggerMethodAndLine() + format, arg1, arg2);
-	}
+    @Override
+    public void warn(final String msg, final Throwable t) {
+        if (logger.isWarnEnabled()) {
+            logger.warn(getLoggerMethodAndLine() + msg, t);
+        }
+    }
 
-	@Override
-	public void error(String format, Object arg1) {
-		logger.error(getLoggerMethodAndLine() + format, arg1);
-	}
+    @Override
+    public boolean isErrorEnabled() {
+        return logger.isErrorEnabled();
+    }
 
-	@Override
-	public void info(String format, Object arg1, Object arg2) {
-		if (logger.isInfoEnabled())
-			logger.info(getLoggerMethodAndLine() + format, arg1, arg2);
-	}
+    @Override
+    public void error(final String msg) {
+        logger.error(getLoggerMethodAndLine() + msg);
+    }
 
-	@Override
-	public void info(String format, Object arg1) {
-		if (logger.isInfoEnabled())
-			logger.info(getLoggerMethodAndLine() + format, arg1);
-	}
+    @Override
+    public void error(final String format, final Object arg) {
+        logger.error(getLoggerMethodAndLine() + format, arg);
+    }
 
-	@Override
-	public void warn(String format, Object arg1, Object arg2) {
-		logger.warn(getLoggerMethodAndLine() + format, arg1, arg2);
-	}
+    @Override
+    public void error(final String format, final Object argA, final Object argB) {
+        logger.error(getLoggerMethodAndLine() + format, argA, argB);
+    }
 
-	@Override
-	public void warn(String format, Object arg1) {
-		logger.warn(getLoggerMethodAndLine() + format, arg1);
-	}
+    @Override
+    public void error(final String format, final Object... argArray) {
+        logger.error(getLoggerMethodAndLine() + format, argArray);
+    }
+
+    @Override
+    public void error(final String msg, final Throwable t) {
+        logger.error(getLoggerMethodAndLine() + msg, t);
+    }
+    // logger.warn(getLoggerMethodAndLine() + format, arg1);
 }

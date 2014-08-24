@@ -42,18 +42,18 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.jboss.netty.util.HashedWheelTimer;
-import org.jboss.netty.util.Timeout;
-import org.jboss.netty.util.Timer;
-import org.jboss.netty.util.TimerTask;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.Timer;
+import io.netty.util.TimerTask;
 import org.waarp.common.database.DbConstant;
 import org.waarp.common.digest.FilesystemBasedDigest;
 import org.waarp.common.digest.FilesystemBasedDigest.DigestAlgo;
 import org.waarp.common.file.AbstractDir;
 import org.waarp.common.future.WaarpFuture;
 import org.waarp.common.json.JsonHandler;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.utility.WaarpThreadFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -74,7 +74,7 @@ public class FileMonitor {
 	/**
 	 * Internal Logger
 	 */
-	static protected volatile WaarpInternalLogger logger;
+	static protected volatile WaarpLogger logger;
 	protected static final DigestAlgo defaultDigestAlgo = DigestAlgo.MD5;
 	protected static final long minimalDelay = 100;
 	protected static final long defaultDelay = 1000;
@@ -143,7 +143,7 @@ public class FileMonitor {
 			FileMonitorCommandRunnableFuture commandRemovedFile,
 			FileMonitorCommandRunnableFuture commandCheckIteration) {
 		if (logger == null) {
-			logger = WaarpInternalLoggerFactory.getLogger(FileMonitor.class);
+			logger = WaarpLoggerFactory.getLogger(FileMonitor.class);
 		}
 		this.name = name;
 		this.statusFile = statusFile;

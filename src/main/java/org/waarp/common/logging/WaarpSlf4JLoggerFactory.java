@@ -1,87 +1,129 @@
 /**
- * This file is part of Waarp Project.
- * 
+ * This file is part of VITAM Project.
+ *
  * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the
  * COPYRIGHT.txt in the distribution for a full listing of individual contributors.
- * 
- * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of
+ *
+ * All VITAM Project is free software: you can redistribute it and/or modify it under the terms of
  * the GNU General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
- * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ *
+ * VITAM is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with Waarp . If not, see
+ *
+ * You should have received a copy of the GNU General Public License along with VITAM . If not, see
  * <http://www.gnu.org/licenses/>.
  */
 package org.waarp.common.logging;
 
-import org.jboss.netty.logging.InternalLogger;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLoggerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 
 /**
- * Example of logger factory using SLF4J from LOGBACK
- * 
+ * logger factory using SLF4J from LOGBACK
+ *
  * @author Frederic Bregier
- * 
+ *
  */
-public class WaarpSlf4JLoggerFactory extends
-		org.jboss.netty.logging.Slf4JLoggerFactory implements WaarpInternalLoggerInterface {
-	static final String ROOT = Logger.ROOT_LOGGER_NAME;// "root"; // LoggerContext.ROOT_NAME; //
+public class WaarpSlf4JLoggerFactory extends WaarpLoggerFactory {
+    static final String ROOT = Logger.ROOT_LOGGER_NAME;
 
-	/**
-	 * 
-	 * @param level
-	 */
-	public WaarpSlf4JLoggerFactory(Level level) {
-		super();
-		Logger logger = (Logger) LoggerFactory
-				.getLogger(ROOT);
-		if (level == null) {
-			logger.info("Default level: " + logger.getLevel());
-		} else {
-			logger.setLevel(level);
-			if (level.isGreaterOrEqual(Level.ERROR)) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.ERROR;
-			} else if (level.isGreaterOrEqual(Level.WARN)) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.WARN;
-			} else if (level.isGreaterOrEqual(Level.INFO)) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.INFO;
-			} else {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.DEBUG;
-			}
-		}
-	}
-	
-	public void setDefaultLevel(WaarpLevel level) {
-		Logger logger = (Logger) LoggerFactory.getLogger(ROOT);
-		if (level != null) {
-			switch (level) {
-				case DEBUG:
-					logger.setLevel(Level.DEBUG);
-					break;
-				case INFO:
-					logger.setLevel(Level.INFO);
-					break;
-				case WARN:
-					logger.setLevel(Level.WARN);
-					break;
-				case ERROR:
-					logger.setLevel(Level.ERROR);
-					break;
-				default:
-					break;
-			}
-		}
-	}
+    // Old versions: "root"; // LoggerContext.ROOT_NAME; //
 
-	@Override
-	public InternalLogger newInstance(String name) {
-		final org.slf4j.Logger logger = LoggerFactory.getLogger(name);
-		return new WaarpSlf4JLogger(logger);
-	}
+    /**
+     *
+     * @param level
+     */
+    public WaarpSlf4JLoggerFactory(final WaarpLogLevel level) {
+        super(level);
+        seLevelSpecific(currentLevel);
+    }
+
+    @Override
+    protected void seLevelSpecific(final WaarpLogLevel level) {
+        final Logger logger = (Logger) LoggerFactory.getLogger(ROOT);
+        switch (level) {
+            case TRACE:
+                logger.setLevel(Level.TRACE);
+                break;
+            case DEBUG:
+                logger.setLevel(Level.DEBUG);
+                break;
+            case INFO:
+                logger.setLevel(Level.INFO);
+                break;
+            case WARN:
+                logger.setLevel(Level.WARN);
+                break;
+            case ERROR:
+                logger.setLevel(Level.ERROR);
+                break;
+            default:
+                logger.setLevel(Level.WARN);
+                break;
+        }
+    }
+
+    @Override
+    public WaarpLogger newInstance(final String name) {
+        final Logger logger = (Logger) LoggerFactory.getLogger(name);
+        return new WaarpSlf4JLogger(logger);
+    }
+
+    WaarpSlf4JLoggerFactory(final boolean failIfNOP) {
+        super(null);
+        assert failIfNOP; // Should be always called with true.
+
+        // SFL4J writes it error messages to System.err. Capture them so that the user does not see such a message on
+        // the console during automatic detection.
+        final StringBuffer buf = new StringBuffer();
+        final PrintStream err = System.err;
+        try {
+            System.setErr(new PrintStream(new OutputStream() {
+                @Override
+                public void write(final int b) {
+                    buf.append((char) b);
+                }
+            }, true, "US-ASCII"));
+        } catch (final UnsupportedEncodingException e) {
+            throw new Error(e);
+        }
+
+        try {
+            if (LoggerFactory.getILoggerFactory() instanceof NOPLoggerFactory) {
+                throw new NoClassDefFoundError(buf.toString());
+            } else {
+                err.print(buf.toString());
+                err.flush();
+            }
+        } finally {
+            System.setErr(err);
+            seLevelSpecific(currentLevel);
+        }
+    }
+
+    @Override
+    protected WaarpLogLevel getLevelSpecific() {
+        final Logger logger = (Logger) LoggerFactory.getLogger(ROOT);
+        if (logger.isTraceEnabled()) {
+            return WaarpLogLevel.TRACE;
+        } else if (logger.isDebugEnabled()) {
+            return WaarpLogLevel.DEBUG;
+        } else if (logger.isInfoEnabled()) {
+            return WaarpLogLevel.INFO;
+        } else if (logger.isWarnEnabled()) {
+            return WaarpLogLevel.WARN;
+        } else if (logger.isErrorEnabled()) {
+            return WaarpLogLevel.ERROR;
+        }
+        return null;
+    }
 }

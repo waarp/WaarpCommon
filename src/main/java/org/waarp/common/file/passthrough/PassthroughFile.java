@@ -20,7 +20,7 @@ package org.waarp.common.file.passthrough;
 import java.nio.channels.FileChannel;
 import java.util.List;
 
-import org.jboss.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ByteBuf;
 
 /**
  * This interface is for Object used in Passthrough mode.
@@ -34,9 +34,9 @@ public interface PassthroughFile {
 
 	public boolean isFile();
 
-	public ChannelBuffer read(int sizeblock) throws PassthroughException;
+	public ByteBuf read(int sizeblock) throws PassthroughException;
 
-	public int write(ChannelBuffer buffer) throws PassthroughException;
+	public int write(ByteBuf buffer) throws PassthroughException;
 
 	public long length();
 

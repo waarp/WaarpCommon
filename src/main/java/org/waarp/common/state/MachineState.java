@@ -21,8 +21,8 @@ import java.util.EnumSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.waarp.common.exception.IllegalFiniteStateException;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * This is the base class for the basic support of Finite State Machine in GoldenGate. One need to
@@ -38,7 +38,7 @@ public class MachineState<EnumState> {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(MachineState.class);
 
 	private ConcurrentHashMap<EnumState, EnumSet<?>> statemap;

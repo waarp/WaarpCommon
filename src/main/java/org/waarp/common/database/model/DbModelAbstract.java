@@ -29,8 +29,8 @@ import org.waarp.common.database.DbConstant;
 import org.waarp.common.database.DbSession;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * This Abstract class regroups common methods for all implementation classes.
@@ -42,11 +42,11 @@ public abstract class DbModelAbstract implements DbModel {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(DbModelAbstract.class);
 
 	/**
-	 * Recreate the disconnected session
+	 * Recreate the disActive session
 	 * 
 	 * @param dbSession
 	 * @throws WaarpDatabaseNoConnectionException
@@ -62,7 +62,7 @@ public abstract class DbModelAbstract implements DbModel {
 			}
 		}
 		DbSession newdbSession = admin.session;
-		if (admin.isConnected) {
+		if (admin.isActive) {
 			newdbSession = new DbSession(admin, dbSession.isReadOnly);
 		}
 		try {
@@ -91,9 +91,9 @@ public abstract class DbModelAbstract implements DbModel {
 		} catch (SQLException e1) {
 		} catch (ConcurrentModificationException e) {
 		}
-		dbSession.isDisconnected = true;
+		dbSession.isDisActive = true;
 		if (dbSession.admin != null)
-			dbSession.admin.isConnected = false;
+			dbSession.admin.isActive = false;
 		DbAdmin.removeConnection(dbSession.internalId);
 	}
 
@@ -108,13 +108,13 @@ public abstract class DbModelAbstract implements DbModel {
 						throw new SQLException("Cannot connect to database");
 					}
 				}
-				dbSession.isDisconnected = false;
+				dbSession.isDisActive = false;
 				if (dbSession.admin != null)
-					dbSession.admin.isConnected = true;
+					dbSession.admin.isActive = true;
 			} catch (SQLException e2) {
-				dbSession.isDisconnected = true;
+				dbSession.isDisActive = true;
 				if (dbSession.admin != null)
-					dbSession.admin.isConnected = false;
+					dbSession.admin.isActive = false;
 				// Might be unsupported so switch to SELECT 1 way
 				if (e2 instanceof org.postgresql.util.PSQLException) {
 					validConnectionSelect(dbSession);
@@ -139,9 +139,9 @@ public abstract class DbModelAbstract implements DbModel {
 						throw new WaarpDatabaseNoConnectionException(
 								"Cannot connect to database", e);
 					}
-					dbSession.isDisconnected = false;
+					dbSession.isDisActive = false;
 					if (dbSession.admin != null)
-						dbSession.admin.isConnected = true;
+						dbSession.admin.isActive = true;
 					dbSession.recreateLongTermPreparedStatements();
 					return;
 				} catch (WaarpDatabaseSqlException e1) {
@@ -170,13 +170,13 @@ public abstract class DbModelAbstract implements DbModel {
 						throw new SQLException("Cannot connect to database");
 					}
 				}
-				dbSession.isDisconnected = false;
+				dbSession.isDisActive = false;
 				if (dbSession.admin != null)
-					dbSession.admin.isConnected = true;
+					dbSession.admin.isActive = true;
 			} catch (SQLException e2) {
-				dbSession.isDisconnected = true;
+				dbSession.isDisActive = true;
 				if (dbSession.admin != null)
-					dbSession.admin.isConnected = false;
+					dbSession.admin.isActive = false;
 				try {
 					try {
 						recreateSession(dbSession);
@@ -226,9 +226,9 @@ public abstract class DbModelAbstract implements DbModel {
 						throw new WaarpDatabaseNoConnectionException(
 								"Cannot connect to database", e);
 					}
-					dbSession.isDisconnected = false;
+					dbSession.isDisActive = false;
 					if (dbSession.admin != null)
-						dbSession.admin.isConnected = true;
+						dbSession.admin.isActive = true;
 					dbSession.recreateLongTermPreparedStatements();
 					return;
 				} catch (WaarpDatabaseSqlException e1) {

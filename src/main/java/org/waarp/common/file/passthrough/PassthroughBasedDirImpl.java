@@ -28,8 +28,8 @@ import org.waarp.common.file.AbstractDir;
 import org.waarp.common.file.FileInterface;
 import org.waarp.common.file.OptsMLSxInterface;
 import org.waarp.common.file.SessionInterface;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * Directory implementation for Passthrough Based. It is just an empty shell since in pass through
@@ -54,7 +54,7 @@ public abstract class PassthroughBasedDirImpl extends AbstractDir {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(PassthroughBasedDirImpl.class);
 
 	/**

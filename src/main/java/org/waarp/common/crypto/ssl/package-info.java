@@ -30,21 +30,21 @@
  * <li>Create the WaarpSslContextFactory:<br>
  * WaarpSslContextFactory ggSslContextFactory = new WaarpSslContextFactory(ggSecureKeyStore,
  * <b>false</b>);</li>
- * <li>Create your own PipelineFactory:<br>
+ * <li>Create your own Initializer:<br>
  * As first item in the pipeline, add:<br>
- * pipeline.addLast("ssl", ggSslContextFactory.initPipelineFactory(<b>false</b>,
+ * pipeline.addLast("ssl", ggSslContextFactory.initInitializer(<b>false</b>,
  * ggSslContextFactory.hasTrustStore(), executor));<br>
  * where executor is generally a Executors.newCachedThreadPool();<br>
  * <br>
  * 
  * For example, see Waarp Local Exec module using SSL:<br>
- * localExecClientPipelineFactory = new LocalExecSslClientPipelineFactory(ggSslContextFactory);<br>
- * bootstrap.setPipelineFactory(localExecClientPipelineFactory);</li>
+ * localExecClientInitializer = new LocalExecSslClientInitializer(ggSslContextFactory);<br>
+ * bootstrap.setInitializer(localExecClientInitializer);</li>
  * <li>In the final Handler, you need to add the handshake:<br>
  * public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)<br>
  * throws Exception {<br>
  * ...<br>
- * SslHandler sslHandler = ctx.getPipeline().get(SslHandler.class);<br>
+ * SslHandler sslHandler = ctx.pipeline().get(SslHandler.class);<br>
  * // Begin handshake<br>
  * ChannelFuture handshakeFuture = sslHandler.handshake();<br>
  * handshakeFuture.addListener(new ChannelFutureListener() {<br>
@@ -53,13 +53,13 @@
  * if (future.isSuccess()) {<br>
  * //OK<br>
  * } else {<br>
- * future.getChannel().close();<br>
+ * future.channel().close();<br>
  * }<br>
  * }<br>
  * });<br>
  * }</li>
  * <li>At the end of your connection, you need to release the Executor passes as argument to
- * ggSslContextFactory.initPipelineFactory</li>
+ * ggSslContextFactory.initInitializer</li>
  * </ul>
  * <br>
  * <br>
@@ -79,20 +79,20 @@
  * <li>Create the WaarpSslContextFactory:<br>
  * WaarpSslContextFactory ggSslContextFactory = new WaarpSslContextFactory(ggSecureKeyStore,
  * <b>true</b>);</li>
- * <li>Create your own PipelineFactory:<br>
+ * <li>Create your own Initializer:<br>
  * As first item in the pipeline, add:<br>
- * pipeline.addLast("ssl", ggSslContextFactory.initPipelineFactory(<b>true</b>,
+ * pipeline.addLast("ssl", ggSslContextFactory.initInitializer(<b>true</b>,
  * ggSslContextFactory.hasTrustStore(), executor));<br>
  * where executor is generally a Executors.newCachedThreadPool();<br>
  * <br>
  * 
  * For example, see Waarp Local Exec module using SSL:<br>
- * bootstrap.setPipelineFactory(new LocalExecSslServerPipelineFactory(ggSslContextFactory, delay));</li>
+ * bootstrap.setInitializer(new LocalExecSslServerInitializer(ggSslContextFactory, delay));</li>
  * <li>In the final Handler, you need to add the handshake:<br>
  * public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e)<br>
  * throws Exception {<br>
  * ...<br>
- * SslHandler sslHandler = ctx.getPipeline().get(SslHandler.class);<br>
+ * SslHandler sslHandler = ctx.pipeline().get(SslHandler.class);<br>
  * // Begin handshake<br>
  * ChannelFuture handshakeFuture = sslHandler.handshake();<br>
  * handshakeFuture.addListener(new ChannelFutureListener() {<br>
@@ -101,13 +101,13 @@
  * if (future.isSuccess()) {<br>
  * //OK<br>
  * } else {<br>
- * future.getChannel().close();<br>
+ * future.channel().close();<br>
  * }<br>
  * }<br>
  * });<br>
  * }</li>
  * <li>At the end of your connection, you need to release the Executor passes as argument to
- * ggSslContextFactory.initPipelineFactory</li>
+ * ggSslContextFactory.initInitializer</li>
  * </ul>
  * 
  */

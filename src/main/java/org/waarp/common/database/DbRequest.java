@@ -24,8 +24,8 @@ import java.sql.Statement;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseNoDataException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * Class to handle request
@@ -37,7 +37,7 @@ public class DbRequest {
 	/**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(DbRequest.class);
 
 	/**
@@ -62,7 +62,7 @@ public class DbRequest {
 	 * @throws WaarpDatabaseNoConnectionException
 	 */
 	public DbRequest(DbSession ls) throws WaarpDatabaseNoConnectionException {
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 		}
 		this.ls = ls;
@@ -84,7 +84,7 @@ public class DbRequest {
 		if (ls.conn == null) {
 			throw new WaarpDatabaseNoConnectionException("No connection");
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 		}
 		try {
@@ -260,7 +260,7 @@ public class DbRequest {
 			throw new WaarpDatabaseNoConnectionException(
 					"SQL ResultSet is Null into getNext");
 		}
-		if (ls.isDisconnected) {
+		if (ls.isDisActive) {
 			ls.checkConnection();
 			throw new WaarpDatabaseSqlException(
 					"Request cannot be executed since connection was recreated between");

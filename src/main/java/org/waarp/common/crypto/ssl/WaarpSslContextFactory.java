@@ -18,12 +18,15 @@
 package org.waarp.common.crypto.ssl;
 
 import java.security.Security;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLSessionContext;
 
-import org.jboss.netty.handler.ssl.SslHandler;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import io.netty.handler.ssl.SslHandler;
+
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 
 /**
  * SSL ContextFactory for Netty.
@@ -32,10 +35,14 @@ import org.waarp.common.logging.WaarpInternalLoggerFactory;
  * 
  */
 public class WaarpSslContextFactory {
-	/**
+    protected static final int DEFAULT_SESSIONCACHE_TIMEOUTSEC = 60;
+
+    protected static final int DEFAULT_SESSIONCACHE_SIZE = 1024;
+
+    /**
 	 * Internal Logger
 	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+	private static final WaarpLogger logger = WaarpLoggerFactory
 			.getLogger(WaarpSslContextFactory.class);
 
 	/**
@@ -81,7 +88,20 @@ public class WaarpSslContextFactory {
 			SERVER_CONTEXT = null;
 		}
 	}
-
+	/**
+	 * 
+	 * @param cacheSize default being 1024
+	 * @param timeOutInSeconds default being 60s
+	 */
+	public void setSessionCacheTime(int cacheSize, int timeOutInSeconds) {
+	    if (SERVER_CONTEXT != null) {
+	        SSLSessionContext sslSessionContext = SERVER_CONTEXT.getServerSessionContext();
+	        if (sslSessionContext != null) {
+	            sslSessionContext.setSessionCacheSize(cacheSize);
+	            sslSessionContext.setSessionTimeout(timeOutInSeconds);
+	        }
+	    }
+	}
 	/**
 	 * 
 	 * @param ggSecureKeyStore
@@ -114,6 +134,11 @@ public class WaarpSslContextFactory {
 					serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
 							null, null);
 				}
+				SSLSessionContext sslSessionContext = serverContext.getServerSessionContext();
+	            if (sslSessionContext != null) {
+	                sslSessionContext.setSessionCacheSize(DEFAULT_SESSIONCACHE_SIZE);
+	                sslSessionContext.setSessionTimeout(DEFAULT_SESSIONCACHE_TIMEOUTSEC);
+	            }
 				return serverContext;
 			} catch (Throwable e) {
 				logger.error("Failed to initialize the server-side SSLContext", e);
@@ -135,6 +160,11 @@ public class WaarpSslContextFactory {
 					clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
 							null, null);
 				}
+                SSLSessionContext sslSessionContext = clientContext.getServerSessionContext();
+                if (sslSessionContext != null) {
+                    sslSessionContext.setSessionCacheSize(DEFAULT_SESSIONCACHE_SIZE);
+                    sslSessionContext.setSessionTimeout(DEFAULT_SESSIONCACHE_TIMEOUTSEC);
+                }
 				return clientContext;
 			} catch (Throwable e) {
 				logger.error("Failed to initialize the client-side SSLContext", e);
@@ -159,22 +189,20 @@ public class WaarpSslContextFactory {
 	}
 
 	/**
-	 * To be called before adding as first entry in the PipelineFactory as<br>
+	 * To be called before adding as first entry in the Initializer as<br>
 	 * pipeline.addLast("ssl", sslhandler);<br>
 	 * 
 	 * @param serverMode
 	 *            True if in Server Mode, else False in Client mode
 	 * @param needClientAuth
 	 *            True if the client needs to be authenticated (only if serverMode is True)
-	 * @param renegotiationEnable
-	 *            True if you want to enable renegotiation (security issue CVE-2009-3555)
 	 * @return the sslhandler
 	 */
-	public SslHandler initPipelineFactory(boolean serverMode,
-			boolean needClientAuth, boolean renegotiationEnable) {
+	public SslHandler initInitializer(boolean serverMode,
+			boolean needClientAuth) {
 		// Add SSL handler first to encrypt and decrypt everything.
 		SSLEngine engine;
-		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode + " IsRenegotiation enable? "+renegotiationEnable);
+		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode);
 		if (serverMode) {
 			engine = getServerContext().createSSLEngine();
 			engine.setUseClientMode(false);
@@ -184,13 +212,63 @@ public class WaarpSslContextFactory {
 			engine.setUseClientMode(true);
 		}
 		SslHandler handler = new SslHandler(engine);
-		// Set the RenegotiationEnable or not
-		handler.setEnableRenegotiation(renegotiationEnable);
 		return handler;
 	}
+	
+    /**
+     * To be called before adding as first entry in the Initializer as<br>
+     * pipeline.addLast("ssl", sslhandler);<br>
+     * 
+     * @param serverMode
+     *            True if in Server Mode, else False in Client mode
+     * @param needClientAuth
+     *            True if the client needs to be authenticated (only if serverMode is True)
+     * @param renegotiationEnable
+     *            True if you want to enable renegotiation (security issue CVE-2009-3555).
+     *            This parameter is now ignored (always False)
+     * @return the sslhandler
+     */
+	@Deprecated
+    public SslHandler initInitializer(boolean serverMode,
+            boolean needClientAuth, boolean renegotiationEnable) {
+	    return this.initInitializer(serverMode, needClientAuth);
+    }
+
+    /**
+     * To be called before adding as first entry in the Initializer as<br>
+     * pipeline.addLast("ssl", sslhandler);<br>
+     * 
+     * @param serverMode
+     *            True if in Server Mode, else False in Client mode
+     * @param needClientAuth
+     *            True if the client needs to be authenticated (only if serverMode is True)
+     * @param renegotiationEnable
+     *            True if you want to enable renegotiation (security issue CVE-2009-3555)
+     * @param host
+     *          Host for which a resume is allowed
+     * @param port
+     *          port associated with the host for which a resume is allowed
+     * @return the sslhandler
+     */
+    public SslHandler initInitializer(boolean serverMode,
+            boolean needClientAuth, String host, int port) {
+        // Add SSL handler first to encrypt and decrypt everything.
+        SSLEngine engine;
+        logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode);
+        if (serverMode) {
+            engine = getServerContext().createSSLEngine(host, port);
+            engine.setUseClientMode(false);
+            engine.setNeedClientAuth(needClientAuth);
+        } else {
+            engine = getClientContext().createSSLEngine(host, port);
+            engine.setUseClientMode(true);
+        }
+        SslHandler handler = new SslHandler(engine);
+        return handler;
+    }
 
 	/**
-	 * To be called before adding as first entry in the PipelineFactory as<br>
+	 * To be called before adding as first entry in the Initializer as<br>
 	 * pipeline.addLast("ssl", sslhandler);<br>
 	 * 
 	 * @param serverMode
@@ -198,31 +276,19 @@ public class WaarpSslContextFactory {
 	 * @param needClientAuth
 	 *            True if the client needs to be authenticated (only if serverMode is True)
 	 * @param renegotiationEnable
-	 *            True if you want to enable renegotiation (security issue CVE-2009-3555)
+	 *            True if you want to enable renegotiation (security issue CVE-2009-3555).
+	 *            This parameter is now ignored (always False)
 	 * @param host
 	 * 			Host for which a resume is allowed
 	 * @param port
 	 * 			port associated with the host for which a resume is allowed
 	 * @return the sslhandler
 	 */
-	public SslHandler initPipelineFactory(boolean serverMode,
+    @Deprecated
+	public SslHandler initInitializer(boolean serverMode,
 			boolean needClientAuth, boolean renegotiationEnable,
 			String host, int port) {
-		// Add SSL handler first to encrypt and decrypt everything.
-		SSLEngine engine;
-		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode);
-		if (serverMode) {
-			engine = getServerContext().createSSLEngine(host, port);
-			engine.setUseClientMode(false);
-			engine.setNeedClientAuth(needClientAuth);
-		} else {
-			engine = getClientContext().createSSLEngine(host, port);
-			engine.setUseClientMode(true);
-		}
-		SslHandler handler = new SslHandler(engine);
-		// Set the RenegotiationEnable or not
-		handler.setEnableRenegotiation(renegotiationEnable);
-		return handler;
+        return this.initInitializer(serverMode, needClientAuth, host, port);
 	}
 
 	/**
