@@ -198,7 +198,7 @@ public class WaarpSslContextFactory {
 	 *            True if the client needs to be authenticated (only if serverMode is True)
 	 * @return the sslhandler
 	 */
-	public SslHandler initInitializer(boolean serverMode,
+	public WaarpSslHandler initInitializer(boolean serverMode,
 			boolean needClientAuth) {
 		// Add SSL handler first to encrypt and decrypt everything.
 		SSLEngine engine;
@@ -211,7 +211,7 @@ public class WaarpSslContextFactory {
 			engine = getClientContext().createSSLEngine();
 			engine.setUseClientMode(true);
 		}
-		SslHandler handler = new SslHandler(engine);
+		WaarpSslHandler handler = new WaarpSslHandler(engine);
 		return handler;
 	}
 	
@@ -250,7 +250,7 @@ public class WaarpSslContextFactory {
      *          port associated with the host for which a resume is allowed
      * @return the sslhandler
      */
-    public SslHandler initInitializer(boolean serverMode,
+    public WaarpSslHandler initInitializer(boolean serverMode,
             boolean needClientAuth, String host, int port) {
         // Add SSL handler first to encrypt and decrypt everything.
         SSLEngine engine;
@@ -263,7 +263,7 @@ public class WaarpSslContextFactory {
             engine = getClientContext().createSSLEngine(host, port);
             engine.setUseClientMode(true);
         }
-        SslHandler handler = new SslHandler(engine);
+        WaarpSslHandler handler = new WaarpSslHandler(engine);
         return handler;
     }
 

@@ -74,8 +74,13 @@ public class WaarpSslUtility {
      * @param sslHandler
      */
     public static void addSslHandlerToPipeline(ChannelPipeline pipeline, ChannelHandler sslHandler) {
+        logger.debug("Add SslHandler");
         pipeline.addFirst("SSL", sslHandler);
+        pipeline.channel().config().setAutoRead(true);
         Thread.yield();
+        logger.debug("Wait SslHandler truely added");
+        ((WaarpSslHandler) sslHandler).waitReady();
+        logger.debug("Added SslHandler");
     }
     /**
      * Launch action for the handshake on the given channel (preferred to waitForHandshake)
@@ -86,6 +91,7 @@ public class WaarpSslUtility {
         final ChannelHandler handler = pipeline.first();
         if (handler instanceof SslHandler) {
             logger.debug("Start handshake SSL");
+            ((WaarpSslHandler) handler).waitReady();
             ((SslHandler) handler).handshakeFuture().addListener(listener);
         }
     }
