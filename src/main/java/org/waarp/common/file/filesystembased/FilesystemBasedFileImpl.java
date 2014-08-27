@@ -378,7 +378,7 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 			writeBlock(dataBlock.getBlock());
 			return;
 		}
-		throw new FileTransferException("No file is ready");
+		throw new FileTransferException("No file is ready while trying to write: "+dataBlock.toString());
 	}
 
 	/**

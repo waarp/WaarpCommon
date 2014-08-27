@@ -307,6 +307,10 @@ public class DataBlock {
 		return byteCount == -1;
 	}
 
+	@Override
+	public String toString() {
+	    return "DataBlock Length:"+byteCount+" isEof:"+isEOF+" isEOR:"+isEOR+" isERROR:"+isERROR+" isRESTART:"+isRESTART;
+	}
 	/**
 	 * Translate the given array of byte into a string in binary format
 	 * 
