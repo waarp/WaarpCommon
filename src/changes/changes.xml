@@ -5,6 +5,10 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+        <release version="2.0.0" date="2014-09-01" description="Major release">
+            <action dev="Frederic Bregier" type="fix">Migrate to Netty 4.1</action>
+            <action dev="Frederic Bregier" type="add">Add WaarpSslHandler support</action>
+        </release>
         <release version="1.2.25" date="2014-06-01" description="Fix release">
             <action dev="Frederic Bregier" type="fix">Fix setFromJson to check if value is given in AbstractDbData</action>
             <action dev="Frederic Bregier" type="fix">Improve DetectionUtils (inspired from Netty)</action>

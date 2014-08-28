@@ -37,6 +37,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
+import org.waarp.common.utility.WaarpThreadFactory;
 
 /**
  * Utilities for SSL support
@@ -54,7 +55,7 @@ public class WaarpSslUtility {
     /**
      * EventExecutor associated with Ssl utility
      */
-    private static final EventExecutor SSL_EVENT_EXECUTOR = new DefaultEventExecutor();
+    private static final EventExecutor SSL_EVENT_EXECUTOR = new DefaultEventExecutor(new WaarpThreadFactory("SSLEVENT"));
     /**
      * ChannelGroup for SSL
      */
@@ -75,6 +76,7 @@ public class WaarpSslUtility {
      */
     public static void addSslHandlerToPipeline(ChannelPipeline pipeline, ChannelHandler sslHandler) {
         logger.debug("Add SslHandler");
+        
         pipeline.addFirst("SSL", sslHandler);
         pipeline.channel().config().setAutoRead(true);
         Thread.yield();
