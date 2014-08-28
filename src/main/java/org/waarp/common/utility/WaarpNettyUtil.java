@@ -23,6 +23,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.Future;
 
 /**
  * Utility class for Netty usage
@@ -70,4 +71,21 @@ public class WaarpNettyUtil {
         bootstrap.childOption(ChannelOption.SO_SNDBUF, 1048576);
     }
 
+    /**
+     * 
+     * @param future
+     * @param timeout
+     */
+    public static void waitOutOfNetty(Future<?> future, long timeout) {
+        long start = System.currentTimeMillis();
+        while (! future.isDone()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+            }
+            if (System.currentTimeMillis() - start > timeout) {
+                break;
+            }
+        }
+    }
 }
