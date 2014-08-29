@@ -19,15 +19,11 @@ package org.waarp.common.crypto.ssl;
 
 import javax.net.ssl.SSLEngine;
 
-import org.waarp.common.future.WaarpFuture;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 
 /**
  * @author "Frederic Bregier"
@@ -38,10 +34,6 @@ public class WaarpSslHandler extends SslHandler {
      * Internal Logger
      */
     private static final WaarpLogger logger = WaarpLoggerFactory.getLogger(WaarpSslHandler.class);
-    
-    private final WaarpFuture ready = new WaarpFuture(true);
-    private final WaarpFuture handshakeDone = new WaarpFuture(true);
-    private volatile ChannelHandlerContext ctx2;
     
     public WaarpSslHandler(SSLEngine engine) {
         super(engine);
@@ -54,33 +46,7 @@ public class WaarpSslHandler extends SslHandler {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         ctx.channel().config().setAutoRead(true);
-        ctx2 = ctx;
         super.handlerAdded(ctx);
         logger.debug("Ssl Handler added: "+ctx.channel().toString());
-        ready.setSuccess();
-    }
-    /**
-     * 
-     * @return True if the handler is correctly added (ready to continue)
-     */
-    protected boolean waitReady() {
-        ready.awaitUninterruptibly(this.getHandshakeTimeoutMillis());
-        return ready.isSuccess();
-    }
-    /**
-     * 
-     * @return True when the handshake is done successfully
-     */
-    protected boolean waitForHandshake() {
-        this.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
-            public void operationComplete(Future<? super Channel> future) throws Exception {
-                logger.debug("Handhsake done: "+future.isSuccess()+":"+((Channel) future.get()).toString());
-                handshakeDone.setSuccess();
-            }
-        });
-        Thread.yield();
-        boolean inTime = handshakeDone.awaitUninterruptibly(this.getHandshakeTimeoutMillis());
-        logger.debug("Handhsake Wait over: "+inTime+":"+handshakeFuture().isSuccess()+":"+ctx2.channel().toString());
-        return this.handshakeFuture().isSuccess();
     }
 }
