@@ -32,7 +32,6 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.DefaultEventExecutor;
 import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.EventExecutorGroup;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -71,22 +70,23 @@ public class WaarpSslUtility {
     }
     /**
      * Add a SslHandler in a pipeline
-     * @param future miight be null, condition to start to add the handler to the pipeline
+     * @param future might be null, condition to start to add the handler to the pipeline
      * @param pipeline
      * @param sslHandler
+     * @param listener action once the handshake is done
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void addSslHandler(ChannelFuture future, final EventExecutorGroup execGroup, final ChannelPipeline pipeline, final ChannelHandler sslHandler,
+    public static void addSslHandler(ChannelFuture future, final ChannelPipeline pipeline, final ChannelHandler sslHandler,
             final GenericFutureListener<? extends Future<? super Channel>> listener) {
         if (future == null) {
             logger.debug("Add SslHandler: "+pipeline.channel());
-            pipeline.addFirst(execGroup, "SSL", sslHandler);
+            pipeline.addFirst("SSL", sslHandler);
             ((SslHandler) sslHandler).handshakeFuture().addListener(listener);
         } else {
             future.addListener(new GenericFutureListener() {
                 public void operationComplete(Future future) throws Exception {
                     logger.debug("Add SslHandler: "+pipeline.channel());
-                    pipeline.addFirst(execGroup, "SSL", sslHandler);
+                    pipeline.addFirst("SSL", sslHandler);
                     ((SslHandler) sslHandler).handshakeFuture().addListener(listener);
                 }
             });
@@ -118,7 +118,7 @@ public class WaarpSslUtility {
 			return true;
 		} else {
 			logger.error("SSL Not found but connected: "+handler.getClass().getName());
-			return false;
+			return true;
 		}
     }
 
@@ -130,7 +130,7 @@ public class WaarpSslUtility {
     public static Channel waitforChannelReady(ChannelFuture future) {
     	// Wait until the connection attempt succeeds or fails.
     	try {
-			future.await();
+			future.await(10000);
 		} catch (InterruptedException e1) {
 		}
         if (!future.isSuccess()) {
@@ -268,11 +268,11 @@ public class WaarpSslUtility {
 				try{
 					channel.pipeline().remove(WaarpSslHandler.class);
 					logger.debug("try to close anyway");
-					channel.close().await();
+					channel.close().await(delay);
 					return false;
 				} catch (NoSuchElementException e) {
 					// ignore;
-					channel.closeFuture().await();
+					channel.closeFuture().await(delay);
 				}
 			}
 		} catch (InterruptedException e) {
