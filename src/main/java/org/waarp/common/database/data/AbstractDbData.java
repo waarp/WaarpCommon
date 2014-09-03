@@ -257,6 +257,9 @@ public abstract class AbstractDbData {
 		}
 	}
 
+	public DbValue[] getAllFields() {
+	    return allFields;
+	}
 	/**
 	 * Delete object from table
 	 * 

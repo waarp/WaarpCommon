@@ -69,7 +69,7 @@ public class WaarpSslUtility {
         sslChannelGroup.add(channel);
     }
     /**
-     * Add a SslHandler in a pipeline
+     * Add a SslHandler in a pipeline when the channel is already active
      * @param future might be null, condition to start to add the handler to the pipeline
      * @param pipeline
      * @param sslHandler
@@ -94,7 +94,7 @@ public class WaarpSslUtility {
         logger.debug("Checked Ssl Handler to be added: "+pipeline.channel());
     }
     /**
-     * Wait for the handshake on the given channel (better to use actionOnSslHandshaked when handler is added after channel is active)
+     * Wait for the handshake on the given channel (better to use addSslHandler when handler is added after channel is active)
      * @param channel
      * @return True if the Handshake is done correctly
      */
@@ -124,7 +124,7 @@ public class WaarpSslUtility {
 
     /**
      * Waiting for the channel to be opened and ready (Client side) (blocking call)
-     * @param future
+     * @param future a future on connect only
      * @return the channel if correctly associated, else return null
      */
     public static Channel waitforChannelReady(ChannelFuture future) {

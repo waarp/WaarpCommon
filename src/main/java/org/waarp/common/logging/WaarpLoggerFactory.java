@@ -129,6 +129,10 @@ public abstract class WaarpLoggerFactory {
         }
     }
 
+    public static WaarpLogLevel getLogLevel() {
+        return currentLevel;
+    }
+    
     protected static synchronized void setInternalLogLevel(final WaarpLogLevel level) {
         if (level != null) {
             currentLevel = level;
