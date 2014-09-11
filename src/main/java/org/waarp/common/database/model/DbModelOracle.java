@@ -189,6 +189,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),
 		VARCHAR(Types.VARCHAR, " VARCHAR2(8096) "),
+        NVARCHAR(Types.NVARCHAR, " VARCHAR2(8096) "),
 		LONGVARCHAR(Types.LONGVARCHAR, " CLOB "),
 		BIT(Types.BIT, " CHAR(1) "),
 		TINYINT(Types.TINYINT, " SMALLINT "),
@@ -216,6 +217,8 @@ public abstract class DbModelOracle extends DbModelAbstract {
 					return CHAR.constructor;
 				case Types.VARCHAR:
 					return VARCHAR.constructor;
+                case Types.NVARCHAR:
+                    return NVARCHAR.constructor;
 				case Types.LONGVARCHAR:
 					return LONGVARCHAR.constructor;
 				case Types.BIT:
