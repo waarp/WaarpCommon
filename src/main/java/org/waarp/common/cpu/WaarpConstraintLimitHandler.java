@@ -329,9 +329,11 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
 				if (lastLA > cpuLimit) {
 					double sleep = lastLA * delay * (step + 1) * random.nextFloat();
 					long shorttime = (((long) sleep) / 10) * 10;
-					try {
-						Thread.sleep(shorttime);
-					} catch (InterruptedException e) {
+					if (shorttime >= 10) {
+    					try {
+    						Thread.sleep(shorttime);
+    					} catch (InterruptedException e) {
+    					}
 					}
 				} else {
 					// last test was OK, so Continue
