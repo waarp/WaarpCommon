@@ -5,7 +5,11 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
-        <release version="1.2.25" date="2014-06-01" description="Fix release">
+        <release version="1.2.26" date="2014-10-05" description="Fix release">
+            <action dev="Frederic Bregier" type="fix">Fix Database compatibilty with MySQL/MariaDB</action>
+            <action dev="Frederic Bregier" type="fix">Fix after upgrading dependencies</action>
+        </release>
+	    <release version="1.2.25" date="2014-06-01" description="Fix release">
             <action dev="Frederic Bregier" type="fix">Fix setFromJson to check if value is given in AbstractDbData</action>
             <action dev="Frederic Bregier" type="fix">Improve DetectionUtils (inspired from Netty)</action>
             <action dev="Frederic Bregier" type="fix">Improve UUID using Base64 (urlsafe) encoding</action>

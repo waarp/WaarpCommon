@@ -134,6 +134,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),
 		VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
+		NVARCHAR(Types.NVARCHAR, " VARCHAR(8096) "),
 		LONGVARCHAR(Types.LONGVARCHAR, " LONGVARCHAR "),
 		BIT(Types.BIT, " BOOLEAN "),
 		TINYINT(Types.TINYINT, " TINYINT "),
@@ -163,6 +164,8 @@ public abstract class DbModelH2 extends DbModelAbstract {
 					return CHAR.constructor;
 				case Types.VARCHAR:
 					return VARCHAR.constructor;
+				case Types.NVARCHAR:
+					return NVARCHAR.constructor;
 				case Types.LONGVARCHAR:
 					return LONGVARCHAR.constructor;
 				case Types.BIT:

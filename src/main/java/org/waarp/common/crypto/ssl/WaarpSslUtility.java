@@ -46,8 +46,7 @@ public class WaarpSslUtility {
     /**
      * Internal Logger
      */
-    private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
-            .getLogger(WaarpSslUtility.class);
+    private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory.getLogger(WaarpSslUtility.class);
     
     /**
      * Waiter for SSL handshake is finished

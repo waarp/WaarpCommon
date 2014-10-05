@@ -113,6 +113,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 	protected static enum DBType {
 		CHAR(Types.CHAR, " CHAR(3) "),
 		VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
+		NVARCHAR(Types.NVARCHAR, " VARCHAR(8096) "),
 		LONGVARCHAR(Types.LONGVARCHAR, " TEXT "),
 		BIT(Types.BIT, " BOOLEAN "),
 		TINYINT(Types.TINYINT, " INT2 "),
@@ -140,6 +141,8 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 					return CHAR.constructor;
 				case Types.VARCHAR:
 					return VARCHAR.constructor;
+				case Types.NVARCHAR:
+					return NVARCHAR.constructor;
 				case Types.LONGVARCHAR:
 					return LONGVARCHAR.constructor;
 				case Types.BIT:
