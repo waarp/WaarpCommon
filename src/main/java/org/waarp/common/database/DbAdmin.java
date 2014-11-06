@@ -82,12 +82,6 @@ public class DbAdmin {
 	public boolean isReadOnly = false;
 
 	/**
-	 * Is this DB Admin accessed by only one thread at a time (no concurrency and no lock/unlock
-	 * problem)
-	 */
-	public boolean isMultipleDBAccess = false;
-
-	/**
 	 * session is the Session object for all type of requests
 	 */
 	public DbSession session = null;

@@ -400,6 +400,11 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 	private ByteBuffer bbyteBuffer = null;
 
 	/**
+	 * Associated write buffer
+	 */
+	private byte [] reusableBytes = null;
+
+	/**
 	 * Return the current position in the FileInterface. In write mode, it is the current file
 	 * length.
 	 * 
@@ -466,17 +471,12 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
 		if (buffer.hasArray()) {
 			start = buffer.arrayOffset();
 			newbuf = buffer.array();
-			if (newbuf.length > start + bufferSize) {
-				byte[] temp = new byte[bufferSize];
-				System.arraycopy(newbuf, start, temp, 0, bufferSize);
-				start = 0;
-				newbuf = temp;
-				buffer.readerIndex(start + bufferSize);
-			} else {
-				buffer.readerIndex(start + bufferSize);
-			}
+			buffer.readerIndex(buffer.readerIndex() + bufferSize);
 		} else {
-			newbuf = new byte[bufferSize];
+	        if (reusableBytes == null || reusableBytes.length != bufferSize) {
+	            reusableBytes = new byte[bufferSize];
+	        }
+			newbuf = reusableBytes;
 			buffer.readBytes(newbuf);
 		}
 		try {
