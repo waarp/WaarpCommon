@@ -32,9 +32,9 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class UUIDTest {
-	private static final char VERSION           = 'd';
-	private static int NB = 5000000;
-	
+    private static final char VERSION = 'd';
+    private static int NB = 5000000;
+
     @Test
     public void testStructure() {
         UUID id = new UUID();
@@ -54,11 +54,11 @@ public class UUIDTest {
         id2 = new UUID(id1.toHex());
         assertEquals(id1, id2);
         assertEquals(id1.hashCode(), id2.hashCode());
-        
+
         id2 = new UUID(id1.toBase64());
         assertEquals(id1, id2);
         assertEquals(id1.hashCode(), id2.hashCode());
-        
+
         UUID id3 = new UUID(id1.getBytes());
         assertEquals(id1, id3);
     }
@@ -73,7 +73,7 @@ public class UUIDTest {
         }
 
         for (int i = 1; i < n; i++) {
-            assertTrue(! ids[i-1].equals(ids[i]));
+            assertTrue(!ids[i - 1].equals(ids[i]));
         }
     }
 
@@ -126,7 +126,7 @@ public class UUIDTest {
     }
 
     @Test
-    public void testMacAddressField() throws Exception{
+    public void testMacAddressField() throws Exception {
         byte[] mac = NetworkInterface.getNetworkInterfaces().nextElement().getHardwareAddress();
 
         // if the machine is not connected to a network it has no active MAC address
@@ -154,31 +154,31 @@ public class UUIDTest {
         for (int i = 0; i < n; i++)
             uuidArray[i] = new UUID();
         long stop = System.currentTimeMillis();
-        System.out.println("Time = "+(stop-start)+" so "+(n*1000/(stop-start))+" Uuids/s");
+        System.out.println("Time = " + (stop - start) + " so " + (n * 1000 / (stop - start)) + " Uuids/s");
 
         for (int i = 0; i < n; i++)
             uuids.add(uuidArray[i]);
 
-        System.out.println("Create "+n+" and get: "+uuids.size());
+        System.out.println("Create " + n + " and get: " + uuids.size());
         assertEquals(n, uuids.size());
         int i = 1;
         int largest = 0;
-        for (; i < n ; i++) {
-        	if (uuidArray[i].getTimestamp() > uuidArray[i-1].getTimestamp()) {
-                int j = i+1;
+        for (; i < n; i++) {
+            if (uuidArray[i].getTimestamp() > uuidArray[i - 1].getTimestamp()) {
+                int j = i + 1;
                 long time = uuidArray[i].getTimestamp();
-                for (; j < n ; j++) {
-                	if (uuidArray[j].getTimestamp() > time) {
-                		if (largest < j-i) {
-                			largest = j-i;
-                			i = j;
-                			break;
-                		}
-                	}
+                for (; j < n; j++) {
+                    if (uuidArray[j].getTimestamp() > time) {
+                        if (largest < j - i) {
+                            largest = j - i;
+                            i = j;
+                            break;
+                        }
+                    }
                 }
-        	}
+            }
         }
-        System.out.println(largest+" different consecutive elements");
+        System.out.println(largest + " different consecutive elements");
     }
 
     private static class Generator extends Thread {

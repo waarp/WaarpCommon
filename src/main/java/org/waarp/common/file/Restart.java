@@ -30,71 +30,72 @@ import org.waarp.common.exception.NoRestartException;
  * 
  */
 public abstract class Restart {
-	/**
-	 * SessionInterface
-	 */
-	private final SessionInterface session;
+    /**
+     * SessionInterface
+     */
+    private final SessionInterface session;
 
-	/**
-	 * Is the current Restart object in context set
-	 */
-	private boolean isSet = false;
+    /**
+     * Is the current Restart object in context set
+     */
+    private boolean isSet = false;
 
-	/**
-	 * Default constructor
-	 * 
-	 * @param session
-	 */
-	protected Restart(SessionInterface session) {
-		isSet = false;
-		this.session = session;
-	}
+    /**
+     * Default constructor
+     * 
+     * @param session
+     */
+    protected Restart(SessionInterface session) {
+        isSet = false;
+        this.session = session;
+    }
 
-	/**
-	 * @return the isSet
-	 */
-	protected boolean isSet() {
-		return isSet;
-	}
+    /**
+     * @return the isSet
+     */
+    protected boolean isSet() {
+        return isSet;
+    }
 
-	/**
-	 * @param isSet
-	 *            the isSet to set
-	 */
-	public void setSet(boolean isSet) {
-		this.isSet = isSet;
-	}
+    /**
+     * @param isSet
+     *            the isSet to set
+     */
+    public void setSet(boolean isSet) {
+        this.isSet = isSet;
+    }
 
-	/**
-	 * @return the session
-	 */
-	protected SessionInterface getSession() {
-		return session;
-	}
+    /**
+     * @return the session
+     */
+    protected SessionInterface getSession() {
+        return session;
+    }
 
-	/**
-	 * Restart from a Marker for the next FileInterface
-	 * 
-	 * @param marker
-	 * @return True if the Marker is OK
-	 * @exception CommandAbstractException
-	 */
-	public abstract boolean restartMarker(String marker)
-			throws CommandAbstractException;
+    /**
+     * Restart from a Marker for the next FileInterface
+     * 
+     * @param marker
+     * @return True if the Marker is OK
+     * @exception CommandAbstractException
+     */
+    public abstract boolean restartMarker(String marker)
+            throws CommandAbstractException;
 
-	/**
-	 * 
-	 * @return the position from a previous REST command
-	 * @throws NoRestartException
-	 *             if no REST command was issued before
-	 */
-	public abstract long getPosition() throws NoRestartException;
-	// FIXME Additionally the implementation should implement a way to get the
-	// values
-	/**
-	 * 
-	 * @param nextBlock
-	 * @return the max between the available size and the nextblock size
-	 */
-	public abstract int getMaxSize(int nextBlock);
+    /**
+     * 
+     * @return the position from a previous REST command
+     * @throws NoRestartException
+     *             if no REST command was issued before
+     */
+    public abstract long getPosition() throws NoRestartException;
+
+    // FIXME Additionally the implementation should implement a way to get the
+    // values
+    /**
+     * 
+     * @param nextBlock
+     * @return the max between the available size and the nextblock size
+     */
+    public abstract int getMaxSize(int nextBlock);
 }

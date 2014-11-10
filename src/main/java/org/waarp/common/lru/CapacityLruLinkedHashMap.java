@@ -28,44 +28,44 @@ import java.util.Map;
  * 
  */
 class CapacityLruLinkedHashMap<K, V> extends LinkedHashMap<K, V> {
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = -5064888079959689619L;
+    private static final long serialVersionUID = -5064888079959689619L;
 
-	private final int capacity;
+    private final int capacity;
 
-	/**
-	 * Creates LRU LinkedHashMap
-	 * 
-	 * @param capacity
-	 * @param initialCapacity
-	 * @param loadFactor
-	 * @throws IllegalArgumentException
-	 *             if capacity is not positive
-	 */
-	protected CapacityLruLinkedHashMap(int capacity, int initialCapacity,
-			float loadFactor) {
-		super(initialCapacity, loadFactor, true);
+    /**
+     * Creates LRU LinkedHashMap
+     * 
+     * @param capacity
+     * @param initialCapacity
+     * @param loadFactor
+     * @throws IllegalArgumentException
+     *             if capacity is not positive
+     */
+    protected CapacityLruLinkedHashMap(int capacity, int initialCapacity,
+            float loadFactor) {
+        super(initialCapacity, loadFactor, true);
 
-		if (capacity <= 0)
-			throw new IllegalArgumentException("capacity must be positive");
+        if (capacity <= 0)
+            throw new IllegalArgumentException("capacity must be positive");
 
-		this.capacity = capacity;
-	}
+        this.capacity = capacity;
+    }
 
-	@Override
-	protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-		return size() > capacity;
-	}
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+        return size() > capacity;
+    }
 
-	/**
-	 * Returns capacity of map
-	 * 
-	 * @return
-	 */
-	public int getCapacity() {
-		return this.capacity;
-	}
+    /**
+     * Returns capacity of map
+     * 
+     * @return
+     */
+    public int getCapacity() {
+        return this.capacity;
+    }
 
 }

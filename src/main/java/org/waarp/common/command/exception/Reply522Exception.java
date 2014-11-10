@@ -27,20 +27,20 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply522Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 522L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 522L;
 
-	/**
-	 * 504 Command not implemented for that parameter.
-	 * 
-	 * @param message
-	 */
-	public Reply522Exception(String message) {
-		super(
-				ReplyCode.REPLY_522_EXTENDED_PORT_FAILURE_UNKNOWN_NETWORK_PROTOCOL,
-				message);
-	}
+    /**
+     * 504 Command not implemented for that parameter.
+     * 
+     * @param message
+     */
+    public Reply522Exception(String message) {
+        super(
+                ReplyCode.REPLY_522_EXTENDED_PORT_FAILURE_UNKNOWN_NETWORK_PROTOCOL,
+                message);
+    }
 
 }

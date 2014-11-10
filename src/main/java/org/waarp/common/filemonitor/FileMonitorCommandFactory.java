@@ -24,15 +24,16 @@ import org.waarp.common.filemonitor.FileMonitor.FileItem;
 
 /**
  * Factory for FileMonitorCommandRunnableFuture
+ * 
  * @author "Frederic Bregier"
- *
+ * 
  */
 public abstract class FileMonitorCommandFactory {
 
-	/**
-	 * 
-	 * @return a new FileMonitorCommandRunnableFuture
-	 */
-	public abstract FileMonitorCommandRunnableFuture create(FileItem fileItem);
-	
+    /**
+     * 
+     * @return a new FileMonitorCommandRunnableFuture
+     */
+    public abstract FileMonitorCommandRunnableFuture create(FileItem fileItem);
+
 }

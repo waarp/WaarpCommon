@@ -57,357 +57,356 @@ import org.waarp.common.utility.WaarpStringUtils;
  * 
  */
 public abstract class KeyObject {
-	/**
-	 * Internal Logger
-	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
-			.getLogger(KeyObject.class);
+    /**
+     * Internal Logger
+     */
+    private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+            .getLogger(KeyObject.class);
 
-	/**
-	 * The True Key associated with this object
-	 */
-	Key secretKey = null;
+    /**
+     * The True Key associated with this object
+     */
+    Key secretKey = null;
 
-	/**
-	 * Empty constructor
-	 */
-	public KeyObject() {
-	}
+    /**
+     * Empty constructor
+     */
+    public KeyObject() {
+    }
 
-	/**
-	 * 
-	 * @return the algorithm used (Java name)
-	 */
-	public abstract String getAlgorithm();
+    /**
+     * 
+     * @return the algorithm used (Java name)
+     */
+    public abstract String getAlgorithm();
 
-	/**
-	 * 
-	 * @return the instance used (Java name)
-	 */
-	public abstract String getInstance();
+    /**
+     * 
+     * @return the instance used (Java name)
+     */
+    public abstract String getInstance();
 
-	/**
-	 * 
-	 * @return the size for the algorithm key
-	 */
-	public abstract int getKeySize();
+    /**
+     * 
+     * @return the size for the algorithm key
+     */
+    public abstract int getKeySize();
 
-	/**
-	 * @return the key associated with this object
-	 */
-	public Key getSecretKey() {
-		return secretKey;
-	}
+    /**
+     * @return the key associated with this object
+     */
+    public Key getSecretKey() {
+        return secretKey;
+    }
 
-	/**
-	 * 
-	 * @return True if this key is ready to be used
-	 */
-	public boolean keyReady() {
-		return secretKey != null;
-	}
+    /**
+     * 
+     * @return True if this key is ready to be used
+     */
+    public boolean keyReady() {
+        return secretKey != null;
+    }
 
-	/**
-	 * Returns the key as an array of bytes in order to be stored somewhere else and retrieved using
-	 * the setSecretKey(byte[] keyData) method.
-	 * 
-	 * @return the key as an array of bytes (or null if not ready)
-	 */
-	public byte[] getSecretKeyInBytes() {
-		if (keyReady()) {
-			return secretKey.getEncoded();
-		} else {
-			return null;
-		}
-	}
+    /**
+     * Returns the key as an array of bytes in order to be stored somewhere else and retrieved using
+     * the setSecretKey(byte[] keyData) method.
+     * 
+     * @return the key as an array of bytes (or null if not ready)
+     */
+    public byte[] getSecretKeyInBytes() {
+        if (keyReady()) {
+            return secretKey.getEncoded();
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * Set the secretKey
-	 * 
-	 * @param secretKey
-	 */
-	public void setSecretKey(Key secretKey) {
-		this.secretKey = secretKey;
-	}
+    /**
+     * Set the secretKey
+     * 
+     * @param secretKey
+     */
+    public void setSecretKey(Key secretKey) {
+        this.secretKey = secretKey;
+    }
 
-	/**
-	 * Reconstruct a key from an array of bytes
-	 */
-	public void setSecretKey(byte[] keyData) {
-		secretKey = new SecretKeySpec(keyData, getAlgorithm());
-	}
+    /**
+     * Reconstruct a key from an array of bytes
+     */
+    public void setSecretKey(byte[] keyData) {
+        secretKey = new SecretKeySpec(keyData, getAlgorithm());
+    }
 
-	/**
-	 * Create a Key from a File
-	 * 
-	 * @param file
-	 * @throws CryptoException
-	 * @throws IOException
-	 */
-	public void setSecretKey(File file) throws CryptoException, IOException {
-		if (file.canRead()) {
-			int len = (int) file.length();
-			byte[] key = new byte[len];
-			FileInputStream inputStream = null;
-			inputStream = new FileInputStream(file);
-			DataInputStream dis = new DataInputStream(inputStream);
-			try {
-				dis.readFully(key);
-			} finally {
-				dis.close();
-			}
-			this.setSecretKey(key);
-		} else {
-			throw new CryptoException("Cannot read crypto file: "+file);
-		}
-	}
+    /**
+     * Create a Key from a File
+     * 
+     * @param file
+     * @throws CryptoException
+     * @throws IOException
+     */
+    public void setSecretKey(File file) throws CryptoException, IOException {
+        if (file.canRead()) {
+            int len = (int) file.length();
+            byte[] key = new byte[len];
+            FileInputStream inputStream = null;
+            inputStream = new FileInputStream(file);
+            DataInputStream dis = new DataInputStream(inputStream);
+            try {
+                dis.readFully(key);
+            } finally {
+                dis.close();
+            }
+            this.setSecretKey(key);
+        } else {
+            throw new CryptoException("Cannot read crypto file: " + file);
+        }
+    }
 
-	/**
-	 * Save a Key to a File
-	 * 
-	 * @param file
-	 * @throws CryptoException
-	 * @throws IOException
-	 */
-	public void saveSecretKey(File file) throws CryptoException, IOException {
-		if (keyReady() && ((!file.exists()) || file.canWrite())) {
-			byte[] key = getSecretKeyInBytes();
-			FileOutputStream outputStream = new FileOutputStream(file);
-			try {
-				outputStream.write(key);
-				outputStream.flush();
-			} finally {
-				outputStream.close();
-			}
-		} else {
-			throw new CryptoException("Cannot read crypto file");
-		}
-	}
+    /**
+     * Save a Key to a File
+     * 
+     * @param file
+     * @throws CryptoException
+     * @throws IOException
+     */
+    public void saveSecretKey(File file) throws CryptoException, IOException {
+        if (keyReady() && ((!file.exists()) || file.canWrite())) {
+            byte[] key = getSecretKeyInBytes();
+            FileOutputStream outputStream = new FileOutputStream(file);
+            try {
+                outputStream.write(key);
+                outputStream.flush();
+            } finally {
+                outputStream.close();
+            }
+        } else {
+            throw new CryptoException("Cannot read crypto file");
+        }
+    }
 
-	/**
-	 * Generate a key from nothing
-	 * 
-	 * @throws Exception
-	 */
-	public void generateKey() throws Exception {
-		try {
-			KeyGenerator keyGen = KeyGenerator.getInstance(getAlgorithm());
-			keyGen.init(getKeySize());
-			secretKey = keyGen.generateKey();
-		} catch (Exception e) {
-			logger.warn("GenerateKey Error", e);
-			throw e;
-		}
-	}
+    /**
+     * Generate a key from nothing
+     * 
+     * @throws Exception
+     */
+    public void generateKey() throws Exception {
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance(getAlgorithm());
+            keyGen.init(getKeySize());
+            secretKey = keyGen.generateKey();
+        } catch (Exception e) {
+            logger.warn("GenerateKey Error", e);
+            throw e;
+        }
+    }
 
-	/**
-	 * Returns a cipher for encryption associated with the key
-	 * 
-	 * @return the cipher for encryption or null if it fails in case Encryption method or key is
-	 *         incorrect
-	 */
-	public Cipher toCrypt() {
-		Cipher cipher;
-		try {
-			cipher = Cipher.getInstance(getInstance());
-			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-		} catch (Exception e) {
-			logger.warn("Crypt Error", e);
-			return null;
-		}
-		return cipher;
-	}
+    /**
+     * Returns a cipher for encryption associated with the key
+     * 
+     * @return the cipher for encryption or null if it fails in case Encryption method or key is
+     *         incorrect
+     */
+    public Cipher toCrypt() {
+        Cipher cipher;
+        try {
+            cipher = Cipher.getInstance(getInstance());
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        } catch (Exception e) {
+            logger.warn("Crypt Error", e);
+            return null;
+        }
+        return cipher;
+    }
 
-	/**
-	 * Crypt one array of bytes and returns the crypted array of bytes
-	 * 
-	 * @param plaintext
-	 * @return the crypted array of bytes
-	 * @throws Exception
-	 */
-	public byte[] crypt(byte[] plaintext) throws Exception {
-		if (!keyReady()) {
-			throw new CryptoException("Key not Ready");
-		}
-		try {
-			Cipher cipher = Cipher.getInstance(getInstance());
-			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-			return cipher.doFinal(plaintext);
-		} catch (Exception e) {
-			logger.warn("Crypt Error", e);
-			throw e;
-		}
-	}
+    /**
+     * Crypt one array of bytes and returns the crypted array of bytes
+     * 
+     * @param plaintext
+     * @return the crypted array of bytes
+     * @throws Exception
+     */
+    public byte[] crypt(byte[] plaintext) throws Exception {
+        if (!keyReady()) {
+            throw new CryptoException("Key not Ready");
+        }
+        try {
+            Cipher cipher = Cipher.getInstance(getInstance());
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            return cipher.doFinal(plaintext);
+        } catch (Exception e) {
+            logger.warn("Crypt Error", e);
+            throw e;
+        }
+    }
 
-	/**
-	 * Crypt one array of bytes and returns the crypted String as HEX format
-	 * 
-	 * @param plaintext
-	 * @return the crypted String as HEX format
-	 * @throws Exception
-	 */
-	public String cryptToHex(byte[] plaintext) throws Exception {
-		byte[] result = crypt(plaintext);
-		return encodeHex(result);
-	}
+    /**
+     * Crypt one array of bytes and returns the crypted String as HEX format
+     * 
+     * @param plaintext
+     * @return the crypted String as HEX format
+     * @throws Exception
+     */
+    public String cryptToHex(byte[] plaintext) throws Exception {
+        byte[] result = crypt(plaintext);
+        return encodeHex(result);
+    }
 
-	/**
-	 * Crypt one String and returns the crypted array of bytes
-	 * 
-	 * @param plaintext
-	 * @return the crypted array of bytes
-	 * @throws Exception
-	 */
-	public byte[] crypt(String plaintext) throws Exception {
-		return crypt(plaintext.getBytes(WaarpStringUtils.UTF8));
-	}
+    /**
+     * Crypt one String and returns the crypted array of bytes
+     * 
+     * @param plaintext
+     * @return the crypted array of bytes
+     * @throws Exception
+     */
+    public byte[] crypt(String plaintext) throws Exception {
+        return crypt(plaintext.getBytes(WaarpStringUtils.UTF8));
+    }
 
-	/**
-	 * Crypt one String and returns the crypted String as HEX format
-	 * 
-	 * @param plaintext
-	 * @return the crypted String as HEX format
-	 * @throws Exception
-	 */
-	public String cryptToHex(String plaintext) throws Exception {
-		return cryptToHex(plaintext.getBytes(WaarpStringUtils.UTF8));
-	}
+    /**
+     * Crypt one String and returns the crypted String as HEX format
+     * 
+     * @param plaintext
+     * @return the crypted String as HEX format
+     * @throws Exception
+     */
+    public String cryptToHex(String plaintext) throws Exception {
+        return cryptToHex(plaintext.getBytes(WaarpStringUtils.UTF8));
+    }
 
-	/**
-	 * Returns a cipher for decryption associated with the key
-	 * 
-	 * @return the cipher for decryption or null if it fails in case Encryption method or key is
-	 *         incorrect
-	 */
-	public Cipher toDecrypt() {
-		Cipher cipher;
-		try {
-			cipher = Cipher.getInstance(getAlgorithm());
-			cipher.init(Cipher.DECRYPT_MODE, secretKey);
-		} catch (Exception e) {
-			logger.warn("Uncrypt Error", e);
-			return null;
-		}
-		return cipher;
-	}
+    /**
+     * Returns a cipher for decryption associated with the key
+     * 
+     * @return the cipher for decryption or null if it fails in case Encryption method or key is
+     *         incorrect
+     */
+    public Cipher toDecrypt() {
+        Cipher cipher;
+        try {
+            cipher = Cipher.getInstance(getAlgorithm());
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        } catch (Exception e) {
+            logger.warn("Uncrypt Error", e);
+            return null;
+        }
+        return cipher;
+    }
 
-	/**
-	 * Decrypt an array of bytes and returns the uncrypted array of bytes
-	 * 
-	 * @param ciphertext
-	 * @return the uncrypted array of bytes
-	 * @throws Exception
-	 */
-	public byte[] decrypt(byte[] ciphertext) throws Exception {
-		if (!keyReady()) {
-			throw new CryptoException("Key not Ready");
-		}
-		try {
-			Cipher cipher = Cipher.getInstance(getAlgorithm());
-			cipher.init(Cipher.DECRYPT_MODE, secretKey);
-			return cipher.doFinal(ciphertext);
-		} catch (Exception e) {
-			logger.warn("Decrypt Error", e);
-			throw e;
-		}
-	}
+    /**
+     * Decrypt an array of bytes and returns the uncrypted array of bytes
+     * 
+     * @param ciphertext
+     * @return the uncrypted array of bytes
+     * @throws Exception
+     */
+    public byte[] decrypt(byte[] ciphertext) throws Exception {
+        if (!keyReady()) {
+            throw new CryptoException("Key not Ready");
+        }
+        try {
+            Cipher cipher = Cipher.getInstance(getAlgorithm());
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            return cipher.doFinal(ciphertext);
+        } catch (Exception e) {
+            logger.warn("Decrypt Error", e);
+            throw e;
+        }
+    }
 
-	/**
-	 * Decrypt an array of bytes and returns the uncrypted String
-	 * 
-	 * @param ciphertext
-	 * @return the uncrypted array of bytes
-	 * @throws Exception
-	 */
-	public String decryptInString(byte[] ciphertext) throws Exception {
-		return new String(decrypt(ciphertext), WaarpStringUtils.UTF8);
-	}
+    /**
+     * Decrypt an array of bytes and returns the uncrypted String
+     * 
+     * @param ciphertext
+     * @return the uncrypted array of bytes
+     * @throws Exception
+     */
+    public String decryptInString(byte[] ciphertext) throws Exception {
+        return new String(decrypt(ciphertext), WaarpStringUtils.UTF8);
+    }
 
-	/**
-	 * Decrypt a String as HEX format representing a crypted array of bytes and returns the
-	 * uncrypted array of bytes
-	 * 
-	 * @param ciphertext
-	 * @return the uncrypted array of bytes
-	 * @throws Exception
-	 */
-	public byte[] decryptHexInBytes(String ciphertext) throws Exception {
-		byte[] arrayBytes = decodeHex(ciphertext);
-		return decrypt(arrayBytes);
-	}
+    /**
+     * Decrypt a String as HEX format representing a crypted array of bytes and returns the
+     * uncrypted array of bytes
+     * 
+     * @param ciphertext
+     * @return the uncrypted array of bytes
+     * @throws Exception
+     */
+    public byte[] decryptHexInBytes(String ciphertext) throws Exception {
+        byte[] arrayBytes = decodeHex(ciphertext);
+        return decrypt(arrayBytes);
+    }
 
-	/**
-	 * Decrypt an array of bytes as HEX format representing a crypted array of bytes and returns the
-	 * uncrypted array of bytes
-	 * 
-	 * @param ciphertext
-	 * @return the uncrypted array of bytes
-	 * @throws Exception
-	 */
-	public byte[] decryptHexInBytes(byte[] ciphertext) throws Exception {
-		byte[] arrayBytes = decodeHex(new String(ciphertext, WaarpStringUtils.UTF8));
-		return decrypt(arrayBytes);
-	}
+    /**
+     * Decrypt an array of bytes as HEX format representing a crypted array of bytes and returns the
+     * uncrypted array of bytes
+     * 
+     * @param ciphertext
+     * @return the uncrypted array of bytes
+     * @throws Exception
+     */
+    public byte[] decryptHexInBytes(byte[] ciphertext) throws Exception {
+        byte[] arrayBytes = decodeHex(new String(ciphertext, WaarpStringUtils.UTF8));
+        return decrypt(arrayBytes);
+    }
 
-	/**
-	 * Decrypt a String as HEX format representing a crypted array of bytes and returns the
-	 * uncrypted String
-	 * 
-	 * @param ciphertext
-	 * @return the uncrypted String
-	 * @throws Exception
-	 */
-	public String decryptHexInString(String ciphertext) throws Exception {
-		return new String(decryptHexInBytes(ciphertext), WaarpStringUtils.UTF8);
-	}
+    /**
+     * Decrypt a String as HEX format representing a crypted array of bytes and returns the
+     * uncrypted String
+     * 
+     * @param ciphertext
+     * @return the uncrypted String
+     * @throws Exception
+     */
+    public String decryptHexInString(String ciphertext) throws Exception {
+        return new String(decryptHexInBytes(ciphertext), WaarpStringUtils.UTF8);
+    }
 
-	/**
-	 * Decode from a file containing a HEX crypted string
-	 * 
-	 * @param file
-	 * @return the decoded uncrypted content of the file
-	 * @throws Exception
-	 */
-	public byte[] decryptHexFile(File file) throws Exception {
-		byte[] byteKeys = new byte[(int) file.length()];
-		FileInputStream inputStream = null;
-		DataInputStream dis = null;
-		try {
-			inputStream = new FileInputStream(file);
-			dis = new DataInputStream(inputStream);
-			dis.readFully(byteKeys);
-			dis.close();
-			String skey = new String(byteKeys, WaarpStringUtils.UTF8);
-			// decrypt it
-			byteKeys = decryptHexInBytes(skey);
-			return byteKeys;
-		} catch (IOException e) {
-			try {
-				if (dis != null) {
-					dis.close();
-				} else if (inputStream != null)
-					inputStream.close();
-			} catch (IOException e1) {
-			}
-			throw e;
-		}
-	}
+    /**
+     * Decode from a file containing a HEX crypted string
+     * 
+     * @param file
+     * @return the decoded uncrypted content of the file
+     * @throws Exception
+     */
+    public byte[] decryptHexFile(File file) throws Exception {
+        byte[] byteKeys = new byte[(int) file.length()];
+        FileInputStream inputStream = null;
+        DataInputStream dis = null;
+        try {
+            inputStream = new FileInputStream(file);
+            dis = new DataInputStream(inputStream);
+            dis.readFully(byteKeys);
+            dis.close();
+            String skey = new String(byteKeys, WaarpStringUtils.UTF8);
+            // decrypt it
+            byteKeys = decryptHexInBytes(skey);
+            return byteKeys;
+        } catch (IOException e) {
+            try {
+                if (dis != null) {
+                    dis.close();
+                } else if (inputStream != null)
+                    inputStream.close();
+            } catch (IOException e1) {}
+            throw e;
+        }
+    }
 
-	/**
-	 * 
-	 * @param encoded
-	 * @return the array of bytes from encoded String (HEX)
-	 */
-	public byte[] decodeHex(String encoded) {
-		return FilesystemBasedDigest.getFromHex(encoded);
-	}
+    /**
+     * 
+     * @param encoded
+     * @return the array of bytes from encoded String (HEX)
+     */
+    public byte[] decodeHex(String encoded) {
+        return FilesystemBasedDigest.getFromHex(encoded);
+    }
 
-	/**
-	 * 
-	 * @param bytes
-	 * @return The encoded array of bytes in HEX
-	 */
-	public String encodeHex(byte[] bytes) {
-		return FilesystemBasedDigest.getHex(bytes);
-	}
+    /**
+     * 
+     * @param bytes
+     * @return The encoded array of bytes in HEX
+     */
+    public String encodeHex(byte[] bytes) {
+        return FilesystemBasedDigest.getHex(bytes);
+    }
 }

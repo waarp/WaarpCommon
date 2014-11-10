@@ -25,48 +25,47 @@ import org.waarp.common.cpu.CpuManagement;
  */
 public class testCpuManagement {
 
-	public static void main(String[] args) {
-		long total = 0;
-		CpuManagement cpuManagement = new CpuManagement();
-		System.err.println("LA: " + cpuManagement.getLoadAverage());
-		for (int i = 0; i < 1000 * 1000 * 1000; i++) {
-			// keep ourselves busy for a while ...
-			// note: we had to add some "work" into the loop or Java 6
-			// optimizes it away. Thanks to Daniel Einspanjer for
-			// pointing that out.
-			total += i;
-			total *= 10;
-		}
-		if (total <= 0)
-			System.out.println(total);
-		System.err.println("LA: " + cpuManagement.getLoadAverage());
+    public static void main(String[] args) {
+        long total = 0;
+        CpuManagement cpuManagement = new CpuManagement();
+        System.err.println("LA: " + cpuManagement.getLoadAverage());
+        for (int i = 0; i < 1000 * 1000 * 1000; i++) {
+            // keep ourselves busy for a while ...
+            // note: we had to add some "work" into the loop or Java 6
+            // optimizes it away. Thanks to Daniel Einspanjer for
+            // pointing that out.
+            total += i;
+            total *= 10;
+        }
+        if (total <= 0)
+            System.out.println(total);
+        System.err.println("LA: " + cpuManagement.getLoadAverage());
 
-		total = 0;
-		for (int i = 0; i < 1000 * 1000 * 1000; i++) {
-			// keep ourselves busy for a while ...
-			// note: we had to add some "work" into the loop or Java 6
-			// optimizes it away. Thanks to Daniel Einspanjer for
-			// pointing that out.
-			total += i;
-			total *= 10;
-		}
-		System.err.println("LA: " + cpuManagement.getLoadAverage());
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-		}
-		System.err.println("LA: " + cpuManagement.getLoadAverage());
+        total = 0;
+        for (int i = 0; i < 1000 * 1000 * 1000; i++) {
+            // keep ourselves busy for a while ...
+            // note: we had to add some "work" into the loop or Java 6
+            // optimizes it away. Thanks to Daniel Einspanjer for
+            // pointing that out.
+            total += i;
+            total *= 10;
+        }
+        System.err.println("LA: " + cpuManagement.getLoadAverage());
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {}
+        System.err.println("LA: " + cpuManagement.getLoadAverage());
 
-		total = 0;
-		for (int i = 0; i < 1000 * 1000 * 1000; i++) {
-			// keep ourselves busy for a while ...
-			// note: we had to add some "work" into the loop or Java 6
-			// optimizes it away. Thanks to Daniel Einspanjer for
-			// pointing that out.
-			total += i;
-			total *= 10;
-		}
-		System.err.println("LA: " + cpuManagement.getLoadAverage());
-	}
+        total = 0;
+        for (int i = 0; i < 1000 * 1000 * 1000; i++) {
+            // keep ourselves busy for a while ...
+            // note: we had to add some "work" into the loop or Java 6
+            // optimizes it away. Thanks to Daniel Einspanjer for
+            // pointing that out.
+            total += i;
+            total *= 10;
+        }
+        System.err.println("LA: " + cpuManagement.getLoadAverage());
+    }
 
 }

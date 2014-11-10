@@ -45,358 +45,355 @@ import org.mariadb.jdbc.MySQLDataSource;
  * 
  */
 public abstract class DbModelMariadb extends DbModelAbstract {
-	/**
-	 * Internal Logger
-	 */
-	private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
-			.getLogger(DbModelMariadb.class);
+    /**
+     * Internal Logger
+     */
+    private static final WaarpInternalLogger logger = WaarpInternalLoggerFactory
+            .getLogger(DbModelMariadb.class);
 
-	public static final DbType type = DbType.MariaDB;
+    public static final DbType type = DbType.MariaDB;
 
-	protected static MySQLDataSource mysqlConnectionPoolDataSource;
-	protected static DbConnectionPool pool;
+    protected static MySQLDataSource mysqlConnectionPoolDataSource;
+    protected static DbConnectionPool pool;
 
-	public DbType getDbType() {
-		return type;
-	}
+    public DbType getDbType() {
+        return type;
+    }
 
-	/**
-	 * Create the object and initialize if necessary the driver
-	 * 
-	 * @param dbserver
-	 * @param dbuser
-	 * @param dbpasswd
-	 * @param timer
-	 * @param delay
-	 * @throws WaarpDatabaseNoConnectionException
-	 */
-	public DbModelMariadb(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay)
-			throws WaarpDatabaseNoConnectionException {
-		this();
-		mysqlConnectionPoolDataSource = new MySQLDataSource();
-		mysqlConnectionPoolDataSource.setUrl(dbserver);
-		mysqlConnectionPoolDataSource.setUser(dbuser);
-		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
-		// Create a pool with no limit
-		pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
-		logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
-				+ pool.getLoginTimeout()
-				+ " ForceClose: " + pool.getTimeoutForceClose());
-	}
+    /**
+     * Create the object and initialize if necessary the driver
+     * 
+     * @param dbserver
+     * @param dbuser
+     * @param dbpasswd
+     * @param timer
+     * @param delay
+     * @throws WaarpDatabaseNoConnectionException
+     */
+    public DbModelMariadb(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay)
+            throws WaarpDatabaseNoConnectionException {
+        this();
+        mysqlConnectionPoolDataSource = new MySQLDataSource();
+        mysqlConnectionPoolDataSource.setUrl(dbserver);
+        mysqlConnectionPoolDataSource.setUser(dbuser);
+        mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+        // Create a pool with no limit
+        pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
+        logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
+                + pool.getLoginTimeout()
+                + " ForceClose: " + pool.getTimeoutForceClose());
+    }
 
-	/**
-	 * Create the object and initialize if necessary the driver
-	 * 
-	 * @param dbserver
-	 * @param dbuser
-	 * @param dbpasswd
-	 * @throws WaarpDatabaseNoConnectionException
-	 */
-	public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
-			throws WaarpDatabaseNoConnectionException {
-		this();
-		mysqlConnectionPoolDataSource = new MySQLDataSource();
-		mysqlConnectionPoolDataSource.setUrl(dbserver);
-		mysqlConnectionPoolDataSource.setUser(dbuser);
-		mysqlConnectionPoolDataSource.setPassword(dbpasswd);
-		// Create a pool with no limit
-		pool = new DbConnectionPool(mysqlConnectionPoolDataSource);
-		logger.warn("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
-				+ pool.getLoginTimeout()
-				+ " ForceClose: " + pool.getTimeoutForceClose());
-	}
+    /**
+     * Create the object and initialize if necessary the driver
+     * 
+     * @param dbserver
+     * @param dbuser
+     * @param dbpasswd
+     * @throws WaarpDatabaseNoConnectionException
+     */
+    public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
+            throws WaarpDatabaseNoConnectionException {
+        this();
+        mysqlConnectionPoolDataSource = new MySQLDataSource();
+        mysqlConnectionPoolDataSource.setUrl(dbserver);
+        mysqlConnectionPoolDataSource.setUser(dbuser);
+        mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+        // Create a pool with no limit
+        pool = new DbConnectionPool(mysqlConnectionPoolDataSource);
+        logger.warn("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
+                + pool.getLoginTimeout()
+                + " ForceClose: " + pool.getTimeoutForceClose());
+    }
 
-	/**
-	 * Create the object and initialize if necessary the driver
-	 * 
-	 * @throws WaarpDatabaseNoConnectionException
-	 */
-	protected DbModelMariadb() throws WaarpDatabaseNoConnectionException {
-		if (DbModelFactory.classLoaded) {
-			return;
-		}
-		try {
-			DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
-			DbModelFactory.classLoaded = true;
-		} catch (SQLException e) {
-			// SQLException
-			logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());
-			DbSession.error(e);
-			throw new WaarpDatabaseNoConnectionException(
-					"Cannot load database drive:" + type.name(), e);
-		}
-	}
+    /**
+     * Create the object and initialize if necessary the driver
+     * 
+     * @throws WaarpDatabaseNoConnectionException
+     */
+    protected DbModelMariadb() throws WaarpDatabaseNoConnectionException {
+        if (DbModelFactory.classLoaded) {
+            return;
+        }
+        try {
+            DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
+            DbModelFactory.classLoaded = true;
+        } catch (SQLException e) {
+            // SQLException
+            logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());
+            DbSession.error(e);
+            throw new WaarpDatabaseNoConnectionException(
+                    "Cannot load database drive:" + type.name(), e);
+        }
+    }
 
-	@Override
-	public Connection getDbConnection(String server, String user, String passwd)
-			throws SQLException {
-		synchronized (this) {
-			if (pool != null) {
-				try {
-					return pool.getConnection();
-				} catch (SQLException e) {
-					// try to renew the pool
-					mysqlConnectionPoolDataSource = new MySQLDataSource();
-					mysqlConnectionPoolDataSource.setUrl(server);
-					mysqlConnectionPoolDataSource.setUser(user);
-					mysqlConnectionPoolDataSource.setPassword(passwd);
-					pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
-					try {
-						return pool.getConnection();
-					} catch (SQLException e2) {
-						pool.dispose();
-						pool = null;
-						return super.getDbConnection(server, user, passwd);
-					}
-				}
-			}
-		}
-		return super.getDbConnection(server, user, passwd);
-	}
+    @Override
+    public Connection getDbConnection(String server, String user, String passwd)
+            throws SQLException {
+        synchronized (this) {
+            if (pool != null) {
+                try {
+                    return pool.getConnection();
+                } catch (SQLException e) {
+                    // try to renew the pool
+                    mysqlConnectionPoolDataSource = new MySQLDataSource();
+                    mysqlConnectionPoolDataSource.setUrl(server);
+                    mysqlConnectionPoolDataSource.setUser(user);
+                    mysqlConnectionPoolDataSource.setPassword(passwd);
+                    pool.resetPoolDataSource(mysqlConnectionPoolDataSource);
+                    try {
+                        return pool.getConnection();
+                    } catch (SQLException e2) {
+                        pool.dispose();
+                        pool = null;
+                        return super.getDbConnection(server, user, passwd);
+                    }
+                }
+            }
+        }
+        return super.getDbConnection(server, user, passwd);
+    }
 
-	@Override
-	public void releaseResources() {
-		if (pool != null) {
-			try {
-				pool.dispose();
-			} catch (SQLException e) {
-			}
-			pool = null;
-		}
-	}
+    @Override
+    public void releaseResources() {
+        if (pool != null) {
+            try {
+                pool.dispose();
+            } catch (SQLException e) {}
+            pool = null;
+        }
+    }
 
+    protected static enum DBType {
+        CHAR(Types.CHAR, " CHAR(3) "),
+        VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
+        /**
+         * To be used for primary keys
+         */
+        NVARCHAR(Types.NVARCHAR, " VARCHAR(255) "),
+        LONGVARCHAR(Types.LONGVARCHAR, " TEXT "),
+        BIT(Types.BIT, " BOOLEAN "),
+        TINYINT(Types.TINYINT, " TINYINT "),
+        SMALLINT(Types.SMALLINT, " SMALLINT "),
+        INTEGER(Types.INTEGER, " INTEGER "),
+        BIGINT(Types.BIGINT, " BIGINT "),
+        REAL(Types.REAL, " FLOAT "),
+        DOUBLE(Types.DOUBLE, " DOUBLE "),
+        VARBINARY(Types.VARBINARY, " BLOB "),
+        DATE(Types.DATE, " DATE "),
+        TIMESTAMP(Types.TIMESTAMP, " TIMESTAMP ");
 
-	protected static enum DBType {
-		CHAR(Types.CHAR, " CHAR(3) "),
-		VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
-		/**
-		 * To be used for primary keys
-		 */
-		NVARCHAR(Types.NVARCHAR, " VARCHAR(255) "),
-		LONGVARCHAR(Types.LONGVARCHAR, " TEXT "),
-		BIT(Types.BIT, " BOOLEAN "),
-		TINYINT(Types.TINYINT, " TINYINT "),
-		SMALLINT(Types.SMALLINT, " SMALLINT "),
-		INTEGER(Types.INTEGER, " INTEGER "),
-		BIGINT(Types.BIGINT, " BIGINT "),
-		REAL(Types.REAL, " FLOAT "),
-		DOUBLE(Types.DOUBLE, " DOUBLE "),
-		VARBINARY(Types.VARBINARY, " BLOB "),
-		DATE(Types.DATE, " DATE "),
-		TIMESTAMP(Types.TIMESTAMP, " TIMESTAMP ");
+        public int type;
 
-		public int type;
+        public String constructor;
 
-		public String constructor;
+        private DBType(int type, String constructor) {
+            this.type = type;
+            this.constructor = constructor;
+        }
 
-		private DBType(int type, String constructor) {
-			this.type = type;
-			this.constructor = constructor;
-		}
+        public static String getType(int sqltype) {
+            switch (sqltype) {
+                case Types.CHAR:
+                    return CHAR.constructor;
+                case Types.VARCHAR:
+                    return VARCHAR.constructor;
+                case Types.NVARCHAR:
+                    return NVARCHAR.constructor;
+                case Types.LONGVARCHAR:
+                    return LONGVARCHAR.constructor;
+                case Types.BIT:
+                    return BIT.constructor;
+                case Types.TINYINT:
+                    return TINYINT.constructor;
+                case Types.SMALLINT:
+                    return SMALLINT.constructor;
+                case Types.INTEGER:
+                    return INTEGER.constructor;
+                case Types.BIGINT:
+                    return BIGINT.constructor;
+                case Types.REAL:
+                    return REAL.constructor;
+                case Types.DOUBLE:
+                    return DOUBLE.constructor;
+                case Types.VARBINARY:
+                    return VARBINARY.constructor;
+                case Types.DATE:
+                    return DATE.constructor;
+                case Types.TIMESTAMP:
+                    return TIMESTAMP.constructor;
+                default:
+                    return null;
+            }
+        }
+    }
 
-		public static String getType(int sqltype) {
-			switch (sqltype) {
-				case Types.CHAR:
-					return CHAR.constructor;
-				case Types.VARCHAR:
-					return VARCHAR.constructor;
-				case Types.NVARCHAR:
-					return NVARCHAR.constructor;
-				case Types.LONGVARCHAR:
-					return LONGVARCHAR.constructor;
-				case Types.BIT:
-					return BIT.constructor;
-				case Types.TINYINT:
-					return TINYINT.constructor;
-				case Types.SMALLINT:
-					return SMALLINT.constructor;
-				case Types.INTEGER:
-					return INTEGER.constructor;
-				case Types.BIGINT:
-					return BIGINT.constructor;
-				case Types.REAL:
-					return REAL.constructor;
-				case Types.DOUBLE:
-					return DOUBLE.constructor;
-				case Types.VARBINARY:
-					return VARBINARY.constructor;
-				case Types.DATE:
-					return DATE.constructor;
-				case Types.TIMESTAMP:
-					return TIMESTAMP.constructor;
-				default:
-					return null;
-			}
-		}
-	}
+    private final ReentrantLock lock = new ReentrantLock();
 
-	private final ReentrantLock lock = new ReentrantLock();
+    public void createTables(DbSession session) throws WaarpDatabaseNoConnectionException {
+        // Create tables: configuration, hosts, rules, runner, cptrunner
+        String createTableH2 = "CREATE TABLE IF NOT EXISTS ";
+        String primaryKey = " PRIMARY KEY ";
+        String notNull = " NOT NULL ";
 
-	public void createTables(DbSession session) throws WaarpDatabaseNoConnectionException {
-		// Create tables: configuration, hosts, rules, runner, cptrunner
-		String createTableH2 = "CREATE TABLE IF NOT EXISTS ";
-		String primaryKey = " PRIMARY KEY ";
-		String notNull = " NOT NULL ";
+        // Example
+        String action = createTableH2 + DbDataModel.table + "(";
+        DbDataModel.Columns[] ccolumns = DbDataModel.Columns
+                .values();
+        for (int i = 0; i < ccolumns.length - 1; i++) {
+            action += ccolumns[i].name() +
+                    DBType.getType(DbDataModel.dbTypes[i]) + notNull +
+                    ", ";
+        }
+        action += ccolumns[ccolumns.length - 1].name() +
+                DBType.getType(DbDataModel.dbTypes[ccolumns.length - 1]) +
+                primaryKey + ")";
+        logger.warn(action);
+        DbRequest request = new DbRequest(session);
+        try {
+            request.query(action);
+        } catch (WaarpDatabaseNoConnectionException e) {
+            logger.warn("CreateTables Error", e);
+            return;
+        } catch (WaarpDatabaseSqlException e) {
+            logger.warn("CreateTables Error", e);
+            return;
+        } finally {
+            request.close();
+        }
+        // Index Example
+        action = "CREATE INDEX IDX_RUNNER ON " + DbDataModel.table + "(";
+        DbDataModel.Columns[] icolumns = DbDataModel.indexes;
+        for (int i = 0; i < icolumns.length - 1; i++) {
+            action += icolumns[i].name() + ", ";
+        }
+        action += icolumns[icolumns.length - 1].name() + ")";
+        logger.warn(action);
+        try {
+            request.query(action);
+        } catch (WaarpDatabaseNoConnectionException e) {
+            logger.warn("CreateTables Error", e);
+            return;
+        } catch (WaarpDatabaseSqlException e) {
+            return;
+        } finally {
+            request.close();
+        }
 
-		// Example
-		String action = createTableH2 + DbDataModel.table + "(";
-		DbDataModel.Columns[] ccolumns = DbDataModel.Columns
-				.values();
-		for (int i = 0; i < ccolumns.length - 1; i++) {
-			action += ccolumns[i].name() +
-					DBType.getType(DbDataModel.dbTypes[i]) + notNull +
-					", ";
-		}
-		action += ccolumns[ccolumns.length - 1].name() +
-				DBType.getType(DbDataModel.dbTypes[ccolumns.length - 1]) +
-				primaryKey + ")";
-		logger.warn(action);
-		DbRequest request = new DbRequest(session);
-		try {
-			request.query(action);
-		} catch (WaarpDatabaseNoConnectionException e) {
-			logger.warn("CreateTables Error", e);
-			return;
-		} catch (WaarpDatabaseSqlException e) {
-			logger.warn("CreateTables Error", e);
-			return;
-		} finally {
-			request.close();
-		}
-		// Index Example
-		action = "CREATE INDEX IDX_RUNNER ON " + DbDataModel.table + "(";
-		DbDataModel.Columns[] icolumns = DbDataModel.indexes;
-		for (int i = 0; i < icolumns.length - 1; i++) {
-			action += icolumns[i].name() + ", ";
-		}
-		action += icolumns[icolumns.length - 1].name() + ")";
-		logger.warn(action);
-		try {
-			request.query(action);
-		} catch (WaarpDatabaseNoConnectionException e) {
-			logger.warn("CreateTables Error", e);
-			return;
-		} catch (WaarpDatabaseSqlException e) {
-			return;
-		} finally {
-			request.close();
-		}
+        // example sequence
+        /*
+         * # Table to handle any number of sequences: CREATE TABLE Sequences ( name VARCHAR(22) NOT
+         * NULL, seq INT UNSIGNED NOT NULL, # (or BIGINT) PRIMARY KEY name ); # Create a Sequence:
+         * INSERT INTO Sequences (name, seq) VALUES (?, 0); # Drop a Sequence: DELETE FROM Sequences
+         * WHERE name = ?; # Get a sequence number: UPDATE Sequences SET seq = LAST_INSERT_ID(seq +
+         * 1) WHERE name = ?; $seq = $db->LastInsertId();
+         */
+        action = "CREATE TABLE Sequences (name VARCHAR(22) NOT NULL PRIMARY KEY," +
+                "seq BIGINT NOT NULL)";
+        logger.warn(action);
+        try {
+            request.query(action);
+        } catch (WaarpDatabaseNoConnectionException e) {
+            logger.warn("CreateTables Error", e);
+            return;
+        } catch (WaarpDatabaseSqlException e) {
+            logger.warn("CreateTables Error", e);
+            return;
+        } finally {
+            request.close();
+        }
+        action = "INSERT INTO Sequences (name, seq) VALUES ('" + DbDataModel.fieldseq + "', " +
+                (DbConstant.ILLEGALVALUE + 1) + ")";
+        logger.warn(action);
+        try {
+            request.query(action);
+        } catch (WaarpDatabaseNoConnectionException e) {
+            logger.warn("CreateTables Error", e);
+            return;
+        } catch (WaarpDatabaseSqlException e) {
+            logger.warn("CreateTables Error", e);
+            return;
+        } finally {
+            request.close();
+        }
+    }
 
-		// example sequence
-		/*
-		 * # Table to handle any number of sequences: CREATE TABLE Sequences ( name VARCHAR(22) NOT
-		 * NULL, seq INT UNSIGNED NOT NULL, # (or BIGINT) PRIMARY KEY name ); # Create a Sequence:
-		 * INSERT INTO Sequences (name, seq) VALUES (?, 0); # Drop a Sequence: DELETE FROM Sequences
-		 * WHERE name = ?; # Get a sequence number: UPDATE Sequences SET seq = LAST_INSERT_ID(seq +
-		 * 1) WHERE name = ?; $seq = $db->LastInsertId();
-		 */
-		action = "CREATE TABLE Sequences (name VARCHAR(22) NOT NULL PRIMARY KEY," +
-				"seq BIGINT NOT NULL)";
-		logger.warn(action);
-		try {
-			request.query(action);
-		} catch (WaarpDatabaseNoConnectionException e) {
-			logger.warn("CreateTables Error", e);
-			return;
-		} catch (WaarpDatabaseSqlException e) {
-			logger.warn("CreateTables Error", e);
-			return;
-		} finally {
-			request.close();
-		}
-		action = "INSERT INTO Sequences (name, seq) VALUES ('" + DbDataModel.fieldseq + "', " +
-				(DbConstant.ILLEGALVALUE + 1) + ")";
-		logger.warn(action);
-		try {
-			request.query(action);
-		} catch (WaarpDatabaseNoConnectionException e) {
-			logger.warn("CreateTables Error", e);
-			return;
-		} catch (WaarpDatabaseSqlException e) {
-			logger.warn("CreateTables Error", e);
-			return;
-		} finally {
-			request.close();
-		}
-	}
+    public void resetSequence(DbSession session, long newvalue)
+            throws WaarpDatabaseNoConnectionException {
+        String action = "UPDATE Sequences SET seq = " + newvalue +
+                " WHERE name = '" + DbDataModel.fieldseq + "'";
+        DbRequest request = new DbRequest(session);
+        try {
+            request.query(action);
+        } catch (WaarpDatabaseNoConnectionException e) {
+            logger.warn("ResetSequence Error", e);
+            return;
+        } catch (WaarpDatabaseSqlException e) {
+            logger.warn("ResetSequence Error", e);
+            return;
+        } finally {
+            request.close();
+        }
+        logger.warn(action);
+    }
 
-	public void resetSequence(DbSession session, long newvalue)
-			throws WaarpDatabaseNoConnectionException {
-		String action = "UPDATE Sequences SET seq = " + newvalue +
-				" WHERE name = '" + DbDataModel.fieldseq + "'";
-		DbRequest request = new DbRequest(session);
-		try {
-			request.query(action);
-		} catch (WaarpDatabaseNoConnectionException e) {
-			logger.warn("ResetSequence Error", e);
-			return;
-		} catch (WaarpDatabaseSqlException e) {
-			logger.warn("ResetSequence Error", e);
-			return;
-		} finally {
-			request.close();
-		}
-		logger.warn(action);
-	}
+    public synchronized long nextSequence(DbSession dbSession)
+            throws WaarpDatabaseNoConnectionException,
+            WaarpDatabaseSqlException, WaarpDatabaseNoDataException {
+        lock.lock();
+        try {
+            long result = DbConstant.ILLEGALVALUE;
+            String action = "SELECT seq FROM Sequences WHERE name = '" +
+                    DbDataModel.fieldseq + "' FOR UPDATE";
+            DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                    dbSession);
+            try {
+                dbSession.conn.setAutoCommit(false);
+            } catch (SQLException e1) {}
+            try {
+                preparedStatement.createPrepareStatement(action);
+                // Limit the search
+                preparedStatement.executeQuery();
+                if (preparedStatement.getNext()) {
+                    try {
+                        result = preparedStatement.getResultSet().getLong(1);
+                    } catch (SQLException e) {
+                        throw new WaarpDatabaseSqlException(e);
+                    }
+                } else {
+                    throw new WaarpDatabaseNoDataException(
+                            "No sequence found. Must be initialized first");
+                }
+            } finally {
+                preparedStatement.realClose();
+            }
+            action = "UPDATE Sequences SET seq = " + (result + 1) +
+                    " WHERE name = '" + DbDataModel.fieldseq + "'";
+            try {
+                preparedStatement.createPrepareStatement(action);
+                // Limit the search
+                preparedStatement.executeUpdate();
+            } finally {
+                preparedStatement.realClose();
+            }
+            return result;
+        } finally {
+            try {
+                dbSession.conn.setAutoCommit(true);
+            } catch (SQLException e1) {}
+            lock.unlock();
+        }
+    }
 
-	public synchronized long nextSequence(DbSession dbSession)
-			throws WaarpDatabaseNoConnectionException,
-			WaarpDatabaseSqlException, WaarpDatabaseNoDataException {
-		lock.lock();
-		try {
-			long result = DbConstant.ILLEGALVALUE;
-			String action = "SELECT seq FROM Sequences WHERE name = '" +
-					DbDataModel.fieldseq + "' FOR UPDATE";
-			DbPreparedStatement preparedStatement = new DbPreparedStatement(
-					dbSession);
-			try {
-				dbSession.conn.setAutoCommit(false);
-			} catch (SQLException e1) {
-			}
-			try {
-				preparedStatement.createPrepareStatement(action);
-				// Limit the search
-				preparedStatement.executeQuery();
-				if (preparedStatement.getNext()) {
-					try {
-						result = preparedStatement.getResultSet().getLong(1);
-					} catch (SQLException e) {
-						throw new WaarpDatabaseSqlException(e);
-					}
-				} else {
-					throw new WaarpDatabaseNoDataException(
-							"No sequence found. Must be initialized first");
-				}
-			} finally {
-				preparedStatement.realClose();
-			}
-			action = "UPDATE Sequences SET seq = " + (result + 1) +
-					" WHERE name = '" + DbDataModel.fieldseq + "'";
-			try {
-				preparedStatement.createPrepareStatement(action);
-				// Limit the search
-				preparedStatement.executeUpdate();
-			} finally {
-				preparedStatement.realClose();
-			}
-			return result;
-		} finally {
-			try {
-				dbSession.conn.setAutoCommit(true);
-			} catch (SQLException e1) {
-			}
-			lock.unlock();
-		}
-	}
+    @Override
+    protected String validConnectionString() {
+        return "select 1 from dual";
+    }
 
-	@Override
-	protected String validConnectionString() {
-		return "select 1 from dual";
-	}
-
-	public String limitRequest(String allfields, String request, int nb) {
-		if (nb == 0) return request;
-		return request + " LIMIT " + nb;
-	}
+    public String limitRequest(String allfields, String request, int nb) {
+        if (nb == 0)
+            return request;
+        return request + " LIMIT " + nb;
+    }
 
 }

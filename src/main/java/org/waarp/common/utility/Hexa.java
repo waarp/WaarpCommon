@@ -22,64 +22,67 @@ package org.waarp.common.utility;
 
 /**
  * @author "Frederic Bregier"
- *
+ * 
  */
 public class Hexa {
-	/**
+    /**
      * HEX_CHARS
      */
     private static final char[] HEX_CHARS = {
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'a', 'b', 'c', 'd', 'e', 'f', };
-    
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+            'a', 'b', 'c', 'd', 'e', 'f', };
+
     public static final byte asByte(char a, char b) {
-		if (a >= HEX_CHARS[10]) {
-			a -= HEX_CHARS[10] - 10;
-		} else {
-			a -= HEX_CHARS[0];
-		}
-		if (b >= HEX_CHARS[10]) {
-			b -= HEX_CHARS[10] - 10;
-		} else {
-			b -= HEX_CHARS[0];
-		}
-		return (byte) ((a << 4) + b);
+        if (a >= HEX_CHARS[10]) {
+            a -= HEX_CHARS[10] - 10;
+        } else {
+            a -= HEX_CHARS[0];
+        }
+        if (b >= HEX_CHARS[10]) {
+            b -= HEX_CHARS[10] - 10;
+        } else {
+            b -= HEX_CHARS[0];
+        }
+        return (byte) ((a << 4) + b);
     }
-    public static final byte[] fromHex(final char []hex) {
-    	final int size = hex.length/2;
-        final byte []bytes = new byte[size];
-        for (int i = 0, j = 0; i < size; ) {
-        	bytes[i ++]  = asByte(hex[j ++], hex[j ++]);
+
+    public static final byte[] fromHex(final char[] hex) {
+        final int size = hex.length / 2;
+        final byte[] bytes = new byte[size];
+        for (int i = 0, j = 0; i < size;) {
+            bytes[i++] = asByte(hex[j++], hex[j++]);
         }
         return bytes;
     }
+
     public static final byte[] fromHex(final String hex) {
         final char[] chars = hex.toCharArray();
-    	final int size = chars.length/2;
-        final byte []bytes = new byte[size];
-        for (int i = 0, j = 0; i < size; ) {
-        	bytes[i ++]  = asByte(chars[j ++], chars[j ++]);
+        final int size = chars.length / 2;
+        final byte[] bytes = new byte[size];
+        for (int i = 0, j = 0; i < size;) {
+            bytes[i++] = asByte(chars[j++], chars[j++]);
         }
         return bytes;
     }
-    
+
     public static final char getHighHex(final byte value) {
-    	return HEX_CHARS[(value & 0xF0) >> 4];
-    }
-    public static final char getLowHex(final byte value) {
-    	return HEX_CHARS[(value & 0x0F)];
+        return HEX_CHARS[(value & 0xF0) >> 4];
     }
 
-    public static final String toHex(final byte []bytes) {
-    	final int size = bytes.length;
-    	final int b16size = size*2;
-    	final char[] id = new char[b16size];
+    public static final char getLowHex(final byte value) {
+        return HEX_CHARS[(value & 0x0F)];
+    }
+
+    public static final String toHex(final byte[] bytes) {
+        final int size = bytes.length;
+        final int b16size = size * 2;
+        final char[] id = new char[b16size];
 
         // split each byte into 4 bit numbers and map to hex characters
-    	for (int i = 0, j = 0; i < size; i++) {
-            id[j ++]  = HEX_CHARS[(bytes[i]  & 0xF0) >> 4];
-            id[j ++]  = HEX_CHARS[(bytes[i]  & 0x0F)];
-    	}
+        for (int i = 0, j = 0; i < size; i++) {
+            id[j++] = HEX_CHARS[(bytes[i] & 0xF0) >> 4];
+            id[j++] = HEX_CHARS[(bytes[i] & 0x0F)];
+        }
         return new String(id);
     }
 }

@@ -23,14 +23,14 @@ package org.waarp.common.crypto;
  * @author frederic bregier
  */
 public class AesManager extends KeyManager {
-	public static final AesManager aesManager = new AesManager();
+    public static final AesManager aesManager = new AesManager();
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyManager#createKeyObject()
-	 */
-	@Override
-	public KeyObject createKeyObject() {
-		return new Aes();
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyManager#createKeyObject()
+     */
+    @Override
+    public KeyObject createKeyObject() {
+        return new Aes();
+    }
 }

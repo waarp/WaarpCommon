@@ -34,115 +34,115 @@ import org.waarp.common.database.exception.WaarpDatabaseNoDataException;
  * 
  */
 public abstract class AbstractDbDataWithCommit extends AbstractDbData {
-	/**
-	 * To be implemented
-	 */
-	// public static String table;
-	// public static final int NBPRKEY;
-	// protected static String selectAllFields;
-	// protected static String updateAllFields;
-	// protected static String insertAllValues;
-	// protected DbValue[] primaryKey;
-	// protected DbValue[] otherFields;
-	// protected DbValue[] allFields;
+    /**
+     * To be implemented
+     */
+    // public static String table;
+    // public static final int NBPRKEY;
+    // protected static String selectAllFields;
+    // protected static String updateAllFields;
+    // protected static String insertAllValues;
+    // protected DbValue[] primaryKey;
+    // protected DbValue[] otherFields;
+    // protected DbValue[] allFields;
 
-	/**
-	 * Abstract constructor to set the DbSession to use
-	 * 
-	 * @param dbSession
-	 */
-	public AbstractDbDataWithCommit(DbSession dbSession) {
-		super(dbSession);
-		initObject();
-	}
+    /**
+     * Abstract constructor to set the DbSession to use
+     * 
+     * @param dbSession
+     */
+    public AbstractDbDataWithCommit(DbSession dbSession) {
+        super(dbSession);
+        initObject();
+    }
 
-	/**
-	 * Insert object into table
-	 * 
-	 * @throws WaarpDatabaseException
-	 */
-	public void insert() throws WaarpDatabaseException {
-		if (isSaved) {
-			return;
-		}
-		if (dbSession == null) {
-			isSaved = true;
-			return;
-		}
-		setToArray();
-		DbPreparedStatement preparedStatement = new DbPreparedStatement(
-				dbSession);
-		try {
-			preparedStatement.createPrepareStatement("INSERT INTO " + getTable() +
-					" (" + getSelectAllFields() + ") VALUES " + getInsertAllValues());
-			setValues(preparedStatement, allFields);
-			int count = preparedStatement.executeUpdate();
-			if (count <= 0) {
-				throw new WaarpDatabaseNoDataException("No row found");
-			}
-			dbSession.commit();
-			isSaved = true;
-		} finally {
-			preparedStatement.realClose();
-		}
-	}
+    /**
+     * Insert object into table
+     * 
+     * @throws WaarpDatabaseException
+     */
+    public void insert() throws WaarpDatabaseException {
+        if (isSaved) {
+            return;
+        }
+        if (dbSession == null) {
+            isSaved = true;
+            return;
+        }
+        setToArray();
+        DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                dbSession);
+        try {
+            preparedStatement.createPrepareStatement("INSERT INTO " + getTable() +
+                    " (" + getSelectAllFields() + ") VALUES " + getInsertAllValues());
+            setValues(preparedStatement, allFields);
+            int count = preparedStatement.executeUpdate();
+            if (count <= 0) {
+                throw new WaarpDatabaseNoDataException("No row found");
+            }
+            dbSession.commit();
+            isSaved = true;
+        } finally {
+            preparedStatement.realClose();
+        }
+    }
 
-	/**
-	 * Update object to table
-	 * 
-	 * @throws WaarpDatabaseException
-	 */
-	public void update() throws WaarpDatabaseException {
-		if (isSaved) {
-			return;
-		}
-		if (dbSession == null) {
-			isSaved = true;
-			return;
-		}
-		setToArray();
-		DbPreparedStatement preparedStatement = new DbPreparedStatement(
-				dbSession);
-		try {
-			preparedStatement.createPrepareStatement("UPDATE " + getTable() +
-					" SET " + getUpdateAllFields() + " WHERE " +
-					getWherePrimaryKey());
-			setValues(preparedStatement, allFields);
-			int count = preparedStatement.executeUpdate();
-			if (count <= 0) {
-				throw new WaarpDatabaseNoDataException("No row found");
-			}
-			dbSession.commit();
-			isSaved = true;
-		} finally {
-			preparedStatement.realClose();
-		}
-	}
+    /**
+     * Update object to table
+     * 
+     * @throws WaarpDatabaseException
+     */
+    public void update() throws WaarpDatabaseException {
+        if (isSaved) {
+            return;
+        }
+        if (dbSession == null) {
+            isSaved = true;
+            return;
+        }
+        setToArray();
+        DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                dbSession);
+        try {
+            preparedStatement.createPrepareStatement("UPDATE " + getTable() +
+                    " SET " + getUpdateAllFields() + " WHERE " +
+                    getWherePrimaryKey());
+            setValues(preparedStatement, allFields);
+            int count = preparedStatement.executeUpdate();
+            if (count <= 0) {
+                throw new WaarpDatabaseNoDataException("No row found");
+            }
+            dbSession.commit();
+            isSaved = true;
+        } finally {
+            preparedStatement.realClose();
+        }
+    }
 
-	/**
-	 * Delete object from table
-	 * 
-	 * @throws WaarpDatabaseException
-	 */
-	public void delete() throws WaarpDatabaseException {
-		if (dbSession == null) {
-			return;
-		}
-		DbPreparedStatement preparedStatement = new DbPreparedStatement(
-				dbSession);
-		try {
-			preparedStatement.createPrepareStatement("DELETE FROM " + getTable() +
-					" WHERE " + getWherePrimaryKey());
-			setPrimaryKey();
-			setValues(preparedStatement, primaryKey);
-			int count = preparedStatement.executeUpdate();
-			if (count <= 0) {
-				throw new WaarpDatabaseNoDataException("No row found");
-			}
-			dbSession.commit();
-			isSaved = false;
-		} finally {
-			preparedStatement.realClose();
-		}
-	}
+    /**
+     * Delete object from table
+     * 
+     * @throws WaarpDatabaseException
+     */
+    public void delete() throws WaarpDatabaseException {
+        if (dbSession == null) {
+            return;
+        }
+        DbPreparedStatement preparedStatement = new DbPreparedStatement(
+                dbSession);
+        try {
+            preparedStatement.createPrepareStatement("DELETE FROM " + getTable() +
+                    " WHERE " + getWherePrimaryKey());
+            setPrimaryKey();
+            setValues(preparedStatement, primaryKey);
+            int count = preparedStatement.executeUpdate();
+            if (count <= 0) {
+                throw new WaarpDatabaseNoDataException("No row found");
+            }
+            dbSession.commit();
+            isSaved = false;
+        } finally {
+            preparedStatement.realClose();
+        }
+    }
 }

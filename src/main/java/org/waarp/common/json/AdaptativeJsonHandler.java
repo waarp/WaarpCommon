@@ -46,507 +46,507 @@ import com.fasterxml.jackson.dataformat.smile.SmileFactory;
 
 /**
  * JSON handler using adaptative format (Smile or Json - in that order -)
+ * 
  * @author "Frederic Bregier"
- *
+ * 
  */
 public class AdaptativeJsonHandler {
 
-	public static enum JsonCodec {
-		SMILE(new SmileFactory()), JSON(new JsonFactory());
-		
-		public final JsonFactory factory;
-		public final ObjectMapper mapper;
-		
-		private JsonCodec(JsonFactory factory) {
-			this.factory = factory;
-			this.mapper = new ObjectMapper(factory);
-			mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-			mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-			mapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
-		}
-		
-		private static List<JsonFactory> getFactories() {
-			List<JsonFactory> factories = new ArrayList<JsonFactory>();
-			JsonCodec [] codecs = JsonCodec.values();
-			for (JsonCodec jsonCodec : codecs) {
-				factories.add(jsonCodec.factory);
-			}
-			return factories;
-		}
-		
-		private static HashMap<String, JsonCodec> getHashMap() {
-			HashMap<String, JsonCodec> hashmap = new HashMap<String, JsonCodec>();
-			JsonCodec [] codecs = JsonCodec.values();
-			for (JsonCodec jsonCodec : codecs) {
-				hashmap.put(jsonCodec.factory.getFormatName(), jsonCodec);
-			}
-			return hashmap;
-		}
-	}
-	
-	/**
-	 * Data Format Detector
-	 */
-	public static final DataFormatDetector detector = new DataFormatDetector(JsonCodec.getFactories())
-		.withMinimalMatch(MatchStrength.WEAK_MATCH)
-		.withOptimalMatch(MatchStrength.SOLID_MATCH);
-	/**
-	 * HashMap getting Codec from Factory name
-	 */
-	public static final HashMap<String, JsonCodec> factoryForName = JsonCodec.getHashMap();
-	
-	public ObjectMapper mapper;
-	public JsonCodec codec;
-	
-	public AdaptativeJsonHandler(JsonCodec codec) {
-		this.codec = codec;
-		mapper = codec.mapper;
-	}
+    public static enum JsonCodec {
+        SMILE(new SmileFactory()), JSON(new JsonFactory());
 
-	public AdaptativeJsonHandler(byte[] source) throws IOException {
-		DataFormatMatcher match = detector.findFormat(source);
-		if (match == null) {
-			this.codec = JsonCodec.JSON;
-			mapper = JsonCodec.JSON.mapper; // default
-		} else {
-			JsonCodec codec = factoryForName.get(match.getMatchedFormatName());
-			if (codec != null) {
-				this.codec = codec;
-				mapper = codec.mapper;
-			} else {
-				this.codec = JsonCodec.JSON;
-				mapper = JsonCodec.JSON.mapper; // default
-			}
-		}
-	}
+        public final JsonFactory factory;
+        public final ObjectMapper mapper;
 
-	public AdaptativeJsonHandler(InputStream source) throws IOException {
-		DataFormatMatcher match = detector.findFormat(source);
-		if (match == null) {
-			this.codec = JsonCodec.JSON;
-			mapper = JsonCodec.JSON.mapper; // default
-		} else {
-			JsonCodec codec = factoryForName.get(match.getMatchedFormatName());
-			if (codec != null) {
-				this.codec = codec;
-				mapper = codec.mapper;
-			} else {
-				this.codec = JsonCodec.JSON;
-				mapper = JsonCodec.JSON.mapper; // default
-			}
-		}
-	}
-	
-	/**
-	 * Change the JsonCodec: warning, change should be done before any usage to preserve consistency
-	 * @param codec
-	 */
-	public void changeHandler(JsonCodec codec) {
-		this.codec = codec;
-		mapper = codec.mapper;
-	}
-	
-	/**
-	 * 
-	 * @return the associated codec
-	 */
-	public JsonCodec getCodec() {
-		return codec;
-	}
-	
-	/**
-	 * 
-	 * @return an empty ObjectNode
-	 */
-	public final ObjectNode createObjectNode() {
-		return mapper.createObjectNode();
-	}
+        private JsonCodec(JsonFactory factory) {
+            this.factory = factory;
+            this.mapper = new ObjectMapper(factory);
+            mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+        }
 
-	/**
-	 * 
-	 * @return an empty ArrayNode
-	 */
-	public final ArrayNode createArrayNode() {
-		return mapper.createArrayNode();
-	}
-	
-	/**
-	 * 
-	 * @param value
-	 * @return the objectNode or null if an error occurs
-	 */
-	public final ObjectNode getFromString(String value) {
-		try {
-			return (ObjectNode) mapper.readTree(value);
-		} catch (JsonProcessingException e) {
-			return null;
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	/**
-	 * 
-	 * @param object
-	 * @return the Json representation of the object
-	 */
-	public final String writeAsString(Object object) {
-		try {
-			return mapper.writeValueAsString(object);
-		} catch (JsonProcessingException e) {
-			return "{}";
-		}
-	}
-	
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @return the String if the field exists, else null
-	 */
-	public final String getString(ObjectNode node, String field) {
-		return getValue(node, field, (String) null);
-	}
+        private static List<JsonFactory> getFactories() {
+            List<JsonFactory> factories = new ArrayList<JsonFactory>();
+            JsonCodec[] codecs = JsonCodec.values();
+            for (JsonCodec jsonCodec : codecs) {
+                factories.add(jsonCodec.factory);
+            }
+            return factories;
+        }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @return the String if the field exists, else null
-	 */
-	public final String getString(ObjectNode node, Enum<?> field) {
-		return getValue(node, field.name(), (String) null);
-	}
+        private static HashMap<String, JsonCodec> getHashMap() {
+            HashMap<String, JsonCodec> hashmap = new HashMap<String, JsonCodec>();
+            JsonCodec[] codecs = JsonCodec.values();
+            for (JsonCodec jsonCodec : codecs) {
+                hashmap.put(jsonCodec.factory.getFormatName(), jsonCodec);
+            }
+            return hashmap;
+        }
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the String if the field exists, else defValue
-	 */
-	public final String getValue(ObjectNode node, String field, String defValue) {
-		JsonNode elt = node.get(field);
-		if (elt != null) {
-			String val = elt.asText();
-			if (val.equals("null")) {
-				return defValue;
-			}
-			return val;
-		}
-		return defValue;
-	}
+    /**
+     * Data Format Detector
+     */
+    public static final DataFormatDetector detector = new DataFormatDetector(JsonCodec.getFactories())
+            .withMinimalMatch(MatchStrength.WEAK_MATCH)
+            .withOptimalMatch(MatchStrength.SOLID_MATCH);
+    /**
+     * HashMap getting Codec from Factory name
+     */
+    public static final HashMap<String, JsonCodec> factoryForName = JsonCodec.getHashMap();
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the Boolean if the field exists, else defValue
-	 */
-	public final Boolean getValue(ObjectNode node, String field, boolean defValue) {
-		return node.path(field).asBoolean(defValue);
-	}
+    public ObjectMapper mapper;
+    public JsonCodec codec;
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the Double if the field exists, else defValue
-	 */
-	public final Double getValue(ObjectNode node, String field, double defValue) {
-		return node.path(field).asDouble(defValue);
-	}
+    public AdaptativeJsonHandler(JsonCodec codec) {
+        this.codec = codec;
+        mapper = codec.mapper;
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the Long if the field exists, else defValue
-	 */
-	public final Long getValue(ObjectNode node, String field, long defValue) {
-		return node.path(field).asLong(defValue);
-	}
+    public AdaptativeJsonHandler(byte[] source) throws IOException {
+        DataFormatMatcher match = detector.findFormat(source);
+        if (match == null) {
+            this.codec = JsonCodec.JSON;
+            mapper = JsonCodec.JSON.mapper; // default
+        } else {
+            JsonCodec codec = factoryForName.get(match.getMatchedFormatName());
+            if (codec != null) {
+                this.codec = codec;
+                mapper = codec.mapper;
+            } else {
+                this.codec = JsonCodec.JSON;
+                mapper = JsonCodec.JSON.mapper; // default
+            }
+        }
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the Integer if the field exists, else defValue
-	 */
-	public final Integer getValue(ObjectNode node, String field, int defValue) {
-		return node.path(field).asInt(defValue);
-	}
+    public AdaptativeJsonHandler(InputStream source) throws IOException {
+        DataFormatMatcher match = detector.findFormat(source);
+        if (match == null) {
+            this.codec = JsonCodec.JSON;
+            mapper = JsonCodec.JSON.mapper; // default
+        } else {
+            JsonCodec codec = factoryForName.get(match.getMatchedFormatName());
+            if (codec != null) {
+                this.codec = codec;
+                mapper = codec.mapper;
+            } else {
+                this.codec = JsonCodec.JSON;
+                mapper = JsonCodec.JSON.mapper; // default
+            }
+        }
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the byte array if the field exists, else defValue
-	 */
-	public final byte[] getValue(ObjectNode node, String field, byte []defValue) {
-		JsonNode elt = node.get(field);
-		if (elt != null) {
-			try {
-				return elt.binaryValue();
-			} catch (IOException e) {
-				return defValue;
-			}
-		}
-		return defValue;
-	}
+    /**
+     * Change the JsonCodec: warning, change should be done before any usage to preserve consistency
+     * 
+     * @param codec
+     */
+    public void changeHandler(JsonCodec codec) {
+        this.codec = codec;
+        mapper = codec.mapper;
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, String field, boolean value) {
-		node.put(field, value);
-	}
+    /**
+     * 
+     * @return the associated codec
+     */
+    public JsonCodec getCodec() {
+        return codec;
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, String field, double value) {
-		node.put(field, value);
-	}
+    /**
+     * 
+     * @return an empty ObjectNode
+     */
+    public final ObjectNode createObjectNode() {
+        return mapper.createObjectNode();
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, String field, int value) {
-		node.put(field, value);
-	}
+    /**
+     * 
+     * @return an empty ArrayNode
+     */
+    public final ArrayNode createArrayNode() {
+        return mapper.createArrayNode();
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, String field, long value) {
-		node.put(field, value);
-	}
+    /**
+     * 
+     * @param value
+     * @return the objectNode or null if an error occurs
+     */
+    public final ObjectNode getFromString(String value) {
+        try {
+            return (ObjectNode) mapper.readTree(value);
+        } catch (JsonProcessingException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, String field, String value) {
-		if (value == null || value.isEmpty()) {
-			return;
-		}
-		node.put(field, value);
-	}
+    /**
+     * 
+     * @param object
+     * @return the Json representation of the object
+     */
+    public final String writeAsString(Object object) {
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            return "{}";
+        }
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, String field, byte []value) {
-		if (value == null || value.length == 0) {
-			return;
-		}
-		node.put(field, value);
-	}
-	
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @return True if all fields exist
-	 */
-	public final boolean exist(ObjectNode node, String ...field) {
-		for (String string : field) {
-			if (! node.has(string))
-				return false;
-		}
-		return true;
-	}
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the String if the field exists, else defValue
-	 */
-	public final String getValue(ObjectNode node, Enum<?> field, String defValue) {
-		return getValue(node, field.name(), defValue);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @return the String if the field exists, else null
+     */
+    public final String getString(ObjectNode node, String field) {
+        return getValue(node, field, (String) null);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the Boolean if the field exists, else defValue
-	 */
-	public final Boolean getValue(ObjectNode node, Enum<?> field, boolean defValue) {
-		return node.path(field.name()).asBoolean(defValue);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @return the String if the field exists, else null
+     */
+    public final String getString(ObjectNode node, Enum<?> field) {
+        return getValue(node, field.name(), (String) null);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the Double if the field exists, else defValue
-	 */
-	public final Double getValue(ObjectNode node, Enum<?> field, double defValue) {
-		return node.path(field.name()).asDouble(defValue);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the String if the field exists, else defValue
+     */
+    public final String getValue(ObjectNode node, String field, String defValue) {
+        JsonNode elt = node.get(field);
+        if (elt != null) {
+            String val = elt.asText();
+            if (val.equals("null")) {
+                return defValue;
+            }
+            return val;
+        }
+        return defValue;
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the Long if the field exists, else defValue
-	 */
-	public final Long getValue(ObjectNode node, Enum<?> field, long defValue) {
-		return node.path(field.name()).asLong(defValue);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the Boolean if the field exists, else defValue
+     */
+    public final Boolean getValue(ObjectNode node, String field, boolean defValue) {
+        return node.path(field).asBoolean(defValue);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the Integer if the field exists, else defValue
-	 */
-	public final Integer getValue(ObjectNode node, Enum<?> field, int defValue) {
-		return node.path(field.name()).asInt(defValue);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the Double if the field exists, else defValue
+     */
+    public final Double getValue(ObjectNode node, String field, double defValue) {
+        return node.path(field).asDouble(defValue);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param defValue
-	 * @return the byte array if the field exists, else defValue
-	 */
-	public final byte[] getValue(ObjectNode node, Enum<?> field, byte []defValue) {
-		return getValue(node, field.name(), defValue);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the Long if the field exists, else defValue
+     */
+    public final Long getValue(ObjectNode node, String field, long defValue) {
+        return node.path(field).asLong(defValue);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, Enum<?> field, boolean value) {
-		node.put(field.name(), value);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the Integer if the field exists, else defValue
+     */
+    public final Integer getValue(ObjectNode node, String field, int defValue) {
+        return node.path(field).asInt(defValue);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, Enum<?> field, double value) {
-		node.put(field.name(), value);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the byte array if the field exists, else defValue
+     */
+    public final byte[] getValue(ObjectNode node, String field, byte[] defValue) {
+        JsonNode elt = node.get(field);
+        if (elt != null) {
+            try {
+                return elt.binaryValue();
+            } catch (IOException e) {
+                return defValue;
+            }
+        }
+        return defValue;
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, Enum<?> field, int value) {
-		node.put(field.name(), value);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, String field, boolean value) {
+        node.put(field, value);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, Enum<?> field, long value) {
-		node.put(field.name(), value);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, String field, double value) {
+        node.put(field, value);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, Enum<?> field, String value) {
-		if (value == null || value.isEmpty()) {
-			return;
-		}
-		node.put(field.name(), value);
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, String field, int value) {
+        node.put(field, value);
+    }
 
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @param value
-	 */
-	public final void setValue(ObjectNode node, Enum<?> field, byte []value) {
-		if (value == null || value.length == 0) {
-			return;
-		}
-		node.put(field.name(), value);
-	}
-	
-	/**
-	 * 
-	 * @param node
-	 * @param field
-	 * @return True if all fields exist
-	 */
-	public final boolean exist(ObjectNode node, Enum<?> ...field) {
-		for (Enum<?> enm : field) {
-			if (! node.has(enm.name()))
-				return false;
-		}
-		return true;
-	}
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, String field, long value) {
+        node.put(field, value);
+    }
 
-	/**
-	 * 
-	 * @param value
-	 * @return the corresponding HashMap
-	 */
-	public final Map<String, Object> getMapFromString(String value) {
-		if (value != null && ! value.isEmpty()) {
-			Map<String, Object> info = null;
-			try {
-				info = mapper.readValue(value, new TypeReference<Map<String, Object>>() {});
-			} catch (JsonParseException e1) {
-			} catch (JsonMappingException e1) {
-			} catch (IOException e1) {
-			}
-			if (info == null) {
-				info = new HashMap<String, Object>();
-			}
-			return info;
-		} else {
-			return new HashMap<String, Object>();
-		}
-	}
-	
-	
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, String field, String value) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        node.put(field, value);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, String field, byte[] value) {
+        if (value == null || value.length == 0) {
+            return;
+        }
+        node.put(field, value);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @return True if all fields exist
+     */
+    public final boolean exist(ObjectNode node, String... field) {
+        for (String string : field) {
+            if (!node.has(string))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the String if the field exists, else defValue
+     */
+    public final String getValue(ObjectNode node, Enum<?> field, String defValue) {
+        return getValue(node, field.name(), defValue);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the Boolean if the field exists, else defValue
+     */
+    public final Boolean getValue(ObjectNode node, Enum<?> field, boolean defValue) {
+        return node.path(field.name()).asBoolean(defValue);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the Double if the field exists, else defValue
+     */
+    public final Double getValue(ObjectNode node, Enum<?> field, double defValue) {
+        return node.path(field.name()).asDouble(defValue);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the Long if the field exists, else defValue
+     */
+    public final Long getValue(ObjectNode node, Enum<?> field, long defValue) {
+        return node.path(field.name()).asLong(defValue);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the Integer if the field exists, else defValue
+     */
+    public final Integer getValue(ObjectNode node, Enum<?> field, int defValue) {
+        return node.path(field.name()).asInt(defValue);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param defValue
+     * @return the byte array if the field exists, else defValue
+     */
+    public final byte[] getValue(ObjectNode node, Enum<?> field, byte[] defValue) {
+        return getValue(node, field.name(), defValue);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, Enum<?> field, boolean value) {
+        node.put(field.name(), value);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, Enum<?> field, double value) {
+        node.put(field.name(), value);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, Enum<?> field, int value) {
+        node.put(field.name(), value);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, Enum<?> field, long value) {
+        node.put(field.name(), value);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, Enum<?> field, String value) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        node.put(field.name(), value);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @param value
+     */
+    public final void setValue(ObjectNode node, Enum<?> field, byte[] value) {
+        if (value == null || value.length == 0) {
+            return;
+        }
+        node.put(field.name(), value);
+    }
+
+    /**
+     * 
+     * @param node
+     * @param field
+     * @return True if all fields exist
+     */
+    public final boolean exist(ObjectNode node, Enum<?>... field) {
+        for (Enum<?> enm : field) {
+            if (!node.has(enm.name()))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * 
+     * @param value
+     * @return the corresponding HashMap
+     */
+    public final Map<String, Object> getMapFromString(String value) {
+        if (value != null && !value.isEmpty()) {
+            Map<String, Object> info = null;
+            try {
+                info = mapper.readValue(value, new TypeReference<Map<String, Object>>() {});
+            } catch (JsonParseException e1) {} catch (JsonMappingException e1) {} catch (IOException e1) {}
+            if (info == null) {
+                info = new HashMap<String, Object>();
+            }
+            return info;
+        } else {
+            return new HashMap<String, Object>();
+        }
+    }
+
 }

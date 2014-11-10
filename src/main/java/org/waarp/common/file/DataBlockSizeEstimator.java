@@ -28,19 +28,19 @@ import org.jboss.netty.util.ObjectSizeEstimator;
  */
 public class DataBlockSizeEstimator implements ObjectSizeEstimator {
 
-	private DefaultObjectSizeEstimator internal = new DefaultObjectSizeEstimator();
+    private DefaultObjectSizeEstimator internal = new DefaultObjectSizeEstimator();
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.jboss.netty.handler.execution.ObjectSizeEstimator#estimateSize(java .lang.Object)
-	 */
-	public int estimateSize(Object o) {
-		if (!(o instanceof DataBlock)) {
-			// Type unimplemented
-			return internal.estimateSize(o);
-		}
-		DataBlock dataBlock = (DataBlock) o;
-		return dataBlock.getByteCount();
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.jboss.netty.handler.execution.ObjectSizeEstimator#estimateSize(java .lang.Object)
+     */
+    public int estimateSize(Object o) {
+        if (!(o instanceof DataBlock)) {
+            // Type unimplemented
+            return internal.estimateSize(o);
+        }
+        DataBlock dataBlock = (DataBlock) o;
+        return dataBlock.getByteCount();
+    }
 
 }

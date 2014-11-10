@@ -27,54 +27,54 @@ import java.lang.ref.SoftReference;
  */
 class SoftReferenceCacheEntry<V> implements InterfaceLruCacheEntry<V> {
 
-	private final SoftReference<V> valueReference;
+    private final SoftReference<V> valueReference;
 
-	private long expirationTime;
+    private long expirationTime;
 
-	/**
-	 * Creates LruCacheEntry with desired ttl
-	 * 
-	 * @param value
-	 * @param ttl
-	 *            time to live in milliseconds
-	 * @throws IllegalArgumentException
-	 *             if ttl is not positive
-	 */
-	SoftReferenceCacheEntry(V value, long ttl) {
-		if (ttl <= 0)
-			throw new IllegalArgumentException("ttl must be positive");
+    /**
+     * Creates LruCacheEntry with desired ttl
+     * 
+     * @param value
+     * @param ttl
+     *            time to live in milliseconds
+     * @throws IllegalArgumentException
+     *             if ttl is not positive
+     */
+    SoftReferenceCacheEntry(V value, long ttl) {
+        if (ttl <= 0)
+            throw new IllegalArgumentException("ttl must be positive");
 
-		valueReference = new SoftReference<V>(value);
-		expirationTime = System.currentTimeMillis() + ttl;
-	}
+        valueReference = new SoftReference<V>(value);
+        expirationTime = System.currentTimeMillis() + ttl;
+    }
 
-	/**
-	 * Returns value if entry is valid, null otherwise.
-	 * 
-	 * Entry is invalid if SoftReference is cleared or entry has expired
-	 * 
-	 * @return value if entry is valid
-	 */
-	public V getValue() {
-		V value = null;
+    /**
+     * Returns value if entry is valid, null otherwise.
+     * 
+     * Entry is invalid if SoftReference is cleared or entry has expired
+     * 
+     * @return value if entry is valid
+     */
+    public V getValue() {
+        V value = null;
 
-		// check expiration time
-		if (System.currentTimeMillis() <= expirationTime) {
-			value = valueReference.get();
+        // check expiration time
+        if (System.currentTimeMillis() <= expirationTime) {
+            value = valueReference.get();
 
-			// if (value == null)
-			// logger.warn("SoftReferency.get() returned null - probably JVM runs out of memory");
-		}
+            // if (value == null)
+            // logger.warn("SoftReferency.get() returned null - probably JVM runs out of memory");
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	public boolean isStillValid(long timeRef) {
-		return (timeRef <= expirationTime);
-	}
+    public boolean isStillValid(long timeRef) {
+        return (timeRef <= expirationTime);
+    }
 
-	public boolean resetTime(long ttl) {
-		expirationTime = System.currentTimeMillis() + ttl;
-		return true;
-	}
+    public boolean resetTime(long ttl) {
+        expirationTime = System.currentTimeMillis() + ttl;
+        return true;
+    }
 }

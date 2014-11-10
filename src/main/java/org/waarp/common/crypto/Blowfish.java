@@ -40,38 +40,38 @@ package org.waarp.common.crypto;
  * @author frederic bregier
  */
 public class Blowfish extends KeyObject {
-	/**
-	 * This value could be between 32 and 448. But it seems it is blocked up to 128.
-	 */
-	public final static int KEY_SIZE = 56; // [32..448]
-	public final static String ALGO = "Blowfish";
-	public final static String INSTANCE = "Blowfish";
-	public final static String EXTENSION = "blf";
+    /**
+     * This value could be between 32 and 448. But it seems it is blocked up to 128.
+     */
+    public final static int KEY_SIZE = 56; // [32..448]
+    public final static String ALGO = "Blowfish";
+    public final static String INSTANCE = "Blowfish";
+    public final static String EXTENSION = "blf";
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getAlgorithm()
-	 */
-	@Override
-	public String getAlgorithm() {
-		return "Blowfish";
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getAlgorithm()
+     */
+    @Override
+    public String getAlgorithm() {
+        return "Blowfish";
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getInstance()
-	 */
-	@Override
-	public String getInstance() {
-		return "Blowfish";
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getInstance()
+     */
+    @Override
+    public String getInstance() {
+        return "Blowfish";
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getKeySize()
-	 */
-	@Override
-	public int getKeySize() {
-		return KEY_SIZE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getKeySize()
+     */
+    @Override
+    public int getKeySize() {
+        return KEY_SIZE;
+    }
 }

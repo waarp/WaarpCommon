@@ -25,10 +25,9 @@ import javax.crypto.Mac;
 
 import org.waarp.common.exception.CryptoException;
 
-
 /**
- * This class handles methods to crypt (not decrypt) messages with HmacSha256 algorithm (very efficient:
- * 105000/s).<br>
+ * This class handles methods to crypt (not decrypt) messages with HmacSha256 algorithm (very
+ * efficient: 105000/s).<br>
  * <br>
  * Usage:<br>
  * <ul>
@@ -47,96 +46,97 @@ import org.waarp.common.exception.CryptoException;
  * 
  */
 public class HmacSha256 extends KeyObject {
-	public final static int KEY_SIZE = 128;
-	public final static String ALGO = "HmacSHA256";
-	public final static String INSTANCE = ALGO;
-	public final static String EXTENSION = "hs2";
+    public final static int KEY_SIZE = 128;
+    public final static String ALGO = "HmacSHA256";
+    public final static String INSTANCE = ALGO;
+    public final static String EXTENSION = "hs2";
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getAlgorithm()
-	 */
-	@Override
-	public String getAlgorithm() {
-		return ALGO;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getAlgorithm()
+     */
+    @Override
+    public String getAlgorithm() {
+        return ALGO;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getInstance()
-	 */
-	@Override
-	public String getInstance() {
-		return INSTANCE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getInstance()
+     */
+    @Override
+    public String getInstance() {
+        return INSTANCE;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getKeySize()
-	 */
-	@Override
-	public int getKeySize() {
-		return KEY_SIZE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getKeySize()
+     */
+    @Override
+    public int getKeySize() {
+        return KEY_SIZE;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#toCrypt()
-	 */
-	@Override
-	public Cipher toCrypt() {
-		throw new IllegalArgumentException("Cannot be used for HmacSha256");
-	}
+    /* (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#toCrypt()
+     */
+    @Override
+    public Cipher toCrypt() {
+        throw new IllegalArgumentException("Cannot be used for HmacSha256");
+    }
 
-	/* (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#crypt(byte[])
-	 */
-	@Override
-	public byte[] crypt(byte[] plaintext) throws Exception {
-		Mac mac = Mac.getInstance(ALGO);
-		mac.init(secretKey);
-		return mac.doFinal(plaintext);
-	}
+    /* (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#crypt(byte[])
+     */
+    @Override
+    public byte[] crypt(byte[] plaintext) throws Exception {
+        Mac mac = Mac.getInstance(ALGO);
+        mac.init(secretKey);
+        return mac.doFinal(plaintext);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#toDecrypt()
-	 */
-	@Override
-	public Cipher toDecrypt() {
-		throw new IllegalArgumentException("Cannot be used for HmacSha256");
-	}
+    /* (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#toDecrypt()
+     */
+    @Override
+    public Cipher toDecrypt() {
+        throw new IllegalArgumentException("Cannot be used for HmacSha256");
+    }
 
-	/* (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#decrypt(byte[])
-	 */
-	@Override
-	public byte[] decrypt(byte[] ciphertext) throws Exception {
-		throw new IllegalArgumentException("Cannot be used for HmacSha256");
-	}
-	
-	/**
-	 * Generates a HmacSha256 key and saves it into the file given as argument
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		if (args.length == 0) {
-			System.err.println("Filename is needed as argument");
-		}
-		HmacSha256 key = new HmacSha256();
-		try {
-			key.generateKey();
-		} catch (Exception e) {
-			System.err.println("Error: "+e.getMessage());
-			return;
-		}
-		try {
-			key.saveSecretKey(new File(args[0]));
-		} catch (CryptoException e) {
-			System.err.println("Error: "+e.getMessage());
-			return;
-		} catch (IOException e) {
-			System.err.println("Error: "+e.getMessage());
-			return;
-		}
-		System.out.println("New HmacSha256 key file is generated: "+args[0]);
-	}
+    /* (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#decrypt(byte[])
+     */
+    @Override
+    public byte[] decrypt(byte[] ciphertext) throws Exception {
+        throw new IllegalArgumentException("Cannot be used for HmacSha256");
+    }
+
+    /**
+     * Generates a HmacSha256 key and saves it into the file given as argument
+     * 
+     * @param args
+     */
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.err.println("Filename is needed as argument");
+        }
+        HmacSha256 key = new HmacSha256();
+        try {
+            key.generateKey();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            return;
+        }
+        try {
+            key.saveSecretKey(new File(args[0]));
+        } catch (CryptoException e) {
+            System.err.println("Error: " + e.getMessage());
+            return;
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+            return;
+        }
+        System.out.println("New HmacSha256 key file is generated: " + args[0]);
+    }
 }

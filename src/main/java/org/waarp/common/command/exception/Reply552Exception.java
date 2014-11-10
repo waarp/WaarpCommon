@@ -28,21 +28,21 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply552Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 552L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 552L;
 
-	/**
-	 * 552 Requested file action aborted. Exceeded storage allocation (for current directory or
-	 * dataset).
-	 * 
-	 * @param message
-	 */
-	public Reply552Exception(String message) {
-		super(
-				ReplyCode.REPLY_552_REQUESTED_FILE_ACTION_ABORTED_EXCEEDED_STORAGE,
-				message);
-	}
+    /**
+     * 552 Requested file action aborted. Exceeded storage allocation (for current directory or
+     * dataset).
+     * 
+     * @param message
+     */
+    public Reply552Exception(String message) {
+        super(
+                ReplyCode.REPLY_552_REQUESTED_FILE_ACTION_ABORTED_EXCEEDED_STORAGE,
+                message);
+    }
 
 }

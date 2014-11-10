@@ -27,29 +27,29 @@ import org.waarp.common.file.filesystembased.FilesystemBasedOptsMLSxImpl;
  * 
  */
 public class PassthroughBasedOptsMLSxImpl extends FilesystemBasedOptsMLSxImpl {
-	/**
-	 * Default empty constructor: no support at all of MLSx function
-	 */
-	public PassthroughBasedOptsMLSxImpl() {
-		super();
-	}
+    /**
+     * Default empty constructor: no support at all of MLSx function
+     */
+    public PassthroughBasedOptsMLSxImpl() {
+        super();
+    }
 
-	/**
-	 * (-1) means not supported, 0 supported but not active, 1 supported and active
-	 * 
-	 * @param optsSize
-	 * @param optsModify
-	 * @param optsType
-	 * @param optsPerm
-	 * @param optsCreate
-	 * @param optsUnique
-	 * @param optsLang
-	 * @param optsMediaType
-	 * @param optsCharset
-	 */
-	public PassthroughBasedOptsMLSxImpl(byte optsSize, byte optsModify,
-			byte optsType, byte optsPerm, byte optsCreate, byte optsUnique,
-			byte optsLang, byte optsMediaType, byte optsCharset) {
-		super();
-	}
+    /**
+     * (-1) means not supported, 0 supported but not active, 1 supported and active
+     * 
+     * @param optsSize
+     * @param optsModify
+     * @param optsType
+     * @param optsPerm
+     * @param optsCreate
+     * @param optsUnique
+     * @param optsLang
+     * @param optsMediaType
+     * @param optsCharset
+     */
+    public PassthroughBasedOptsMLSxImpl(byte optsSize, byte optsModify,
+            byte optsType, byte optsPerm, byte optsCreate, byte optsUnique,
+            byte optsLang, byte optsMediaType, byte optsCharset) {
+        super();
+    }
 }

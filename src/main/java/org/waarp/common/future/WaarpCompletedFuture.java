@@ -26,74 +26,74 @@ import java.util.concurrent.TimeUnit;
  * 
  */
 public abstract class WaarpCompletedFuture extends WaarpFuture {
-	/**
+    /**
 	 */
-	protected WaarpCompletedFuture() {
-		super(false);
-	}
+    protected WaarpCompletedFuture() {
+        super(false);
+    }
 
-	@Override
-	public WaarpFuture await() throws InterruptedException {
-		if (Thread.interrupted()) {
-			throw new InterruptedException();
-		}
-		return this;
-	}
+    @Override
+    public WaarpFuture await() throws InterruptedException {
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+        return this;
+    }
 
-	@Override
-	public boolean await(long timeout, TimeUnit unit)
-			throws InterruptedException {
-		if (Thread.interrupted()) {
-			throw new InterruptedException();
-		}
-		return true;
-	}
+    @Override
+    public boolean await(long timeout, TimeUnit unit)
+            throws InterruptedException {
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+        return true;
+    }
 
-	@Override
-	public boolean await(long timeoutMillis) throws InterruptedException {
-		if (Thread.interrupted()) {
-			throw new InterruptedException();
-		}
-		return true;
-	}
+    @Override
+    public boolean await(long timeoutMillis) throws InterruptedException {
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+        return true;
+    }
 
-	@Override
-	public WaarpFuture awaitUninterruptibly() {
-		return this;
-	}
+    @Override
+    public WaarpFuture awaitUninterruptibly() {
+        return this;
+    }
 
-	@Override
-	public boolean awaitUninterruptibly(long timeout, TimeUnit unit) {
-		return true;
-	}
+    @Override
+    public boolean awaitUninterruptibly(long timeout, TimeUnit unit) {
+        return true;
+    }
 
-	@Override
-	public boolean awaitUninterruptibly(long timeoutMillis) {
-		return true;
-	}
+    @Override
+    public boolean awaitUninterruptibly(long timeoutMillis) {
+        return true;
+    }
 
-	@Override
-	public boolean isDone() {
-		return true;
-	}
+    @Override
+    public boolean isDone() {
+        return true;
+    }
 
-	@Override
-	public boolean setFailure(Throwable cause) {
-		return false;
-	}
+    @Override
+    public boolean setFailure(Throwable cause) {
+        return false;
+    }
 
-	@Override
-	public boolean setSuccess() {
-		return false;
-	}
+    @Override
+    public boolean setSuccess() {
+        return false;
+    }
 
-	@Override
-	public boolean cancel() {
-		return false;
-	}
+    @Override
+    public boolean cancel() {
+        return false;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return false;
-	}
+    @Override
+    public boolean isCancelled() {
+        return false;
+    }
 }

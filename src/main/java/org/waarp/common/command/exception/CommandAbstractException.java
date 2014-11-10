@@ -27,43 +27,43 @@ import org.waarp.common.command.ReplyCode;
  */
 @SuppressWarnings("serial")
 public abstract class CommandAbstractException extends Exception {
-	/**
-	 * Associated code
-	 */
-	public ReplyCode code = null;
+    /**
+     * Associated code
+     */
+    public ReplyCode code = null;
 
-	/**
-	 * Associated Message if any
-	 */
-	public String message = null;
+    /**
+     * Associated Message if any
+     */
+    public String message = null;
 
-	/**
-	 * Unique constructor
-	 * 
-	 * @param code
-	 * @param message
-	 */
-	public CommandAbstractException(ReplyCode code, String message) {
-		super(code.getMesg());
-		this.code = code;
-		this.message = message;
-	}
+    /**
+     * Unique constructor
+     * 
+     * @param code
+     * @param message
+     */
+    public CommandAbstractException(ReplyCode code, String message) {
+        super(code.getMesg());
+        this.code = code;
+        this.message = message;
+    }
 
-	/**
+    /**
 	 *
 	 */
-	@Override
-	public String toString() {
-		return "Code: " + code.name() + " Mesg: " +
-				(message != null ? message : "no specific message");
-	}
+    @Override
+    public String toString() {
+        return "Code: " + code.name() + " Mesg: " +
+                (message != null ? message : "no specific message");
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Throwable#getMessage()
-	 */
-	@Override
-	public String getMessage() {
-		return toString();
-	}
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Throwable#getMessage()
+     */
+    @Override
+    public String getMessage() {
+        return toString();
+    }
 }

@@ -27,19 +27,19 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply501Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 501L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 501L;
 
-	/**
-	 * 501 Syntax error in parameters or arguments.
-	 * 
-	 * @param message
-	 */
-	public Reply501Exception(String message) {
-		super(ReplyCode.REPLY_501_SYNTAX_ERROR_IN_PARAMETERS_OR_ARGUMENTS,
-				message);
-	}
+    /**
+     * 501 Syntax error in parameters or arguments.
+     * 
+     * @param message
+     */
+    public Reply501Exception(String message) {
+        super(ReplyCode.REPLY_501_SYNTAX_ERROR_IN_PARAMETERS_OR_ARGUMENTS,
+                message);
+    }
 
 }

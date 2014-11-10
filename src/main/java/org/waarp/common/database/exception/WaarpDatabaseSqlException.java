@@ -25,38 +25,38 @@ package org.waarp.common.database.exception;
  */
 public class WaarpDatabaseSqlException extends WaarpDatabaseException {
 
-	/**
+    /**
      *
      */
-	private static final long serialVersionUID = -4081996057795490036L;
+    private static final long serialVersionUID = -4081996057795490036L;
 
-	/**
+    /**
      *
      */
-	public WaarpDatabaseSqlException() {
-		super();
-	}
+    public WaarpDatabaseSqlException() {
+        super();
+    }
 
-	/**
-	 * @param arg0
-	 * @param arg1
-	 */
-	public WaarpDatabaseSqlException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+    /**
+     * @param arg0
+     * @param arg1
+     */
+    public WaarpDatabaseSqlException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
 
-	/**
-	 * @param arg0
-	 */
-	public WaarpDatabaseSqlException(String arg0) {
-		super(arg0);
-	}
+    /**
+     * @param arg0
+     */
+    public WaarpDatabaseSqlException(String arg0) {
+        super(arg0);
+    }
 
-	/**
-	 * @param arg0
-	 */
-	public WaarpDatabaseSqlException(Throwable arg0) {
-		super(arg0);
-	}
+    /**
+     * @param arg0
+     */
+    public WaarpDatabaseSqlException(Throwable arg0) {
+        super(arg0);
+    }
 
 }

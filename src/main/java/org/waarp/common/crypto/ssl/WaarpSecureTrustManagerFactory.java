@@ -33,90 +33,90 @@ import org.waarp.common.exception.CryptoException;
  * 
  */
 public class WaarpSecureTrustManagerFactory extends TrustManagerFactorySpi {
-	private final WaarpX509TrustManager ggTrustManager;
+    private final WaarpX509TrustManager ggTrustManager;
 
-	private final TrustManager[] trustManager;
+    private final TrustManager[] trustManager;
 
-	private final boolean needAuthentication;
-	private final boolean hasTrustStore;
+    private final boolean needAuthentication;
+    private final boolean hasTrustStore;
 
-	/**
-	 * Accept all connections
-	 * 
-	 */
-	public WaarpSecureTrustManagerFactory() {
-		ggTrustManager = new WaarpX509TrustManager();
-		trustManager = new TrustManager[] {
-				ggTrustManager };
-		needAuthentication = false;
-		hasTrustStore = false;
-	}
+    /**
+     * Accept all connections
+     * 
+     */
+    public WaarpSecureTrustManagerFactory() {
+        ggTrustManager = new WaarpX509TrustManager();
+        trustManager = new TrustManager[] {
+                ggTrustManager };
+        needAuthentication = false;
+        hasTrustStore = false;
+    }
 
-	/**
-	 * 
-	 * @param tmf
-	 * @param clientAuthent
-	 *            True if the TrustStore is used for Client Authentication
-	 * @throws CryptoException
-	 */
-	public WaarpSecureTrustManagerFactory(TrustManagerFactory tmf,
-			boolean clientAuthent) throws CryptoException {
-		ggTrustManager = new WaarpX509TrustManager(tmf);
-		trustManager = new TrustManager[] {
-				ggTrustManager };
-		needAuthentication = clientAuthent;
-		hasTrustStore = true;
-	}
+    /**
+     * 
+     * @param tmf
+     * @param clientAuthent
+     *            True if the TrustStore is used for Client Authentication
+     * @throws CryptoException
+     */
+    public WaarpSecureTrustManagerFactory(TrustManagerFactory tmf,
+            boolean clientAuthent) throws CryptoException {
+        ggTrustManager = new WaarpX509TrustManager(tmf);
+        trustManager = new TrustManager[] {
+                ggTrustManager };
+        needAuthentication = clientAuthent;
+        hasTrustStore = true;
+    }
 
-	/**
-	 * 
-	 * @return True if this TrustManager really check authentication
-	 */
-	public boolean hasTrustStore() {
-		return hasTrustStore;
-	}
+    /**
+     * 
+     * @return True if this TrustManager really check authentication
+     */
+    public boolean hasTrustStore() {
+        return hasTrustStore;
+    }
 
-	/**
-	 * 
-	 * @return True if this TrustManager really check authentication
-	 */
-	public boolean needAuthentication() {
-		return needAuthentication;
-	}
+    /**
+     * 
+     * @return True if this TrustManager really check authentication
+     */
+    public boolean needAuthentication() {
+        return needAuthentication;
+    }
 
-	/**
-	 * 
-	 * @return The TrustManager arrays
-	 */
-	public TrustManager[] getTrustManagers() {
-		return trustManager.clone();
-	}
+    /**
+     * 
+     * @return The TrustManager arrays
+     */
+    public TrustManager[] getTrustManagers() {
+        return trustManager.clone();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see javax.net.ssl.TrustManagerFactorySpi#engineGetTrustManagers()
-	 */
-	@Override
-	protected TrustManager[] engineGetTrustManagers() {
-		return getTrustManagers();
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.net.ssl.TrustManagerFactorySpi#engineGetTrustManagers()
+     */
+    @Override
+    protected TrustManager[] engineGetTrustManagers() {
+        return getTrustManagers();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see javax.net.ssl.TrustManagerFactorySpi#engineInit(java.security.KeyStore)
-	 */
-	@Override
-	protected void engineInit(KeyStore arg0) {
-		// Unused
-	}
+    /*
+     * (non-Javadoc)
+     * @see javax.net.ssl.TrustManagerFactorySpi#engineInit(java.security.KeyStore)
+     */
+    @Override
+    protected void engineInit(KeyStore arg0) {
+        // Unused
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @seejavax.net.ssl.TrustManagerFactorySpi#engineInit(javax.net.ssl. ManagerFactoryParameters)
-	 */
-	@Override
-	protected void engineInit(ManagerFactoryParameters arg0) {
-		// Unused
-	}
+    /*
+     * (non-Javadoc)
+     * @seejavax.net.ssl.TrustManagerFactorySpi#engineInit(javax.net.ssl. ManagerFactoryParameters)
+     */
+    @Override
+    protected void engineInit(ManagerFactoryParameters arg0) {
+        // Unused
+    }
 
 }

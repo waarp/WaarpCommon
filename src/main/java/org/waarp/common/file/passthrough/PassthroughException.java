@@ -25,24 +25,24 @@ package org.waarp.common.file.passthrough;
  */
 public class PassthroughException extends Exception {
 
-	/**
+    /**
      *
      */
-	private static final long serialVersionUID = 2469590070694883673L;
+    private static final long serialVersionUID = 2469590070694883673L;
 
-	/**
-	 * @param message
-	 */
-	public PassthroughException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public PassthroughException(String message) {
+        super(message);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public PassthroughException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public PassthroughException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

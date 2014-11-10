@@ -29,11 +29,11 @@ import java.util.EnumSet;
  */
 public class Transition<EnumState> {
 
-	public EnumState state;
-	public EnumSet<?> set;
+    public EnumState state;
+    public EnumSet<?> set;
 
-	public Transition(EnumState state, EnumSet<?> set) {
-		this.state = state;
-		this.set = set;
-	}
+    public Transition(EnumState state, EnumSet<?> set) {
+        this.state = state;
+        this.set = set;
+    }
 }

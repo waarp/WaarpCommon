@@ -27,130 +27,129 @@ import java.util.concurrent.Callable;
  * 
  */
 public abstract class AbstractLruCache<K, V> implements InterfaceLruCache<K, V> {
-	private long ttl;
+    private long ttl;
 
-	/**
-	 * Constructs BaseLruCache
-	 * 
-	 * @param ttl
-	 * @throws IllegalArgumentException
-	 *             if ttl is not positive
-	 */
-	protected AbstractLruCache(long ttl) {
-		if (ttl <= 0)
-			throw new IllegalArgumentException("ttl must be positive");
+    /**
+     * Constructs BaseLruCache
+     * 
+     * @param ttl
+     * @throws IllegalArgumentException
+     *             if ttl is not positive
+     */
+    protected AbstractLruCache(long ttl) {
+        if (ttl <= 0)
+            throw new IllegalArgumentException("ttl must be positive");
 
-		this.ttl = ttl;
-	}
+        this.ttl = ttl;
+    }
 
-	public boolean contains(K key) {
-		// can't use contains because of expiration policy
-		V value = get(key);
+    public boolean contains(K key) {
+        // can't use contains because of expiration policy
+        V value = get(key);
 
-		return value != null;
-	}
+        return value != null;
+    }
 
-	/**
-	 * Creates new LruCacheEntry<V>.
-	 * 
-	 * It can be used to change implementation of LruCacheEntry
-	 * 
-	 * @param value
-	 * @param ttl
-	 * @return LruCacheEntry<V>
-	 */
-	protected InterfaceLruCacheEntry<V> createEntry(V value, long ttl) {
-		return new StrongReferenceCacheEntry<V>(value, ttl);
-	}
+    /**
+     * Creates new LruCacheEntry<V>.
+     * 
+     * It can be used to change implementation of LruCacheEntry
+     * 
+     * @param value
+     * @param ttl
+     * @return LruCacheEntry<V>
+     */
+    protected InterfaceLruCacheEntry<V> createEntry(V value, long ttl) {
+        return new StrongReferenceCacheEntry<V>(value, ttl);
+    }
 
-	public V get(K key) {
-		return getValue(key);
-	}
+    public V get(K key) {
+        return getValue(key);
+    }
 
-	public V get(K key, Callable<V> callback) throws Exception {
-		return get(key, callback, ttl);
-	}
+    public V get(K key, Callable<V> callback) throws Exception {
+        return get(key, callback, ttl);
+    }
 
-	public V get(K key, Callable<V> callback, long ttl) throws Exception {
-		V value = get(key);
+    public V get(K key, Callable<V> callback, long ttl) throws Exception {
+        V value = get(key);
 
-		// if element doesn't exist create it using callback
-		if (value == null) {
-			value = callback.call();
-			put(key, value, ttl);
-		}
+        // if element doesn't exist create it using callback
+        if (value == null) {
+            value = callback.call();
+            put(key, value, ttl);
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	public long getTtl() {
-		return ttl;
-	}
+    public long getTtl() {
+        return ttl;
+    }
 
-	
-	public void setNewTtl(long ttl) {
-		if (ttl <= 0)
-			throw new IllegalArgumentException("ttl must be positive");
-		this.ttl = ttl;
-	}
+    public void setNewTtl(long ttl) {
+        if (ttl <= 0)
+            throw new IllegalArgumentException("ttl must be positive");
+        this.ttl = ttl;
+    }
 
-	/**
-	 * Returns LruCacheEntry mapped by key or null if it does not exist
-	 * 
-	 * @param key
-	 * @return LruCacheEntry<V>
-	 */
-	abstract protected InterfaceLruCacheEntry<V> getEntry(K key);
+    /**
+     * Returns LruCacheEntry mapped by key or null if it does not exist
+     * 
+     * @param key
+     * @return LruCacheEntry<V>
+     */
+    abstract protected InterfaceLruCacheEntry<V> getEntry(K key);
 
-	public void updateTtl(K key) {
-		InterfaceLruCacheEntry<V> cacheEntry = getEntry(key);
-		if (cacheEntry != null) {
-			cacheEntry.resetTime(ttl);
-		}
-	}
-	
-	/**
-	 * Tries to retrieve value by it's key. Automatically removes entry if it's not valid
-	 * (LruCacheEntry.getValue() returns null)
-	 * 
-	 * @param key
-	 * @return Value
-	 */
-	protected V getValue(K key) {
-		V value = null;
+    public void updateTtl(K key) {
+        InterfaceLruCacheEntry<V> cacheEntry = getEntry(key);
+        if (cacheEntry != null) {
+            cacheEntry.resetTime(ttl);
+        }
+    }
 
-		InterfaceLruCacheEntry<V> cacheEntry = getEntry(key);
+    /**
+     * Tries to retrieve value by it's key. Automatically removes entry if it's not valid
+     * (LruCacheEntry.getValue() returns null)
+     * 
+     * @param key
+     * @return Value
+     */
+    protected V getValue(K key) {
+        V value = null;
 
-		if (cacheEntry != null) {
-			value = cacheEntry.getValue();
+        InterfaceLruCacheEntry<V> cacheEntry = getEntry(key);
 
-			// autoremove entry from cache if it's not valid
-			if (value == null) {
-				remove(key);
-			}
-		}
+        if (cacheEntry != null) {
+            value = cacheEntry.getValue();
 
-		return value;
-	}
+            // autoremove entry from cache if it's not valid
+            if (value == null) {
+                remove(key);
+            }
+        }
 
-	public boolean isEmpty() {
-		return size() == 0;
-	}
+        return value;
+    }
 
-	public void put(K key, V value) {
-		put(key, value, ttl);
-	}
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 
-	public void put(K key, V value, long ttl) {
-		if (value != null)
-			putEntry(key, createEntry(value, ttl));
-	}
+    public void put(K key, V value) {
+        put(key, value, ttl);
+    }
 
-	/**
-	 * Puts entry into cache
-	 * 
-	 * @param key
-	 * @param entry
-	 */
-	abstract protected void putEntry(K key, InterfaceLruCacheEntry<V> entry);
+    public void put(K key, V value, long ttl) {
+        if (value != null)
+            putEntry(key, createEntry(value, ttl));
+    }
+
+    /**
+     * Puts entry into cache
+     * 
+     * @param key
+     * @param entry
+     */
+    abstract protected void putEntry(K key, InterfaceLruCacheEntry<V> entry);
 }

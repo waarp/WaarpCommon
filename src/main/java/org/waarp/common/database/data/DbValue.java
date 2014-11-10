@@ -40,422 +40,423 @@ import org.waarp.common.utility.WaarpStringUtils;
  * 
  */
 public class DbValue {
-	/**
-	 * Real value
-	 */
-	public Object value;
-	/**
-	 * Data Type
-	 */
-	public int type;
-	/**
-	 * Column name
-	 */
-	public String column;
+    /**
+     * Real value
+     */
+    public Object value;
+    /**
+     * Data Type
+     */
+    public int type;
+    /**
+     * Column name
+     */
+    public String column;
 
-	public DbValue(String value) {
-		this.value = value;
-		type = Types.VARCHAR;
-	}
+    public DbValue(String value) {
+        this.value = value;
+        type = Types.VARCHAR;
+    }
 
-	public DbValue(String value, boolean LONG) {
-		this.value = value;
-		type = Types.LONGVARCHAR;
-	}
+    public DbValue(String value, boolean LONG) {
+        this.value = value;
+        type = Types.LONGVARCHAR;
+    }
 
-	public DbValue(boolean value) {
-		this.value = value;
-		type = Types.BIT;
-	}
+    public DbValue(boolean value) {
+        this.value = value;
+        type = Types.BIT;
+    }
 
-	public DbValue(byte value) {
-		this.value = value;
-		type = Types.TINYINT;
-	}
+    public DbValue(byte value) {
+        this.value = value;
+        type = Types.TINYINT;
+    }
 
-	public DbValue(short value) {
-		this.value = value;
-		type = Types.SMALLINT;
-	}
+    public DbValue(short value) {
+        this.value = value;
+        type = Types.SMALLINT;
+    }
 
-	public DbValue(int value) {
-		this.value = value;
-		type = Types.INTEGER;
-	}
+    public DbValue(int value) {
+        this.value = value;
+        type = Types.INTEGER;
+    }
 
-	public DbValue(long value) {
-		this.value = value;
-		type = Types.BIGINT;
-	}
+    public DbValue(long value) {
+        this.value = value;
+        type = Types.BIGINT;
+    }
 
-	public DbValue(float value) {
-		this.value = value;
-		type = Types.REAL;
-	}
+    public DbValue(float value) {
+        this.value = value;
+        type = Types.REAL;
+    }
 
-	public DbValue(double value) {
-		this.value = value;
-		type = Types.DOUBLE;
-	}
+    public DbValue(double value) {
+        this.value = value;
+        type = Types.DOUBLE;
+    }
 
-	public DbValue(byte[] value) {
-		this.value = value;
-		type = Types.VARBINARY;
-	}
+    public DbValue(byte[] value) {
+        this.value = value;
+        type = Types.VARBINARY;
+    }
 
-	public DbValue(Date value) {
-		this.value = value;
-		type = Types.DATE;
-	}
+    public DbValue(Date value) {
+        this.value = value;
+        type = Types.DATE;
+    }
 
-	public DbValue(Timestamp value) {
-		this.value = value;
-		type = Types.TIMESTAMP;
-	}
+    public DbValue(Timestamp value) {
+        this.value = value;
+        type = Types.TIMESTAMP;
+    }
 
-	public DbValue(java.util.Date value) {
-		this.value = new Timestamp(value.getTime());
-		type = Types.TIMESTAMP;
-	}
+    public DbValue(java.util.Date value) {
+        this.value = new Timestamp(value.getTime());
+        type = Types.TIMESTAMP;
+    }
 
-	public DbValue(String value, String name) {
-		this.value = value;
-		type = Types.VARCHAR;
-		column = name;
-	}
+    public DbValue(String value, String name) {
+        this.value = value;
+        type = Types.VARCHAR;
+        column = name;
+    }
 
-	public DbValue(String value, String name, boolean LONG) {
-		this.value = value;
-		type = Types.LONGVARCHAR;
-		column = name;
-	}
+    public DbValue(String value, String name, boolean LONG) {
+        this.value = value;
+        type = Types.LONGVARCHAR;
+        column = name;
+    }
 
-	public DbValue(boolean value, String name) {
-		this.value = value;
-		type = Types.BIT;
-		column = name;
-	}
+    public DbValue(boolean value, String name) {
+        this.value = value;
+        type = Types.BIT;
+        column = name;
+    }
 
-	public DbValue(byte value, String name) {
-		this.value = value;
-		type = Types.TINYINT;
-		column = name;
-	}
+    public DbValue(byte value, String name) {
+        this.value = value;
+        type = Types.TINYINT;
+        column = name;
+    }
 
-	public DbValue(short value, String name) {
-		this.value = value;
-		type = Types.SMALLINT;
-		column = name;
-	}
+    public DbValue(short value, String name) {
+        this.value = value;
+        type = Types.SMALLINT;
+        column = name;
+    }
 
-	public DbValue(int value, String name) {
-		this.value = value;
-		type = Types.INTEGER;
-		column = name;
-	}
+    public DbValue(int value, String name) {
+        this.value = value;
+        type = Types.INTEGER;
+        column = name;
+    }
 
-	public DbValue(long value, String name) {
-		this.value = value;
-		type = Types.BIGINT;
-		column = name;
-	}
+    public DbValue(long value, String name) {
+        this.value = value;
+        type = Types.BIGINT;
+        column = name;
+    }
 
-	public DbValue(float value, String name) {
-		this.value = value;
-		type = Types.REAL;
-		column = name;
-	}
+    public DbValue(float value, String name) {
+        this.value = value;
+        type = Types.REAL;
+        column = name;
+    }
 
-	public DbValue(double value, String name) {
-		this.value = value;
-		type = Types.DOUBLE;
-		column = name;
-	}
+    public DbValue(double value, String name) {
+        this.value = value;
+        type = Types.DOUBLE;
+        column = name;
+    }
 
-	public DbValue(byte[] value, String name) {
-		this.value = value;
-		type = Types.VARBINARY;
-		column = name;
-	}
+    public DbValue(byte[] value, String name) {
+        this.value = value;
+        type = Types.VARBINARY;
+        column = name;
+    }
 
-	public DbValue(Date value, String name) {
-		this.value = value;
-		type = Types.DATE;
-		column = name;
-	}
+    public DbValue(Date value, String name) {
+        this.value = value;
+        type = Types.DATE;
+        column = name;
+    }
 
-	public DbValue(Timestamp value, String name) {
-		this.value = value;
-		type = Types.TIMESTAMP;
-		column = name;
-	}
+    public DbValue(Timestamp value, String name) {
+        this.value = value;
+        type = Types.TIMESTAMP;
+        column = name;
+    }
 
-	public DbValue(java.util.Date value, String name) {
-		this.value = new Timestamp(value.getTime());
-		type = Types.TIMESTAMP;
-		column = name;
-	}
+    public DbValue(java.util.Date value, String name) {
+        this.value = new Timestamp(value.getTime());
+        type = Types.TIMESTAMP;
+        column = name;
+    }
 
-	public DbValue(Reader value, String name) {
-		this.value = value;
-		type = Types.CLOB;
-		column = name;
-	}
+    public DbValue(Reader value, String name) {
+        this.value = value;
+        type = Types.CLOB;
+        column = name;
+    }
 
-	public DbValue(InputStream value, String name) {
-		this.value = value;
-		type = Types.BLOB;
-		column = name;
-	}
+    public DbValue(InputStream value, String name) {
+        this.value = value;
+        type = Types.BLOB;
+        column = name;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setValue(boolean value) {
-		this.value = value;
-	}
+    public void setValue(boolean value) {
+        this.value = value;
+    }
 
-	public void setValue(byte value) {
-		this.value = value;
-	}
+    public void setValue(byte value) {
+        this.value = value;
+    }
 
-	public void setValue(short value) {
-		this.value = value;
-	}
+    public void setValue(short value) {
+        this.value = value;
+    }
 
-	public void setValue(int value) {
-		this.value = value;
-	}
+    public void setValue(int value) {
+        this.value = value;
+    }
 
-	public void setValue(long value) {
-		this.value = value;
-	}
+    public void setValue(long value) {
+        this.value = value;
+    }
 
-	public void setValue(float value) {
-		this.value = value;
-	}
+    public void setValue(float value) {
+        this.value = value;
+    }
 
-	public void setValue(double value) {
-		this.value = value;
-	}
+    public void setValue(double value) {
+        this.value = value;
+    }
 
-	public void setValue(byte[] value) {
-		this.value = value;
-	}
+    public void setValue(byte[] value) {
+        this.value = value;
+    }
 
-	public void setValue(Date value) {
-		this.value = value;
-	}
+    public void setValue(Date value) {
+        this.value = value;
+    }
 
-	public void setValue(Timestamp value) {
-		this.value = value;
-	}
+    public void setValue(Timestamp value) {
+        this.value = value;
+    }
 
-	public void setValue(java.util.Date value) {
-		this.value = new Timestamp(value.getTime());
-	}
+    public void setValue(java.util.Date value) {
+        this.value = new Timestamp(value.getTime());
+    }
 
-	public void setValue(Reader value) {
-		this.value = value;
-	}
+    public void setValue(Reader value) {
+        this.value = value;
+    }
 
-	public void setValue(InputStream value) {
-		this.value = value;
-	}
+    public void setValue(InputStream value) {
+        this.value = value;
+    }
 
-	/**
-	 * 
-	 * @return the type in full string format
-	 */
-	public String getType() {
-		switch (type) {
-			case Types.VARCHAR:
-				return "VARCHAR";
-			case Types.LONGVARCHAR:
-				return "LONGVARCHAR";
-			case Types.BIT:
-				return "BIT";
-			case Types.TINYINT:
-				return "TINYINT";
-			case Types.SMALLINT:
-				return "SMALLINT";
-			case Types.INTEGER:
-				return "INTEGER";
-			case Types.BIGINT:
-				return "BIGINT";
-			case Types.REAL:
-				return "REAL";
-			case Types.DOUBLE:
-				return "DOUBLE";
-			case Types.VARBINARY:
-				return "VARBINARY";
-			case Types.DATE:
-				return "DATE";
-			case Types.TIMESTAMP:
-				return "TIMESTAMP";
-			case Types.CLOB:
-				return "CLOB";
-			case Types.BLOB:
-				return "BLOB";
-			default:
-				return "UNKNOWN:"+type;
-		}
-	}
-	public Object getValue() throws WaarpDatabaseSqlException {
-		switch (type) {
-			case Types.VARCHAR:
-			case Types.LONGVARCHAR:
-			case Types.BIT:
-			case Types.TINYINT:
-			case Types.SMALLINT:
-			case Types.INTEGER:
-			case Types.BIGINT:
-			case Types.REAL:
-			case Types.DOUBLE:
-			case Types.VARBINARY:
-			case Types.DATE:
-			case Types.TIMESTAMP:
-			case Types.CLOB:
-			case Types.BLOB:
-				return value;
-			default:
-				throw new WaarpDatabaseSqlException("Type unknown: " + type);
-		}
-	}
+    /**
+     * 
+     * @return the type in full string format
+     */
+    public String getType() {
+        switch (type) {
+            case Types.VARCHAR:
+                return "VARCHAR";
+            case Types.LONGVARCHAR:
+                return "LONGVARCHAR";
+            case Types.BIT:
+                return "BIT";
+            case Types.TINYINT:
+                return "TINYINT";
+            case Types.SMALLINT:
+                return "SMALLINT";
+            case Types.INTEGER:
+                return "INTEGER";
+            case Types.BIGINT:
+                return "BIGINT";
+            case Types.REAL:
+                return "REAL";
+            case Types.DOUBLE:
+                return "DOUBLE";
+            case Types.VARBINARY:
+                return "VARBINARY";
+            case Types.DATE:
+                return "DATE";
+            case Types.TIMESTAMP:
+                return "TIMESTAMP";
+            case Types.CLOB:
+                return "CLOB";
+            case Types.BLOB:
+                return "BLOB";
+            default:
+                return "UNKNOWN:" + type;
+        }
+    }
 
-	public String getValueAsString() throws WaarpDatabaseSqlException {
-		switch (type) {
-			case Types.VARCHAR:
-			case Types.LONGVARCHAR:
-				return (String) value;
-			case Types.BIT:
-				return ((Boolean) value).toString();
-			case Types.TINYINT:
-				return ((Byte) value).toString();
-			case Types.SMALLINT:
-				return ((Short) value).toString();
-			case Types.INTEGER:
-				return ((Integer) value).toString();
-			case Types.BIGINT:
-				return ((Long) value).toString();
-			case Types.REAL:
-				return ((Float) value).toString();
-			case Types.DOUBLE:
-				return ((Double) value).toString();
-			case Types.VARBINARY:
-				return new String((byte[]) value, WaarpStringUtils.UTF8);
-			case Types.DATE:
-				return ((Date) value).toString();
-			case Types.TIMESTAMP:
-				return ((Timestamp) value).toString();
-			case Types.CLOB: {
-				StringBuilder sBuilder = new StringBuilder();
-				Reader reader = ((Reader) value);
-				char[] cbuf = new char[4096];
-				int len;
-				try {
-					len = reader.read(cbuf);
-					while (len > 0) {
-						sBuilder.append(cbuf, 0, len);
-						len = reader.read(cbuf);
-					}
-				} catch (IOException e) {
-					throw new WaarpDatabaseSqlException("Error while reading Clob as String", e);
-				}
-				return sBuilder.toString();
-			}
-			case Types.BLOB: {
-				StringBuilder sBuilder = new StringBuilder();
-				Reader reader = ((Reader) value);
-				char[] cbuf = new char[4096];
-				int len;
-				try {
-					len = reader.read(cbuf);
-					while (len > 0) {
-						sBuilder.append(cbuf, 0, len);
-						len = reader.read(cbuf);
-					}
-				} catch (IOException e) {
-					throw new WaarpDatabaseSqlException("Error while reading Clob as String", e);
-				}
-				return sBuilder.toString();
-			}
-			default:
-				throw new WaarpDatabaseSqlException("Type unknown: " + type);
-		}
-	}
+    public Object getValue() throws WaarpDatabaseSqlException {
+        switch (type) {
+            case Types.VARCHAR:
+            case Types.LONGVARCHAR:
+            case Types.BIT:
+            case Types.TINYINT:
+            case Types.SMALLINT:
+            case Types.INTEGER:
+            case Types.BIGINT:
+            case Types.REAL:
+            case Types.DOUBLE:
+            case Types.VARBINARY:
+            case Types.DATE:
+            case Types.TIMESTAMP:
+            case Types.CLOB:
+            case Types.BLOB:
+                return value;
+            default:
+                throw new WaarpDatabaseSqlException("Type unknown: " + type);
+        }
+    }
 
-	public void setValueFromString(String svalue) throws WaarpDatabaseSqlException {
-		switch (type) {
-			case Types.VARCHAR:
-			case Types.LONGVARCHAR:
-				value = svalue;
-				break;
-			case Types.BIT:
-				value = Boolean.parseBoolean(svalue);
-				break;
-			case Types.TINYINT:
-				value = Byte.parseByte(svalue);
-				break;
-			case Types.SMALLINT:
-				value = Short.parseShort(svalue);
-				break;
-			case Types.INTEGER:
-				value = Integer.parseInt(svalue);
-				break;
-			case Types.BIGINT:
-				value = Long.parseLong(svalue);
-				break;
-			case Types.REAL:
-				value = Float.parseFloat(svalue);
-				break;
-			case Types.DOUBLE:
-				value = Double.parseDouble(svalue);
-				break;
-			case Types.VARBINARY:
-				value = svalue.getBytes(WaarpStringUtils.UTF8);
-				break;
-			case Types.DATE:
-				try {
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-					value = format.parse(svalue);
-				} catch (ParseException e) {
-					try {
-						value = DateFormat.getDateTimeInstance().parse(svalue);
-					} catch (ParseException e1) {
-						throw new WaarpDatabaseSqlException("Error in Date: " + svalue, e);
-					}
-				}
-				break;
-			case Types.TIMESTAMP:
-				try {
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-					value = new Timestamp(format.parse(svalue).getTime());
-				} catch (ParseException e) {
-					try {
-						value = new Timestamp(DateFormat.getDateTimeInstance().parse(svalue).getTime());
-					} catch (ParseException e1) {
-						throw new WaarpDatabaseSqlException("Error in Timestamp: " + svalue, e);
-					}
-				}
-				break;
-			case Types.CLOB:
-				try {
-					value = new InputStreamReader(new FileInputStream(svalue), WaarpStringUtils.UTF8);
-				} catch (FileNotFoundException e) {
-					throw new WaarpDatabaseSqlException("Error in CLOB: " + svalue, e);
-				}
-				break;
-			case Types.BLOB:
-				try {
-					value = new FileInputStream(svalue);
-				} catch (FileNotFoundException e) {
-					throw new WaarpDatabaseSqlException("Error in BLOB: " + svalue, e);
-				}
-				break;
-			default:
-				throw new WaarpDatabaseSqlException("Type unknown: " + type);
-		}
-	}
+    public String getValueAsString() throws WaarpDatabaseSqlException {
+        switch (type) {
+            case Types.VARCHAR:
+            case Types.LONGVARCHAR:
+                return (String) value;
+            case Types.BIT:
+                return ((Boolean) value).toString();
+            case Types.TINYINT:
+                return ((Byte) value).toString();
+            case Types.SMALLINT:
+                return ((Short) value).toString();
+            case Types.INTEGER:
+                return ((Integer) value).toString();
+            case Types.BIGINT:
+                return ((Long) value).toString();
+            case Types.REAL:
+                return ((Float) value).toString();
+            case Types.DOUBLE:
+                return ((Double) value).toString();
+            case Types.VARBINARY:
+                return new String((byte[]) value, WaarpStringUtils.UTF8);
+            case Types.DATE:
+                return ((Date) value).toString();
+            case Types.TIMESTAMP:
+                return ((Timestamp) value).toString();
+            case Types.CLOB: {
+                StringBuilder sBuilder = new StringBuilder();
+                Reader reader = ((Reader) value);
+                char[] cbuf = new char[4096];
+                int len;
+                try {
+                    len = reader.read(cbuf);
+                    while (len > 0) {
+                        sBuilder.append(cbuf, 0, len);
+                        len = reader.read(cbuf);
+                    }
+                } catch (IOException e) {
+                    throw new WaarpDatabaseSqlException("Error while reading Clob as String", e);
+                }
+                return sBuilder.toString();
+            }
+            case Types.BLOB: {
+                StringBuilder sBuilder = new StringBuilder();
+                Reader reader = ((Reader) value);
+                char[] cbuf = new char[4096];
+                int len;
+                try {
+                    len = reader.read(cbuf);
+                    while (len > 0) {
+                        sBuilder.append(cbuf, 0, len);
+                        len = reader.read(cbuf);
+                    }
+                } catch (IOException e) {
+                    throw new WaarpDatabaseSqlException("Error while reading Clob as String", e);
+                }
+                return sBuilder.toString();
+            }
+            default:
+                throw new WaarpDatabaseSqlException("Type unknown: " + type);
+        }
+    }
+
+    public void setValueFromString(String svalue) throws WaarpDatabaseSqlException {
+        switch (type) {
+            case Types.VARCHAR:
+            case Types.LONGVARCHAR:
+                value = svalue;
+                break;
+            case Types.BIT:
+                value = Boolean.parseBoolean(svalue);
+                break;
+            case Types.TINYINT:
+                value = Byte.parseByte(svalue);
+                break;
+            case Types.SMALLINT:
+                value = Short.parseShort(svalue);
+                break;
+            case Types.INTEGER:
+                value = Integer.parseInt(svalue);
+                break;
+            case Types.BIGINT:
+                value = Long.parseLong(svalue);
+                break;
+            case Types.REAL:
+                value = Float.parseFloat(svalue);
+                break;
+            case Types.DOUBLE:
+                value = Double.parseDouble(svalue);
+                break;
+            case Types.VARBINARY:
+                value = svalue.getBytes(WaarpStringUtils.UTF8);
+                break;
+            case Types.DATE:
+                try {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    value = format.parse(svalue);
+                } catch (ParseException e) {
+                    try {
+                        value = DateFormat.getDateTimeInstance().parse(svalue);
+                    } catch (ParseException e1) {
+                        throw new WaarpDatabaseSqlException("Error in Date: " + svalue, e);
+                    }
+                }
+                break;
+            case Types.TIMESTAMP:
+                try {
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                    value = new Timestamp(format.parse(svalue).getTime());
+                } catch (ParseException e) {
+                    try {
+                        value = new Timestamp(DateFormat.getDateTimeInstance().parse(svalue).getTime());
+                    } catch (ParseException e1) {
+                        throw new WaarpDatabaseSqlException("Error in Timestamp: " + svalue, e);
+                    }
+                }
+                break;
+            case Types.CLOB:
+                try {
+                    value = new InputStreamReader(new FileInputStream(svalue), WaarpStringUtils.UTF8);
+                } catch (FileNotFoundException e) {
+                    throw new WaarpDatabaseSqlException("Error in CLOB: " + svalue, e);
+                }
+                break;
+            case Types.BLOB:
+                try {
+                    value = new FileInputStream(svalue);
+                } catch (FileNotFoundException e) {
+                    throw new WaarpDatabaseSqlException("Error in BLOB: " + svalue, e);
+                }
+                break;
+            default:
+                throw new WaarpDatabaseSqlException("Type unknown: " + type);
+        }
+    }
 }

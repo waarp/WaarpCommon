@@ -24,38 +24,38 @@ package org.waarp.common.exception;
  * 
  */
 public class IllegalFiniteStateException extends Exception {
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = 8731284958857363751L;
+    private static final long serialVersionUID = 8731284958857363751L;
 
-	/**
+    /**
      * 
      */
-	public IllegalFiniteStateException() {
-		super();
-	}
+    public IllegalFiniteStateException() {
+        super();
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public IllegalFiniteStateException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public IllegalFiniteStateException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
-	 * @param s
-	 */
-	public IllegalFiniteStateException(String s) {
-		super(s);
-	}
+    /**
+     * @param s
+     */
+    public IllegalFiniteStateException(String s) {
+        super(s);
+    }
 
-	/**
-	 * @param cause
-	 */
-	public IllegalFiniteStateException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param cause
+     */
+    public IllegalFiniteStateException(Throwable cause) {
+        super(cause);
+    }
 
 }

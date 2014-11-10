@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply502Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 502L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 502L;
 
-	/**
-	 * 502 Command not implemented.
-	 * 
-	 * @param message
-	 */
-	public Reply502Exception(String message) {
-		super(ReplyCode.REPLY_502_COMMAND_NOT_IMPLEMENTED, message);
-	}
+    /**
+     * 502 Command not implemented.
+     * 
+     * @param message
+     */
+    public Reply502Exception(String message) {
+        super(ReplyCode.REPLY_502_COMMAND_NOT_IMPLEMENTED, message);
+    }
 
 }

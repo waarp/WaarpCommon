@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply450Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 450L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 450L;
 
-	/**
-	 * 450 Requested file action not taken. File unavailable (e.g., file busy).
-	 * 
-	 * @param message
-	 */
-	public Reply450Exception(String message) {
-		super(ReplyCode.REPLY_450_REQUESTED_FILE_ACTION_NOT_TAKEN, message);
-	}
+    /**
+     * 450 Requested file action not taken. File unavailable (e.g., file busy).
+     * 
+     * @param message
+     */
+    public Reply450Exception(String message) {
+        super(ReplyCode.REPLY_450_REQUESTED_FILE_ACTION_NOT_TAKEN, message);
+    }
 
 }
