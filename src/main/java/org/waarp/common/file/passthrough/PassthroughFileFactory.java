@@ -25,23 +25,23 @@ package org.waarp.common.file.passthrough;
  */
 public interface PassthroughFileFactory {
 
-	/**
-	 * 
-	 * @param pbfi
-	 *            the {@link PassthroughBasedFileImpl}
-	 * @return the associated {@link PassthroughFile}
-	 * @throws PassthroughException
-	 */
-	public PassthroughFile create(PassthroughBasedFileImpl pbfi) throws PassthroughException;
+    /**
+     * 
+     * @param pbfi
+     *            the {@link PassthroughBasedFileImpl}
+     * @return the associated {@link PassthroughFile}
+     * @throws PassthroughException
+     */
+    public PassthroughFile create(PassthroughBasedFileImpl pbfi) throws PassthroughException;
 
-	/**
-	 * 
-	 * @param dir
-	 *            Base directory (may be null)
-	 * @param path
-	 *            relative or absolute path (may be null)
-	 * @return the associated {@link PassthroughFile}
-	 * @throws PassthroughException
-	 */
-	public PassthroughFile create(PassthroughFile dir, String path) throws PassthroughException;
+    /**
+     * 
+     * @param dir
+     *            Base directory (may be null)
+     * @param path
+     *            relative or absolute path (may be null)
+     * @return the associated {@link PassthroughFile}
+     * @throws PassthroughException
+     */
+    public PassthroughFile create(PassthroughFile dir, String path) throws PassthroughException;
 }

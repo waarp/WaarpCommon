@@ -27,14 +27,14 @@ import org.waarp.common.file.FileParameterInterface;
  */
 public class FilesystemBasedFileParameterImpl implements FileParameterInterface {
 
-	/**
-	 * Should a file MD5 SHA1 be computed using NIO. In low usage, direct access is faster. In high
-	 * usage, it might be better to use Nio.
-	 */
-	public static boolean useNio = false;
+    /**
+     * Should a file MD5 SHA1 be computed using NIO. In low usage, direct access is faster. In high
+     * usage, it might be better to use Nio.
+     */
+    public static boolean useNio = false;
 
-	/**
-	 * Should the file be deleted when the transfer is aborted on STOR like commands
-	 */
-	public boolean deleteOnAbort = false;
+    /**
+     * Should the file be deleted when the transfer is aborted on STOR like commands
+     */
+    public boolean deleteOnAbort = false;
 }

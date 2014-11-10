@@ -37,135 +37,135 @@ import org.waarp.common.exception.CryptoException;
  * 
  */
 public abstract class KeyManager {
-	ConcurrentHashMap<String, KeyObject> keysConcurrentHashMap =
-			new ConcurrentHashMap<String, KeyObject>();
-	AtomicBoolean isInitialized = new AtomicBoolean(false);
+    ConcurrentHashMap<String, KeyObject> keysConcurrentHashMap =
+            new ConcurrentHashMap<String, KeyObject>();
+    AtomicBoolean isInitialized = new AtomicBoolean(false);
 
-	public abstract KeyObject createKeyObject();
+    public abstract KeyObject createKeyObject();
 
-	/**
-	 * Init the Manager from a list of filename Key, the key name is the basename minus the
-	 * extension
-	 * 
-	 * @param keys
-	 * @param extension
-	 * @return the list of wrong keys
-	 */
-	public List<String> initFromList(List<String> keys, String extension) {
-		LinkedList<String> wrong = new LinkedList<String>();
-		for (String filename : keys) {
-			File file = new File(filename);
-			if (file.canRead()) {
-				String basename = file.getName();
-				int lastpos = basename.lastIndexOf(extension);
-				if (lastpos <= 0) {
-					wrong.add(filename);
-					continue;
-				}
-				String firstname = basename.substring(0, lastpos - 1);
-				int len = (int) file.length();
-				byte[] key = new byte[len];
-				FileInputStream inputStream = null;
-				try {
-					inputStream = new FileInputStream(file);
-				} catch (FileNotFoundException e) {
-					// should not be
-					wrong.add(filename);
-					continue;
-				}
-				int read = 0;
-				int offset = 0;
-				while (read > 0) {
-					try {
-						read = inputStream.read(key, offset, len);
-					} catch (IOException e) {
-						wrong.add(filename);
-						read = -2;
-						break;
-					}
-					offset += read;
-					if (offset < len) {
-						len -= read;
-					} else {
-						break;
-					}
-				}
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-				}
-				if (read < -1) {
-					// wrong
-					continue;
-				}
-				KeyObject keyObject = createKeyObject();
-				keyObject.setSecretKey(key);
-				this.setKey(firstname, keyObject);
-			} else {
-				wrong.add(filename);
-			}
-		}
-		this.isInitialized.set(true);
-		return wrong;
-	}
+    /**
+     * Init the Manager from a list of filename Key, the key name is the basename minus the
+     * extension
+     * 
+     * @param keys
+     * @param extension
+     * @return the list of wrong keys
+     */
+    public List<String> initFromList(List<String> keys, String extension) {
+        LinkedList<String> wrong = new LinkedList<String>();
+        for (String filename : keys) {
+            File file = new File(filename);
+            if (file.canRead()) {
+                String basename = file.getName();
+                int lastpos = basename.lastIndexOf(extension);
+                if (lastpos <= 0) {
+                    wrong.add(filename);
+                    continue;
+                }
+                String firstname = basename.substring(0, lastpos - 1);
+                int len = (int) file.length();
+                byte[] key = new byte[len];
+                FileInputStream inputStream = null;
+                try {
+                    inputStream = new FileInputStream(file);
+                } catch (FileNotFoundException e) {
+                    // should not be
+                    wrong.add(filename);
+                    continue;
+                }
+                int read = 0;
+                int offset = 0;
+                while (read > 0) {
+                    try {
+                        read = inputStream.read(key, offset, len);
+                    } catch (IOException e) {
+                        wrong.add(filename);
+                        read = -2;
+                        break;
+                    }
+                    offset += read;
+                    if (offset < len) {
+                        len -= read;
+                    } else {
+                        break;
+                    }
+                }
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                }
+                if (read < -1) {
+                    // wrong
+                    continue;
+                }
+                KeyObject keyObject = createKeyObject();
+                keyObject.setSecretKey(key);
+                this.setKey(firstname, keyObject);
+            } else {
+                wrong.add(filename);
+            }
+        }
+        this.isInitialized.set(true);
+        return wrong;
+    }
 
-	public void saveToFiles(String extension) throws CryptoException, IOException {
-		Enumeration<String> names = keysConcurrentHashMap.keys();
-		while (names.hasMoreElements()) {
-			String name = names.nextElement();
-			KeyObject key = keysConcurrentHashMap.get(name);
-			key.saveSecretKey(new File(name + "." + extension));
-		}
-	}
+    public void saveToFiles(String extension) throws CryptoException, IOException {
+        Enumeration<String> names = keysConcurrentHashMap.keys();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            KeyObject key = keysConcurrentHashMap.get(name);
+            key.saveSecretKey(new File(name + "." + extension));
+        }
+    }
 
-	/**
-	 * Add or set a new key associated to the given name
-	 * 
-	 * @param name
-	 * @param keyObject
-	 */
-	public void setKey(String name, KeyObject keyObject) {
-		this.keysConcurrentHashMap.put(name, keyObject);
-	}
+    /**
+     * Add or set a new key associated to the given name
+     * 
+     * @param name
+     * @param keyObject
+     */
+    public void setKey(String name, KeyObject keyObject) {
+        this.keysConcurrentHashMap.put(name, keyObject);
+    }
 
-	/**
-	 * @param name
-	 * @return the key associated to the given name
-	 */
-	public KeyObject getKey(String name) {
-		return this.keysConcurrentHashMap.get(name);
-	}
+    /**
+     * @param name
+     * @return the key associated to the given name
+     */
+    public KeyObject getKey(String name) {
+        return this.keysConcurrentHashMap.get(name);
+    }
 
-	/**
-	 * One method to get the crypted String from the given string and key
-	 * 
-	 * @param keyName
-	 * @param toBeCrypted
-	 * @return the crypted String
-	 * @throws Exception
-	 */
-	public String crypt(String keyName, String toBeCrypted) throws Exception {
-		KeyObject keyObject = this.getKey(keyName);
-		if (keyObject == null) {
-			throw new NoSuchAlgorithmException("Key does not exist: " + keyName);
-		}
-		return keyObject.cryptToHex(toBeCrypted);
-	}
+    /**
+     * One method to get the crypted String from the given string and key
+     * 
+     * @param keyName
+     * @param toBeCrypted
+     * @return the crypted String
+     * @throws Exception
+     */
+    public String crypt(String keyName, String toBeCrypted) throws Exception {
+        KeyObject keyObject = this.getKey(keyName);
+        if (keyObject == null) {
+            throw new NoSuchAlgorithmException("Key does not exist: " + keyName);
+        }
+        return keyObject.cryptToHex(toBeCrypted);
+    }
 
-	/**
-	 * One method to get the uncrypted String from the given crypted string and key
-	 * 
-	 * @param keyName
-	 * @param toBeDecrypted
-	 * @return the uncrypted String
-	 * @throws Exception
-	 */
-	public String decrypt(String keyName, String toBeDecrypted) throws Exception {
-		KeyObject keyObject = this.getKey(keyName);
-		if (keyObject == null) {
-			throw new NoSuchAlgorithmException("Key does not exist: " + keyName);
-		}
-		return keyObject.decryptHexInString(toBeDecrypted);
-	}
+    /**
+     * One method to get the uncrypted String from the given crypted string and key
+     * 
+     * @param keyName
+     * @param toBeDecrypted
+     * @return the uncrypted String
+     * @throws Exception
+     */
+    public String decrypt(String keyName, String toBeDecrypted) throws Exception {
+        KeyObject keyObject = this.getKey(keyName);
+        if (keyObject == null) {
+            throw new NoSuchAlgorithmException("Key does not exist: " + keyName);
+        }
+        return keyObject.decryptHexInString(toBeDecrypted);
+    }
 
 }

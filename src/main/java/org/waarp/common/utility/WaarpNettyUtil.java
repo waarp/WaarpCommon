@@ -27,6 +27,7 @@ import io.netty.util.concurrent.Future;
 
 /**
  * Utility class for Netty usage
+ * 
  * @author "Frederic Bregier"
  *
  */
@@ -37,6 +38,7 @@ public class WaarpNettyUtil {
 
     /**
      * Add default configuration for client bootstrap
+     * 
      * @param bootstrap
      * @param group
      * @param timeout
@@ -51,14 +53,17 @@ public class WaarpNettyUtil {
         bootstrap.option(ChannelOption.SO_RCVBUF, 1048576);
         bootstrap.option(ChannelOption.SO_SNDBUF, 1048576);
     }
+
     /**
      * Add default configuration for server bootstrap
+     * 
      * @param bootstrap
      * @param groupBoss
      * @param groupWorker
      * @param timeout
      */
-    public static void setServerBootstrap(ServerBootstrap bootstrap, EventLoopGroup groupBoss, EventLoopGroup groupWorker, int timeout) {
+    public static void setServerBootstrap(ServerBootstrap bootstrap, EventLoopGroup groupBoss,
+            EventLoopGroup groupWorker, int timeout) {
         bootstrap.channel(NioServerSocketChannel.class);
         bootstrap.group(groupBoss, groupWorker);
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
@@ -78,7 +83,7 @@ public class WaarpNettyUtil {
      */
     public static void waitOutOfNetty(Future<?> future, long timeout) {
         long start = System.currentTimeMillis();
-        while (! future.isDone()) {
+        while (!future.isDone()) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {

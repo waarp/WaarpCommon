@@ -29,23 +29,23 @@ import java.util.TimeZone;
  */
 public class XmlStaticShared {
 
-	protected static final TimeZone z = TimeZone.getTimeZone("GMT");
+    protected static final TimeZone z = TimeZone.getTimeZone("GMT");
 
-	/** parser for Date */
-	protected static final DateFormat timeFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss z");
+    /** parser for Date */
+    protected static final DateFormat timeFormat = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss z");
 
-	/** parser for SQL Date */
-	protected static final DateFormat dateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd z");
+    /** parser for SQL Date */
+    protected static final DateFormat dateFormat = new SimpleDateFormat(
+            "yyyy-MM-dd z");
 
-	/** parser for Timestamp */
-	protected static final DateFormat timestampFormat = new SimpleDateFormat(
-			"yyyy-MM-dd HH:mm:ss");
-	static {
-		timeFormat.setTimeZone(z);
-		dateFormat.setTimeZone(z);
-		timestampFormat.setTimeZone(z);
-	}
+    /** parser for Timestamp */
+    protected static final DateFormat timestampFormat = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss");
+    static {
+        timeFormat.setTimeZone(z);
+        dateFormat.setTimeZone(z);
+        timestampFormat.setTimeZone(z);
+    }
 
 }

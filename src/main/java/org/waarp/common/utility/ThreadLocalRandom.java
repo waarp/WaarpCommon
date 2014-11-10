@@ -29,24 +29,22 @@ package org.waarp.common.utility;
 import java.util.Random;
 
 /**
- * A random number generator isolated to the current thread.  Like the
- * global {@link Random} generator used by the {@link
- * Math} class, a {@code ThreadLocalRandom} is initialized
+ * A random number generator isolated to the current thread. Like the
+ * global {@link Random} generator used by the {@link Math} class, a {@code ThreadLocalRandom} is initialized
  * with an internally generated seed that may not otherwise be
  * modified. When applicable, use of {@code ThreadLocalRandom} rather
  * than shared {@code Random} objects in concurrent programs will
- * typically encounter much less overhead and contention.  Use of
- * {@code ThreadLocalRandom} is particularly appropriate when multiple
+ * typically encounter much less overhead and contention. Use of {@code ThreadLocalRandom} is particularly appropriate when
+ * multiple
  * tasks use random numbers in parallel in thread pools.
  *
- * <p>Usages of this class should typically be of the form:
- * {@code ThreadLocalRandom.current().nextX(...)} (where
- * {@code X} is {@code Int}, {@code Long}, etc).
- * When all usages are of this form, it is never possible to
- * accidently share a {@code ThreadLocalRandom} across multiple threads.
+ * <p>
+ * Usages of this class should typically be of the form: {@code ThreadLocalRandom.current().nextX(...)} (where {@code X} is
+ * {@code Int}, {@code Long}, etc). When all usages are of this form, it is never possible to accidently share a
+ * {@code ThreadLocalRandom} across multiple threads.
  *
- * <p>This class also provides additional commonly used bounded random
- * generation methods.
+ * <p>
+ * This class also provides additional commonly used bounded random generation methods.
  *
  * @since 1.7
  */
@@ -63,7 +61,7 @@ public final class ThreadLocalRandom extends Random {
 
     /**
      * Initialization flag to permit the first and only allowed call
-     * to setSeed (inside Random constructor) to succeed.  We can't
+     * to setSeed (inside Random constructor) to succeed. We can't
      * allow others since it would cause setting seed in one part of a
      * program to unintentionally impact other usages by the thread.
      */
@@ -79,12 +77,12 @@ public final class ThreadLocalRandom extends Random {
      * The actual ThreadLocal
      */
     private static final ThreadLocal<ThreadLocalRandom> localRandom =
-        new ThreadLocal<ThreadLocalRandom>() {
-            @Override
-            protected ThreadLocalRandom initialValue() {
-                return new ThreadLocalRandom();
-            }
-    };
+            new ThreadLocal<ThreadLocalRandom>() {
+                @Override
+                protected ThreadLocalRandom initialValue() {
+                    return new ThreadLocalRandom();
+                }
+            };
 
     /**
      * Returns the current thread's {@code ThreadLocalRandom}.
@@ -96,10 +94,11 @@ public final class ThreadLocalRandom extends Random {
     }
 
     /**
-     * Throws {@code UnsupportedOperationException}.  Setting seeds in
+     * Throws {@code UnsupportedOperationException}. Setting seeds in
      * this generator is not supported.
      *
-     * @throws UnsupportedOperationException always
+     * @throws UnsupportedOperationException
+     *             always
      */
     @Override
     public void setSeed(long seed) {

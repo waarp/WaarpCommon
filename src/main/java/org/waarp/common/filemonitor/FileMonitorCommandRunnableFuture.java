@@ -26,84 +26,90 @@ import org.waarp.common.filemonitor.FileMonitor.FileItem;
 
 /**
  * Command run when a new file item is validated
+ * 
  * @author "Frederic Bregier"
  *
  */
 public abstract class FileMonitorCommandRunnableFuture implements Runnable {
-	public FileItem fileItem;
-	private Thread currentThread;
-	public FileMonitor monitor;
-	
-	/**
-	 */
-	public FileMonitorCommandRunnableFuture() {
-	}
+    public FileItem fileItem;
+    private Thread currentThread;
+    public FileMonitor monitor;
 
-	public void setMonitor(FileMonitor monitor) {
-		this.monitor = monitor;
-	}
-	
-	/**
-	 * @param fileItem
+    /**
 	 */
-	public FileMonitorCommandRunnableFuture(FileItem fileItem) {
-		this.fileItem = fileItem;
-	}
+    public FileMonitorCommandRunnableFuture() {
+    }
 
-	public void setFileItem(FileItem fileItem) {
-		this.fileItem = fileItem;
-	}
+    public void setMonitor(FileMonitor monitor) {
+        this.monitor = monitor;
+    }
 
-	@Override
-	public void run() {
-		currentThread = Thread.currentThread();
-		if (fileItem != null) {
-			run(fileItem);
-		}
-	}
-	/**
-	 * 
-	 * @param fileItem fileItem on which the command will be executed.
-	 */
-	public abstract void run(FileItem fileItem);
-	/**
-	 * To be called at the end of the primary action (only for commandValidFile).
-	 * @param status
-	 * @param specialId the specialId associated with the task
-	 */
-	protected void finalize(boolean status, long specialId) {
-		if (monitor != null) {
-			Date date = new Date();
-			if (date.after(monitor.nextDay)) {
-				// midnight is after last check
-				monitor.setNextDay();
-				monitor.todayok.set(0);
-				monitor.todayerror.set(0);
-			}
-		}
-		if (status) {
-			fileItem.used = true;
-			// Keep the hash: fileItem.hash = null;
-			fileItem.specialId = specialId;
-			if (monitor != null) {
-				monitor.globalok.incrementAndGet();
-				monitor.todayok.incrementAndGet();
-			}
-		} else {
-			// execution in error, will retry later on
-			fileItem.used = false;
-			fileItem.hash = null;
-			fileItem.specialId = specialId;
-			if (monitor != null) {
-				monitor.globalerror.incrementAndGet();
-				monitor.todayerror.incrementAndGet();
-			}
-		}
-	}
-	
-	public void cancel() {
-		if (currentThread != null) {
-			currentThread.interrupt();
-		}
-	}
+    /**
+     * @param fileItem
+     */
+    public FileMonitorCommandRunnableFuture(FileItem fileItem) {
+        this.fileItem = fileItem;
+    }
+
+    public void setFileItem(FileItem fileItem) {
+        this.fileItem = fileItem;
+    }
+
+    @Override
+    public void run() {
+        currentThread = Thread.currentThread();
+        if (fileItem != null) {
+            run(fileItem);
+        }
+    }
+
+    /**
+     * 
+     * @param fileItem
+     *            fileItem on which the command will be executed.
+     */
+    public abstract void run(FileItem fileItem);
+
+    /**
+     * To be called at the end of the primary action (only for commandValidFile).
+     * 
+     * @param status
+     * @param specialId
+     *            the specialId associated with the task
+     */
+    protected void finalize(boolean status, long specialId) {
+        if (monitor != null) {
+            Date date = new Date();
+            if (date.after(monitor.nextDay)) {
+                // midnight is after last check
+                monitor.setNextDay();
+                monitor.todayok.set(0);
+                monitor.todayerror.set(0);
+            }
+        }
+        if (status) {
+            fileItem.used = true;
+            // Keep the hash: fileItem.hash = null;
+            fileItem.specialId = specialId;
+            if (monitor != null) {
+                monitor.globalok.incrementAndGet();
+                monitor.todayok.incrementAndGet();
+            }
+        } else {
+            // execution in error, will retry later on
+            fileItem.used = false;
+            fileItem.hash = null;
+            fileItem.specialId = specialId;
+            if (monitor != null) {
+                monitor.globalerror.incrementAndGet();
+                monitor.todayerror.incrementAndGet();
+            }
+        }
+    }
+
+    public void cancel() {
+        if (currentThread != null) {
+            currentThread.interrupt();
+        }
+    }
 }

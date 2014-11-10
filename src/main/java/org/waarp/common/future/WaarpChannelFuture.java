@@ -26,38 +26,38 @@ import io.netty.channel.Channel;
  * 
  */
 public class WaarpChannelFuture extends WaarpFuture {
-	/**
-	 * Channel as result
-	 */
-	private Channel channel = null;
+    /**
+     * Channel as result
+     */
+    private Channel channel = null;
 
-	/**
+    /**
      *
      */
-	public WaarpChannelFuture() {
-		super();
-	}
+    public WaarpChannelFuture() {
+        super();
+    }
 
-	/**
-	 * @param cancellable
-	 */
-	public WaarpChannelFuture(boolean cancellable) {
-		super(cancellable);
-	}
+    /**
+     * @param cancellable
+     */
+    public WaarpChannelFuture(boolean cancellable) {
+        super(cancellable);
+    }
 
-	/**
-	 * @return the channel as result
-	 */
-	public Channel channel() {
-		return channel;
-	}
+    /**
+     * @return the channel as result
+     */
+    public Channel channel() {
+        return channel;
+    }
 
-	/**
-	 * @param channel
-	 *            the channel to set
-	 */
-	public void setChannel(Channel channel) {
-		this.channel = channel;
-	}
+    /**
+     * @param channel
+     *            the channel to set
+     */
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
 
 }

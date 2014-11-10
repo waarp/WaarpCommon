@@ -33,64 +33,64 @@ import org.waarp.common.exception.CryptoException;
  * 
  */
 public class WaarpX509TrustManager implements X509TrustManager {
-	/**
-	 * First using default X509TrustManager returned by the global TrustManager. Then delegate
-	 * decisions to it, and fall back to the logic in this class if the default doesn't trust it.
-	 */
-	private X509TrustManager defaultX509TrustManager = null;
+    /**
+     * First using default X509TrustManager returned by the global TrustManager. Then delegate
+     * decisions to it, and fall back to the logic in this class if the default doesn't trust it.
+     */
+    private X509TrustManager defaultX509TrustManager = null;
 
-	/**
-	 * Create an "always-valid" X509TrustManager
-	 */
-	public WaarpX509TrustManager() {
-		defaultX509TrustManager = null;
-	}
+    /**
+     * Create an "always-valid" X509TrustManager
+     */
+    public WaarpX509TrustManager() {
+        defaultX509TrustManager = null;
+    }
 
-	/**
-	 * Create a "default" X509TrustManager
-	 * 
-	 * @param tmf
-	 * @throws CryptoException
-	 */
-	public WaarpX509TrustManager(TrustManagerFactory tmf) throws CryptoException {
-		TrustManager[] tms = tmf.getTrustManagers();
-		/**
-		 * Iterate over the returned trustmanagers, look for an instance of X509TrustManager and use
-		 * it as the default
-		 */
-		for (int i = 0; i < tms.length; i++) {
-			if (tms[i] instanceof X509TrustManager) {
-				defaultX509TrustManager = (X509TrustManager) tms[i];
-				return;
-			}
-		}
-		/**
-		 * Could not initialize, maybe try to build it from scratch?
-		 */
-		throw new CryptoException("Cannot initialize the WaarpX509TrustManager");
-	}
+    /**
+     * Create a "default" X509TrustManager
+     * 
+     * @param tmf
+     * @throws CryptoException
+     */
+    public WaarpX509TrustManager(TrustManagerFactory tmf) throws CryptoException {
+        TrustManager[] tms = tmf.getTrustManagers();
+        /**
+         * Iterate over the returned trustmanagers, look for an instance of X509TrustManager and use
+         * it as the default
+         */
+        for (int i = 0; i < tms.length; i++) {
+            if (tms[i] instanceof X509TrustManager) {
+                defaultX509TrustManager = (X509TrustManager) tms[i];
+                return;
+            }
+        }
+        /**
+         * Could not initialize, maybe try to build it from scratch?
+         */
+        throw new CryptoException("Cannot initialize the WaarpX509TrustManager");
+    }
 
-	public void checkClientTrusted(X509Certificate[] arg0, String arg1)
-			throws CertificateException {
-		if (defaultX509TrustManager == null) {
-			return; // valid
-		}
-		defaultX509TrustManager.checkClientTrusted(arg0, arg1);
-	}
+    public void checkClientTrusted(X509Certificate[] arg0, String arg1)
+            throws CertificateException {
+        if (defaultX509TrustManager == null) {
+            return; // valid
+        }
+        defaultX509TrustManager.checkClientTrusted(arg0, arg1);
+    }
 
-	public void checkServerTrusted(X509Certificate[] arg0, String arg1)
-			throws CertificateException {
-		if (defaultX509TrustManager == null) {
-			return; // valid
-		}
-		defaultX509TrustManager.checkServerTrusted(arg0, arg1);
-	}
+    public void checkServerTrusted(X509Certificate[] arg0, String arg1)
+            throws CertificateException {
+        if (defaultX509TrustManager == null) {
+            return; // valid
+        }
+        defaultX509TrustManager.checkServerTrusted(arg0, arg1);
+    }
 
-	public X509Certificate[] getAcceptedIssuers() {
-		if (defaultX509TrustManager == null) {
-			return new X509Certificate[0]; // none valid
-		}
-		return defaultX509TrustManager.getAcceptedIssuers();
-	}
+    public X509Certificate[] getAcceptedIssuers() {
+        if (defaultX509TrustManager == null) {
+            return new X509Certificate[0]; // none valid
+        }
+        return defaultX509TrustManager.getAcceptedIssuers();
+    }
 
 }

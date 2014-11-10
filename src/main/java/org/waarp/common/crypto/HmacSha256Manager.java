@@ -23,14 +23,14 @@ package org.waarp.common.crypto;
  * @author frederic bregier
  */
 public class HmacSha256Manager extends KeyManager {
-	public static final HmacSha256Manager aesManager = new HmacSha256Manager();
+    public static final HmacSha256Manager aesManager = new HmacSha256Manager();
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyManager#createKeyObject()
-	 */
-	@Override
-	public KeyObject createKeyObject() {
-		return new HmacSha256();
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyManager#createKeyObject()
+     */
+    @Override
+    public KeyObject createKeyObject() {
+        return new HmacSha256();
+    }
 }

@@ -33,76 +33,76 @@ import org.waarp.common.state.example.ExampleEnumState.ExampleTransition;
  * 
  */
 public class ExampleUsageMachineState {
-	/**
-	 * An example of usage.
-	 * 
-	 * @param args
-	 */
-	@SuppressWarnings({
-			"unchecked", "rawtypes" })
-	public static void main(String[] args) {
-	    WaarpLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
+    /**
+     * An example of usage.
+     * 
+     * @param args
+     */
+    @SuppressWarnings({
+            "unchecked", "rawtypes" })
+    public static void main(String[] args) {
+        WaarpLoggerFactory.setDefaultFactory(new WaarpSlf4JLoggerFactory(null));
 
-		// Example
+        // Example
 
-		// First create a HashMap and fill it directly
-		ConcurrentHashMap<ExampleEnumState, EnumSet<ExampleEnumState>> stateMap =
-				new ConcurrentHashMap<ExampleEnumState, EnumSet<ExampleEnumState>>();
-		stateMap.put(ExampleTransition.tRUNNING.elt.state,
-				(EnumSet<ExampleEnumState>) ExampleTransition.tRUNNING.elt.set);
-		// Second create the MachineState with the right Map
-		MachineState<ExampleEnumState> machineState1 =
-				new MachineState(ExampleEnumState.PAUSED, stateMap);
-		// Third, if not already done, fill the Map with the transitions
-		for (ExampleTransition trans : ExampleTransition.values()) {
-			machineState1.addNewAssociation(trans.elt);
-		}
+        // First create a HashMap and fill it directly
+        ConcurrentHashMap<ExampleEnumState, EnumSet<ExampleEnumState>> stateMap =
+                new ConcurrentHashMap<ExampleEnumState, EnumSet<ExampleEnumState>>();
+        stateMap.put(ExampleTransition.tRUNNING.elt.state,
+                (EnumSet<ExampleEnumState>) ExampleTransition.tRUNNING.elt.set);
+        // Second create the MachineState with the right Map
+        MachineState<ExampleEnumState> machineState1 =
+                new MachineState(ExampleEnumState.PAUSED, stateMap);
+        // Third, if not already done, fill the Map with the transitions
+        for (ExampleTransition trans : ExampleTransition.values()) {
+            machineState1.addNewAssociation(trans.elt);
+        }
 
-		// Or First create the MachineSate but empty
-		MachineState<ExampleEnumState> machineState2 =
-				new MachineState(ExampleEnumState.PAUSED);
-		// Second fill the associations with transitions since none exist yet
-		for (ExampleTransition trans : ExampleTransition.values()) {
-			machineState2.addNewAssociation(trans.elt);
-		}
+        // Or First create the MachineSate but empty
+        MachineState<ExampleEnumState> machineState2 =
+                new MachineState(ExampleEnumState.PAUSED);
+        // Second fill the associations with transitions since none exist yet
+        for (ExampleTransition trans : ExampleTransition.values()) {
+            machineState2.addNewAssociation(trans.elt);
+        }
 
-		System.out.println("Machine1 states...");
-		changeState(machineState1, ExampleEnumState.CONFIGURING);
-		changeState(machineState1, ExampleEnumState.PAUSED);
-		changeState(machineState1, ExampleEnumState.RUNNING);
-		changeState(machineState1, ExampleEnumState.ENDED);
-		changeState(machineState1, ExampleEnumState.PAUSED);
-		changeState(machineState1, ExampleEnumState.RESET);
-		changeState(machineState1, ExampleEnumState.PAUSED);
+        System.out.println("Machine1 states...");
+        changeState(machineState1, ExampleEnumState.CONFIGURING);
+        changeState(machineState1, ExampleEnumState.PAUSED);
+        changeState(machineState1, ExampleEnumState.RUNNING);
+        changeState(machineState1, ExampleEnumState.ENDED);
+        changeState(machineState1, ExampleEnumState.PAUSED);
+        changeState(machineState1, ExampleEnumState.RESET);
+        changeState(machineState1, ExampleEnumState.PAUSED);
 
-		System.out.println("Machine2 states...");
-		changeState(machineState2, ExampleEnumState.CONFIGURING);
-		changeState(machineState2, ExampleEnumState.PAUSED);
-		changeState(machineState2, ExampleEnumState.RUNNING);
-		changeState(machineState2, ExampleEnumState.ENDED);
-		changeState(machineState2, ExampleEnumState.PAUSED);
-		changeState(machineState2, ExampleEnumState.RESET);
-		changeState(machineState2, ExampleEnumState.PAUSED);
-	}
+        System.out.println("Machine2 states...");
+        changeState(machineState2, ExampleEnumState.CONFIGURING);
+        changeState(machineState2, ExampleEnumState.PAUSED);
+        changeState(machineState2, ExampleEnumState.RUNNING);
+        changeState(machineState2, ExampleEnumState.ENDED);
+        changeState(machineState2, ExampleEnumState.PAUSED);
+        changeState(machineState2, ExampleEnumState.RESET);
+        changeState(machineState2, ExampleEnumState.PAUSED);
+    }
 
-	static private void changeState(MachineState<ExampleEnumState> mach,
-			ExampleEnumState desired) {
-		try {
-			printState(mach);
-			mach.setCurrent(desired);
-			printState(mach);
-		} catch (IllegalFiniteStateException e) {
-			printWrongState(mach, desired);
-		}
-	}
+    static private void changeState(MachineState<ExampleEnumState> mach,
+            ExampleEnumState desired) {
+        try {
+            printState(mach);
+            mach.setCurrent(desired);
+            printState(mach);
+        } catch (IllegalFiniteStateException e) {
+            printWrongState(mach, desired);
+        }
+    }
 
-	static private void printState(MachineState<ExampleEnumState> mach) {
-		System.out.println("State is " + mach.getCurrent());
-	}
+    static private void printState(MachineState<ExampleEnumState> mach) {
+        System.out.println("State is " + mach.getCurrent());
+    }
 
-	static private void printWrongState(MachineState<ExampleEnumState> mach,
-			ExampleEnumState desired) {
-		System.out.println("Cannot go from State " + mach.getCurrent() + " to State " + desired);
-	}
+    static private void printWrongState(MachineState<ExampleEnumState> mach,
+            ExampleEnumState desired) {
+        System.out.println("Cannot go from State " + mach.getCurrent() + " to State " + desired);
+    }
 
 }

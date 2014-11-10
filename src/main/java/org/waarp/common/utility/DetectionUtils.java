@@ -30,89 +30,89 @@ import java.util.concurrent.BlockingQueue;
  * 
  */
 public class DetectionUtils {
-	private static final int JAVA_VERSION = javaVersion0();
-	private static final boolean IS_WINDOWS;
-	private static final boolean IS_UNIX_IBM;
-	private static final int NUMBERTHREAD;
-	
-	static {
-		String os = SystemPropertyUtil.get("os.name").toLowerCase();
-		// windows
-		IS_WINDOWS = os.indexOf("win") >= 0;
-		if (!IS_WINDOWS) {
-			String vendor = SystemPropertyUtil.get("java.vm.vendor");
-			vendor = vendor.toLowerCase();
-			IS_UNIX_IBM = (vendor.indexOf("ibm") >= 0);
-		} else {
-			IS_UNIX_IBM = false;
-		}
-		NUMBERTHREAD = Math.max(1, SystemPropertyUtil.getInt(
+    private static final int JAVA_VERSION = javaVersion0();
+    private static final boolean IS_WINDOWS;
+    private static final boolean IS_UNIX_IBM;
+    private static final int NUMBERTHREAD;
+
+    static {
+        String os = SystemPropertyUtil.get("os.name").toLowerCase();
+        // windows
+        IS_WINDOWS = os.indexOf("win") >= 0;
+        if (!IS_WINDOWS) {
+            String vendor = SystemPropertyUtil.get("java.vm.vendor");
+            vendor = vendor.toLowerCase();
+            IS_UNIX_IBM = (vendor.indexOf("ibm") >= 0);
+        } else {
+            IS_UNIX_IBM = false;
+        }
+        NUMBERTHREAD = Math.max(1, SystemPropertyUtil.getInt(
                 "org.waarp.numThreads", Runtime.getRuntime().availableProcessors() * 2));
-	}
+    }
 
-	/**
-	 * 
-	 * @return the default number of threads (core * 2)
-	 */
-	public static int numberThreads() {
-	    return NUMBERTHREAD;
-	}
+    /**
+     * 
+     * @return the default number of threads (core * 2)
+     */
+    public static int numberThreads() {
+        return NUMBERTHREAD;
+    }
 
-	/**
-	 * Return <code>true</code> if the JVM is running on Windows
-	 * 
-	 */
-	public static boolean isWindows() {
-		return IS_WINDOWS;
-	}
+    /**
+     * Return <code>true</code> if the JVM is running on Windows
+     * 
+     */
+    public static boolean isWindows() {
+        return IS_WINDOWS;
+    }
 
-	/**
-	 * Return <code>true</code> if the JVM is running on IBM UNIX JVM
-	 * 
-	 */
-	public static boolean isUnixIBM() {
-		return IS_UNIX_IBM;
-	}
+    /**
+     * Return <code>true</code> if the JVM is running on IBM UNIX JVM
+     * 
+     */
+    public static boolean isUnixIBM() {
+        return IS_UNIX_IBM;
+    }
 
-	public static int javaVersion() {
-		return JAVA_VERSION;
-	}
+    public static int javaVersion() {
+        return JAVA_VERSION;
+    }
 
-	private static int javaVersion0() {
-		try {
-			// Check if its android, if so handle it the same way as java6.
-			//
-			// See https://github.com/netty/netty/issues/282
-			Class.forName("android.app.Application");
-			return 6;
-		} catch (ClassNotFoundException e) {
-			// Ignore
-		}
-		
-		try {
+    private static int javaVersion0() {
+        try {
+            // Check if its android, if so handle it the same way as java6.
+            //
+            // See https://github.com/netty/netty/issues/282
+            Class.forName("android.app.Application");
+            return 6;
+        } catch (ClassNotFoundException e) {
+            // Ignore
+        }
+
+        try {
             Class.forName("java.time.Clock", false, Object.class.getClassLoader());
-			return 8;
+            return 8;
         } catch (Exception e) {
             // Ignore
         }
 
-		try {
-			Class.forName(
-					"java.util.concurrent.LinkedTransferQueue", false,
-					BlockingQueue.class.getClassLoader());
-			return 7;
-		} catch (Exception e) {
-			// Ignore
-		}
+        try {
+            Class.forName(
+                    "java.util.concurrent.LinkedTransferQueue", false,
+                    BlockingQueue.class.getClassLoader());
+            return 7;
+        } catch (Exception e) {
+            // Ignore
+        }
 
-		try {
-			Class.forName(
-					"java.util.ArrayDeque", false, Queue.class.getClassLoader());
-			return 6;
-		} catch (Exception e) {
-			// Ignore
-		}
+        try {
+            Class.forName(
+                    "java.util.ArrayDeque", false, Queue.class.getClassLoader());
+            return 6;
+        } catch (Exception e) {
+            // Ignore
+        }
 
-		return 5;
-	}
+        return 5;
+    }
 }

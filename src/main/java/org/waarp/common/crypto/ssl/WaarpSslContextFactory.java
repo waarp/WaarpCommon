@@ -40,181 +40,185 @@ public class WaarpSslContextFactory {
     protected static final int DEFAULT_SESSIONCACHE_SIZE = 1024;
 
     /**
-	 * Internal Logger
-	 */
-	private static final WaarpLogger logger = WaarpLoggerFactory
-			.getLogger(WaarpSslContextFactory.class);
+     * Internal Logger
+     */
+    private static final WaarpLogger logger = WaarpLoggerFactory
+            .getLogger(WaarpSslContextFactory.class);
 
-	/**
+    /**
     *
     */
-	private static final String PROTOCOL = "TLS";
+    private static final String PROTOCOL = "TLS";
 
-	/**
+    /**
     *
     */
-	private final SSLContext SERVER_CONTEXT;
+    private final SSLContext SERVER_CONTEXT;
 
-	/**
+    /**
     *
     */
-	private final SSLContext CLIENT_CONTEXT;
+    private final SSLContext CLIENT_CONTEXT;
 
-	private boolean needClientAuthentication = false;
+    private boolean needClientAuthentication = false;
 
-	/**
-	 * Create both CONTEXT
-	 * 
-	 * @param ggSecureKeyStore
-	 */
-	public WaarpSslContextFactory(WaarpSecureKeyStore ggSecureKeyStore) {
-		// Both construct Client and Server mode
-		SERVER_CONTEXT = initSslContextFactory(ggSecureKeyStore, true);
-		CLIENT_CONTEXT = initSslContextFactory(ggSecureKeyStore, false);
-	}
+    /**
+     * Create both CONTEXT
+     * 
+     * @param ggSecureKeyStore
+     */
+    public WaarpSslContextFactory(WaarpSecureKeyStore ggSecureKeyStore) {
+        // Both construct Client and Server mode
+        SERVER_CONTEXT = initSslContextFactory(ggSecureKeyStore, true);
+        CLIENT_CONTEXT = initSslContextFactory(ggSecureKeyStore, false);
+    }
 
-	/**
-	 * Create only one of the CONTEXT
-	 * 
-	 * @param ggSecureKeyStore
-	 * @param serverMode
-	 */
-	public WaarpSslContextFactory(WaarpSecureKeyStore ggSecureKeyStore, boolean serverMode) {
-		if (serverMode) {
-			SERVER_CONTEXT = initSslContextFactory(ggSecureKeyStore, serverMode);
-			CLIENT_CONTEXT = null;
-		} else {
-			CLIENT_CONTEXT = initSslContextFactory(ggSecureKeyStore, serverMode);
-			SERVER_CONTEXT = null;
-		}
-	}
-	/**
-	 * 
-	 * @param cacheSize default being 1024
-	 * @param timeOutInSeconds default being 60s
-	 */
-	public void setSessionCacheTime(int cacheSize, int timeOutInSeconds) {
-	    if (SERVER_CONTEXT != null) {
-	        SSLSessionContext sslSessionContext = SERVER_CONTEXT.getServerSessionContext();
-	        if (sslSessionContext != null) {
-	            sslSessionContext.setSessionCacheSize(cacheSize);
-	            sslSessionContext.setSessionTimeout(timeOutInSeconds);
-	        }
-	    }
-	}
-	/**
-	 * 
-	 * @param ggSecureKeyStore
-	 * @param serverMode
-	 * @return the SSLContext
-	 */
-	private SSLContext initSslContextFactory(WaarpSecureKeyStore ggSecureKeyStore,
-			boolean serverMode) {
-		String algorithm = Security
-				.getProperty("ssl.KeyManagerFactory.algorithm");
-		if (algorithm == null) {
-			algorithm = "SunX509";
-		}
+    /**
+     * Create only one of the CONTEXT
+     * 
+     * @param ggSecureKeyStore
+     * @param serverMode
+     */
+    public WaarpSslContextFactory(WaarpSecureKeyStore ggSecureKeyStore, boolean serverMode) {
+        if (serverMode) {
+            SERVER_CONTEXT = initSslContextFactory(ggSecureKeyStore, serverMode);
+            CLIENT_CONTEXT = null;
+        } else {
+            CLIENT_CONTEXT = initSslContextFactory(ggSecureKeyStore, serverMode);
+            SERVER_CONTEXT = null;
+        }
+    }
 
-		SSLContext serverContext = null;
-		SSLContext clientContext = null;
-		if (serverMode) {
-			try {
-				// Initialize the SSLContext to work with our key managers.
-				serverContext = SSLContext.getInstance(PROTOCOL);
-				WaarpSecureTrustManagerFactory secureTrustManagerFactory =
-						ggSecureKeyStore.getSecureTrustManagerFactory();
-				needClientAuthentication = secureTrustManagerFactory.needAuthentication();
-				if (secureTrustManagerFactory.hasTrustStore()) {
-					logger.debug("Has TrustManager");
-					serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
-							secureTrustManagerFactory.getTrustManagers(), null);
-				} else {
-					logger.debug("No TrustManager");
-					serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
-							null, null);
-				}
-				SSLSessionContext sslSessionContext = serverContext.getServerSessionContext();
-	            if (sslSessionContext != null) {
-	                sslSessionContext.setSessionCacheSize(DEFAULT_SESSIONCACHE_SIZE);
-	                sslSessionContext.setSessionTimeout(DEFAULT_SESSIONCACHE_TIMEOUTSEC);
-	            }
-				return serverContext;
-			} catch (Throwable e) {
-				logger.error("Failed to initialize the server-side SSLContext", e);
-				throw new Error("Failed to initialize the server-side SSLContext",
-						e);
-			}
-		} else {
-			try {
-				clientContext = SSLContext.getInstance(PROTOCOL);
-				WaarpSecureTrustManagerFactory secureTrustManagerFactory =
-						ggSecureKeyStore.getSecureTrustManagerFactory();
-				needClientAuthentication = secureTrustManagerFactory.needAuthentication();
-				if (secureTrustManagerFactory.hasTrustStore()) {
-					logger.debug("Has TrustManager");
-					clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
-							secureTrustManagerFactory.getTrustManagers(), null);
-				} else {
-					logger.debug("No TrustManager");
-					clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
-							null, null);
-				}
+    /**
+     * 
+     * @param cacheSize
+     *            default being 1024
+     * @param timeOutInSeconds
+     *            default being 60s
+     */
+    public void setSessionCacheTime(int cacheSize, int timeOutInSeconds) {
+        if (SERVER_CONTEXT != null) {
+            SSLSessionContext sslSessionContext = SERVER_CONTEXT.getServerSessionContext();
+            if (sslSessionContext != null) {
+                sslSessionContext.setSessionCacheSize(cacheSize);
+                sslSessionContext.setSessionTimeout(timeOutInSeconds);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param ggSecureKeyStore
+     * @param serverMode
+     * @return the SSLContext
+     */
+    private SSLContext initSslContextFactory(WaarpSecureKeyStore ggSecureKeyStore,
+            boolean serverMode) {
+        String algorithm = Security
+                .getProperty("ssl.KeyManagerFactory.algorithm");
+        if (algorithm == null) {
+            algorithm = "SunX509";
+        }
+
+        SSLContext serverContext = null;
+        SSLContext clientContext = null;
+        if (serverMode) {
+            try {
+                // Initialize the SSLContext to work with our key managers.
+                serverContext = SSLContext.getInstance(PROTOCOL);
+                WaarpSecureTrustManagerFactory secureTrustManagerFactory =
+                        ggSecureKeyStore.getSecureTrustManagerFactory();
+                needClientAuthentication = secureTrustManagerFactory.needAuthentication();
+                if (secureTrustManagerFactory.hasTrustStore()) {
+                    logger.debug("Has TrustManager");
+                    serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
+                            secureTrustManagerFactory.getTrustManagers(), null);
+                } else {
+                    logger.debug("No TrustManager");
+                    serverContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
+                            null, null);
+                }
+                SSLSessionContext sslSessionContext = serverContext.getServerSessionContext();
+                if (sslSessionContext != null) {
+                    sslSessionContext.setSessionCacheSize(DEFAULT_SESSIONCACHE_SIZE);
+                    sslSessionContext.setSessionTimeout(DEFAULT_SESSIONCACHE_TIMEOUTSEC);
+                }
+                return serverContext;
+            } catch (Throwable e) {
+                logger.error("Failed to initialize the server-side SSLContext", e);
+                throw new Error("Failed to initialize the server-side SSLContext",
+                        e);
+            }
+        } else {
+            try {
+                clientContext = SSLContext.getInstance(PROTOCOL);
+                WaarpSecureTrustManagerFactory secureTrustManagerFactory =
+                        ggSecureKeyStore.getSecureTrustManagerFactory();
+                needClientAuthentication = secureTrustManagerFactory.needAuthentication();
+                if (secureTrustManagerFactory.hasTrustStore()) {
+                    logger.debug("Has TrustManager");
+                    clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
+                            secureTrustManagerFactory.getTrustManagers(), null);
+                } else {
+                    logger.debug("No TrustManager");
+                    clientContext.init(ggSecureKeyStore.getKeyManagerFactory().getKeyManagers(),
+                            null, null);
+                }
                 SSLSessionContext sslSessionContext = clientContext.getServerSessionContext();
                 if (sslSessionContext != null) {
                     sslSessionContext.setSessionCacheSize(DEFAULT_SESSIONCACHE_SIZE);
                     sslSessionContext.setSessionTimeout(DEFAULT_SESSIONCACHE_TIMEOUTSEC);
                 }
-				return clientContext;
-			} catch (Throwable e) {
-				logger.error("Failed to initialize the client-side SSLContext", e);
-				throw new Error("Failed to initialize the client-side SSLContext",
-						e);
-			}
-		}
-	}
+                return clientContext;
+            } catch (Throwable e) {
+                logger.error("Failed to initialize the client-side SSLContext", e);
+                throw new Error("Failed to initialize the client-side SSLContext",
+                        e);
+            }
+        }
+    }
 
-	/**
-	 * @return the Server Context
-	 */
-	public SSLContext getServerContext() {
-		return SERVER_CONTEXT;
-	}
+    /**
+     * @return the Server Context
+     */
+    public SSLContext getServerContext() {
+        return SERVER_CONTEXT;
+    }
 
-	/**
-	 * @return the Client Context
-	 */
-	public SSLContext getClientContext() {
-		return CLIENT_CONTEXT;
-	}
+    /**
+     * @return the Client Context
+     */
+    public SSLContext getClientContext() {
+        return CLIENT_CONTEXT;
+    }
 
-	/**
-	 * To be called before adding as first entry in the Initializer as<br>
-	 * pipeline.addLast("ssl", sslhandler);<br>
-	 * 
-	 * @param serverMode
-	 *            True if in Server Mode, else False in Client mode
-	 * @param needClientAuth
-	 *            True if the client needs to be authenticated (only if serverMode is True)
-	 * @return the sslhandler
-	 */
-	public WaarpSslHandler initInitializer(boolean serverMode,
-			boolean needClientAuth) {
-		// Add SSL handler first to encrypt and decrypt everything.
-		SSLEngine engine;
-		logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode);
-		if (serverMode) {
-			engine = getServerContext().createSSLEngine();
-			engine.setUseClientMode(false);
-			engine.setNeedClientAuth(needClientAuth);
-		} else {
-			engine = getClientContext().createSSLEngine();
-			engine.setUseClientMode(true);
-		}
-		WaarpSslHandler handler = new WaarpSslHandler(engine);
-		return handler;
-	}
-	
+    /**
+     * To be called before adding as first entry in the Initializer as<br>
+     * pipeline.addLast("ssl", sslhandler);<br>
+     * 
+     * @param serverMode
+     *            True if in Server Mode, else False in Client mode
+     * @param needClientAuth
+     *            True if the client needs to be authenticated (only if serverMode is True)
+     * @return the sslhandler
+     */
+    public WaarpSslHandler initInitializer(boolean serverMode,
+            boolean needClientAuth) {
+        // Add SSL handler first to encrypt and decrypt everything.
+        SSLEngine engine;
+        logger.debug("Has TrustManager? " + needClientAuth + " Is ServerMode? " + serverMode);
+        if (serverMode) {
+            engine = getServerContext().createSSLEngine();
+            engine.setUseClientMode(false);
+            engine.setNeedClientAuth(needClientAuth);
+        } else {
+            engine = getClientContext().createSSLEngine();
+            engine.setUseClientMode(true);
+        }
+        WaarpSslHandler handler = new WaarpSslHandler(engine);
+        return handler;
+    }
+
     /**
      * To be called before adding as first entry in the Initializer as<br>
      * pipeline.addLast("ssl", sslhandler);<br>
@@ -228,10 +232,10 @@ public class WaarpSslContextFactory {
      *            This parameter is now ignored (always False)
      * @return the sslhandler
      */
-	@Deprecated
+    @Deprecated
     public SslHandler initInitializer(boolean serverMode,
             boolean needClientAuth, boolean renegotiationEnable) {
-	    return this.initInitializer(serverMode, needClientAuth);
+        return this.initInitializer(serverMode, needClientAuth);
     }
 
     /**
@@ -245,9 +249,9 @@ public class WaarpSslContextFactory {
      * @param renegotiationEnable
      *            True if you want to enable renegotiation (security issue CVE-2009-3555)
      * @param host
-     *          Host for which a resume is allowed
+     *            Host for which a resume is allowed
      * @param port
-     *          port associated with the host for which a resume is allowed
+     *            port associated with the host for which a resume is allowed
      * @return the sslhandler
      */
     public WaarpSslHandler initInitializer(boolean serverMode,
@@ -267,35 +271,35 @@ public class WaarpSslContextFactory {
         return handler;
     }
 
-	/**
-	 * To be called before adding as first entry in the Initializer as<br>
-	 * pipeline.addLast("ssl", sslhandler);<br>
-	 * 
-	 * @param serverMode
-	 *            True if in Server Mode, else False in Client mode
-	 * @param needClientAuth
-	 *            True if the client needs to be authenticated (only if serverMode is True)
-	 * @param renegotiationEnable
-	 *            True if you want to enable renegotiation (security issue CVE-2009-3555).
-	 *            This parameter is now ignored (always False)
-	 * @param host
-	 * 			Host for which a resume is allowed
-	 * @param port
-	 * 			port associated with the host for which a resume is allowed
-	 * @return the sslhandler
-	 */
+    /**
+     * To be called before adding as first entry in the Initializer as<br>
+     * pipeline.addLast("ssl", sslhandler);<br>
+     * 
+     * @param serverMode
+     *            True if in Server Mode, else False in Client mode
+     * @param needClientAuth
+     *            True if the client needs to be authenticated (only if serverMode is True)
+     * @param renegotiationEnable
+     *            True if you want to enable renegotiation (security issue CVE-2009-3555).
+     *            This parameter is now ignored (always False)
+     * @param host
+     *            Host for which a resume is allowed
+     * @param port
+     *            port associated with the host for which a resume is allowed
+     * @return the sslhandler
+     */
     @Deprecated
-	public SslHandler initInitializer(boolean serverMode,
-			boolean needClientAuth, boolean renegotiationEnable,
-			String host, int port) {
+    public SslHandler initInitializer(boolean serverMode,
+            boolean needClientAuth, boolean renegotiationEnable,
+            String host, int port) {
         return this.initInitializer(serverMode, needClientAuth, host, port);
-	}
+    }
 
-	/**
-	 * 
-	 * @return True if the associated KeyStore has a TrustStore
-	 */
-	public boolean needClientAuthentication() {
-		return needClientAuthentication;
-	}
+    /**
+     * 
+     * @return True if the associated KeyStore has a TrustStore
+     */
+    public boolean needClientAuthentication() {
+        return needClientAuthentication;
+    }
 }

@@ -23,47 +23,47 @@ package org.waarp.common.lru;
  * 
  */
 class StrongReferenceCacheEntry<V> implements InterfaceLruCacheEntry<V> {
-	private final V value;
+    private final V value;
 
-	private long expirationTime;
+    private long expirationTime;
 
-	/**
-	 * Creates StrongReferencyCacheEntry with desired ttl
-	 * 
-	 * @param value
-	 * @param ttl
-	 *            time to live in milliseconds
-	 * @throws IllegalArgumentException
-	 *             if ttl is not positive
-	 */
-	StrongReferenceCacheEntry(V value, long ttl) {
-		if (ttl <= 0)
-			throw new IllegalArgumentException("ttl must be positive");
+    /**
+     * Creates StrongReferencyCacheEntry with desired ttl
+     * 
+     * @param value
+     * @param ttl
+     *            time to live in milliseconds
+     * @throws IllegalArgumentException
+     *             if ttl is not positive
+     */
+    StrongReferenceCacheEntry(V value, long ttl) {
+        if (ttl <= 0)
+            throw new IllegalArgumentException("ttl must be positive");
 
-		this.value = value;
-		expirationTime = System.currentTimeMillis() + ttl;
-	}
+        this.value = value;
+        expirationTime = System.currentTimeMillis() + ttl;
+    }
 
-	/**
-	 * Returns value if entry is valid, null otherwise.
-	 * 
-	 * Entry is invalid if it's expired
-	 * 
-	 * @return value if entry is valid
-	 */
-	public V getValue() {
-		if (System.currentTimeMillis() > expirationTime)
-			return null;
-		else
-			return value;
-	}
+    /**
+     * Returns value if entry is valid, null otherwise.
+     * 
+     * Entry is invalid if it's expired
+     * 
+     * @return value if entry is valid
+     */
+    public V getValue() {
+        if (System.currentTimeMillis() > expirationTime)
+            return null;
+        else
+            return value;
+    }
 
-	public boolean isStillValid(long timeRef) {
-		return (timeRef <= expirationTime);
-	}
-	
-	public boolean resetTime(long ttl) {
-		expirationTime = System.currentTimeMillis() + ttl;
-		return true;
-	}
+    public boolean isStillValid(long timeRef) {
+        return (timeRef <= expirationTime);
+    }
+
+    public boolean resetTime(long ttl) {
+        expirationTime = System.currentTimeMillis() + ttl;
+        return true;
+    }
 }

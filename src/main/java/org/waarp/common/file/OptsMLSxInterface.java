@@ -24,108 +24,108 @@ package org.waarp.common.file;
  * 
  */
 public interface OptsMLSxInterface {
-	/**
-	 * @return the optsCharset
-	 */
-	public byte getOptsCharset();
+    /**
+     * @return the optsCharset
+     */
+    public byte getOptsCharset();
 
-	/**
-	 * @param optsCharset
-	 *            the optsCharset to set
-	 */
-	public void setOptsCharset(byte optsCharset);
+    /**
+     * @param optsCharset
+     *            the optsCharset to set
+     */
+    public void setOptsCharset(byte optsCharset);
 
-	/**
-	 * @return the optsCreate
-	 */
-	public byte getOptsCreate();
+    /**
+     * @return the optsCreate
+     */
+    public byte getOptsCreate();
 
-	/**
-	 * @param optsCreate
-	 *            the optsCreate to set
-	 */
-	public void setOptsCreate(byte optsCreate);
+    /**
+     * @param optsCreate
+     *            the optsCreate to set
+     */
+    public void setOptsCreate(byte optsCreate);
 
-	/**
-	 * @return the optsLang
-	 */
-	public byte getOptsLang();
+    /**
+     * @return the optsLang
+     */
+    public byte getOptsLang();
 
-	/**
-	 * @param optsLang
-	 *            the optsLang to set
-	 */
-	public void setOptsLang(byte optsLang);
+    /**
+     * @param optsLang
+     *            the optsLang to set
+     */
+    public void setOptsLang(byte optsLang);
 
-	/**
-	 * @return the optsMediaType
-	 */
-	public byte getOptsMediaType();
+    /**
+     * @return the optsMediaType
+     */
+    public byte getOptsMediaType();
 
-	/**
-	 * @param optsMediaType
-	 *            the optsMediaType to set
-	 */
-	public void setOptsMediaType(byte optsMediaType);
+    /**
+     * @param optsMediaType
+     *            the optsMediaType to set
+     */
+    public void setOptsMediaType(byte optsMediaType);
 
-	/**
-	 * @return the optsModify
-	 */
-	public byte getOptsModify();
+    /**
+     * @return the optsModify
+     */
+    public byte getOptsModify();
 
-	/**
-	 * @param optsModify
-	 *            the optsModify to set
-	 */
-	public void setOptsModify(byte optsModify);
+    /**
+     * @param optsModify
+     *            the optsModify to set
+     */
+    public void setOptsModify(byte optsModify);
 
-	/**
-	 * @return the optsPerm
-	 */
-	public byte getOptsPerm();
+    /**
+     * @return the optsPerm
+     */
+    public byte getOptsPerm();
 
-	/**
-	 * @param optsPerm
-	 *            the optsPerm to set
-	 */
-	public void setOptsPerm(byte optsPerm);
+    /**
+     * @param optsPerm
+     *            the optsPerm to set
+     */
+    public void setOptsPerm(byte optsPerm);
 
-	/**
-	 * @return the optsSize
-	 */
-	public byte getOptsSize();
+    /**
+     * @return the optsSize
+     */
+    public byte getOptsSize();
 
-	/**
-	 * @param optsSize
-	 *            the optsSize to set
-	 */
-	public void setOptsSize(byte optsSize);
+    /**
+     * @param optsSize
+     *            the optsSize to set
+     */
+    public void setOptsSize(byte optsSize);
 
-	/**
-	 * @return the optsType
-	 */
-	public byte getOptsType();
+    /**
+     * @return the optsType
+     */
+    public byte getOptsType();
 
-	/**
-	 * @param optsType
-	 *            the optsType to set
-	 */
-	public void setOptsType(byte optsType);
+    /**
+     * @param optsType
+     *            the optsType to set
+     */
+    public void setOptsType(byte optsType);
 
-	/**
-	 * @return the optsUnique
-	 */
-	public byte getOptsUnique();
+    /**
+     * @return the optsUnique
+     */
+    public byte getOptsUnique();
 
-	/**
-	 * @param optsUnique
-	 *            the optsUnique to set
-	 */
-	public void setOptsUnique(byte optsUnique);
+    /**
+     * @param optsUnique
+     *            the optsUnique to set
+     */
+    public void setOptsUnique(byte optsUnique);
 
-	/**
-	 * 
-	 * @return the String associated to the feature for MLSx
-	 */
-	public String getFeat();
+    /**
+     * 
+     * @return the String associated to the feature for MLSx
+     */
+    public String getFeat();
 }

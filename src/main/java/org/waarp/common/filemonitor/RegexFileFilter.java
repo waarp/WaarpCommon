@@ -26,36 +26,40 @@ import java.util.regex.Pattern;
 
 /**
  * Example of FileFilter using regex on filename and possible Size
+ * 
  * @author "Frederic Bregier"
  *
  */
 public class RegexFileFilter implements FileFilter {
-	public static final String REGEX_XML_EXTENSION = ".*\\.[xX][mM][lL]$";
-	
-	protected Pattern pattern;
-	protected long minimalSize = 0;
-	
-	public RegexFileFilter(String regex) {
-		pattern = Pattern.compile(regex);
-	}
-	public RegexFileFilter(String regex, long minimalSize) {
-		pattern = Pattern.compile(regex);
-		this.minimalSize = minimalSize;
-	}
-	public RegexFileFilter(long minimalSize) {
-		pattern = null;
-		this.minimalSize = minimalSize;
-	}
+    public static final String REGEX_XML_EXTENSION = ".*\\.[xX][mM][lL]$";
 
-	@Override
-	public boolean accept(File pathname) {
-		if (pathname.isFile()) {
-			if (pattern != null) {
-				return pattern.matcher(pathname.getName()).matches() && (minimalSize == 0 || pathname.length() >= minimalSize);
-			}
-			return minimalSize == 0 || pathname.length() >= minimalSize;
-		}
-		return false;
-	}
+    protected Pattern pattern;
+    protected long minimalSize = 0;
+
+    public RegexFileFilter(String regex) {
+        pattern = Pattern.compile(regex);
+    }
+
+    public RegexFileFilter(String regex, long minimalSize) {
+        pattern = Pattern.compile(regex);
+        this.minimalSize = minimalSize;
+    }
+
+    public RegexFileFilter(long minimalSize) {
+        pattern = null;
+        this.minimalSize = minimalSize;
+    }
+
+    @Override
+    public boolean accept(File pathname) {
+        if (pathname.isFile()) {
+            if (pattern != null) {
+                return pattern.matcher(pathname.getName()).matches()
+                        && (minimalSize == 0 || pathname.length() >= minimalSize);
+            }
+            return minimalSize == 0 || pathname.length() >= minimalSize;
+        }
+        return false;
+    }
 
 }

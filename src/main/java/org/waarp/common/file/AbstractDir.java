@@ -38,309 +38,310 @@ import org.waarp.common.utility.DetectionUtils;
  * 
  */
 public abstract class AbstractDir implements DirInterface {
-	/**
-	 * Internal Logger
-	 */
-	private static final WaarpLogger logger = WaarpLoggerFactory
-			.getLogger(AbstractDir.class);
-	/**
-	 * Current Directory
-	 */
-	protected String currentDir = null;
-	/**
-	 * SessionInterface
-	 */
-	protected SessionInterface session;
+    /**
+     * Internal Logger
+     */
+    private static final WaarpLogger logger = WaarpLoggerFactory
+            .getLogger(AbstractDir.class);
+    /**
+     * Current Directory
+     */
+    protected String currentDir = null;
+    /**
+     * SessionInterface
+     */
+    protected SessionInterface session;
 
-	/**
-	 * Opts command for MLSx. (-1) means not supported, 0 supported but not active, 1 supported and
-	 * active
-	 */
-	protected OptsMLSxInterface optsMLSx;
-	/**
-	 * Hack to say Windows or Unix (root like X:\ or /)
-	 */
-	protected static final Boolean ISUNIX;
-	/**
-	 * Roots for Windows system
-	 */
-	protected static final File[] roots;
+    /**
+     * Opts command for MLSx. (-1) means not supported, 0 supported but not active, 1 supported and
+     * active
+     */
+    protected OptsMLSxInterface optsMLSx;
+    /**
+     * Hack to say Windows or Unix (root like X:\ or /)
+     */
+    protected static final Boolean ISUNIX;
+    /**
+     * Roots for Windows system
+     */
+    protected static final File[] roots;
 
-	/**
-	 * Init Windows Support
-	 */
-	static {
-		ISUNIX = ! DetectionUtils.isWindows();
-		if (!ISUNIX) {
-			roots = File.listRoots();
-		} else {
-			roots = new File[] {new File("/")};
-		}
-	}
+    /**
+     * Init Windows Support
+     */
+    static {
+        ISUNIX = !DetectionUtils.isWindows();
+        if (!ISUNIX) {
+            roots = File.listRoots();
+        } else {
+            roots = new File[] { new File("/") };
+        }
+    }
 
-	/**
-	 * 
-	 * @param file
-	 * @return The corresponding Root file
-	 */
-	protected File getCorrespondingRoot(File file) {
-		if (ISUNIX) {
-			return new File("/");
-		}
-		String path = file.getAbsolutePath();
-		for (File root : roots) {
-			if (path.startsWith(root.getAbsolutePath())) {
-				return root;
-			}
-		}
-		// hack !
-		logger.warn("No root found for " + file.getAbsolutePath());
-		return roots[0];
-	}
+    /**
+     * 
+     * @param file
+     * @return The corresponding Root file
+     */
+    protected File getCorrespondingRoot(File file) {
+        if (ISUNIX) {
+            return new File("/");
+        }
+        String path = file.getAbsolutePath();
+        for (File root : roots) {
+            if (path.startsWith(root.getAbsolutePath())) {
+                return root;
+            }
+        }
+        // hack !
+        logger.warn("No root found for " + file.getAbsolutePath());
+        return roots[0];
+    }
 
-	/**
-	 * Normalize Path to Internal unique representation
-	 * 
-	 * @param path
-	 * @return the normalized path
-	 */
-	public static String normalizePath(String path) {
-		return path.replace('\\', SEPARATORCHAR).replace("//", "/");
-	}
+    /**
+     * Normalize Path to Internal unique representation
+     * 
+     * @param path
+     * @return the normalized path
+     */
+    public static String normalizePath(String path) {
+        return path.replace('\\', SEPARATORCHAR).replace("//", "/");
+    }
 
-	/**
-	 * 
-	 * @return the SessionInterface
-	 */
-	public SessionInterface getSession() {
-		return session;
-	}
+    /**
+     * 
+     * @return the SessionInterface
+     */
+    public SessionInterface getSession() {
+        return session;
+    }
 
-	public String validatePath(String path) throws CommandAbstractException {
-		String extDir;
-		if (isAbsolute(path)) {
-			extDir = path;
-			File newDir = new File(extDir);
-			try {
-				return validatePath(newDir);
-			} catch (Reply553Exception e) {
-				// ignore and continue as it could be not absolute
-			}
-		}
-		if (path.charAt(0) == SEPARATORCHAR) {
-			extDir = path;
-		} else {
-			extDir = currentDir + SEPARATOR + path;
-		}
-		// Get the baseDir (mount point)
-		String baseDir = getSession().getAuth().getBaseDirectory();
-		// Get the translated real file path (removing '..')
-		File newDir = new File(baseDir, extDir);
-		return validatePath(newDir);
-	}
+    public String validatePath(String path) throws CommandAbstractException {
+        String extDir;
+        if (isAbsolute(path)) {
+            extDir = path;
+            File newDir = new File(extDir);
+            try {
+                return validatePath(newDir);
+            } catch (Reply553Exception e) {
+                // ignore and continue as it could be not absolute
+            }
+        }
+        if (path.charAt(0) == SEPARATORCHAR) {
+            extDir = path;
+        } else {
+            extDir = currentDir + SEPARATOR + path;
+        }
+        // Get the baseDir (mount point)
+        String baseDir = getSession().getAuth().getBaseDirectory();
+        // Get the translated real file path (removing '..')
+        File newDir = new File(baseDir, extDir);
+        return validatePath(newDir);
+    }
 
-	/**
-	 * 
-	 * @param path
-	 * @return True if the given Path is an absolute one under Windows System or should be an absolute one on Unix
-	 */
-	public boolean isAbsolute(String path) {
-		File file = new File(path);
-		logger.debug("isAbsolute: "+file+":"+ISUNIX+":"+file.isAbsolute()+":"+file.getParentFile());
-		if (!ISUNIX) {
-			return file.isAbsolute();
-		} else {
-			file = file.getParentFile();
-			return (file != null && file.isAbsolute() && file.isDirectory() && ! file.getAbsolutePath().equals(File.separator));
-		}
-	}
+    /**
+     * 
+     * @param path
+     * @return True if the given Path is an absolute one under Windows System or should be an absolute one on Unix
+     */
+    public boolean isAbsolute(String path) {
+        File file = new File(path);
+        logger.debug("isAbsolute: " + file + ":" + ISUNIX + ":" + file.isAbsolute() + ":" + file.getParentFile());
+        if (!ISUNIX) {
+            return file.isAbsolute();
+        } else {
+            file = file.getParentFile();
+            return (file != null && file.isAbsolute() && file.isDirectory() && !file.getAbsolutePath().equals(
+                    File.separator));
+        }
+    }
 
-	/**
-	 * Consolidate Path as relative or absolute path to an absolute path
-	 * 
-	 * @param path
-	 * @return the consolidated path
-	 * @throws CommandAbstractException
-	 */
-	protected String consolidatePath(String path)
-			throws CommandAbstractException {
-		if (path == null || path.isEmpty()) {
-			throw new Reply501Exception("Path must not be empty");
-		}
-		// First check if the path is relative or absolute
-		if (isAbsolute(path)) {
-			return normalizePath(path);
-		}
-		String extDir = normalizePath(path);
-		if (extDir.charAt(0) != SEPARATORCHAR) {
-			extDir = currentDir + SEPARATOR + extDir;
-		}
-		return extDir;
-	}
+    /**
+     * Consolidate Path as relative or absolute path to an absolute path
+     * 
+     * @param path
+     * @return the consolidated path
+     * @throws CommandAbstractException
+     */
+    protected String consolidatePath(String path)
+            throws CommandAbstractException {
+        if (path == null || path.isEmpty()) {
+            throw new Reply501Exception("Path must not be empty");
+        }
+        // First check if the path is relative or absolute
+        if (isAbsolute(path)) {
+            return normalizePath(path);
+        }
+        String extDir = normalizePath(path);
+        if (extDir.charAt(0) != SEPARATORCHAR) {
+            extDir = currentDir + SEPARATOR + extDir;
+        }
+        return extDir;
+    }
 
-	/**
-	 * Construct the CanonicalPath without taking into account symbolic link
-	 * 
-	 * @param dir
-	 * @return the canonicalPath
-	 */
-	protected String getCanonicalPath(File dir) {
-		if (ISUNIX) {
-			// resolve it without getting symbolic links
-			StringBuilder builder = new StringBuilder();
-			// Get the path in reverse order from end to start
-			List<String> list = new ArrayList<String>();
-			File newdir = dir;
-			String lastdir = newdir.getName();
-			list.add(lastdir);
-			File parent = newdir.getParentFile();
-			while (parent != null) {
-				newdir = parent;
-				lastdir = newdir.getName();
-				list.add(lastdir);
-				parent = newdir.getParentFile();
-			}
-			// Now filter on '..' or '.'
-			for (int i = list.size() - 1; i >= 0; i--) {
-				String curdir = list.get(i);
-				if (curdir.equals(".")) {
-					list.remove(i);// removes '.'
-				} else if (curdir.equals("..")) {
-					list.remove(i);// removes '..'
-					int len = list.size();
-					if (len > 0 && i < len) {
-						list.remove(i);// and removes parent dir
-					}
-				}
-			}
-			if (list.isEmpty()) {
-				return "/";
-			}
+    /**
+     * Construct the CanonicalPath without taking into account symbolic link
+     * 
+     * @param dir
+     * @return the canonicalPath
+     */
+    protected String getCanonicalPath(File dir) {
+        if (ISUNIX) {
+            // resolve it without getting symbolic links
+            StringBuilder builder = new StringBuilder();
+            // Get the path in reverse order from end to start
+            List<String> list = new ArrayList<String>();
+            File newdir = dir;
+            String lastdir = newdir.getName();
+            list.add(lastdir);
+            File parent = newdir.getParentFile();
+            while (parent != null) {
+                newdir = parent;
+                lastdir = newdir.getName();
+                list.add(lastdir);
+                parent = newdir.getParentFile();
+            }
+            // Now filter on '..' or '.'
+            for (int i = list.size() - 1; i >= 0; i--) {
+                String curdir = list.get(i);
+                if (curdir.equals(".")) {
+                    list.remove(i);// removes '.'
+                } else if (curdir.equals("..")) {
+                    list.remove(i);// removes '..'
+                    int len = list.size();
+                    if (len > 0 && i < len) {
+                        list.remove(i);// and removes parent dir
+                    }
+                }
+            }
+            if (list.isEmpty()) {
+                return "/";
+            }
 
-			for (int i = list.size() - 1; i >= 0; i--) {
-				builder.append('/');
-				builder.append(list.get(i));
-			}
-			return builder.toString();
-		}
-		// Windows version
-		// no link so just use the default version of canonical Path
-		try {
-			return dir.getCanonicalPath();
-		} catch (IOException e) {
-			return dir.getAbsolutePath();
-		}
-	}
+            for (int i = list.size() - 1; i >= 0; i--) {
+                builder.append('/').append(list.get(i));
+            }
+            return builder.toString();
+        }
+        // Windows version
+        // no link so just use the default version of canonical Path
+        try {
+            return dir.getCanonicalPath();
+        } catch (IOException e) {
+            return dir.getAbsolutePath();
+        }
+    }
 
-	/**
-	 * Same as validatePath but from a FileInterface
-	 * 
-	 * @param dir
-	 * @return the construct and validated path (could be different than the one given as argument,
-	 *         example: '..' are removed)
-	 * @throws CommandAbstractException
-	 */
-	protected String validatePath(File dir) throws CommandAbstractException {
-		String extDir = null;
-		extDir = normalizePath(getCanonicalPath(dir));
-		// Get the relative business path
-		extDir = getSession().getAuth().getRelativePath(extDir);
-		// Check if this business path is valid
-		if (getSession().getAuth().isBusinessPathValid(extDir)) {
-			logger.debug("final path: "+extDir);
-			return extDir;
-		}
-		throw new Reply553Exception("Pathname not allowed");
-	}
-	
-	public boolean isPathInCurrentDir(String path) {
-		String extDir;
-		if (isAbsolute(path)) {
-			extDir = path;
-			File newDir = new File(extDir);
-			return isPathInCurrentDir(newDir);
-		}
-		if (path.charAt(0) == SEPARATORCHAR) {
-			extDir = path;
-		} else {
-			extDir = currentDir + SEPARATOR + path;
-		}
-		// Get the baseDir (mount point)
-		String baseDir = getSession().getAuth().getBaseDirectory();
-		// Get the translated real file path (removing '..')
-		File newDir = new File(baseDir, extDir);
-		return isPathInCurrentDir(newDir);
-	}
-	/**
-	 * Validate a file according to the current Directory
-	 * 
-	 * @param dir
-	 * @return True if validated
-	 * @throws CommandAbstractException
-	 */
-	protected boolean isPathInCurrentDir(File dir) {
-		String extDir = null;
-		extDir = normalizePath(getCanonicalPath(dir));
-		// Get the relative business path
-		extDir = getSession().getAuth().getRelativePath(extDir);
-		// Check if this business path is valid
-		if (extDir.startsWith(currentDir)) {
-			return true;
-		}
-		logger.warn("File not OK: {} not in {}", extDir, currentDir);
-		return false;
-	}
+    /**
+     * Same as validatePath but from a FileInterface
+     * 
+     * @param dir
+     * @return the construct and validated path (could be different than the one given as argument,
+     *         example: '..' are removed)
+     * @throws CommandAbstractException
+     */
+    protected String validatePath(File dir) throws CommandAbstractException {
+        String extDir = null;
+        extDir = normalizePath(getCanonicalPath(dir));
+        // Get the relative business path
+        extDir = getSession().getAuth().getRelativePath(extDir);
+        // Check if this business path is valid
+        if (getSession().getAuth().isBusinessPathValid(extDir)) {
+            logger.debug("final path: " + extDir);
+            return extDir;
+        }
+        throw new Reply553Exception("Pathname not allowed");
+    }
 
-	/**
-	 * Finds all files matching a wildcard expression (based on '?', '~' or '*').
-	 * 
-	 * @param pathWithWildcard
-	 *            The wildcard expression with a business path.
-	 * @return List of String as relative paths matching the wildcard expression. Those files are
-	 *         tested as valid from business point of view. If Wildcard support is not active, if
-	 *         the path contains any wildcards, it will throw an error.
-	 * @throws CommandAbstractException
-	 */
-	protected abstract List<String> wildcardFiles(String pathWithWildcard)
-			throws CommandAbstractException;
+    public boolean isPathInCurrentDir(String path) {
+        String extDir;
+        if (isAbsolute(path)) {
+            extDir = path;
+            File newDir = new File(extDir);
+            return isPathInCurrentDir(newDir);
+        }
+        if (path.charAt(0) == SEPARATORCHAR) {
+            extDir = path;
+        } else {
+            extDir = currentDir + SEPARATOR + path;
+        }
+        // Get the baseDir (mount point)
+        String baseDir = getSession().getAuth().getBaseDirectory();
+        // Get the translated real file path (removing '..')
+        File newDir = new File(baseDir, extDir);
+        return isPathInCurrentDir(newDir);
+    }
 
-	public String getPwd() throws CommandAbstractException {
-		return currentDir;
-	}
+    /**
+     * Validate a file according to the current Directory
+     * 
+     * @param dir
+     * @return True if validated
+     * @throws CommandAbstractException
+     */
+    protected boolean isPathInCurrentDir(File dir) {
+        String extDir = null;
+        extDir = normalizePath(getCanonicalPath(dir));
+        // Get the relative business path
+        extDir = getSession().getAuth().getRelativePath(extDir);
+        // Check if this business path is valid
+        if (extDir.startsWith(currentDir)) {
+            return true;
+        }
+        logger.warn("File not OK: {} not in {}", extDir, currentDir);
+        return false;
+    }
 
-	public boolean changeParentDirectory() throws CommandAbstractException {
-		return changeDirectory("..");
-	}
+    /**
+     * Finds all files matching a wildcard expression (based on '?', '~' or '*').
+     * 
+     * @param pathWithWildcard
+     *            The wildcard expression with a business path.
+     * @return List of String as relative paths matching the wildcard expression. Those files are
+     *         tested as valid from business point of view. If Wildcard support is not active, if
+     *         the path contains any wildcards, it will throw an error.
+     * @throws CommandAbstractException
+     */
+    protected abstract List<String> wildcardFiles(String pathWithWildcard)
+            throws CommandAbstractException;
 
-	public FileInterface setFile(String path,
-			boolean append) throws CommandAbstractException {
-		checkIdentify();
-		String newpath = consolidatePath(path);
-		List<String> paths = wildcardFiles(newpath);
-		if (paths.size() != 1) {
-			throw new Reply550Exception("File not found: " +
-					paths.size() + " founds");
-		}
-		String extDir = paths.get(0);
-		return newFile(extDir, append);
-	}
+    public String getPwd() throws CommandAbstractException {
+        return currentDir;
+    }
 
-	public void checkIdentify() throws Reply530Exception {
-		if (!getSession().getAuth().isIdentified()) {
-			throw new Reply530Exception("User not authentified");
-		}
-	}
+    public boolean changeParentDirectory() throws CommandAbstractException {
+        return changeDirectory("..");
+    }
 
-	public void clear() {
-		currentDir = null;
-	}
+    public FileInterface setFile(String path,
+            boolean append) throws CommandAbstractException {
+        checkIdentify();
+        String newpath = consolidatePath(path);
+        List<String> paths = wildcardFiles(newpath);
+        if (paths.size() != 1) {
+            throw new Reply550Exception("File not found: " +
+                    paths.size() + " founds");
+        }
+        String extDir = paths.get(0);
+        return newFile(extDir, append);
+    }
 
-	public void initAfterIdentification() {
-		currentDir = getSession().getAuth().getBusinessPath();
-	}
+    public void checkIdentify() throws Reply530Exception {
+        if (!getSession().getAuth().isIdentified()) {
+            throw new Reply530Exception("User not authentified");
+        }
+    }
 
-	public OptsMLSxInterface getOptsMLSx() {
-		return optsMLSx;
-	}
+    public void clear() {
+        currentDir = null;
+    }
+
+    public void initAfterIdentification() {
+        currentDir = getSession().getAuth().getBusinessPath();
+    }
+
+    public OptsMLSxInterface getOptsMLSx() {
+        return optsMLSx;
+    }
 
 }

@@ -34,7 +34,7 @@ public class WaarpSslHandler extends SslHandler {
      * Internal Logger
      */
     private static final WaarpLogger logger = WaarpLoggerFactory.getLogger(WaarpSslHandler.class);
-    
+
     public WaarpSslHandler(SSLEngine engine) {
         super(engine);
     }
@@ -47,6 +47,6 @@ public class WaarpSslHandler extends SslHandler {
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         ctx.channel().config().setAutoRead(true);
         super.handlerAdded(ctx);
-        logger.debug("Ssl Handler added: "+ctx.channel().toString());
+        logger.debug("Ssl Handler added: " + ctx.channel().toString());
     }
 }

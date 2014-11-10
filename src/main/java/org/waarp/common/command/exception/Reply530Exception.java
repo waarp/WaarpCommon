@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply530Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 530L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 530L;
 
-	/**
-	 * 530 Not logged in.
-	 * 
-	 * @param message
-	 */
-	public Reply530Exception(String message) {
-		super(ReplyCode.REPLY_530_NOT_LOGGED_IN, message);
-	}
+    /**
+     * 530 Not logged in.
+     * 
+     * @param message
+     */
+    public Reply530Exception(String message) {
+        super(ReplyCode.REPLY_530_NOT_LOGGED_IN, message);
+    }
 
 }

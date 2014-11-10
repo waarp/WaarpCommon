@@ -30,7 +30,7 @@ public class MachineStateTest {
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void testMachineStateEnumStateConcurrentHashMapOfEnumStateEnumSetOfQ() {
         // First create a HashMap and fill it directly
         ConcurrentHashMap<ExampleEnumState, EnumSet<ExampleEnumState>> stateMap =
@@ -55,7 +55,7 @@ public class MachineStateTest {
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void testMachineStateEnumState() {
         // Or First create the MachineSate but empty
         MachineState<ExampleEnumState> machineState2 =
@@ -86,7 +86,7 @@ public class MachineStateTest {
             return false;
         }
     }
-    
+
     static private final void printState(MachineState<ExampleEnumState> mach) {
         System.out.println("State is " + mach.getCurrent());
     }

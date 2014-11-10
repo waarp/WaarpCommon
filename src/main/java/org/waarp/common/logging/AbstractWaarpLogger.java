@@ -317,14 +317,9 @@ public abstract class AbstractWaarpLogger implements WaarpLogger, Serializable {
      * @return "MethodName(FileName:LineNumber) " from elt
      */
     private static final String getMethodAndLine(final StackTraceElement elt) {
-        final StringBuilder builder = new StringBuilder(elt.getClassName());
-        builder.append('.');
-        builder.append(elt.getMethodName());
-        builder.append('(');
-        builder.append(elt.getFileName());
-        builder.append(':');
-        builder.append(elt.getLineNumber());
-        builder.append(") : ");
+        final StringBuilder builder = new StringBuilder(elt.getClassName())
+                .append('.').append(elt.getMethodName()).append('(')
+                .append(elt.getFileName()).append(':').append(elt.getLineNumber()).append(") : ");
         return builder.toString();
     }
 }

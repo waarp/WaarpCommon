@@ -28,20 +28,20 @@ import org.waarp.common.state.Transition;
  * 
  */
 public enum ExampleEnumState {
-	RUNNING, PAUSED, CONFIGURING, RESET, ENDED;
+    RUNNING, PAUSED, CONFIGURING, RESET, ENDED;
 
-	public static enum ExampleTransition {
-		tRUNNING(RUNNING, EnumSet.of(PAUSED, ENDED)),
-		tPAUSED(PAUSED, EnumSet.of(RUNNING, RESET, CONFIGURING)),
-		tENDED(ENDED, EnumSet.of(RESET)),
-		tCONFIGURING(CONFIGURING, EnumSet.of(PAUSED)),
-		tRESET(RESET, EnumSet.of(PAUSED, RESET));
+    public static enum ExampleTransition {
+        tRUNNING(RUNNING, EnumSet.of(PAUSED, ENDED)),
+        tPAUSED(PAUSED, EnumSet.of(RUNNING, RESET, CONFIGURING)),
+        tENDED(ENDED, EnumSet.of(RESET)),
+        tCONFIGURING(CONFIGURING, EnumSet.of(PAUSED)),
+        tRESET(RESET, EnumSet.of(PAUSED, RESET));
 
-		public Transition<ExampleEnumState> elt;
+        public Transition<ExampleEnumState> elt;
 
-		private ExampleTransition(ExampleEnumState state, EnumSet<ExampleEnumState> set) {
-			this.elt = new Transition<ExampleEnumState>(state, set);
-		}
-	}
+        private ExampleTransition(ExampleEnumState state, EnumSet<ExampleEnumState> set) {
+            this.elt = new Transition<ExampleEnumState>(state, set);
+        }
+    }
 
 }

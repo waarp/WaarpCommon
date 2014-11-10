@@ -28,47 +28,47 @@ import org.waarp.common.file.SessionInterface;
  * 
  */
 public abstract class FilesystemBasedRestartImpl extends Restart {
-	/**
-	 * Valid Position for the next current file
-	 */
-	protected long position = -1;
-	protected int limit = -1;
+    /**
+     * Valid Position for the next current file
+     */
+    protected long position = -1;
+    protected int limit = -1;
 
-	/**
-	 * @param session
-	 */
-	public FilesystemBasedRestartImpl(SessionInterface session) {
-		super(session);
-	}
+    /**
+     * @param session
+     */
+    public FilesystemBasedRestartImpl(SessionInterface session) {
+        super(session);
+    }
 
-	@Override
-	public long getPosition() throws NoRestartException {
-		if (isSet()) {
-			setSet(false);
-			return position;
-		}
-		throw new NoRestartException("Restart is not set");
-	}
-	
-	@Override
-	public int getMaxSize(int nextBlock) {
-		if (limit > 0) {
-			if (nextBlock > limit) {
-				nextBlock = limit;
-			}
-			limit -= nextBlock;
-			return nextBlock;
-		} else if (limit == 0) {
-			limit = -1;
-			return 0;
-		}
-		return nextBlock;
-	}
+    @Override
+    public long getPosition() throws NoRestartException {
+        if (isSet()) {
+            setSet(false);
+            return position;
+        }
+        throw new NoRestartException("Restart is not set");
+    }
 
-	@Override
-	public void setSet(boolean isSet) {
-		super.setSet(isSet);
-		limit = -1;
-	}
-	
+    @Override
+    public int getMaxSize(int nextBlock) {
+        if (limit > 0) {
+            if (nextBlock > limit) {
+                nextBlock = limit;
+            }
+            limit -= nextBlock;
+            return nextBlock;
+        } else if (limit == 0) {
+            limit = -1;
+            return 0;
+        }
+        return nextBlock;
+    }
+
+    @Override
+    public void setSet(boolean isSet) {
+        super.setSet(isSet);
+        limit = -1;
+    }
+
 }

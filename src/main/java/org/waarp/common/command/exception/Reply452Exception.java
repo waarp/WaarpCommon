@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply452Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 452L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 452L;
 
-	/**
-	 * 452 Requested action not taken. Insufficient storage space in system.
-	 * 
-	 * @param message
-	 */
-	public Reply452Exception(String message) {
-		super(ReplyCode.REPLY_452_REQUESTED_ACTION_NOT_TAKEN, message);
-	}
+    /**
+     * 452 Requested action not taken. Insufficient storage space in system.
+     * 
+     * @param message
+     */
+    public Reply452Exception(String message) {
+        super(ReplyCode.REPLY_452_REQUESTED_ACTION_NOT_TAKEN, message);
+    }
 
 }

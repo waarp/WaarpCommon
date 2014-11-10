@@ -25,41 +25,41 @@ package org.waarp.common.future;
  */
 public class WaarpFailedFuture extends WaarpCompletedFuture {
 
-	private final Throwable cause;
+    private final Throwable cause;
 
-	/**
-	 * Creates a new instance.
-	 * 
-	 * @param cause
-	 *            the cause of failure
-	 */
-	public WaarpFailedFuture(Throwable cause) {
-		super();
-		if (cause == null) {
-			throw new NullPointerException("cause");
-		}
-		this.cause = cause;
-	}
+    /**
+     * Creates a new instance.
+     * 
+     * @param cause
+     *            the cause of failure
+     */
+    public WaarpFailedFuture(Throwable cause) {
+        super();
+        if (cause == null) {
+            throw new NullPointerException("cause");
+        }
+        this.cause = cause;
+    }
 
-	@Override
-	public synchronized Throwable getCause() {
-		return cause;
-	}
+    @Override
+    public synchronized Throwable getCause() {
+        return cause;
+    }
 
-	@Override
-	public synchronized boolean isSuccess() {
-		return false;
-	}
+    @Override
+    public synchronized boolean isSuccess() {
+        return false;
+    }
 
-	public WaarpFuture rethrowIfFailed() throws Exception {
-		if (cause instanceof Exception) {
-			throw (Exception) cause;
-		}
+    public WaarpFuture rethrowIfFailed() throws Exception {
+        if (cause instanceof Exception) {
+            throw (Exception) cause;
+        }
 
-		if (cause instanceof Error) {
-			throw (Error) cause;
-		}
+        if (cause instanceof Error) {
+            throw (Error) cause;
+        }
 
-		throw new RuntimeException(cause);
-	}
+        throw new RuntimeException(cause);
+    }
 }

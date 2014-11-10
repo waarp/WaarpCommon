@@ -27,20 +27,20 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply553Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 553L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 553L;
 
-	/**
-	 * 553 Requested action not taken. File name not allowed.
-	 * 
-	 * @param message
-	 */
-	public Reply553Exception(String message) {
-		super(
-				ReplyCode.REPLY_553_REQUESTED_ACTION_NOT_TAKEN_FILE_NAME_NOT_ALLOWED,
-				message);
-	}
+    /**
+     * 553 Requested action not taken. File name not allowed.
+     * 
+     * @param message
+     */
+    public Reply553Exception(String message) {
+        super(
+                ReplyCode.REPLY_553_REQUESTED_ACTION_NOT_TAKEN_FILE_NAME_NOT_ALLOWED,
+                message);
+    }
 
 }

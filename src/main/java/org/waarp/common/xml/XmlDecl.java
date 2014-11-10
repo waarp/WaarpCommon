@@ -24,147 +24,147 @@ package org.waarp.common.xml;
  * 
  */
 public class XmlDecl {
-	private final String name;
+    private final String name;
 
-	private final XmlType type;
+    private final XmlType type;
 
-	private final String xmlPath;
+    private final String xmlPath;
 
-	private final XmlDecl[] subXml;
+    private final XmlDecl[] subXml;
 
-	private final boolean isMultiple;
+    private final boolean isMultiple;
 
-	public XmlDecl(String name, String xmlPath) {
-		this.name = name;
-		this.type = XmlType.EMPTY;
-		this.xmlPath = xmlPath;
-		this.isMultiple = false;
-		this.subXml = null;
-	}
+    public XmlDecl(String name, String xmlPath) {
+        this.name = name;
+        this.type = XmlType.EMPTY;
+        this.xmlPath = xmlPath;
+        this.isMultiple = false;
+        this.subXml = null;
+    }
 
-	public XmlDecl(XmlType type, String xmlPath) {
-		this.name = xmlPath;
-		this.type = type;
-		this.xmlPath = xmlPath;
-		this.isMultiple = false;
-		this.subXml = null;
-	}
+    public XmlDecl(XmlType type, String xmlPath) {
+        this.name = xmlPath;
+        this.type = type;
+        this.xmlPath = xmlPath;
+        this.isMultiple = false;
+        this.subXml = null;
+    }
 
-	public XmlDecl(String name, XmlType type, String xmlPath) {
-		this.name = name;
-		this.type = type;
-		this.xmlPath = xmlPath;
-		this.isMultiple = false;
-		this.subXml = null;
-	}
+    public XmlDecl(String name, XmlType type, String xmlPath) {
+        this.name = name;
+        this.type = type;
+        this.xmlPath = xmlPath;
+        this.isMultiple = false;
+        this.subXml = null;
+    }
 
-	public XmlDecl(String name, XmlType type, String xmlPath, boolean isMultiple) {
-		this.name = name;
-		this.type = type;
-		this.xmlPath = xmlPath;
-		this.isMultiple = isMultiple;
-		this.subXml = null;
-	}
+    public XmlDecl(String name, XmlType type, String xmlPath, boolean isMultiple) {
+        this.name = name;
+        this.type = type;
+        this.xmlPath = xmlPath;
+        this.isMultiple = isMultiple;
+        this.subXml = null;
+    }
 
-	public XmlDecl(String name, XmlType type, String xmlPath, XmlDecl[] decls,
-			boolean isMultiple) {
-		this.name = name;
-		this.type = type;
-		this.xmlPath = xmlPath;
-		this.isMultiple = isMultiple;
-		this.subXml = decls;
-	}
+    public XmlDecl(String name, XmlType type, String xmlPath, XmlDecl[] decls,
+            boolean isMultiple) {
+        this.name = name;
+        this.type = type;
+        this.xmlPath = xmlPath;
+        this.isMultiple = isMultiple;
+        this.subXml = decls;
+    }
 
-	/**
-	 * Get Java field name
-	 * 
-	 * @return the field name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Get Java field name
+     * 
+     * @return the field name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @return the class type
-	 */
-	public Class<?> getClassType() {
-		return type.getClassType();
-	}
+    /**
+     * @return the class type
+     */
+    public Class<?> getClassType() {
+        return type.getClassType();
+    }
 
-	/**
-	 * @return the internal type
-	 */
-	public XmlType getType() {
-		return type;
-	}
+    /**
+     * @return the internal type
+     */
+    public XmlType getType() {
+        return type;
+    }
 
-	/**
-	 * @return the xmlPath
-	 */
-	public String getXmlPath() {
-		return xmlPath;
-	}
+    /**
+     * @return the xmlPath
+     */
+    public String getXmlPath() {
+        return xmlPath;
+    }
 
-	/**
-	 * 
-	 * @return True if this Decl is a subXml
-	 */
-	public boolean isSubXml() {
-		return this.subXml != null;
-	}
+    /**
+     * 
+     * @return True if this Decl is a subXml
+     */
+    public boolean isSubXml() {
+        return this.subXml != null;
+    }
 
-	/**
-	 * @return the subXml
-	 */
-	public XmlDecl[] getSubXml() {
-		return subXml;
-	}
+    /**
+     * @return the subXml
+     */
+    public XmlDecl[] getSubXml() {
+        return subXml;
+    }
 
-	/**
-	 * @return the subXml size
-	 */
-	public int getSubXmlSize() {
-		if (subXml == null)
-			return 0;
-		return subXml.length;
-	}
+    /**
+     * @return the subXml size
+     */
+    public int getSubXmlSize() {
+        if (subXml == null)
+            return 0;
+        return subXml.length;
+    }
 
-	/**
-	 * @return the isMultiple
-	 */
-	public boolean isMultiple() {
-		return isMultiple;
-	}
+    /**
+     * @return the isMultiple
+     */
+    public boolean isMultiple() {
+        return isMultiple;
+    }
 
-	/**
-	 * Check if two XmlDecl are compatible
-	 * 
-	 * @param xmlDecl
-	 * @return True if compatible
-	 */
-	public boolean isCompatible(XmlDecl xmlDecl) {
-		if (((isMultiple && xmlDecl.isMultiple) || ((!isMultiple) && (!xmlDecl.isMultiple))) &&
-				((isSubXml() && xmlDecl.isSubXml()) ||
-				((!isSubXml()) && (!xmlDecl.isSubXml())))) {
-			if (!isSubXml()) {
-				return type == xmlDecl.type;
-			}
-			if (subXml.length != xmlDecl.subXml.length) {
-				return false;
-			}
-			for (int i = 0; i < subXml.length; i++) {
-				if (!subXml[i].isCompatible(xmlDecl.subXml[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
+    /**
+     * Check if two XmlDecl are compatible
+     * 
+     * @param xmlDecl
+     * @return True if compatible
+     */
+    public boolean isCompatible(XmlDecl xmlDecl) {
+        if (((isMultiple && xmlDecl.isMultiple) || ((!isMultiple) && (!xmlDecl.isMultiple))) &&
+                ((isSubXml() && xmlDecl.isSubXml()) ||
+                ((!isSubXml()) && (!xmlDecl.isSubXml())))) {
+            if (!isSubXml()) {
+                return type == xmlDecl.type;
+            }
+            if (subXml.length != xmlDecl.subXml.length) {
+                return false;
+            }
+            for (int i = 0; i < subXml.length; i++) {
+                if (!subXml[i].isCompatible(xmlDecl.subXml[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
-	public String toString() {
-		return "Decl: " + name + " Type: " + type.name() + " XmlPath: " +
-				xmlPath + " isMultiple: " + isMultiple + " isSubXml: " +
-				isSubXml();
-	}
+    public String toString() {
+        return "Decl: " + name + " Type: " + type.name() + " XmlPath: " +
+                xmlPath + " isMultiple: " + isMultiple + " isSubXml: " +
+                isSubXml();
+    }
 }

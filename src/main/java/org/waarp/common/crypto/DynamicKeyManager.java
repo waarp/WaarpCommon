@@ -40,164 +40,164 @@ import org.waarp.common.utility.WaarpStringUtils;
  * 
  */
 public class DynamicKeyManager extends KeyManager {
-	/**
-	 * Manager of Dynamic Key
-	 */
-	public static final DynamicKeyManager dynamicKeyManager = new DynamicKeyManager();
-	/**
-	 * Extra information file extension
-	 */
-	public static final String INFEXTENSION = ".inf";
+    /**
+     * Manager of Dynamic Key
+     */
+    public static final DynamicKeyManager dynamicKeyManager = new DynamicKeyManager();
+    /**
+     * Extra information file extension
+     */
+    public static final String INFEXTENSION = ".inf";
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyManager#createKeyObject()
-	 */
-	@Override
-	public KeyObject createKeyObject() {
-		throw new InstantiationError(
-				"DynamicKeyManager does not implement this function");
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyManager#createKeyObject()
+     */
+    @Override
+    public KeyObject createKeyObject() {
+        throw new InstantiationError(
+                "DynamicKeyManager does not implement this function");
+    }
 
-	@Override
-	public List<String> initFromList(List<String> keys, String extension) {
-		LinkedList<String> wrong = new LinkedList<String>();
-		for (String filename : keys) {
-			File file = new File(filename);
-			if (file.canRead()) {
-				String basename = file.getName();
-				int lastpos = basename.lastIndexOf(extension);
-				if (lastpos <= 0) {
-					wrong.add(filename);
-					continue;
-				}
-				String firstname = basename.substring(0, lastpos - 1);
-				int len = (int) file.length();
-				byte[] key = new byte[len];
-				FileInputStream inputStream = null;
-				try {
-					inputStream = new FileInputStream(file);
-				} catch (FileNotFoundException e) {
-					// should not be
-					wrong.add(filename);
-					continue;
-				}
-				int read = 0;
-				int offset = 0;
-				while (read > 0) {
-					try {
-						read = inputStream.read(key, offset, len);
-					} catch (IOException e) {
-						wrong.add(filename);
-						read = -2;
-						break;
-					}
-					offset += read;
-					if (offset < len) {
-						len -= read;
-					} else {
-						break;
-					}
-				}
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-				}
-				if (read < -1) {
-					// wrong
-					continue;
-				}
-				String infFilename = filename + INFEXTENSION;
-				File infFile = new File(infFilename);
-				inputStream = null;
-				try {
-					inputStream = new FileInputStream(infFile);
-				} catch (FileNotFoundException e) {
-					// should not be
-					wrong.add(filename);
-					continue;
-				}
-				KeyObject keyObject;
-				try {
-					int keySize = inputStream.read();
-					String algo = readString(inputStream);
-					if (algo == null) {
-						wrong.add(filename);
-						continue;
-					}
-					String instance = readString(inputStream);
-					if (instance == null) {
-						wrong.add(filename);
-						continue;
-					}
-					keyObject = new DynamicKeyObject(keySize, algo, instance,
-							extension);
-				} catch (IOException e1) {
-					wrong.add(filename);
-					continue;
-				} finally {
-					try {
-						inputStream.close();
-					} catch (IOException e) {
-					}
-				}
-				keyObject.setSecretKey(key);
-				this.setKey(firstname, keyObject);
-			} else {
-				wrong.add(filename);
-			}
-		}
-		this.isInitialized.set(true);
-		return wrong;
-	}
+    @Override
+    public List<String> initFromList(List<String> keys, String extension) {
+        LinkedList<String> wrong = new LinkedList<String>();
+        for (String filename : keys) {
+            File file = new File(filename);
+            if (file.canRead()) {
+                String basename = file.getName();
+                int lastpos = basename.lastIndexOf(extension);
+                if (lastpos <= 0) {
+                    wrong.add(filename);
+                    continue;
+                }
+                String firstname = basename.substring(0, lastpos - 1);
+                int len = (int) file.length();
+                byte[] key = new byte[len];
+                FileInputStream inputStream = null;
+                try {
+                    inputStream = new FileInputStream(file);
+                } catch (FileNotFoundException e) {
+                    // should not be
+                    wrong.add(filename);
+                    continue;
+                }
+                int read = 0;
+                int offset = 0;
+                while (read > 0) {
+                    try {
+                        read = inputStream.read(key, offset, len);
+                    } catch (IOException e) {
+                        wrong.add(filename);
+                        read = -2;
+                        break;
+                    }
+                    offset += read;
+                    if (offset < len) {
+                        len -= read;
+                    } else {
+                        break;
+                    }
+                }
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                }
+                if (read < -1) {
+                    // wrong
+                    continue;
+                }
+                String infFilename = filename + INFEXTENSION;
+                File infFile = new File(infFilename);
+                inputStream = null;
+                try {
+                    inputStream = new FileInputStream(infFile);
+                } catch (FileNotFoundException e) {
+                    // should not be
+                    wrong.add(filename);
+                    continue;
+                }
+                KeyObject keyObject;
+                try {
+                    int keySize = inputStream.read();
+                    String algo = readString(inputStream);
+                    if (algo == null) {
+                        wrong.add(filename);
+                        continue;
+                    }
+                    String instance = readString(inputStream);
+                    if (instance == null) {
+                        wrong.add(filename);
+                        continue;
+                    }
+                    keyObject = new DynamicKeyObject(keySize, algo, instance,
+                            extension);
+                } catch (IOException e1) {
+                    wrong.add(filename);
+                    continue;
+                } finally {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                    }
+                }
+                keyObject.setSecretKey(key);
+                this.setKey(firstname, keyObject);
+            } else {
+                wrong.add(filename);
+            }
+        }
+        this.isInitialized.set(true);
+        return wrong;
+    }
 
-	/**
-	 * Specific functions to ease the process of reading the "inf" file
-	 * 
-	 * @param inputStream
-	 * @return the String that should be read
-	 */
-	private String readString(FileInputStream inputStream) {
-		int len;
-		try {
-			len = inputStream.read();
-		} catch (IOException e1) {
-			return null;
-		}
-		byte[] readbyte = new byte[len];
-		for (int i = 0; i < len; i++) {
-			try {
-				readbyte[i] = (byte) inputStream.read();
-			} catch (IOException e) {
-				return null;
-			}
-		}
-		return new String(readbyte, WaarpStringUtils.UTF8);
-	}
+    /**
+     * Specific functions to ease the process of reading the "inf" file
+     * 
+     * @param inputStream
+     * @return the String that should be read
+     */
+    private String readString(FileInputStream inputStream) {
+        int len;
+        try {
+            len = inputStream.read();
+        } catch (IOException e1) {
+            return null;
+        }
+        byte[] readbyte = new byte[len];
+        for (int i = 0; i < len; i++) {
+            try {
+                readbyte[i] = (byte) inputStream.read();
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return new String(readbyte, WaarpStringUtils.UTF8);
+    }
 
-	@Override
-	public void saveToFiles(String extension) throws CryptoException,
-			IOException {
-		Enumeration<String> names = keysConcurrentHashMap.keys();
-		while (names.hasMoreElements()) {
-			String name = names.nextElement();
-			KeyObject key = keysConcurrentHashMap.get(name);
-			key.saveSecretKey(new File(name + "." + extension));
-			FileOutputStream outputStream = new FileOutputStream(new File(name +
-					"." + extension + INFEXTENSION));
-			try {
-				outputStream.write(key.getKeySize());
-				String algo = key.getAlgorithm();
-				String instance = key.getInstance();
-				outputStream.write(algo.length());
-				outputStream.write(algo.getBytes(WaarpStringUtils.UTF8));
-				outputStream.write(instance.length());
-				outputStream.write(instance.getBytes(WaarpStringUtils.UTF8));
-				outputStream.close();
-			} finally {
-				outputStream.close();
-			}
-		}
-	}
+    @Override
+    public void saveToFiles(String extension) throws CryptoException,
+            IOException {
+        Enumeration<String> names = keysConcurrentHashMap.keys();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            KeyObject key = keysConcurrentHashMap.get(name);
+            key.saveSecretKey(new File(name + "." + extension));
+            FileOutputStream outputStream = new FileOutputStream(new File(name +
+                    "." + extension + INFEXTENSION));
+            try {
+                outputStream.write(key.getKeySize());
+                String algo = key.getAlgorithm();
+                String instance = key.getInstance();
+                outputStream.write(algo.length());
+                outputStream.write(algo.getBytes(WaarpStringUtils.UTF8));
+                outputStream.write(instance.length());
+                outputStream.write(instance.getBytes(WaarpStringUtils.UTF8));
+                outputStream.close();
+            } finally {
+                outputStream.close();
+            }
+        }
+    }
 
 }

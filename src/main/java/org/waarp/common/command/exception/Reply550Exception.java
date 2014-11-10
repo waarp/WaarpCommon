@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply550Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 550L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 550L;
 
-	/**
-	 * 550 Requested action not taken. File unavailable (e.g., file not found, no access).
-	 * 
-	 * @param message
-	 */
-	public Reply550Exception(String message) {
-		super(ReplyCode.REPLY_550_REQUESTED_ACTION_NOT_TAKEN, message);
-	}
+    /**
+     * 550 Requested action not taken. File unavailable (e.g., file not found, no access).
+     * 
+     * @param message
+     */
+    public Reply550Exception(String message) {
+        super(ReplyCode.REPLY_550_REQUESTED_ACTION_NOT_TAKEN, message);
+    }
 
 }

@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * ReentrantLock with a timeout in locking without exception and no exception on unlock if the thread is not locking it.
+ * 
  * @author "Frederic Bregier"
  *
  */
@@ -43,6 +44,7 @@ public class WaarpLock extends ReentrantLock {
     /**
      * Try to lock within the given limit, but do not raized any exception if not locked.
      * A complete lock shall be done using other calls, like simple lock() method.
+     * 
      * @param timeout
      * @param timeUnit
      */
@@ -57,8 +59,8 @@ public class WaarpLock extends ReentrantLock {
     public void unlock() {
         try {
             super.unlock();
-        } catch (IllegalMonitorStateException e) {}
+        } catch (IllegalMonitorStateException e) {
+        }
     }
-    
-    
+
 }

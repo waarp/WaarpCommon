@@ -25,24 +25,24 @@ package org.waarp.common.exception;
  */
 public class NoRestartException extends Exception {
 
-	/**
+    /**
 	 *
 	 */
-	private static final long serialVersionUID = -1400965989265245071L;
+    private static final long serialVersionUID = -1400965989265245071L;
 
-	/**
-	 * @param message
-	 */
-	public NoRestartException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public NoRestartException(String message) {
+        super(message);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public NoRestartException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public NoRestartException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

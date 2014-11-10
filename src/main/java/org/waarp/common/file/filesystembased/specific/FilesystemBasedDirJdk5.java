@@ -27,27 +27,27 @@ import java.io.File;
  * 
  */
 public class FilesystemBasedDirJdk5 extends FilesystemBasedDirJdkAbstract {
-	/**
-	 * 
-	 * @param file
-	 * @return True if the file is executable
-	 */
-	@Override
-	public boolean canExecute(File file) {
-		return false;
-	}
+    /**
+     * 
+     * @param file
+     * @return True if the file is executable
+     */
+    @Override
+    public boolean canExecute(File file) {
+        return false;
+    }
 
-	/**
-	 * 
-	 * @param directory
-	 * @return the free space of the given Directory
-	 */
-	@Override
-	public long getFreeSpace(File directory) {
-		if (FilesystemBasedDirJdkAbstract.ueApacheCommonsIo) {
-			return FilesystemBasedCommonsIo.freeSpace(directory
-					.getAbsolutePath());
-		}
-		return -1;
-	}
+    /**
+     * 
+     * @param directory
+     * @return the free space of the given Directory
+     */
+    @Override
+    public long getFreeSpace(File directory) {
+        if (FilesystemBasedDirJdkAbstract.ueApacheCommonsIo) {
+            return FilesystemBasedCommonsIo.freeSpace(directory
+                    .getAbsolutePath());
+        }
+        return -1;
+    }
 }

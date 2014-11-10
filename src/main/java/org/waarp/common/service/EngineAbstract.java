@@ -22,21 +22,25 @@ package org.waarp.common.service;
 
 /**
  * Abstract class to implement to be able to start or shutdown a service
+ * 
  * @author Frederic Bregier
  *
  */
 public abstract class EngineAbstract extends Thread {
-	/**
-	 * Shutdown the service
-	 */
-	public abstract void shutdown();
-	/**
-	 * 
-	 * @return True if the service is shutdown
-	 */
+    /**
+     * Shutdown the service
+     */
+    public abstract void shutdown();
+
+    /**
+     * 
+     * @return True if the service is shutdown
+     */
     public abstract boolean isShutdown();
+
     /**
      * Return when the service is shutdown
+     * 
      * @return True if the service is correctly shutdown, else False if in error
      */
     public abstract boolean waitShutdown() throws InterruptedException;

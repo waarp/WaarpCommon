@@ -30,92 +30,92 @@ import org.junit.Test;
  */
 public class HmacShaTest {
 
-	/**
-	 * Test method
-	 */
-	@Test
-	public void testToCrypt() {
-		String plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
-		HmacSha256 hmacSha256 = new HmacSha256();
-		// Generate a key
-		try {
-			hmacSha256.generateKey();
-		} catch (Exception e) {
-			fail(e.getMessage());
-			return;
-		}
-		// get the generated key
-		byte[] secretKey = hmacSha256.getSecretKeyInBytes();
-		assertNotNull(secretKey);
-		// crypt one text
-		byte[] ciphertext;
-		try {
-			ciphertext = hmacSha256.crypt(plaintext);
-		} catch (Exception e) {
-			fail(e.getMessage());
-			return;
-		}
-		assertNotNull(ciphertext);
-		// Test the set Key
-		hmacSha256.setSecretKey(secretKey);
+    /**
+     * Test method
+     */
+    @Test
+    public void testToCrypt() {
+        String plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
+        HmacSha256 hmacSha256 = new HmacSha256();
+        // Generate a key
+        try {
+            hmacSha256.generateKey();
+        } catch (Exception e) {
+            fail(e.getMessage());
+            return;
+        }
+        // get the generated key
+        byte[] secretKey = hmacSha256.getSecretKeyInBytes();
+        assertNotNull(secretKey);
+        // crypt one text
+        byte[] ciphertext;
+        try {
+            ciphertext = hmacSha256.crypt(plaintext);
+        } catch (Exception e) {
+            fail(e.getMessage());
+            return;
+        }
+        assertNotNull(ciphertext);
+        // Test the set Key
+        hmacSha256.setSecretKey(secretKey);
 
-		// same on String only
-		int nb = 50000;
-		int k = 0;
-		long time1 = System.currentTimeMillis();
-		for (int i = 0; i < nb; i++) {
-			String cipherString;
-			try {
-				cipherString = hmacSha256.cryptToHex(plaintext);
-			} catch (Exception e) {
-				fail(e.getMessage());
-				return;
-			}
-			k += cipherString.length();
-		}
-		long time2 = System.currentTimeMillis();
-		System.out.println("SHA256 Total time in ms: " + (time2 - time1) + " or "
-				+ (nb * 1000 / (time2 - time1)) + " crypt/s for "+ (k/nb));
+        // same on String only
+        int nb = 50000;
+        int k = 0;
+        long time1 = System.currentTimeMillis();
+        for (int i = 0; i < nb; i++) {
+            String cipherString;
+            try {
+                cipherString = hmacSha256.cryptToHex(plaintext);
+            } catch (Exception e) {
+                fail(e.getMessage());
+                return;
+            }
+            k += cipherString.length();
+        }
+        long time2 = System.currentTimeMillis();
+        System.out.println("SHA256 Total time in ms: " + (time2 - time1) + " or "
+                + (nb * 1000 / (time2 - time1)) + " crypt/s for " + (k / nb));
 
-		HmacSha1 hmacSha1 = new HmacSha1();
-		// Generate a key
-		try {
-			hmacSha1.generateKey();
-		} catch (Exception e) {
-			fail(e.getMessage());
-			return;
-		}
-		// get the generated key
-		secretKey = hmacSha1.getSecretKeyInBytes();
-		assertNotNull(secretKey);
-		// crypt one text
-		try {
-			ciphertext = hmacSha1.crypt(plaintext);
-		} catch (Exception e) {
-			fail(e.getMessage());
-			return;
-		}
-		assertNotNull(ciphertext);
-		// Test the set Key
-		hmacSha1.setSecretKey(secretKey);
-		// same on String only
-		nb = 50000;
-		k = 0;
-		time1 = System.currentTimeMillis();
-		for (int i = 0; i < nb; i++) {
-			String cipherString;
-			try {
-				cipherString = hmacSha1.cryptToHex(plaintext);
-			} catch (Exception e) {
-				fail(e.getMessage());
-				return;
-			}
-			k += cipherString.length();
-		}
-		time2 = System.currentTimeMillis();
-		System.out.println("SHA1 Total time in ms: " + (time2 - time1) + " or "
-				+ (nb * 1000 / (time2 - time1)) + " crypt/s for "+ (k/nb));
-		assertTrue(true);
-	}
+        HmacSha1 hmacSha1 = new HmacSha1();
+        // Generate a key
+        try {
+            hmacSha1.generateKey();
+        } catch (Exception e) {
+            fail(e.getMessage());
+            return;
+        }
+        // get the generated key
+        secretKey = hmacSha1.getSecretKeyInBytes();
+        assertNotNull(secretKey);
+        // crypt one text
+        try {
+            ciphertext = hmacSha1.crypt(plaintext);
+        } catch (Exception e) {
+            fail(e.getMessage());
+            return;
+        }
+        assertNotNull(ciphertext);
+        // Test the set Key
+        hmacSha1.setSecretKey(secretKey);
+        // same on String only
+        nb = 50000;
+        k = 0;
+        time1 = System.currentTimeMillis();
+        for (int i = 0; i < nb; i++) {
+            String cipherString;
+            try {
+                cipherString = hmacSha1.cryptToHex(plaintext);
+            } catch (Exception e) {
+                fail(e.getMessage());
+                return;
+            }
+            k += cipherString.length();
+        }
+        time2 = System.currentTimeMillis();
+        System.out.println("SHA1 Total time in ms: " + (time2 - time1) + " or "
+                + (nb * 1000 / (time2 - time1)) + " crypt/s for " + (k / nb));
+        assertTrue(true);
+    }
 
 }

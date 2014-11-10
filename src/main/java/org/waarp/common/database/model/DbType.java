@@ -24,20 +24,20 @@ package org.waarp.common.database.model;
  * 
  */
 public enum DbType {
-	Oracle, MySQL, PostGreSQL, H2, MariaDB;
+    Oracle, MySQL, PostGreSQL, H2, MariaDB;
 
-	public static DbType getFromDriver(String driver) {
-		if (driver.contains("oracle")) {
-			return DbType.Oracle;
-		} else if (driver.contains("mysql")) {
-			return DbType.MySQL;
-		} else if (driver.contains("postgresql")) {
-			return DbType.PostGreSQL;
-		} else if (driver.contains("h2")) {
-			return DbType.H2;
-		} else if (driver.contains("mariadb")) {
-			return DbType.MariaDB;
-		}
-		return null;
-	}
+    public static DbType getFromDriver(String driver) {
+        if (driver.contains("oracle")) {
+            return DbType.Oracle;
+        } else if (driver.contains("mysql")) {
+            return DbType.MySQL;
+        } else if (driver.contains("postgresql")) {
+            return DbType.PostGreSQL;
+        } else if (driver.contains("h2")) {
+            return DbType.H2;
+        } else if (driver.contains("mariadb")) {
+            return DbType.MariaDB;
+        }
+        return null;
+    }
 }

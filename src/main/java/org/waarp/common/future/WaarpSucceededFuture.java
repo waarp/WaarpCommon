@@ -25,17 +25,17 @@ package org.waarp.common.future;
  */
 public class WaarpSucceededFuture extends WaarpCompletedFuture {
 
-	@Override
-	public synchronized Throwable getCause() {
-		return null;
-	}
+    @Override
+    public synchronized Throwable getCause() {
+        return null;
+    }
 
-	@Override
-	public synchronized boolean isSuccess() {
-		return true;
-	}
+    @Override
+    public synchronized boolean isSuccess() {
+        return true;
+    }
 
-	public WaarpFuture rethrowIfFailed() throws Exception {
-		return this;
-	}
+    public WaarpFuture rethrowIfFailed() throws Exception {
+        return this;
+    }
 }

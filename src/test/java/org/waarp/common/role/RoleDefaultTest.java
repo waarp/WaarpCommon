@@ -295,6 +295,7 @@ public class RoleDefaultTest {
         RoleDefault role = new RoleDefault();
         checkRole(role, ROLE.NOACCESS);
     }
+
     @Test
     public void testRoleDefaultROLE() {
         for (ROLE roletoset : ROLE.values()) {

@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply425Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 425L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 425L;
 
-	/**
-	 * 425 Can't open data connection.
-	 * 
-	 * @param message
-	 */
-	public Reply425Exception(String message) {
-		super(ReplyCode.REPLY_425_CANT_OPEN_DATA_CONNECTION, message);
-	}
+    /**
+     * 425 Can't open data connection.
+     * 
+     * @param message
+     */
+    public Reply425Exception(String message) {
+        super(ReplyCode.REPLY_425_CANT_OPEN_DATA_CONNECTION, message);
+    }
 
 }

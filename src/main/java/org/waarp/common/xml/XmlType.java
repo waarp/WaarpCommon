@@ -27,129 +27,129 @@ import java.sql.Timestamp;
  * 
  */
 public enum XmlType {
-	BOOLEAN(Boolean.TYPE), INTEGER(Integer.TYPE), FLOAT(Float.TYPE), CHARACTER(
-			Character.TYPE), BYTE(Byte.TYPE), LONG(Long.TYPE), DOUBLE(
-			Double.TYPE), SHORT(Short.TYPE), SQLDATE(Date.class), TIMESTAMP(
-			Timestamp.class), STRING(String.class), XVAL(XmlValue.class),
-	EMPTY(XmlType.class);
+    BOOLEAN(Boolean.TYPE), INTEGER(Integer.TYPE), FLOAT(Float.TYPE), CHARACTER(
+            Character.TYPE), BYTE(Byte.TYPE), LONG(Long.TYPE), DOUBLE(
+            Double.TYPE), SHORT(Short.TYPE), SQLDATE(Date.class), TIMESTAMP(
+            Timestamp.class), STRING(String.class), XVAL(XmlValue.class),
+    EMPTY(XmlType.class);
 
-	public Class<?> classType;
+    public Class<?> classType;
 
-	/**
-	 * @param classType
-	 */
-	private XmlType(Class<?> classType) {
-		this.classType = classType;
-	}
+    /**
+     * @param classType
+     */
+    private XmlType(Class<?> classType) {
+        this.classType = classType;
+    }
 
-	/**
-	 * 
-	 * @return the associated Native Java class
-	 */
-	public Class<?> getClassType() {
-		return classType;
-	}
+    /**
+     * 
+     * @return the associated Native Java class
+     */
+    public Class<?> getClassType() {
+        return classType;
+    }
 
-	/**
-	 * 
-	 * @param value
-	 * @return True if the Object is natively compatible with the internal Type
-	 */
-	public boolean isNativelyCompatible(Object value) {
-		Class<?> type = value.getClass();
-		switch (this) {
-			case BOOLEAN:
-				return (type.equals(Boolean.TYPE) || Boolean.class
-						.isAssignableFrom(type));
-			case INTEGER:
-				return (type.equals(Integer.TYPE) || Integer.class
-						.isAssignableFrom(type));
-			case FLOAT:
-				return (type.equals(Float.TYPE) || Float.class
-						.isAssignableFrom(type));
-			case CHARACTER:
-				return (type.equals(Character.TYPE) || Character.class
-						.isAssignableFrom(type));
-			case BYTE:
-				return (type.equals(Byte.TYPE) || Byte.class
-						.isAssignableFrom(type));
-			case LONG:
-				return (type.equals(Long.TYPE) || Long.class
-						.isAssignableFrom(type));
-			case DOUBLE:
-				return (type.equals(Double.TYPE) || Double.class
-						.isAssignableFrom(type));
-			case SHORT:
-				return (type.equals(Short.TYPE) || Short.class
-						.isAssignableFrom(type));
-			case SQLDATE:
-				return (java.sql.Date.class.isAssignableFrom(type));
-			case TIMESTAMP:
-				return (Timestamp.class.isAssignableFrom(type));
-			case STRING:
-				return (String.class.isAssignableFrom(type));
-			case XVAL:
-				if (type.isArray() &&
-						type.getName().contains(XmlValue.class.getName())) {
-					return true;
-				}
-				return false;
-			case EMPTY:
-				return false;
-			default:
-				return false;
-		}
-	}
+    /**
+     * 
+     * @param value
+     * @return True if the Object is natively compatible with the internal Type
+     */
+    public boolean isNativelyCompatible(Object value) {
+        Class<?> type = value.getClass();
+        switch (this) {
+            case BOOLEAN:
+                return (type.equals(Boolean.TYPE) || Boolean.class
+                        .isAssignableFrom(type));
+            case INTEGER:
+                return (type.equals(Integer.TYPE) || Integer.class
+                        .isAssignableFrom(type));
+            case FLOAT:
+                return (type.equals(Float.TYPE) || Float.class
+                        .isAssignableFrom(type));
+            case CHARACTER:
+                return (type.equals(Character.TYPE) || Character.class
+                        .isAssignableFrom(type));
+            case BYTE:
+                return (type.equals(Byte.TYPE) || Byte.class
+                        .isAssignableFrom(type));
+            case LONG:
+                return (type.equals(Long.TYPE) || Long.class
+                        .isAssignableFrom(type));
+            case DOUBLE:
+                return (type.equals(Double.TYPE) || Double.class
+                        .isAssignableFrom(type));
+            case SHORT:
+                return (type.equals(Short.TYPE) || Short.class
+                        .isAssignableFrom(type));
+            case SQLDATE:
+                return (java.sql.Date.class.isAssignableFrom(type));
+            case TIMESTAMP:
+                return (Timestamp.class.isAssignableFrom(type));
+            case STRING:
+                return (String.class.isAssignableFrom(type));
+            case XVAL:
+                if (type.isArray() &&
+                        type.getName().contains(XmlValue.class.getName())) {
+                    return true;
+                }
+                return false;
+            case EMPTY:
+                return false;
+            default:
+                return false;
+        }
+    }
 
-	public boolean isBoolean() {
-		return this == BOOLEAN;
-	}
+    public boolean isBoolean() {
+        return this == BOOLEAN;
+    }
 
-	public boolean isInteger() {
-		return this == INTEGER;
-	}
+    public boolean isInteger() {
+        return this == INTEGER;
+    }
 
-	public boolean isFloat() {
-		return this == FLOAT;
-	}
+    public boolean isFloat() {
+        return this == FLOAT;
+    }
 
-	public boolean isCharacter() {
-		return this == CHARACTER;
-	}
+    public boolean isCharacter() {
+        return this == CHARACTER;
+    }
 
-	public boolean isByte() {
-		return this == BYTE;
-	}
+    public boolean isByte() {
+        return this == BYTE;
+    }
 
-	public boolean isLong() {
-		return this == LONG;
-	}
+    public boolean isLong() {
+        return this == LONG;
+    }
 
-	public boolean isDouble() {
-		return this == DOUBLE;
-	}
+    public boolean isDouble() {
+        return this == DOUBLE;
+    }
 
-	public boolean isShort() {
-		return this == SHORT;
-	}
+    public boolean isShort() {
+        return this == SHORT;
+    }
 
-	public boolean isDate() {
-		return this == SQLDATE;
-	}
+    public boolean isDate() {
+        return this == SQLDATE;
+    }
 
-	public boolean isTimestamp() {
-		return this == TIMESTAMP;
-	}
+    public boolean isTimestamp() {
+        return this == TIMESTAMP;
+    }
 
-	public boolean isString() {
-		return this == STRING;
-	}
+    public boolean isString() {
+        return this == STRING;
+    }
 
-	public boolean isXmlValue() {
-		return this == XVAL;
-	}
+    public boolean isXmlValue() {
+        return this == XVAL;
+    }
 
-	public boolean isEmpty() {
-		return this == EMPTY;
-	}
+    public boolean isEmpty() {
+        return this == EMPTY;
+    }
 }

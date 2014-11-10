@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply426Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 426L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 426L;
 
-	/**
-	 * 426 Connection closed), transfer aborted.
-	 * 
-	 * @param message
-	 */
-	public Reply426Exception(String message) {
-		super(ReplyCode.REPLY_426_CONNECTION_CLOSED_TRANSFER_ABORTED, message);
-	}
+    /**
+     * 426 Connection closed), transfer aborted.
+     * 
+     * @param message
+     */
+    public Reply426Exception(String message) {
+        super(ReplyCode.REPLY_426_CONNECTION_CLOSED_TRANSFER_ABORTED, message);
+    }
 
 }
