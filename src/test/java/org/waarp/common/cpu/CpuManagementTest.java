@@ -9,7 +9,13 @@ public class CpuManagementTest {
     @Test
     public void testGetLoadAverage() {
         long total = 0;
-        CpuManagement cpuManagement = new CpuManagement();
+        CpuManagement cpuManagement = null;
+        try {
+            cpuManagement = new CpuManagement();
+        } catch (UnsupportedOperationException e) {
+            System.err.println(e);
+            return;
+        }
         double max = 0.0;
         System.err.println("LA: " + cpuManagement.getLoadAverage());
         for (int i = 0; i < 1000 * 1000 * 1000; i++) {
