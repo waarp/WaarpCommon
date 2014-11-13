@@ -20,9 +20,9 @@ package org.waarp.common.database;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -90,7 +90,7 @@ public class DbSession {
      * List all DbPrepareStatement with long term usage to enable the recreation when the associated
      * connection is reopened
      */
-    private final List<DbPreparedStatement> listPreparedStatement = new LinkedList<DbPreparedStatement>();
+    private final Collection<DbPreparedStatement> listPreparedStatement = new ConcurrentLinkedQueue<DbPreparedStatement>();
 
     void setInternalId(DbSession session) {
         session.internalId = new UUID();
@@ -575,7 +575,9 @@ public class DbSession {
      */
     public void removeLongTermPreparedStatements() {
         for (DbPreparedStatement longterm : listPreparedStatement) {
-            longterm.realClose();
+            if (longterm != null) {
+                longterm.realClose();
+            }
         }
         listPreparedStatement.clear();
     }

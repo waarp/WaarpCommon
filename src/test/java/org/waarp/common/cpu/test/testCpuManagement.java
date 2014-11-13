@@ -27,7 +27,13 @@ public class testCpuManagement {
 
     public static void main(String[] args) {
         long total = 0;
-        CpuManagement cpuManagement = new CpuManagement();
+        CpuManagement cpuManagement;
+        try {
+            cpuManagement = new CpuManagement();
+        } catch (UnsupportedOperationException e) {
+            System.err.println(e);
+            return;
+        }
         System.err.println("LA: " + cpuManagement.getLoadAverage());
         for (int i = 0; i < 1000 * 1000 * 1000; i++) {
             // keep ourselves busy for a while ...
