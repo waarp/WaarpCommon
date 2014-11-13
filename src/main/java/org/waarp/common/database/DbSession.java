@@ -21,13 +21,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.ConcurrentModificationException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.netty.util.Timeout;
 import io.netty.util.TimerTask;
+import io.netty.util.internal.ConcurrentSet;
+
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.database.model.DbModelFactory;
@@ -90,7 +91,7 @@ public class DbSession {
      * List all DbPrepareStatement with long term usage to enable the recreation when the associated
      * connection is reopened
      */
-    private final List<DbPreparedStatement> listPreparedStatement = new LinkedList<DbPreparedStatement>();
+    private final Set<DbPreparedStatement> listPreparedStatement = new ConcurrentSet<DbPreparedStatement>();
 
     void setInternalId(DbSession session) {
         session.internalId = new UUID();
@@ -580,7 +581,9 @@ public class DbSession {
      */
     public void removeLongTermPreparedStatements() {
         for (DbPreparedStatement longterm : listPreparedStatement) {
-            longterm.realClose();
+            if (longterm != null) {
+                longterm.realClose();
+            }
         }
         listPreparedStatement.clear();
     }
