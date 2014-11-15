@@ -1256,7 +1256,7 @@ public class Base64
         catch (java.io.UnsupportedEncodingException uee) {
             bytes = s.getBytes();
         } // end catch
-        //</change>
+          //</change>
 
         // Decode
         bytes = decode(bytes, 0, bytes.length, options);
