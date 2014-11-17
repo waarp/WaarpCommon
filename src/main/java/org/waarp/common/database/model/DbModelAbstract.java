@@ -156,6 +156,10 @@ public abstract class DbModelAbstract implements DbModel {
         synchronized (dbSession) {
             Statement stmt = null;
             try {
+                if (dbSession.conn == null) {
+                    throw new WaarpDatabaseNoConnectionException(
+                            "Cannot connect to database");
+                }
                 stmt = dbSession.conn.createStatement();
                 if (stmt.execute(validConnectionString())) {
                     ResultSet set = stmt.getResultSet();
