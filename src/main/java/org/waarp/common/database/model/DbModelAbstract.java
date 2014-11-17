@@ -101,6 +101,10 @@ public abstract class DbModelAbstract implements DbModel {
             throws WaarpDatabaseNoConnectionException {
         // try to limit the number of check!
         synchronized (dbSession) {
+            if (dbSession.conn == null) {
+                throw new WaarpDatabaseNoConnectionException(
+                        "Cannot connect to database");
+            }
             try {
                 if (!dbSession.conn.isClosed()) {
                     if (!dbSession.conn.isValid(DbConstant.VALIDTESTDURATION)) {
