@@ -30,286 +30,286 @@ import java.util.logging.Logger;
  */
 public class WaarpJdkLogger extends WaarpInternalLogger {
 
-	private final Logger logger;
+    private final Logger logger;
 
-	private final String loggerName;
+    private final String loggerName;
 
-	WaarpJdkLogger(Logger logger, String loggerName) {
-		super();
-		this.logger = logger;
-		this.loggerName = loggerName;
-	}
+    WaarpJdkLogger(Logger logger, String loggerName) {
+        super();
+        this.logger = logger;
+        this.loggerName = loggerName;
+    }
 
-	public void debug(String msg) {
-		if (logger.isLoggable(Level.FINE))
-			logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine() + msg);
-	}
+    public void debug(String msg) {
+        if (logger.isLoggable(Level.FINE))
+            logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine() + msg);
+    }
 
-	public void debug(String msg, Throwable cause) {
-		if (logger.isLoggable(Level.FINE))
-			logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine() + msg, cause);
-	}
+    public void debug(String msg, Throwable cause) {
+        if (logger.isLoggable(Level.FINE))
+            logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine() + msg, cause);
+    }
 
-	public void error(String msg) {
-		logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine() + msg);
-	}
+    public void error(String msg) {
+        logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine() + msg);
+    }
 
-	public void error(String msg, Throwable cause) {
-		logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine() + msg, cause);
-	}
+    public void error(String msg, Throwable cause) {
+        logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine() + msg, cause);
+    }
 
-	public void info(String msg) {
-		if (logger.isLoggable(Level.INFO))
-			logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine() + msg);
-	}
+    public void info(String msg) {
+        if (logger.isLoggable(Level.INFO))
+            logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine() + msg);
+    }
 
-	public void info(String msg, Throwable cause) {
-		if (logger.isLoggable(Level.INFO))
-			logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine() + msg, cause);
-	}
+    public void info(String msg, Throwable cause) {
+        if (logger.isLoggable(Level.INFO))
+            logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine() + msg, cause);
+    }
 
-	public boolean isDebugEnabled() {
-		return logger.isLoggable(Level.FINE);
-	}
+    public boolean isDebugEnabled() {
+        return logger.isLoggable(Level.FINE);
+    }
 
-	public boolean isErrorEnabled() {
-		return logger.isLoggable(Level.SEVERE);
-	}
+    public boolean isErrorEnabled() {
+        return logger.isLoggable(Level.SEVERE);
+    }
 
-	public boolean isInfoEnabled() {
-		return logger.isLoggable(Level.INFO);
-	}
+    public boolean isInfoEnabled() {
+        return logger.isLoggable(Level.INFO);
+    }
 
-	public boolean isWarnEnabled() {
-		return logger.isLoggable(Level.WARNING);
-	}
+    public boolean isWarnEnabled() {
+        return logger.isLoggable(Level.WARNING);
+    }
 
-	public void warn(String msg) {
-		logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine() + msg);
-	}
+    public void warn(String msg) {
+        logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine() + msg);
+    }
 
-	public void warn(String msg, Throwable cause) {
-		logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine() + msg, cause);
-	}
+    public void warn(String msg, Throwable cause) {
+        logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine() + msg, cause);
+    }
 
-	@Override
-	public String toString() {
-		return loggerName;
-	}
+    @Override
+    public String toString() {
+        return loggerName;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void debug(String format, String arg1) {
-		if (logger.isLoggable(Level.FINE)) {
-			logger.logp(Level.FINE, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
-							arg1));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void debug(String format, String arg1) {
+        if (logger.isLoggable(Level.FINE)) {
+            logger.logp(Level.FINE, loggerName, null,
+                    getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
+                            arg1));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void debug(String format, String arg1, String arg2) {
-		if (logger.isLoggable(Level.FINE)) {
-			logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst("\\{\\}",
-							arg1).replaceFirst("\\{\\}", arg2));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.String,
+     * java.lang.String)
+     */
+    @Override
+    public void debug(String format, String arg1, String arg2) {
+        if (logger.isLoggable(Level.FINE)) {
+            logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()
+                    + format.replaceFirst("\\{\\}",
+                            arg1).replaceFirst("\\{\\}", arg2));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void debug(String format, Object arg1, Object arg2) {
-		if (logger.isLoggable(Level.FINE)) {
-			logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst("\\{\\}",
-							arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public void debug(String format, Object arg1, Object arg2) {
+        if (logger.isLoggable(Level.FINE)) {
+            logger.logp(Level.FINE, loggerName, null, getLoggerMethodAndLine()
+                    + format.replaceFirst("\\{\\}",
+                            arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.Object)
-	 */
-	@Override
-	public void debug(String format, Object arg1) {
-		if (logger.isLoggable(Level.FINE)) {
-			logger.logp(Level.FINE, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
-							arg1.toString()));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#debug(java.lang.String, java.lang.Object)
+     */
+    @Override
+    public void debug(String format, Object arg1) {
+        if (logger.isLoggable(Level.FINE)) {
+            logger.logp(Level.FINE, loggerName, null,
+                    getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
+                            arg1.toString()));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void error(String format, String arg1) {
-		if (logger.isLoggable(Level.SEVERE)) {
-			logger.logp(Level.SEVERE, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst(
-							"\\{\\}", arg1));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void error(String format, String arg1) {
+        if (logger.isLoggable(Level.SEVERE)) {
+            logger.logp(Level.SEVERE, loggerName, null,
+                    getLoggerMethodAndLine() + format.replaceFirst(
+                            "\\{\\}", arg1));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void error(String format, String arg1, String arg2) {
-		if (logger.isLoggable(Level.SEVERE)) {
-			logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst(
-							"\\{\\}", arg1).replaceFirst("\\{\\}", arg2));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.String,
+     * java.lang.String)
+     */
+    @Override
+    public void error(String format, String arg1, String arg2) {
+        if (logger.isLoggable(Level.SEVERE)) {
+            logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine()
+                    + format.replaceFirst(
+                            "\\{\\}", arg1).replaceFirst("\\{\\}", arg2));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void error(String format, Object arg1, Object arg2) {
-		if (logger.isLoggable(Level.SEVERE)) {
-			logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst(
-							"\\{\\}", arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public void error(String format, Object arg1, Object arg2) {
+        if (logger.isLoggable(Level.SEVERE)) {
+            logger.logp(Level.SEVERE, loggerName, null, getLoggerMethodAndLine()
+                    + format.replaceFirst(
+                            "\\{\\}", arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.Object)
-	 */
-	@Override
-	public void error(String format, Object arg1) {
-		if (logger.isLoggable(Level.SEVERE)) {
-			logger.logp(Level.SEVERE, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst(
-							"\\{\\}", arg1.toString()));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#error(java.lang.String, java.lang.Object)
+     */
+    @Override
+    public void error(String format, Object arg1) {
+        if (logger.isLoggable(Level.SEVERE)) {
+            logger.logp(Level.SEVERE, loggerName, null,
+                    getLoggerMethodAndLine() + format.replaceFirst(
+                            "\\{\\}", arg1.toString()));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void info(String format, String arg1) {
-		if (logger.isLoggable(Level.INFO)) {
-			logger.logp(Level.INFO, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
-							arg1));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void info(String format, String arg1) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.logp(Level.INFO, loggerName, null,
+                    getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
+                            arg1));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void info(String format, String arg1, String arg2) {
-		if (logger.isLoggable(Level.INFO)) {
-			logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst("\\{\\}",
-							arg1).replaceFirst("\\{\\}", arg2));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.String,
+     * java.lang.String)
+     */
+    @Override
+    public void info(String format, String arg1, String arg2) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()
+                    + format.replaceFirst("\\{\\}",
+                            arg1).replaceFirst("\\{\\}", arg2));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void info(String format, Object arg1, Object arg2) {
-		if (logger.isLoggable(Level.INFO)) {
-			logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst("\\{\\}",
-							arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public void info(String format, Object arg1, Object arg2) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.logp(Level.INFO, loggerName, null, getLoggerMethodAndLine()
+                    + format.replaceFirst("\\{\\}",
+                            arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.Object)
-	 */
-	@Override
-	public void info(String format, Object arg1) {
-		if (logger.isLoggable(Level.INFO)) {
-			logger.logp(Level.INFO, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
-							arg1.toString()));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#info(java.lang.String, java.lang.Object)
+     */
+    @Override
+    public void info(String format, Object arg1) {
+        if (logger.isLoggable(Level.INFO)) {
+            logger.logp(Level.INFO, loggerName, null,
+                    getLoggerMethodAndLine() + format.replaceFirst("\\{\\}",
+                            arg1.toString()));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void warn(String format, String arg1) {
-		if (logger.isLoggable(Level.WARNING)) {
-			logger.logp(Level.WARNING, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst(
-							"\\{\\}", arg1));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void warn(String format, String arg1) {
+        if (logger.isLoggable(Level.WARNING)) {
+            logger.logp(Level.WARNING, loggerName, null,
+                    getLoggerMethodAndLine() + format.replaceFirst(
+                            "\\{\\}", arg1));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void warn(String format, String arg1, String arg2) {
-		if (logger.isLoggable(Level.WARNING)) {
-			logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst(
-							"\\{\\}", arg1).replaceFirst("\\{\\}", arg2));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.String,
+     * java.lang.String)
+     */
+    @Override
+    public void warn(String format, String arg1, String arg2) {
+        if (logger.isLoggable(Level.WARNING)) {
+            logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine()
+                    + format.replaceFirst(
+                            "\\{\\}", arg1).replaceFirst("\\{\\}", arg2));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void warn(String format, Object arg1, Object arg2) {
-		if (logger.isLoggable(Level.WARNING)) {
-			logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine()
-					+ format.replaceFirst(
-							"\\{\\}", arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.Object,
+     * java.lang.Object)
+     */
+    @Override
+    public void warn(String format, Object arg1, Object arg2) {
+        if (logger.isLoggable(Level.WARNING)) {
+            logger.logp(Level.WARNING, loggerName, null, getLoggerMethodAndLine()
+                    + format.replaceFirst(
+                            "\\{\\}", arg1.toString()).replaceFirst("\\{\\}", arg2.toString()));
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.Object)
-	 */
-	@Override
-	public void warn(String format, Object arg1) {
-		if (logger.isLoggable(Level.WARNING)) {
-			logger.logp(Level.WARNING, loggerName, null,
-					getLoggerMethodAndLine() + format.replaceFirst(
-							"\\{\\}", arg1.toString()));
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.logging.WaarpInternalLogger#warn(java.lang.String, java.lang.Object)
+     */
+    @Override
+    public void warn(String format, Object arg1) {
+        if (logger.isLoggable(Level.WARNING)) {
+            logger.logp(Level.WARNING, loggerName, null,
+                    getLoggerMethodAndLine() + format.replaceFirst(
+                            "\\{\\}", arg1.toString()));
+        }
+    }
 }

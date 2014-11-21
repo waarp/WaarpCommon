@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply451Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 451L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 451L;
 
-	/**
-	 * 451 Requested action aborted: local error in processing.
-	 * 
-	 * @param message
-	 */
-	public Reply451Exception(String message) {
-		super(ReplyCode.REPLY_451_REQUESTED_ACTION_ABORTED, message);
-	}
+    /**
+     * 451 Requested action aborted: local error in processing.
+     * 
+     * @param message
+     */
+    public Reply451Exception(String message) {
+        super(ReplyCode.REPLY_451_REQUESTED_ACTION_ABORTED, message);
+    }
 
 }

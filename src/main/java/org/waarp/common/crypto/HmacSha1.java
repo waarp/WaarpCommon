@@ -20,10 +20,9 @@ package org.waarp.common.crypto;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 
-
 /**
- * This class handles methods to crypt (not decrypt) messages with HmacSha1 algorithm (very efficient:
- * 136000/s).<br>
+ * This class handles methods to crypt (not decrypt) messages with HmacSha1 algorithm (very
+ * efficient: 136000/s).<br>
  * <br>
  * Usage:<br>
  * <ul>
@@ -42,70 +41,70 @@ import javax.crypto.Mac;
  * 
  */
 public class HmacSha1 extends KeyObject {
-	public final static int KEY_SIZE = 128;
-	public final static String ALGO = "HmacSHA1";
-	public final static String INSTANCE = ALGO;
-	public final static String EXTENSION = "hs1";
+    public final static int KEY_SIZE = 128;
+    public final static String ALGO = "HmacSHA1";
+    public final static String INSTANCE = ALGO;
+    public final static String EXTENSION = "hs1";
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getAlgorithm()
-	 */
-	@Override
-	public String getAlgorithm() {
-		return ALGO;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getAlgorithm()
+     */
+    @Override
+    public String getAlgorithm() {
+        return ALGO;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getInstance()
-	 */
-	@Override
-	public String getInstance() {
-		return INSTANCE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getInstance()
+     */
+    @Override
+    public String getInstance() {
+        return INSTANCE;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getKeySize()
-	 */
-	@Override
-	public int getKeySize() {
-		return KEY_SIZE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getKeySize()
+     */
+    @Override
+    public int getKeySize() {
+        return KEY_SIZE;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#toCrypt()
-	 */
-	@Override
-	public Cipher toCrypt() {
-		throw new IllegalArgumentException("Cannot be used for HmacSha1");
-	}
+    /* (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#toCrypt()
+     */
+    @Override
+    public Cipher toCrypt() {
+        throw new IllegalArgumentException("Cannot be used for HmacSha1");
+    }
 
-	/* (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#crypt(byte[])
-	 */
-	@Override
-	public byte[] crypt(byte[] plaintext) throws Exception {
-		Mac mac = Mac.getInstance(ALGO);
-		mac.init(secretKey);
-		return mac.doFinal(plaintext);
-	}
+    /* (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#crypt(byte[])
+     */
+    @Override
+    public byte[] crypt(byte[] plaintext) throws Exception {
+        Mac mac = Mac.getInstance(ALGO);
+        mac.init(secretKey);
+        return mac.doFinal(plaintext);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#toDecrypt()
-	 */
-	@Override
-	public Cipher toDecrypt() {
-		throw new IllegalArgumentException("Cannot be used for HmacSha1");
-	}
+    /* (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#toDecrypt()
+     */
+    @Override
+    public Cipher toDecrypt() {
+        throw new IllegalArgumentException("Cannot be used for HmacSha1");
+    }
 
-	/* (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#decrypt(byte[])
-	 */
-	@Override
-	public byte[] decrypt(byte[] ciphertext) throws Exception {
-		throw new IllegalArgumentException("Cannot be used for HmacSha1");
-	}
+    /* (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#decrypt(byte[])
+     */
+    @Override
+    public byte[] decrypt(byte[] ciphertext) throws Exception {
+        throw new IllegalArgumentException("Cannot be used for HmacSha1");
+    }
 
 }

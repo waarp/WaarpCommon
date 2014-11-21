@@ -30,58 +30,58 @@ import ch.qos.logback.classic.Logger;
  * 
  */
 public class WaarpSlf4JLoggerFactory extends
-		org.jboss.netty.logging.Slf4JLoggerFactory implements WaarpInternalLoggerInterface {
-	static final String ROOT = Logger.ROOT_LOGGER_NAME;// "root"; // LoggerContext.ROOT_NAME; //
+        org.jboss.netty.logging.Slf4JLoggerFactory implements WaarpInternalLoggerInterface {
+    static final String ROOT = Logger.ROOT_LOGGER_NAME;// "root"; // LoggerContext.ROOT_NAME; //
 
-	/**
-	 * 
-	 * @param level
-	 */
-	public WaarpSlf4JLoggerFactory(Level level) {
-		super();
-		Logger logger = (Logger) LoggerFactory
-				.getLogger(ROOT);
-		if (level == null) {
-			logger.info("Default level: " + logger.getLevel());
-		} else {
-			logger.setLevel(level);
-			if (level.isGreaterOrEqual(Level.ERROR)) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.ERROR;
-			} else if (level.isGreaterOrEqual(Level.WARN)) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.WARN;
-			} else if (level.isGreaterOrEqual(Level.INFO)) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.INFO;
-			} else {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.DEBUG;
-			}
-		}
-	}
-	
-	public void setDefaultLevel(WaarpLevel level) {
-		Logger logger = (Logger) LoggerFactory.getLogger(ROOT);
-		if (level != null) {
-			switch (level) {
-				case DEBUG:
-					logger.setLevel(Level.DEBUG);
-					break;
-				case INFO:
-					logger.setLevel(Level.INFO);
-					break;
-				case WARN:
-					logger.setLevel(Level.WARN);
-					break;
-				case ERROR:
-					logger.setLevel(Level.ERROR);
-					break;
-				default:
-					break;
-			}
-		}
-	}
+    /**
+     * 
+     * @param level
+     */
+    public WaarpSlf4JLoggerFactory(Level level) {
+        super();
+        Logger logger = (Logger) LoggerFactory
+                .getLogger(ROOT);
+        if (level == null) {
+            logger.info("Default level: " + logger.getLevel());
+        } else {
+            logger.setLevel(level);
+            if (level.isGreaterOrEqual(Level.ERROR)) {
+                WaarpInternalLoggerFactory.currentLevel = WaarpLevel.ERROR;
+            } else if (level.isGreaterOrEqual(Level.WARN)) {
+                WaarpInternalLoggerFactory.currentLevel = WaarpLevel.WARN;
+            } else if (level.isGreaterOrEqual(Level.INFO)) {
+                WaarpInternalLoggerFactory.currentLevel = WaarpLevel.INFO;
+            } else {
+                WaarpInternalLoggerFactory.currentLevel = WaarpLevel.DEBUG;
+            }
+        }
+    }
 
-	@Override
-	public InternalLogger newInstance(String name) {
-		final org.slf4j.Logger logger = LoggerFactory.getLogger(name);
-		return new WaarpSlf4JLogger(logger);
-	}
+    public void setDefaultLevel(WaarpLevel level) {
+        Logger logger = (Logger) LoggerFactory.getLogger(ROOT);
+        if (level != null) {
+            switch (level) {
+                case DEBUG:
+                    logger.setLevel(Level.DEBUG);
+                    break;
+                case INFO:
+                    logger.setLevel(Level.INFO);
+                    break;
+                case WARN:
+                    logger.setLevel(Level.WARN);
+                    break;
+                case ERROR:
+                    logger.setLevel(Level.ERROR);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public InternalLogger newInstance(String name) {
+        final org.slf4j.Logger logger = LoggerFactory.getLogger(name);
+        return new WaarpSlf4JLogger(logger);
+    }
 }

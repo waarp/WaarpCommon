@@ -27,19 +27,19 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply500Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 500L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 500L;
 
-	/**
-	 * 500 Syntax error, command unrecognized. This may include errors such as command line too
-	 * long.
-	 * 
-	 * @param message
-	 */
-	public Reply500Exception(String message) {
-		super(ReplyCode.REPLY_500_SYNTAX_ERROR_COMMAND_UNRECOGNIZED, message);
-	}
+    /**
+     * 500 Syntax error, command unrecognized. This may include errors such as command line too
+     * long.
+     * 
+     * @param message
+     */
+    public Reply500Exception(String message) {
+        super(ReplyCode.REPLY_500_SYNTAX_ERROR_COMMAND_UNRECOGNIZED, message);
+    }
 
 }

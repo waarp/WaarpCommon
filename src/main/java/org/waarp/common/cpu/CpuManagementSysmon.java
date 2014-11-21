@@ -25,47 +25,47 @@ import com.jezhumble.javasysmon.JavaSysMon;
  * 
  */
 public class CpuManagementSysmon implements CpuManagementInterface {
-	public static long delay = 1000;
+    public static long delay = 1000;
 
-	JavaSysMon sysMon;
+    JavaSysMon sysMon;
 
-	CpuTimes cpuTimesOld;
-	CpuTimes cpuTimesOldNext;
-	long time;
+    CpuTimes cpuTimesOld;
+    CpuTimes cpuTimesOldNext;
+    long time;
 
-	/**
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if System Load Average is not supported
-	 */
-	public CpuManagementSysmon() throws UnsupportedOperationException {
-		sysMon = new JavaSysMon();
-		cpuTimesOld = sysMon.cpuTimes();
-		cpuTimesOldNext = cpuTimesOld;
-		time = System.currentTimeMillis();
-	}
+    /**
+     * 
+     * @throws UnsupportedOperationException
+     *             if System Load Average is not supported
+     */
+    public CpuManagementSysmon() throws UnsupportedOperationException {
+        sysMon = new JavaSysMon();
+        cpuTimesOld = sysMon.cpuTimes();
+        cpuTimesOldNext = cpuTimesOld;
+        time = System.currentTimeMillis();
+    }
 
-	/**
-	 * 
-	 * @return the load average
-	 */
-	public double getLoadAverage() {
-		long newTime = System.currentTimeMillis();
-		CpuTimes cpuTimes = sysMon.cpuTimes();
-		double rate = cpuTimes.getCpuUsage(cpuTimesOld);
-		long delta = newTime - time;
-		if ((delta) > delay) {
-			if ((delta) > 10 * delay) {
-				time = newTime;
-				cpuTimesOldNext = cpuTimes;
-				cpuTimesOld = cpuTimes;
-			} else {
-				time = newTime;
-				cpuTimesOldNext = cpuTimes;
-				cpuTimesOld = cpuTimesOldNext;
-			}
-		}
-		return rate;
-	}
+    /**
+     * 
+     * @return the load average
+     */
+    public double getLoadAverage() {
+        long newTime = System.currentTimeMillis();
+        CpuTimes cpuTimes = sysMon.cpuTimes();
+        double rate = cpuTimes.getCpuUsage(cpuTimesOld);
+        long delta = newTime - time;
+        if ((delta) > delay) {
+            if ((delta) > 10 * delay) {
+                time = newTime;
+                cpuTimesOldNext = cpuTimes;
+                cpuTimesOld = cpuTimes;
+            } else {
+                time = newTime;
+                cpuTimesOldNext = cpuTimes;
+                cpuTimesOld = cpuTimesOldNext;
+            }
+        }
+        return rate;
+    }
 
 }

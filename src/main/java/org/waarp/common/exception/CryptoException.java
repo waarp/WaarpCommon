@@ -25,24 +25,24 @@ package org.waarp.common.exception;
  */
 public class CryptoException extends Exception {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = -7835997952812942700L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = -7835997952812942700L;
 
-	/**
-	 * @param message
-	 */
-	public CryptoException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public CryptoException(String message) {
+        super(message);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public CryptoException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public CryptoException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

@@ -30,74 +30,74 @@ import org.jboss.netty.buffer.ChannelBuffer;
  */
 public interface PassthroughFile {
 
-	public boolean isDirectory();
+    public boolean isDirectory();
 
-	public boolean isFile();
+    public boolean isFile();
 
-	public ChannelBuffer read(int sizeblock) throws PassthroughException;
+    public ChannelBuffer read(int sizeblock) throws PassthroughException;
 
-	public int write(ChannelBuffer buffer) throws PassthroughException;
+    public int write(ChannelBuffer buffer) throws PassthroughException;
 
-	public long length();
+    public long length();
 
-	public boolean canRead();
+    public boolean canRead();
 
-	public boolean canWrite();
+    public boolean canWrite();
 
-	public boolean isInReading();
+    public boolean isInReading();
 
-	public boolean isInWriting();
+    public boolean isInWriting();
 
-	public boolean exists();
+    public boolean exists();
 
-	public boolean delete() throws PassthroughException;
+    public boolean delete() throws PassthroughException;
 
-	public boolean renameTo(String path) throws PassthroughException;
+    public boolean renameTo(String path) throws PassthroughException;
 
-	public void position(long position) throws PassthroughException;
+    public void position(long position) throws PassthroughException;
 
-	public void flush() throws PassthroughException;
+    public void flush() throws PassthroughException;
 
-	/**
-	 * Note: be aware to not directly use transferTo or transferFrom at once but to use them by
-	 * chunk to prevent memory usage (mmap used under the wood by the JVM)
-	 * 
-	 * @param out
-	 * @return the size in bytes transfered
-	 * @throws PassthroughException
-	 */
-	public long transferTo(FileChannel out) throws PassthroughException;
+    /**
+     * Note: be aware to not directly use transferTo or transferFrom at once but to use them by
+     * chunk to prevent memory usage (mmap used under the wood by the JVM)
+     * 
+     * @param out
+     * @return the size in bytes transfered
+     * @throws PassthroughException
+     */
+    public long transferTo(FileChannel out) throws PassthroughException;
 
-	public void close() throws PassthroughException;
+    public void close() throws PassthroughException;
 
-	// Some extra functions that could be not implemented but just throwing the exception
-	public List<String> wildcard(String subPath) throws PassthroughException;
+    // Some extra functions that could be not implemented but just throwing the exception
+    public List<String> wildcard(String subPath) throws PassthroughException;
 
-	public boolean mkdir() throws PassthroughException;
+    public boolean mkdir() throws PassthroughException;
 
-	public boolean rmdir() throws PassthroughException;
+    public boolean rmdir() throws PassthroughException;
 
-	public boolean changeDirectory(String path) throws PassthroughException;
+    public boolean changeDirectory(String path) throws PassthroughException;
 
-	/**
-	 * Return the Modification time
-	 * 
-	 * @return the Modification time as a String YYYYMMDDHHMMSS.sss
-	 */
-	public String getModificationTime() throws PassthroughException;
+    /**
+     * Return the Modification time
+     * 
+     * @return the Modification time as a String YYYYMMDDHHMMSS.sss
+     */
+    public String getModificationTime() throws PassthroughException;
 
-	public List<String> list() throws PassthroughException;
+    public List<String> list() throws PassthroughException;
 
-	public List<String> listFull(boolean lsFormat) throws PassthroughException;
+    public List<String> listFull(boolean lsFormat) throws PassthroughException;
 
-	public String fileFull(boolean lsFormat) throws PassthroughException;
+    public String fileFull(boolean lsFormat) throws PassthroughException;
 
-	public long getFreeSpace() throws PassthroughException;
+    public long getFreeSpace() throws PassthroughException;
 
-	public long getCRC() throws PassthroughException;
+    public long getCRC() throws PassthroughException;
 
-	public byte[] getMD5() throws PassthroughException;
+    public byte[] getMD5() throws PassthroughException;
 
-	public byte[] getSHA1() throws PassthroughException;
+    public byte[] getSHA1() throws PassthroughException;
 
 }

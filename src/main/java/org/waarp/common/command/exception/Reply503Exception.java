@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply503Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 503L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 503L;
 
-	/**
-	 * 503 Bad sequence of commands.
-	 * 
-	 * @param message
-	 */
-	public Reply503Exception(String message) {
-		super(ReplyCode.REPLY_503_BAD_SEQUENCE_OF_COMMANDS, message);
-	}
+    /**
+     * 503 Bad sequence of commands.
+     * 
+     * @param message
+     */
+    public Reply503Exception(String message) {
+        super(ReplyCode.REPLY_503_BAD_SEQUENCE_OF_COMMANDS, message);
+    }
 
 }

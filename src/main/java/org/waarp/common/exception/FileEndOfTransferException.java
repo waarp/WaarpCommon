@@ -25,24 +25,24 @@ package org.waarp.common.exception;
  */
 public class FileEndOfTransferException extends Exception {
 
-	/**
+    /**
 	 *
 	 */
-	private static final long serialVersionUID = 977343700748516315L;
+    private static final long serialVersionUID = 977343700748516315L;
 
-	/**
-	 * @param message
-	 */
-	public FileEndOfTransferException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public FileEndOfTransferException(String message) {
+        super(message);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public FileEndOfTransferException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public FileEndOfTransferException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

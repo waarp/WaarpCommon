@@ -27,19 +27,19 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply504Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 504L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 504L;
 
-	/**
-	 * 504 Command not implemented for that parameter.
-	 * 
-	 * @param message
-	 */
-	public Reply504Exception(String message) {
-		super(ReplyCode.REPLY_504_COMMAND_NOT_IMPLEMENTED_FOR_THAT_PARAMETER,
-				message);
-	}
+    /**
+     * 504 Command not implemented for that parameter.
+     * 
+     * @param message
+     */
+    public Reply504Exception(String message) {
+        super(ReplyCode.REPLY_504_COMMAND_NOT_IMPLEMENTED_FOR_THAT_PARAMETER,
+                message);
+    }
 
 }

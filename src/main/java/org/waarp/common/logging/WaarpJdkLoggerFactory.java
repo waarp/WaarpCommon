@@ -34,56 +34,55 @@ import org.jboss.netty.logging.JdkLoggerFactory;
  * @author Frederic Bregier
  */
 public class WaarpJdkLoggerFactory extends JdkLoggerFactory implements WaarpInternalLoggerInterface {
-	/**
-	 * 
-	 * @param level
-	 */
-	public WaarpJdkLoggerFactory(Level level) {
-		super();
+    /**
+     * 
+     * @param level
+     */
+    public WaarpJdkLoggerFactory(Level level) {
+        super();
 
-		Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-		if (level == null) {
-			logger.info("Default level: " + logger.getLevel());
-		} else {
-			logger.setLevel(level);
-			if (level.intValue() < Level.INFO.intValue()) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.DEBUG;
-			} else if (level.intValue() < Level.WARNING.intValue()) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.INFO;
-			} else if (level.intValue() < Level.SEVERE.intValue()) {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.WARN;
-			} else {
-				WaarpInternalLoggerFactory.currentLevel = WaarpLevel.ERROR;
-			}
-		}
-	}
-	
-	public void setDefaultLevel(WaarpLevel level) {
-		Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-		if (level != null) {
-			switch (level) {
-				case DEBUG:
-					logger.setLevel(Level.ALL);
-					break;
-				case INFO:
-					logger.setLevel(Level.INFO);
-					break;
-				case WARN:
-					logger.setLevel(Level.WARNING);
-					break;
-				case ERROR:
-					logger.setLevel(Level.SEVERE);
-					break;
-				default:
-					break;
-			}
-		}
-	}
+        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        if (level == null) {
+            logger.info("Default level: " + logger.getLevel());
+        } else {
+            logger.setLevel(level);
+            if (level.intValue() < Level.INFO.intValue()) {
+                WaarpInternalLoggerFactory.currentLevel = WaarpLevel.DEBUG;
+            } else if (level.intValue() < Level.WARNING.intValue()) {
+                WaarpInternalLoggerFactory.currentLevel = WaarpLevel.INFO;
+            } else if (level.intValue() < Level.SEVERE.intValue()) {
+                WaarpInternalLoggerFactory.currentLevel = WaarpLevel.WARN;
+            } else {
+                WaarpInternalLoggerFactory.currentLevel = WaarpLevel.ERROR;
+            }
+        }
+    }
 
+    public void setDefaultLevel(WaarpLevel level) {
+        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        if (level != null) {
+            switch (level) {
+                case DEBUG:
+                    logger.setLevel(Level.ALL);
+                    break;
+                case INFO:
+                    logger.setLevel(Level.INFO);
+                    break;
+                case WARN:
+                    logger.setLevel(Level.WARNING);
+                    break;
+                case ERROR:
+                    logger.setLevel(Level.SEVERE);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
-	@Override
-	public InternalLogger newInstance(String name) {
-		final Logger logger = Logger.getLogger(name);
-		return new WaarpJdkLogger(logger, name);
-	}
+    @Override
+    public InternalLogger newInstance(String name) {
+        final Logger logger = Logger.getLogger(name);
+        return new WaarpJdkLogger(logger, name);
+    }
 }

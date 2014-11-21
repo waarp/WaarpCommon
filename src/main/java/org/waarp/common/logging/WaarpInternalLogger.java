@@ -33,251 +33,247 @@ import org.jboss.netty.logging.InternalLogger;
  * 
  */
 public abstract class WaarpInternalLogger implements InternalLogger {
-	private static int BASELEVEL;
+    private static int BASELEVEL;
 
-	/**
-	 * Determine the good level
-	 * 
-	 * @return the default base level
-	 */
-	private static int detectLoggingBaseLevel() {
-		StackTraceElement[] elt = Thread.currentThread().getStackTrace();
-		int i = 0;
-		for (i = 0; i < elt.length; i++) {
-			if (elt[i].getMethodName().equalsIgnoreCase("detectLoggingBaseLevel")) {
-				break;
-			}
-		}
-		return i;
-	}
+    /**
+     * Determine the good level
+     * 
+     * @return the default base level
+     */
+    private static int detectLoggingBaseLevel() {
+        StackTraceElement[] elt = Thread.currentThread().getStackTrace();
+        int i = 0;
+        for (i = 0; i < elt.length; i++) {
+            if (elt[i].getMethodName().equalsIgnoreCase("detectLoggingBaseLevel")) {
+                break;
+            }
+        }
+        return i;
+    }
 
-	{
-		BASELEVEL = detectLoggingBaseLevel();
-	}
+    {
+        BASELEVEL = detectLoggingBaseLevel();
+    }
 
-	/**
-	 * To be used in message for logger (rank 2) like
-	 * logger.warn(code,"message:"+getImmediateMethodAndLine(),null);
-	 * 
-	 * @return "ClassAndMethodName(FileName:LineNumber)"
-	 */
-	public static String getImmediateMethodAndLine() {
-		StackTraceElement elt = Thread.currentThread().getStackTrace()[BASELEVEL + 1];
-		return getMethodAndLine(elt);
-	}
+    /**
+     * To be used in message for logger (rank 2) like
+     * logger.warn(code,"message:"+getImmediateMethodAndLine(),null);
+     * 
+     * @return "ClassAndMethodName(FileName:LineNumber)"
+     */
+    public static String getImmediateMethodAndLine() {
+        StackTraceElement elt = Thread.currentThread().getStackTrace()[BASELEVEL + 1];
+        return getMethodAndLine(elt);
+    }
 
-	// FIXME TODO for JDK6 IBM add 1 (2->3 and 3->4)
-	/**
-	 * To be used only by Logger (rank 5)
-	 * 
-	 * @return "MethodName(FileName:LineNumber)"
-	 */
-	protected static String getLoggerMethodAndLine() {
-		StackTraceElement elt = Thread.currentThread().getStackTrace()[BASELEVEL + 2];
-		return getMethodAndLine(elt);
-	}
+    // FIXME TODO for JDK6 IBM add 1 (2->3 and 3->4)
+    /**
+     * To be used only by Logger (rank 5)
+     * 
+     * @return "MethodName(FileName:LineNumber)"
+     */
+    protected static String getLoggerMethodAndLine() {
+        StackTraceElement elt = Thread.currentThread().getStackTrace()[BASELEVEL + 2];
+        return getMethodAndLine(elt);
+    }
 
-	/**
-	 * @param rank
-	 *            is the current depth of call+1 (immediate = 1+1=2)
-	 * @return "ClassAndMethodName(FileName:LineNumber)"
-	 */
-	public static String getRankMethodAndLine(int rank) {
-		StackTraceElement elt = Thread.currentThread().getStackTrace()[rank];
-		return getMethodAndLine(elt);
-	}
+    /**
+     * @param rank
+     *            is the current depth of call+1 (immediate = 1+1=2)
+     * @return "ClassAndMethodName(FileName:LineNumber)"
+     */
+    public static String getRankMethodAndLine(int rank) {
+        StackTraceElement elt = Thread.currentThread().getStackTrace()[rank];
+        return getMethodAndLine(elt);
+    }
 
-	/**
-	 * 
-	 * @param elt
-	 * @return "MethodName(FileName:LineNumber) " from elt
-	 */
-	private static String getMethodAndLine(StackTraceElement elt) {
-		StringBuilder builder = new StringBuilder(elt.getClassName());
-		builder.append('.');
-		builder.append(elt.getMethodName());
-		builder.append('(');
-		builder.append(elt.getFileName());
-		builder.append(':');
-		builder.append(elt.getLineNumber());
-		builder.append(") : ");
-		return builder.toString();
-	}
+    /**
+     * 
+     * @param elt
+     * @return "MethodName(FileName:LineNumber) " from elt
+     */
+    private static String getMethodAndLine(StackTraceElement elt) {
+        StringBuilder builder = new StringBuilder(elt.getClassName());
+        builder.append('.').append(elt.getMethodName())
+                .append('(').append(elt.getFileName()).append(':')
+                .append(elt.getLineNumber()).append(") : ");
+        return builder.toString();
+    }
 
-	/**
-	 * @param level
-	 * @return True if the level is enabled
-	 */
-	public boolean isEnabled(InternalLogLevel level) {
-		switch (level) {
-			case DEBUG:
-				return isDebugEnabled();
-			case INFO:
-				return isInfoEnabled();
-			case WARN:
-				return isWarnEnabled();
-			case ERROR:
-				return isErrorEnabled();
-			default:
-				throw new Error();
-		}
-	}
+    /**
+     * @param level
+     * @return True if the level is enabled
+     */
+    public boolean isEnabled(InternalLogLevel level) {
+        switch (level) {
+            case DEBUG:
+                return isDebugEnabled();
+            case INFO:
+                return isInfoEnabled();
+            case WARN:
+                return isWarnEnabled();
+            case ERROR:
+                return isErrorEnabled();
+            default:
+                throw new Error();
+        }
+    }
 
-	public void log(InternalLogLevel level, String msg, Throwable cause) {
-		switch (level) {
-			case DEBUG:
-				debug(msg, cause);
-				break;
-			case INFO:
-				info(msg, cause);
-				break;
-			case WARN:
-				warn(msg, cause);
-				break;
-			case ERROR:
-				error(msg, cause);
-				break;
-			default:
-				throw new Error();
-		}
-	}
+    public void log(InternalLogLevel level, String msg, Throwable cause) {
+        switch (level) {
+            case DEBUG:
+                debug(msg, cause);
+                break;
+            case INFO:
+                info(msg, cause);
+                break;
+            case WARN:
+                warn(msg, cause);
+                break;
+            case ERROR:
+                error(msg, cause);
+                break;
+            default:
+                throw new Error();
+        }
+    }
 
-	public void log(InternalLogLevel level, String msg) {
-		switch (level) {
-			case DEBUG:
-				debug(msg);
-				break;
-			case INFO:
-				info(msg);
-				break;
-			case WARN:
-				warn(msg);
-				break;
-			case ERROR:
-				error(msg);
-				break;
-			default:
-				throw new Error();
-		}
-	}
+    public void log(InternalLogLevel level, String msg) {
+        switch (level) {
+            case DEBUG:
+                debug(msg);
+                break;
+            case INFO:
+                info(msg);
+                break;
+            case WARN:
+                warn(msg);
+                break;
+            case ERROR:
+                error(msg);
+                break;
+            default:
+                throw new Error();
+        }
+    }
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 */
-	public abstract void debug(String format, String arg1);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     */
+    public abstract void debug(String format, String arg1);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 */
-	public abstract void info(String format, String arg1);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     */
+    public abstract void info(String format, String arg1);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 */
-	public abstract void warn(String format, String arg1);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     */
+    public abstract void warn(String format, String arg1);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 */
-	public abstract void error(String format, String arg1);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     */
+    public abstract void error(String format, String arg1);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	public abstract void debug(String format, String arg1, String arg2);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    public abstract void debug(String format, String arg1, String arg2);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	public abstract void info(String format, String arg1, String arg2);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    public abstract void info(String format, String arg1, String arg2);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	public abstract void warn(String format, String arg1, String arg2);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    public abstract void warn(String format, String arg1, String arg2);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	public abstract void error(String format, String arg1, String arg2);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    public abstract void error(String format, String arg1, String arg2);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	public abstract void debug(String format, Object arg1, Object arg2);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    public abstract void debug(String format, Object arg1, Object arg2);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	public abstract void info(String format, Object arg1, Object arg2);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    public abstract void info(String format, Object arg1, Object arg2);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	public abstract void warn(String format, Object arg1, Object arg2);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    public abstract void warn(String format, Object arg1, Object arg2);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	public abstract void error(String format, Object arg1, Object arg2);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    public abstract void error(String format, Object arg1, Object arg2);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 */
-	public abstract void debug(String format, Object arg1);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     */
+    public abstract void debug(String format, Object arg1);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 */
-	public abstract void info(String format, Object arg1);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     */
+    public abstract void info(String format, Object arg1);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 */
-	public abstract void warn(String format, Object arg1);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     */
+    public abstract void warn(String format, Object arg1);
 
-	/**
-	 * 
-	 * @param format
-	 * @param arg1
-	 */
-	public abstract void error(String format, Object arg1);
+    /**
+     * 
+     * @param format
+     * @param arg1
+     */
+    public abstract void error(String format, Object arg1);
 }

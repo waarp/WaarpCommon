@@ -25,38 +25,38 @@ package org.waarp.common.database.exception;
  */
 public class WaarpDatabaseNoConnectionException extends WaarpDatabaseException {
 
-	/**
+    /**
      *
      */
-	private static final long serialVersionUID = -408789088492387727L;
+    private static final long serialVersionUID = -408789088492387727L;
 
-	/**
+    /**
      *
      */
-	public WaarpDatabaseNoConnectionException() {
-		super();
-	}
+    public WaarpDatabaseNoConnectionException() {
+        super();
+    }
 
-	/**
-	 * @param arg0
-	 * @param arg1
-	 */
-	public WaarpDatabaseNoConnectionException(String arg0, Throwable arg1) {
-		super(arg0, arg1);
-	}
+    /**
+     * @param arg0
+     * @param arg1
+     */
+    public WaarpDatabaseNoConnectionException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
 
-	/**
-	 * @param arg0
-	 */
-	public WaarpDatabaseNoConnectionException(String arg0) {
-		super(arg0);
-	}
+    /**
+     * @param arg0
+     */
+    public WaarpDatabaseNoConnectionException(String arg0) {
+        super(arg0);
+    }
 
-	/**
-	 * @param arg0
-	 */
-	public WaarpDatabaseNoConnectionException(Throwable arg0) {
-		super(arg0);
-	}
+    /**
+     * @param arg0
+     */
+    public WaarpDatabaseNoConnectionException(Throwable arg0) {
+        super(arg0);
+    }
 
 }

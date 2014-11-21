@@ -40,38 +40,38 @@ package org.waarp.common.crypto;
  * 
  */
 public class Aes extends KeyObject {
-	/**
-	 * This value could be between 32 and 128 due to license limitation.
-	 */
-	public final static int KEY_SIZE = 128; // [32..448]
-	public final static String ALGO = "AES";
-	public final static String INSTANCE = "AES/ECB/PKCS5Padding";
-	public final static String EXTENSION = "aes";
+    /**
+     * This value could be between 32 and 128 due to license limitation.
+     */
+    public final static int KEY_SIZE = 128; // [32..448]
+    public final static String ALGO = "AES";
+    public final static String INSTANCE = "AES/ECB/PKCS5Padding";
+    public final static String EXTENSION = "aes";
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getAlgorithm()
-	 */
-	@Override
-	public String getAlgorithm() {
-		return ALGO;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getAlgorithm()
+     */
+    @Override
+    public String getAlgorithm() {
+        return ALGO;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getInstance()
-	 */
-	@Override
-	public String getInstance() {
-		return INSTANCE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getInstance()
+     */
+    @Override
+    public String getInstance() {
+        return INSTANCE;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyObject#getKeySize()
-	 */
-	@Override
-	public int getKeySize() {
-		return KEY_SIZE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyObject#getKeySize()
+     */
+    @Override
+    public int getKeySize() {
+        return KEY_SIZE;
+    }
 }

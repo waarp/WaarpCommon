@@ -25,5 +25,4 @@ import org.waarp.common.file.filesystembased.FilesystemBasedFileParameterImpl;
  * @author Frederic Bregier
  * 
  */
-public class PassthroughBasedFileParameterImpl extends FilesystemBasedFileParameterImpl {
-}
+public class PassthroughBasedFileParameterImpl extends FilesystemBasedFileParameterImpl {}

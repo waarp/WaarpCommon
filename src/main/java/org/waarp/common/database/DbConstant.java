@@ -24,29 +24,29 @@ package org.waarp.common.database;
  * 
  */
 public class DbConstant {
-	/**
-	 * Illegal value as SpecialId of transfer (any value above is valid)
-	 */
-	public static final long ILLEGALVALUE = Long.MIN_VALUE;
-	/**
-	 * The current DbAdmin object
-	 */
-	public static DbAdmin admin = null;
-	/**
-	 * The no-commit DbAdmin object
-	 */
-	public static DbAdmin noCommitAdmin = null;
-	/**
-	 * How long to wait in second for a validation of connection (isValid(time))
-	 */
-	public static int VALIDTESTDURATION = 2;
-	/**
-	 * Number of Database max connection (if pooled)
-	 */
-	public static int MAXCONNECTION = 5000;
-	/**
-	 * Delay in second to try to connect
-	 */
-	public static int DELAYMAXCONNECTION = 30;
+    /**
+     * Illegal value as SpecialId of transfer (any value above is valid)
+     */
+    public static final long ILLEGALVALUE = Long.MIN_VALUE;
+    /**
+     * The current DbAdmin object
+     */
+    public static DbAdmin admin = null;
+    /**
+     * The no-commit DbAdmin object
+     */
+    public static DbAdmin noCommitAdmin = null;
+    /**
+     * How long to wait in second for a validation of connection (isValid(time))
+     */
+    public static int VALIDTESTDURATION = 2;
+    /**
+     * Number of Database max connection (if pooled)
+     */
+    public static int MAXCONNECTION = 5000;
+    /**
+     * Delay in second to try to connect
+     */
+    public static int DELAYMAXCONNECTION = 30;
 
 }

@@ -29,81 +29,81 @@ import java.util.Set;
  * 
  */
 public class XmlHash {
-	private final Hashtable<String, XmlValue> hashtable;
+    private final Hashtable<String, XmlValue> hashtable;
 
-	public XmlHash(XmlValue[] values) {
-		hashtable = new Hashtable<String, XmlValue>();
-		for (XmlValue xmlValue : values) {
-			if (xmlValue.isMultiple()) {
-				hashtable.put(xmlValue.getName(), xmlValue);
-			} else if (xmlValue.isSubXml()) {
-				this.put(xmlValue);
-			} else {
-				hashtable.put(xmlValue.getName(), xmlValue);
-			}
-		}
-	}
+    public XmlHash(XmlValue[] values) {
+        hashtable = new Hashtable<String, XmlValue>();
+        for (XmlValue xmlValue : values) {
+            if (xmlValue.isMultiple()) {
+                hashtable.put(xmlValue.getName(), xmlValue);
+            } else if (xmlValue.isSubXml()) {
+                this.put(xmlValue);
+            } else {
+                hashtable.put(xmlValue.getName(), xmlValue);
+            }
+        }
+    }
 
-	public XmlValue get(String name) {
-		return hashtable.get(name);
-	}
+    public XmlValue get(String name) {
+        return hashtable.get(name);
+    }
 
-	public XmlValue put(XmlValue value) {
-		if (value.isMultiple()) {
-			return hashtable.put(value.getName(), value);
-		} else if (value.isSubXml()) {
-			XmlValue ret = hashtable.put(value.getName(), value);
-			if (!value.isEmpty()) {
-				for (XmlValue subvalue : value.getSubXml()) {
-					if (subvalue != null) {
-						this.put(subvalue);
-					}
-				}
-			}
-			return ret;
-		} else {
-			return hashtable.put(value.getName(), value);
-		}
-	}
+    public XmlValue put(XmlValue value) {
+        if (value.isMultiple()) {
+            return hashtable.put(value.getName(), value);
+        } else if (value.isSubXml()) {
+            XmlValue ret = hashtable.put(value.getName(), value);
+            if (!value.isEmpty()) {
+                for (XmlValue subvalue : value.getSubXml()) {
+                    if (subvalue != null) {
+                        this.put(subvalue);
+                    }
+                }
+            }
+            return ret;
+        } else {
+            return hashtable.put(value.getName(), value);
+        }
+    }
 
-	public int size() {
-		return hashtable.size();
-	}
+    public int size() {
+        return hashtable.size();
+    }
 
-	public boolean isEmpty() {
-		return hashtable.isEmpty();
-	}
+    public boolean isEmpty() {
+        return hashtable.isEmpty();
+    }
 
-	public Enumeration<String> keys() {
-		return hashtable.keys();
-	}
+    public Enumeration<String> keys() {
+        return hashtable.keys();
+    }
 
-	public Enumeration<XmlValue> elements() {
-		return hashtable.elements();
-	}
+    public Enumeration<XmlValue> elements() {
+        return hashtable.elements();
+    }
 
-	public boolean contains(XmlValue value) {
-		return hashtable.contains(value);
-	}
+    public boolean contains(XmlValue value) {
+        return hashtable.contains(value);
+    }
 
-	public boolean containsValue(XmlValue value) {
-		return hashtable.containsValue(value);
-	}
+    public boolean containsValue(XmlValue value) {
+        return hashtable.containsValue(value);
+    }
 
-	public boolean containsKey(String key) {
-		return hashtable.containsKey(key);
-	}
+    public boolean containsKey(String key) {
+        return hashtable.containsKey(key);
+    }
 
-	public XmlValue remove(String key) {
-		return hashtable.remove(key);
-	}
+    public XmlValue remove(String key) {
+        return hashtable.remove(key);
+    }
 
-	public void clear() {
-		hashtable.clear();
-	}
+    public void clear() {
+        hashtable.clear();
+    }
 
-	public Set<String> keySet() {
-		return hashtable.keySet();
-	}
+    public Set<String> keySet() {
+        return hashtable.keySet();
+    }
 
 }

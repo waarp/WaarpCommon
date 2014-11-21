@@ -32,25 +32,25 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
  */
 public class FilesystemBasedCommonsIo {
 
-	/**
-	 * 
-	 * @param pathname
-	 * @return the free space of the given pathname
-	 */
-	public static long freeSpace(String pathname) {
-		try {
-			return FileSystemUtils.freeSpaceKb(pathname) << 10;
-		} catch (IOException e) {
-			return -1;
-		}
-	}
+    /**
+     * 
+     * @param pathname
+     * @return the free space of the given pathname
+     */
+    public static long freeSpace(String pathname) {
+        try {
+            return FileSystemUtils.freeSpaceKb(pathname) << 10;
+        } catch (IOException e) {
+            return -1;
+        }
+    }
 
-	/**
-	 * 
-	 * @param dir
-	 * @return The associated FileFilter
-	 */
-	public static FileFilter getWildcardFileFilter(String dir) {
-		return new WildcardFileFilter(dir);
-	}
+    /**
+     * 
+     * @param dir
+     * @return The associated FileFilter
+     */
+    public static FileFilter getWildcardFileFilter(String dir) {
+        return new WildcardFileFilter(dir);
+    }
 }

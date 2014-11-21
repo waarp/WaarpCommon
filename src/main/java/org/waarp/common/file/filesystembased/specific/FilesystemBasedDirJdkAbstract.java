@@ -26,24 +26,24 @@ import java.io.File;
  * 
  */
 public abstract class FilesystemBasedDirJdkAbstract {
-	/**
-	 * Should the Ftp Server use the Apache Commons Io or not: if not wildcard and freespace (ALLO)
-	 * will not be supported.
-	 */
-	public static boolean ueApacheCommonsIo = true;
+    /**
+     * Should the Ftp Server use the Apache Commons Io or not: if not wildcard and freespace (ALLO)
+     * will not be supported.
+     */
+    public static boolean ueApacheCommonsIo = true;
 
-	/**
-	 * 
-	 * @param directory
-	 * @return the free space of the given Directory
-	 */
-	public abstract long getFreeSpace(File directory);
+    /**
+     * 
+     * @param directory
+     * @return the free space of the given Directory
+     */
+    public abstract long getFreeSpace(File directory);
 
-	/**
-	 * Result of ls on FileInterface
-	 * 
-	 * @param file
-	 * @return True if the file is executable
-	 */
-	public abstract boolean canExecute(File file);
+    /**
+     * Result of ls on FileInterface
+     * 
+     * @param file
+     * @return True if the file is executable
+     */
+    public abstract boolean canExecute(File file);
 }

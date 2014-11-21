@@ -29,60 +29,59 @@ import org.waarp.common.exception.NoRestartException;
 
 /**
  * @author "Frederic Bregier"
- *
+ * 
  */
 public abstract class AbstractFile implements FileInterface {
-	/**
-	 * Is this Document ready to be accessed
-	 */
-	protected boolean isReady = false;
-	
-	public void clear() throws CommandAbstractException {
-		closeFile();
-		isReady = false;
-	}
+    /**
+     * Is this Document ready to be accessed
+     */
+    protected boolean isReady = false;
 
-	public void checkIdentify() throws Reply530Exception {
-		if (!getSession().getAuth().isIdentified()) {
-			throw new Reply530Exception("User not authentified");
-		}
-	}
+    public void clear() throws CommandAbstractException {
+        closeFile();
+        isReady = false;
+    }
 
-	public DataBlock getMarker() throws CommandAbstractException {
-		throw new Reply502Exception("No marker implemented");
-	}
-	
-	public boolean restartMarker(Restart restart)
-			throws CommandAbstractException {
-		try {
-			long newposition = restart.getPosition();
-			try {
-				setPosition(newposition);
-			} catch (IOException e) {
-				throw new Reply502Exception("Cannot set the marker position");
-			}
-			return true;
-		} catch (NoRestartException e) {
-		}
-		return false;
-	}
+    public void checkIdentify() throws Reply530Exception {
+        if (!getSession().getAuth().isIdentified()) {
+            throw new Reply530Exception("User not authentified");
+        }
+    }
 
-	public boolean retrieve() throws CommandAbstractException {
-		checkIdentify();
-		if (isReady) {
-			restartMarker(getSession().getRestart());
-			return canRead();
-		}
-		return false;
-	}
+    public DataBlock getMarker() throws CommandAbstractException {
+        throw new Reply502Exception("No marker implemented");
+    }
 
-	public boolean store() throws CommandAbstractException {
-		checkIdentify();
-		if (isReady) {
-			restartMarker(getSession().getRestart());
-			return canWrite();
-		}
-		return false;
-	}
+    public boolean restartMarker(Restart restart)
+            throws CommandAbstractException {
+        try {
+            long newposition = restart.getPosition();
+            try {
+                setPosition(newposition);
+            } catch (IOException e) {
+                throw new Reply502Exception("Cannot set the marker position");
+            }
+            return true;
+        } catch (NoRestartException e) {}
+        return false;
+    }
+
+    public boolean retrieve() throws CommandAbstractException {
+        checkIdentify();
+        if (isReady) {
+            restartMarker(getSession().getRestart());
+            return canRead();
+        }
+        return false;
+    }
+
+    public boolean store() throws CommandAbstractException {
+        checkIdentify();
+        if (isReady) {
+            restartMarker(getSession().getRestart());
+            return canWrite();
+        }
+        return false;
+    }
 
 }

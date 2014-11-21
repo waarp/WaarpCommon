@@ -26,27 +26,27 @@ import java.io.File;
  * 
  */
 public class FilesystemBasedDirJdk6 extends FilesystemBasedDirJdkAbstract {
-	/**
-	 * 
-	 * @param file
-	 * @return True if the file is executable
-	 */
-	@Override
-	public boolean canExecute(File file) {
-		return file.canExecute();
-	}
+    /**
+     * 
+     * @param file
+     * @return True if the file is executable
+     */
+    @Override
+    public boolean canExecute(File file) {
+        return file.canExecute();
+    }
 
-	/**
-	 * 
-	 * @param directory
-	 * @return the free space of the given Directory
-	 */
-	@Override
-	public long getFreeSpace(File directory) {
-		try {
-			return directory.getFreeSpace();
-		} catch (Exception e) {
-			return -1;
-		}
-	}
+    /**
+     * 
+     * @param directory
+     * @return the free space of the given Directory
+     */
+    @Override
+    public long getFreeSpace(File directory) {
+        try {
+            return directory.getFreeSpace();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
 }

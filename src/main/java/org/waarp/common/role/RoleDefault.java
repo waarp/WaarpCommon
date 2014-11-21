@@ -25,213 +25,218 @@ package org.waarp.common.role;
  * 
  */
 public class RoleDefault {
-	public static enum ROLE {
-		/**
-		 * No access to any function
-		 */
-		NOACCESS(0), 
-		/**
-		 * Read only access, no action
-		 */
-		READONLY(1), 
-		/**
-		 * Ability to starts transfer
-		 */
-		TRANSFER(2), 
-		/**
-		 * Ability to control rules
-		 */
-		RULE(4), 
-		/**
-		 * Ability to control hosts
-		 */
-		HOST(8), 
-		/**
-		 * Ability to control bandwidth limitation
-		 */
-		LIMIT(16), 
-		/**
-		 * Ability to control the system configuration and to control transfers
-		 */
-		SYSTEM(32), 
-		/**
-		 * Ability to control the logging
-		 */
-		LOGCONTROL(64), 
-		/**
-		 * Unused Role value
-		 */
-		UNUSED(-128),
-		/**
-		 * Default partner : ability to read and starts transfers
-		 */
-		PARTNER(READONLY, TRANSFER),
-		/**
-		 * Administrator on configuration (partner, rule, host)
-		 */
-		CONFIGADMIN(PARTNER, RULE, HOST),
-		/**
-		 * Administrator on all
-		 */
-		FULLADMIN(CONFIGADMIN, LIMIT, SYSTEM, LOGCONTROL);
-		
-		private byte role;
-		private ROLE(int val) {
-			this.role = (byte) val;
-		}
-		private ROLE(ROLE...name) {
-			for (ROLE role : name) {
-				this.role |= role.role;
-			}
-		}
-		public boolean isContained(byte value) {
-			return (value & role) == role;
-		}
-		public byte getAsByte() {
-			return role;
-		}
-		public final static String toString(byte fromRole) {
-			StringBuilder result = new StringBuilder("[ ");
-			ROLE [] values = ROLE.values();
-			for (ROLE role : values) {
-				if (role.isContained(fromRole)) {
-					result.append(role.name());
-					result.append(' ');
-				}
-			}
-			result.append(']');
-			return result.toString();
-		}
-		public final static ROLE fromByte(byte role) {
-			switch (role) {
-				case 0:
-					return NOACCESS;
-				case 1:
-					return READONLY;
-				case 2:
-					return TRANSFER;
-				case 4:
-					return RULE;
-				case 8:
-					return HOST;
-				case 16:
-					return LIMIT;
-				case 32:
-					return SYSTEM;
-				case 64:
-					return LOGCONTROL;
-				case -128:
-					return UNUSED;
-				default:
-					return NOACCESS;
-			}
-		}
-	};
+    public static enum ROLE {
+        /**
+         * No access to any function
+         */
+        NOACCESS(0),
+        /**
+         * Read only access, no action
+         */
+        READONLY(1),
+        /**
+         * Ability to starts transfer
+         */
+        TRANSFER(2),
+        /**
+         * Ability to control rules
+         */
+        RULE(4),
+        /**
+         * Ability to control hosts
+         */
+        HOST(8),
+        /**
+         * Ability to control bandwidth limitation
+         */
+        LIMIT(16),
+        /**
+         * Ability to control the system configuration and to control transfers
+         */
+        SYSTEM(32),
+        /**
+         * Ability to control the logging
+         */
+        LOGCONTROL(64),
+        /**
+         * Unused Role value
+         */
+        UNUSED(-128),
+        /**
+         * Default partner : ability to read and starts transfers
+         */
+        PARTNER(READONLY, TRANSFER),
+        /**
+         * Administrator on configuration (partner, rule, host)
+         */
+        CONFIGADMIN(PARTNER, RULE, HOST),
+        /**
+         * Administrator on all
+         */
+        FULLADMIN(CONFIGADMIN, LIMIT, SYSTEM, LOGCONTROL);
 
-	private byte role;
+        private byte role;
 
-	public RoleDefault() {
-		this.role = ROLE.NOACCESS.role;
-	}
+        private ROLE(int val) {
+            this.role = (byte) val;
+        }
 
-	public RoleDefault(ROLE role) {
-		this.role = role.role;
-	}
-	
-	public byte getRoleAsByte() {
-		return role;
-	}
+        private ROLE(ROLE... name) {
+            for (ROLE role : name) {
+                this.role |= role.role;
+            }
+        }
 
-	@Override
-	public String toString() {
-		return ROLE.toString(role);
-	}
-	
-	public RoleDefault addRole(ROLE newrole) {
-		this.role |= newrole.role;
-		return this;
-	}
+        public boolean isContained(byte value) {
+            return (value & role) == role;
+        }
 
-	public RoleDefault setRole(ROLE newrole) {
-		this.role = newrole.role;
-		return this;
-	}
+        public byte getAsByte() {
+            return role;
+        }
 
-	public RoleDefault setRoleDefault(RoleDefault newrole) {
-		this.role = newrole.role;
-		return this;
-	}
+        public final static String toString(byte fromRole) {
+            StringBuilder result = new StringBuilder("[ ");
+            ROLE[] values = ROLE.values();
+            for (ROLE role : values) {
+                if (role.isContained(fromRole)) {
+                    result.append(role.name()).append(' ');
+                }
+            }
+            result.append(']');
+            return result.toString();
+        }
 
-	public void clear() {
-		this.role = ROLE.NOACCESS.role;
-	}
-	
-	public boolean isContaining(ROLE otherrole) {
-		return otherrole.isContained(role);
-	}
+        public final static ROLE fromByte(byte role) {
+            switch (role) {
+                case 0:
+                    return NOACCESS;
+                case 1:
+                    return READONLY;
+                case 2:
+                    return TRANSFER;
+                case 4:
+                    return RULE;
+                case 8:
+                    return HOST;
+                case 16:
+                    return LIMIT;
+                case 32:
+                    return SYSTEM;
+                case 64:
+                    return LOGCONTROL;
+                case -128:
+                    return UNUSED;
+                default:
+                    return NOACCESS;
+            }
+        }
+    };
 
-	public boolean hasReadOnly() {
-		return ROLE.READONLY.isContained(role);
-	}
+    private byte role;
 
-	public boolean hasTransfer() {
-		return ROLE.TRANSFER.isContained(role);
-	}
+    public RoleDefault() {
+        this.role = ROLE.NOACCESS.role;
+    }
 
-	public boolean hasRule() {
-		return ROLE.RULE.isContained(role);
-	}
+    public RoleDefault(ROLE role) {
+        this.role = role.role;
+    }
 
-	public boolean hasHost() {
-		return ROLE.HOST.isContained(role);
-	}
+    public byte getRoleAsByte() {
+        return role;
+    }
 
-	public boolean hasLimit() {
-		return ROLE.LIMIT.isContained(role);
-	}
+    @Override
+    public String toString() {
+        return ROLE.toString(role);
+    }
 
-	public boolean hasSystem() {
-		return ROLE.SYSTEM.isContained(role);
-	}
+    public RoleDefault addRole(ROLE newrole) {
+        this.role |= newrole.role;
+        return this;
+    }
 
-	public boolean hasUnused() {
-		return ROLE.UNUSED.isContained(role);
-	}
+    public RoleDefault setRole(ROLE newrole) {
+        this.role = newrole.role;
+        return this;
+    }
 
-	public boolean hasLogControl() {
-		return ROLE.LOGCONTROL.isContained(role);
-	}
+    public RoleDefault setRoleDefault(RoleDefault newrole) {
+        this.role = newrole.role;
+        return this;
+    }
 
-	public final static boolean hasReadOnly(byte role) {
-		return ROLE.READONLY.isContained(role);
-	}
+    public void clear() {
+        this.role = ROLE.NOACCESS.role;
+    }
 
-	public final static boolean hasTransfer(byte role) {
-		return ROLE.TRANSFER.isContained(role);
-	}
+    public boolean isContaining(ROLE otherrole) {
+        return otherrole.isContained(role);
+    }
 
-	public final static boolean hasRule(byte role) {
-		return ROLE.RULE.isContained(role);
-	}
+    public boolean hasReadOnly() {
+        return ROLE.READONLY.isContained(role);
+    }
 
-	public final static boolean hasHost(byte role) {
-		return ROLE.HOST.isContained(role);
-	}
+    public boolean hasTransfer() {
+        return ROLE.TRANSFER.isContained(role);
+    }
 
-	public final static boolean hasLimit(byte role) {
-		return ROLE.LIMIT.isContained(role);
-	}
+    public boolean hasRule() {
+        return ROLE.RULE.isContained(role);
+    }
 
-	public final static boolean hasSystem(byte role) {
-		return ROLE.SYSTEM.isContained(role);
-	}
+    public boolean hasHost() {
+        return ROLE.HOST.isContained(role);
+    }
 
-	public final static boolean hasUnused(byte role) {
-		return ROLE.UNUSED.isContained(role);
-	}
+    public boolean hasLimit() {
+        return ROLE.LIMIT.isContained(role);
+    }
 
-	public final static boolean hasLogControl(byte role) {
-		return ROLE.LOGCONTROL.isContained(role);
-	}
+    public boolean hasSystem() {
+        return ROLE.SYSTEM.isContained(role);
+    }
+
+    public boolean hasUnused() {
+        return ROLE.UNUSED.isContained(role);
+    }
+
+    public boolean hasLogControl() {
+        return ROLE.LOGCONTROL.isContained(role);
+    }
+
+    public final static boolean hasReadOnly(byte role) {
+        return ROLE.READONLY.isContained(role);
+    }
+
+    public final static boolean hasTransfer(byte role) {
+        return ROLE.TRANSFER.isContained(role);
+    }
+
+    public final static boolean hasRule(byte role) {
+        return ROLE.RULE.isContained(role);
+    }
+
+    public final static boolean hasHost(byte role) {
+        return ROLE.HOST.isContained(role);
+    }
+
+    public final static boolean hasLimit(byte role) {
+        return ROLE.LIMIT.isContained(role);
+    }
+
+    public final static boolean hasSystem(byte role) {
+        return ROLE.SYSTEM.isContained(role);
+    }
+
+    public final static boolean hasUnused(byte role) {
+        return ROLE.UNUSED.isContained(role);
+    }
+
+    public final static boolean hasLogControl(byte role) {
+        return ROLE.LOGCONTROL.isContained(role);
+    }
 
 }

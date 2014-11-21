@@ -44,215 +44,215 @@ package org.waarp.common.crypto;
  */
 public class DynamicKeyObject extends KeyObject {
 
-	/**
-	 * Minimal key size
-	 * 
-	 * @author Frederic Bregier
-	 * 
-	 */
-	public enum INSTANCES {
-		AES(128), // Min 128
-		ARCFOUR(56), // No Max
-		Blowfish(56), // No Max
-		DES(56), // Must be 56 except if Strong Policy is used
-		DESede(112), // 112 or 168 triple DES
-		RC2(56),
-		RC4(56);
+    /**
+     * Minimal key size
+     * 
+     * @author Frederic Bregier
+     * 
+     */
+    public enum INSTANCES {
+        AES(128), // Min 128
+        ARCFOUR(56), // No Max
+        Blowfish(56), // No Max
+        DES(56), // Must be 56 except if Strong Policy is used
+        DESede(112), // 112 or 168 triple DES
+        RC2(56),
+        RC4(56);
 
-		int size;
+        int size;
 
-		private INSTANCES(int size) {
-			this.size = size;
-		}
-	}
+        private INSTANCES(int size) {
+            this.size = size;
+        }
+    }
 
-	/**
-	 * Recommended key size when normal JVM installed (no extension on encrypt support)
-	 * 
-	 * @author Frederic Bregier
-	 * 
-	 */
-	public enum INSTANCESMAX {
-		AES(128), // Min 128
-		ARCFOUR(128), // No Max
-		Blowfish(128), // No Max
-		DES(56), // Must be 56 except if Strong Policy is used
-		DESede(168), // 112 or 168 triple DES
-		RC2(128),
-		RC4(128);
+    /**
+     * Recommended key size when normal JVM installed (no extension on encrypt support)
+     * 
+     * @author Frederic Bregier
+     * 
+     */
+    public enum INSTANCESMAX {
+        AES(128), // Min 128
+        ARCFOUR(128), // No Max
+        Blowfish(128), // No Max
+        DES(56), // Must be 56 except if Strong Policy is used
+        DESede(168), // 112 or 168 triple DES
+        RC2(128),
+        RC4(128);
 
-		int size;
+        int size;
 
-		private INSTANCESMAX(int size) {
-			this.size = size;
-		}
-	}
+        private INSTANCESMAX(int size) {
+            this.size = size;
+        }
+    }
 
-	/**
-	 * This value could be between 32 and 128 due to license limitation.
-	 */
-	public final int KEY_SIZE;
-	/**
-	 * Short name for the algorithm
-	 */
-	public final String ALGO;
-	/**
-	 * Could be the shortname again (default implementation in JVM) or the full name as
-	 * DES/ECB/PKCS5Padding
-	 */
-	public final String INSTANCE;
-	/**
-	 * The extension for the file to use when saving the key (note that an extra file as
-	 * extension.inf will be also saved for the extra information)
-	 */
-	public final String EXTENSION;
+    /**
+     * This value could be between 32 and 128 due to license limitation.
+     */
+    public final int KEY_SIZE;
+    /**
+     * Short name for the algorithm
+     */
+    public final String ALGO;
+    /**
+     * Could be the shortname again (default implementation in JVM) or the full name as
+     * DES/ECB/PKCS5Padding
+     */
+    public final String INSTANCE;
+    /**
+     * The extension for the file to use when saving the key (note that an extra file as
+     * extension.inf will be also saved for the extra information)
+     */
+    public final String EXTENSION;
 
-	/**
-	 * @param kEYSIZE
-	 *            example DES: 56
-	 * @param aLGO
-	 *            example DES: DES
-	 * @param iNSTANCE
-	 *            example DES: DES/ECB/PKCS5Padding
-	 * @param eXTENSION
-	 *            example DES: des
-	 */
-	public DynamicKeyObject(int kEYSIZE, String aLGO, String iNSTANCE,
-			String eXTENSION) {
-		super();
-		KEY_SIZE = kEYSIZE;
-		ALGO = aLGO;
-		INSTANCE = iNSTANCE;
-		EXTENSION = eXTENSION;
-	}
+    /**
+     * @param kEYSIZE
+     *            example DES: 56
+     * @param aLGO
+     *            example DES: DES
+     * @param iNSTANCE
+     *            example DES: DES/ECB/PKCS5Padding
+     * @param eXTENSION
+     *            example DES: des
+     */
+    public DynamicKeyObject(int kEYSIZE, String aLGO, String iNSTANCE,
+            String eXTENSION) {
+        super();
+        KEY_SIZE = kEYSIZE;
+        ALGO = aLGO;
+        INSTANCE = iNSTANCE;
+        EXTENSION = eXTENSION;
+    }
 
-	/**
-	 * 
-	 * @param instance
-	 *            the minimal default instance
-	 * @param eXTENSION
-	 *            to use for files
-	 */
-	public DynamicKeyObject(INSTANCES instance,
-			String eXTENSION) {
-		super();
-		KEY_SIZE = instance.size;
-		ALGO = instance.name();
-		INSTANCE = instance.name();
-		EXTENSION = eXTENSION;
-	}
+    /**
+     * 
+     * @param instance
+     *            the minimal default instance
+     * @param eXTENSION
+     *            to use for files
+     */
+    public DynamicKeyObject(INSTANCES instance,
+            String eXTENSION) {
+        super();
+        KEY_SIZE = instance.size;
+        ALGO = instance.name();
+        INSTANCE = instance.name();
+        EXTENSION = eXTENSION;
+    }
 
-	/**
-	 * 
-	 * @param instance
-	 *            the maximal default instance
-	 * @param eXTENSION
-	 *            to use for files
-	 */
-	public DynamicKeyObject(INSTANCESMAX instance,
-			String eXTENSION) {
-		super();
-		KEY_SIZE = instance.size;
-		ALGO = instance.name();
-		INSTANCE = instance.name();
-		EXTENSION = eXTENSION;
-	}
+    /**
+     * 
+     * @param instance
+     *            the maximal default instance
+     * @param eXTENSION
+     *            to use for files
+     */
+    public DynamicKeyObject(INSTANCESMAX instance,
+            String eXTENSION) {
+        super();
+        KEY_SIZE = instance.size;
+        ALGO = instance.name();
+        INSTANCE = instance.name();
+        EXTENSION = eXTENSION;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#getAlgorithm()
-	 */
-	@Override
-	public String getAlgorithm() {
-		return ALGO;
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#getAlgorithm()
+     */
+    @Override
+    public String getAlgorithm() {
+        return ALGO;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#getInstance()
-	 */
-	@Override
-	public String getInstance() {
-		return INSTANCE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#getInstance()
+     */
+    @Override
+    public String getInstance() {
+        return INSTANCE;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.waarp.common.crypto.KeyObject#getKeySize()
-	 */
-	@Override
-	public int getKeySize() {
-		return KEY_SIZE;
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.waarp.common.crypto.KeyObject#getKeySize()
+     */
+    @Override
+    public int getKeySize() {
+        return KEY_SIZE;
+    }
 
-	/**
-	 * This method allows to test the correctness of this class
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String[] args) throws Exception {
-		String plaintext = null;
-		if (args.length != 0) {
-			plaintext = args[0];
-		}
-		if (plaintext == null || plaintext.length() == 0) {
-			plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
-		}
-		System.out.println("plaintext = " + plaintext);
-		System.out.println("=====================================");
-		// Can implements with KeyGenerator AES, ARCFOUR, Blowfish, DES, DESede,
-		// RC2, RC4
-		for (INSTANCES instance : INSTANCES.values()) {
-			test(plaintext, instance.size, instance.name());
-		}
-		for (INSTANCESMAX instance : INSTANCESMAX.values()) {
-			test(plaintext, instance.size, instance.name());
-		}
-	}
+    /**
+     * This method allows to test the correctness of this class
+     * 
+     * @param args
+     * @throws Exception
+     */
+    public static void main(String[] args) throws Exception {
+        String plaintext = null;
+        if (args.length != 0) {
+            plaintext = args[0];
+        }
+        if (plaintext == null || plaintext.length() == 0) {
+            plaintext = "This is a try for a very long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long String";
+        }
+        System.out.println("plaintext = " + plaintext);
+        System.out.println("=====================================");
+        // Can implements with KeyGenerator AES, ARCFOUR, Blowfish, DES, DESede,
+        // RC2, RC4
+        for (INSTANCES instance : INSTANCES.values()) {
+            test(plaintext, instance.size, instance.name());
+        }
+        for (INSTANCESMAX instance : INSTANCESMAX.values()) {
+            test(plaintext, instance.size, instance.name());
+        }
+    }
 
-	/**
-	 * test function
-	 * 
-	 * @param plaintext
-	 * @param size
-	 * @param algo
-	 * @throws Exception
-	 */
-	private static void test(String plaintext, int size, String algo)
-			throws Exception {
-		DynamicKeyObject dyn = new DynamicKeyObject(size, algo, algo, algo);
-		// Generate a key
-		dyn.generateKey();
-		// get the generated key
-		byte[] secretKey = dyn.getSecretKeyInBytes();
-		// crypt one text
-		byte[] ciphertext = dyn.crypt(plaintext);
-		// print the cipher
-		// System.out.println("ciphertext = " + dyn.encodeHex(ciphertext));
+    /**
+     * test function
+     * 
+     * @param plaintext
+     * @param size
+     * @param algo
+     * @throws Exception
+     */
+    private static void test(String plaintext, int size, String algo)
+            throws Exception {
+        DynamicKeyObject dyn = new DynamicKeyObject(size, algo, algo, algo);
+        // Generate a key
+        dyn.generateKey();
+        // get the generated key
+        byte[] secretKey = dyn.getSecretKeyInBytes();
+        // crypt one text
+        byte[] ciphertext = dyn.crypt(plaintext);
+        // print the cipher
+        // System.out.println("ciphertext = " + dyn.encodeHex(ciphertext));
 
-		// Test the set Key
-		dyn.setSecretKey(secretKey);
-		// decrypt the cipher
-		String plaintext2 = dyn.decryptInString(ciphertext);
-		// print the result
-		// System.out.println("plaintext2 = " + plaintext2);
-		if (!plaintext2.equals(plaintext))
-			System.out.println("Error: plaintext2 != plaintext");
+        // Test the set Key
+        dyn.setSecretKey(secretKey);
+        // decrypt the cipher
+        String plaintext2 = dyn.decryptInString(ciphertext);
+        // print the result
+        // System.out.println("plaintext2 = " + plaintext2);
+        if (!plaintext2.equals(plaintext))
+            System.out.println("Error: plaintext2 != plaintext");
 
-		// same on String only
-		int nb = 100000;
-		long time1 = System.currentTimeMillis();
-		for (int i = 0; i < nb; i++) {
-			String cipherString = dyn.cryptToHex(plaintext);
-			// System.out.println("cipherString = " + cipherString);
-			String plaintext3 = dyn.decryptHexInString(cipherString);
-			// System.out.println("plaintext3 = " + plaintext3);
-			if (!plaintext3.equals(plaintext))
-				System.out.println("Error: plaintext3 != plaintext");
-		}
-		long time2 = System.currentTimeMillis();
-		System.out.println(algo + ": Total time: " + (time2 - time1) + " ms, " +
-				(nb * 1000 / (time2 - time1)) + " crypt or decrypt/s");
-	}
+        // same on String only
+        int nb = 100000;
+        long time1 = System.currentTimeMillis();
+        for (int i = 0; i < nb; i++) {
+            String cipherString = dyn.cryptToHex(plaintext);
+            // System.out.println("cipherString = " + cipherString);
+            String plaintext3 = dyn.decryptHexInString(cipherString);
+            // System.out.println("plaintext3 = " + plaintext3);
+            if (!plaintext3.equals(plaintext))
+                System.out.println("Error: plaintext3 != plaintext");
+        }
+        long time2 = System.currentTimeMillis();
+        System.out.println(algo + ": Total time: " + (time2 - time1) + " ms, " +
+                (nb * 1000 / (time2 - time1)) + " crypt or decrypt/s");
+    }
 }

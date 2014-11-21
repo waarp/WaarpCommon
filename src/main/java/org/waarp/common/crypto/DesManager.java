@@ -23,14 +23,14 @@ package org.waarp.common.crypto;
  * @author frederic bregier
  */
 public class DesManager extends KeyManager {
-	public static final DesManager desManager = new DesManager();
+    public static final DesManager desManager = new DesManager();
 
-	/*
-	 * (non-Javadoc)
-	 * @see atlas.cryptage.KeyManager#createKeyObject()
-	 */
-	@Override
-	public KeyObject createKeyObject() {
-		return new Des();
-	}
+    /*
+     * (non-Javadoc)
+     * @see atlas.cryptage.KeyManager#createKeyObject()
+     */
+    @Override
+    public KeyObject createKeyObject() {
+        return new Des();
+    }
 }

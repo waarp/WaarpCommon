@@ -25,23 +25,24 @@ package org.waarp.common.lru;
  * 
  */
 public interface InterfaceLruCacheEntry<V> {
-	/**
-	 * Returns value stored in entry or null if entry is not valid
-	 * 
-	 * @return Value
-	 */
-	public V getValue();
+    /**
+     * Returns value stored in entry or null if entry is not valid
+     * 
+     * @return Value
+     */
+    public V getValue();
 
-	/**
-	 * 
-	 * @param timeRef
-	 * @return True if this entry is still valid
-	 */
-	public boolean isStillValid(long timeRef);
-	
-	/**
-	 * Reset the time of overtime
-	 * @return True if this entry has its time reset
-	 */
-	public boolean resetTime(long ttl);
+    /**
+     * 
+     * @param timeRef
+     * @return True if this entry is still valid
+     */
+    public boolean isStillValid(long timeRef);
+
+    /**
+     * Reset the time of overtime
+     * 
+     * @return True if this entry has its time reset
+     */
+    public boolean resetTime(long ttl);
 }

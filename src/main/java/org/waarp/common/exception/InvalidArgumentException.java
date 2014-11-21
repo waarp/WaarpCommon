@@ -25,24 +25,24 @@ package org.waarp.common.exception;
  */
 public class InvalidArgumentException extends Exception {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = -3817642817509722692L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = -3817642817509722692L;
 
-	/**
-	 * @param message
-	 */
-	public InvalidArgumentException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public InvalidArgumentException(String message) {
+        super(message);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public InvalidArgumentException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public InvalidArgumentException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

@@ -27,27 +27,28 @@ import org.jboss.netty.logging.InternalLoggerFactory;
  * 
  */
 public abstract class WaarpInternalLoggerFactory extends
-		InternalLoggerFactory implements WaarpInternalLoggerInterface {
-	public static WaarpLevel currentLevel = WaarpLevel.WARN; // default if not set
-	/**
-	 * 
-	 * @param clazz
-	 * @return the WaarpInternalLogger
-	 */
-	public static WaarpInternalLogger getLogger(Class<?> clazz) {
-		InternalLoggerFactory factory = getDefaultFactory();
-		if (factory instanceof WaarpInternalLoggerInterface) {
-			return (WaarpInternalLogger) factory.newInstance(clazz.getName());
-		} else {
-			// Should be set first so default = JDK support
-			InternalLoggerFactory.setDefaultFactory(new WaarpJdkLoggerFactory(null));
-			return (WaarpInternalLogger) getDefaultFactory().newInstance(
-					clazz.getName());
-		}
-	}
+        InternalLoggerFactory implements WaarpInternalLoggerInterface {
+    public static WaarpLevel currentLevel = WaarpLevel.WARN; // default if not set
 
-	public static void setLogLevel(WaarpLevel level) {
-		currentLevel = level;
-		((WaarpInternalLoggerInterface) getDefaultFactory()).setDefaultLevel(level);
-	}
+    /**
+     * 
+     * @param clazz
+     * @return the WaarpInternalLogger
+     */
+    public static WaarpInternalLogger getLogger(Class<?> clazz) {
+        InternalLoggerFactory factory = getDefaultFactory();
+        if (factory instanceof WaarpInternalLoggerInterface) {
+            return (WaarpInternalLogger) factory.newInstance(clazz.getName());
+        } else {
+            // Should be set first so default = JDK support
+            InternalLoggerFactory.setDefaultFactory(new WaarpJdkLoggerFactory(null));
+            return (WaarpInternalLogger) getDefaultFactory().newInstance(
+                    clazz.getName());
+        }
+    }
+
+    public static void setLogLevel(WaarpLevel level) {
+        currentLevel = level;
+        ((WaarpInternalLoggerInterface) getDefaultFactory()).setDefaultLevel(level);
+    }
 }

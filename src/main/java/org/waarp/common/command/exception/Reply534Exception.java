@@ -27,18 +27,18 @@ import org.waarp.common.command.ReplyCode;
  */
 public class Reply534Exception extends CommandAbstractException {
 
-	/**
-	 * serialVersionUID of long:
-	 */
-	private static final long serialVersionUID = 534L;
+    /**
+     * serialVersionUID of long:
+     */
+    private static final long serialVersionUID = 534L;
 
-	/**
-	 * 534 Request denied for policy reasons.
-	 * 
-	 * @param message
-	 */
-	public Reply534Exception(String message) {
-		super(ReplyCode.REPLY_534_REQUEST_DENIED_FOR_POLICY_REASONS, message);
-	}
+    /**
+     * 534 Request denied for policy reasons.
+     * 
+     * @param message
+     */
+    public Reply534Exception(String message) {
+        super(ReplyCode.REPLY_534_REQUEST_DENIED_FOR_POLICY_REASONS, message);
+    }
 
 }

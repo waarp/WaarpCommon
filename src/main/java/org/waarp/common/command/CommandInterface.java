@@ -28,104 +28,104 @@ import org.waarp.common.file.SessionInterface;
  * 
  */
 public interface CommandInterface {
-	/**
-	 * Set the Command from the args
-	 * 
-	 * @param session
-	 * @param command
-	 * @param arg
-	 * @param code
-	 */
-	public void setArgs(SessionInterface session, String command, String arg,
-			@SuppressWarnings("rawtypes") Enum code);
+    /**
+     * Set the Command from the args
+     * 
+     * @param session
+     * @param command
+     * @param arg
+     * @param code
+     */
+    public void setArgs(SessionInterface session, String command, String arg,
+            @SuppressWarnings("rawtypes") Enum code);
 
-	/**
-	 * Execute the command. This execution must set the replyCode in the session to a correct value
-	 * before returning.
-	 * 
-	 * @exception CommandAbstractException
-	 *                in case of an FTP Error occurs
-	 */
-	abstract public void exec() throws CommandAbstractException;
+    /**
+     * Execute the command. This execution must set the replyCode in the session to a correct value
+     * before returning.
+     * 
+     * @exception CommandAbstractException
+     *                in case of an FTP Error occurs
+     */
+    abstract public void exec() throws CommandAbstractException;
 
-	/**
-	 * This function is intend to allow to force USER->PASS->ACCT->CDW for instance
-	 * 
-	 * @param extraNextCommand
-	 *            the extraNextCommand to set
-	 */
-	public void setExtraNextCommand(@SuppressWarnings("rawtypes") Enum extraNextCommand);
+    /**
+     * This function is intend to allow to force USER->PASS->ACCT->CDW for instance
+     * 
+     * @param extraNextCommand
+     *            the extraNextCommand to set
+     */
+    public void setExtraNextCommand(@SuppressWarnings("rawtypes") Enum extraNextCommand);
 
-	/**
-	 * This function is called when a new command is received to check if this new command is
-	 * positive according to the previous command and status.
-	 * 
-	 * @param newCommand
-	 * @return True if this new command is OK, else False
-	 */
-	public abstract boolean isNextCommandValid(CommandInterface newCommand);
+    /**
+     * This function is called when a new command is received to check if this new command is
+     * positive according to the previous command and status.
+     * 
+     * @param newCommand
+     * @return True if this new command is OK, else False
+     */
+    public abstract boolean isNextCommandValid(CommandInterface newCommand);
 
-	/**
-	 * @return the object
-	 */
-	public Object getObject();
+    /**
+     * @return the object
+     */
+    public Object getObject();
 
-	/**
-	 * @param object
-	 *            the object to set
-	 */
-	public void setObject(Object object);
+    /**
+     * @param object
+     *            the object to set
+     */
+    public void setObject(Object object);
 
-	/**
-	 * @return the arg
-	 */
-	public String getArg();
+    /**
+     * @return the arg
+     */
+    public String getArg();
 
-	/**
-	 * 
-	 * @return the list of arguments
-	 */
-	public String[] getArgs();
+    /**
+     * 
+     * @return the list of arguments
+     */
+    public String[] getArgs();
 
-	/**
-	 * Get an integer value from argument
-	 * 
-	 * @param argx
-	 * @return the integer
-	 * @throws InvalidArgumentException
-	 *             if the argument is not an integer
-	 */
-	public int getValue(String argx) throws InvalidArgumentException;
+    /**
+     * Get an integer value from argument
+     * 
+     * @param argx
+     * @return the integer
+     * @throws InvalidArgumentException
+     *             if the argument is not an integer
+     */
+    public int getValue(String argx) throws InvalidArgumentException;
 
-	/**
-	 * @return the command
-	 */
-	public String getCommand();
+    /**
+     * @return the command
+     */
+    public String getCommand();
 
-	/**
-	 * Does this command has an argument
-	 * 
-	 * @return True if it has an argument
-	 */
-	public boolean hasArg();
+    /**
+     * Does this command has an argument
+     * 
+     * @return True if it has an argument
+     */
+    public boolean hasArg();
 
-	/**
-	 * 
-	 * @return the current SessionInterface
-	 */
-	public SessionInterface getSession();
+    /**
+     * 
+     * @return the current SessionInterface
+     */
+    public SessionInterface getSession();
 
-	// some helpful functions
-	/**
-	 * Set the previous command as the new current command (used after a incorrect sequence of
-	 * commands or unknown command). Also clear the Restart object.
-	 * 
-	 */
-	public void invalidCurrentCommand();
+    // some helpful functions
+    /**
+     * Set the previous command as the new current command (used after a incorrect sequence of
+     * commands or unknown command). Also clear the Restart object.
+     * 
+     */
+    public void invalidCurrentCommand();
 
-	/**
-	 * 
-	 * @return The GgCommandCode associated with this command
-	 */
-	public Enum<?> getCode();
+    /**
+     * 
+     * @return The GgCommandCode associated with this command
+     */
+    public Enum<?> getCode();
 }

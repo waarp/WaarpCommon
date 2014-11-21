@@ -25,27 +25,28 @@ import java.util.Properties;
  * A collection of utility methods to retrieve and parse the values of the Java system properties.
  */
 public final class SystemPropertyUtil {
-	public static final String FILE_ENCODING = "file.encoding";
-	
-	private static final Properties props = new Properties();
+    public static final String FILE_ENCODING = "file.encoding";
+
+    private static final Properties props = new Properties();
 
     // Retrieve all system properties at once so that there's no need to deal with
     // security exceptions from next time.  Otherwise, we might end up with logging every
     // security exceptions on every system property access or introducing more complexity
     // just because of less verbose logging.
     static {
-    	refresh();
+        refresh();
     }
 
     /**
-    * Re-retrieves all system properties so that any post-launch properties updates are retrieved.
-    */
+     * Re-retrieves all system properties so that any post-launch properties updates are retrieved.
+     */
     public static void refresh() {
         Properties newProps = null;
         try {
             newProps = System.getProperties();
         } catch (SecurityException e) {
-        	System.err.println("Unable to retrieve the system properties; default values will be used: "+e.getMessage());
+            System.err.println("Unable to retrieve the system properties; default values will be used: "
+                    + e.getMessage());
             newProps = new Properties();
         }
 
@@ -53,30 +54,33 @@ public final class SystemPropertyUtil {
             props.clear();
             props.putAll(newProps);
         }
-        if (! contains(FILE_ENCODING) || ! get(FILE_ENCODING).equalsIgnoreCase(WaarpStringUtils.UTF_8)) {
-    		try {
-    			//logger.info("Try to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument to ensure correctness");
+        if (!contains(FILE_ENCODING) || !get(FILE_ENCODING).equalsIgnoreCase(WaarpStringUtils.UTF_8)) {
+            try {
+                //logger.info("Try to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument to ensure correctness");
                 System.setProperty(FILE_ENCODING, WaarpStringUtils.UTF_8);
                 Field charset = Charset.class.getDeclaredField("defaultCharset");
-    	        charset.setAccessible(true);
-    	        charset.set(null,null);
-    	        synchronized (props) {
-    	            props.clear();
-    	            props.putAll(newProps);
-    	        }
-    		} catch (Exception e1) {
-    			// ignore since it is a security issue and -Dfile.encoding=UTF-8 should be used
-    			System.err.println("Issue while trying to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument: "+e1.getMessage());
-    			System.err.println("Currently file.encoding is: "+ get(FILE_ENCODING));
-    		}
+                charset.setAccessible(true);
+                charset.set(null, null);
+                synchronized (props) {
+                    props.clear();
+                    props.putAll(newProps);
+                }
+            } catch (Exception e1) {
+                // ignore since it is a security issue and -Dfile.encoding=UTF-8 should be used
+                System.err
+                        .println("Issue while trying to set UTF-8 as default file encoding: use -Dfile.encoding=UTF-8 as java command argument: "
+                                + e1.getMessage());
+                System.err.println("Currently file.encoding is: " + get(FILE_ENCODING));
+            }
         }
     }
+
     /**
      * 
      * @return True if Encoding is Correct
      */
     public static boolean isFileEncodingCorrect() {
-    	return (contains(FILE_ENCODING) && get(FILE_ENCODING).equalsIgnoreCase(WaarpStringUtils.UTF_8));
+        return (contains(FILE_ENCODING) && get(FILE_ENCODING).equalsIgnoreCase(WaarpStringUtils.UTF_8));
     }
 
     /**
@@ -91,9 +95,9 @@ public final class SystemPropertyUtil {
     }
 
     /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to {@code null} if the property access fails.
-     *
+     * Returns the value of the Java system property with the specified {@code key}, while falling
+     * back to {@code null} if the property access fails.
+     * 
      * @return the property value or {@code null}
      */
     public final static String get(String key) {
@@ -101,12 +105,10 @@ public final class SystemPropertyUtil {
     }
 
     /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to the specified default value if
-     * the property access fails.
-     *
-     * @return the property value.
-     *         {@code def} if there's no such property or if an access to the
+     * Returns the value of the Java system property with the specified {@code key}, while falling
+     * back to the specified default value if the property access fails.
+     * 
+     * @return the property value. {@code def} if there's no such property or if an access to the
      *         specified property is not allowed.
      */
     public final static String get(String key, String def) {
@@ -123,12 +125,10 @@ public final class SystemPropertyUtil {
     }
 
     /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to the specified default value if
-     * the property access fails.
-     *
-     * @return the property value.
-     *         {@code def} if there's no such property or if an access to the
+     * Returns the value of the Java system property with the specified {@code key}, while falling
+     * back to the specified default value if the property access fails.
+     * 
+     * @return the property value. {@code def} if there's no such property or if an access to the
      *         specified property is not allowed.
      */
     public static boolean getBoolean(String key, boolean def) {
@@ -156,18 +156,16 @@ public final class SystemPropertyUtil {
 
         System.err.println(
                 "Unable to parse the boolean system property '" + key + "':" + value + " - " +
-                "using the default value: " + def);
+                        "using the default value: " + def);
 
         return def;
     }
 
     /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to the specified default value if
-     * the property access fails.
-     *
-     * @return the property value.
-     *         {@code def} if there's no such property or if an access to the
+     * Returns the value of the Java system property with the specified {@code key}, while falling
+     * back to the specified default value if the property access fails.
+     * 
+     * @return the property value. {@code def} if there's no such property or if an access to the
      *         specified property is not allowed.
      */
     public static int getInt(String key, int def) {
@@ -191,18 +189,16 @@ public final class SystemPropertyUtil {
 
         System.err.println(
                 "Unable to parse the integer system property '" + key + "':" + value + " - " +
-                "using the default value: " + def);
+                        "using the default value: " + def);
 
         return def;
     }
 
     /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to the specified default value if
-     * the property access fails.
-     *
-     * @return the property value.
-     *         {@code def} if there's no such property or if an access to the
+     * Returns the value of the Java system property with the specified {@code key}, while falling
+     * back to the specified default value if the property access fails.
+     * 
+     * @return the property value. {@code def} if there's no such property or if an access to the
      *         specified property is not allowed.
      */
     public static long getLong(String key, long def) {
@@ -226,15 +222,15 @@ public final class SystemPropertyUtil {
 
         System.err.println(
                 "Unable to parse the long integer system property '" + key + "':" + value + " - " +
-                "using the default value: " + def);
+                        "using the default value: " + def);
 
         return def;
     }
 
     public static void debug() {
-    	props.list(System.out);
+        props.list(System.out);
     }
-    
+
     private SystemPropertyUtil() {
         // Unused
     }

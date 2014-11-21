@@ -26,29 +26,29 @@ package org.waarp.common.command;
  * 
  */
 public class NextCommandReply {
-	/**
-	 * Command to be accepted next time
-	 */
-	public Enum<?> command = null;
+    /**
+     * Command to be accepted next time
+     */
+    public Enum<?> command = null;
 
-	/**
-	 * Reply to do to the Ftp client
-	 */
-	public ReplyCode reply = null;
+    /**
+     * Reply to do to the Ftp client
+     */
+    public ReplyCode reply = null;
 
-	/**
-	 * Message
-	 */
-	public String message = null;
+    /**
+     * Message
+     */
+    public String message = null;
 
-	/**
-	 * @param command
-	 * @param reply
-	 * @param message
-	 */
-	public NextCommandReply(Enum<?> command, ReplyCode reply, String message) {
-		this.command = command;
-		this.reply = reply;
-		this.message = message;
-	}
+    /**
+     * @param command
+     * @param reply
+     * @param message
+     */
+    public NextCommandReply(Enum<?> command, ReplyCode reply, String message) {
+        this.command = command;
+        this.reply = reply;
+        this.message = message;
+    }
 }

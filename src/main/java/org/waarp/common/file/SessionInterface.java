@@ -24,43 +24,43 @@ package org.waarp.common.file;
  * 
  */
 public interface SessionInterface {
-	/**
-	 * @return the DirInterface
-	 */
-	public DirInterface getDir();
+    /**
+     * @return the DirInterface
+     */
+    public DirInterface getDir();
 
-	/**
-	 * @return the AuthInterface
-	 */
-	public AuthInterface getAuth();
+    /**
+     * @return the AuthInterface
+     */
+    public AuthInterface getAuth();
 
-	/**
-	 * Clean the session
-	 * 
-	 */
-	public void clear();
+    /**
+     * Clean the session
+     * 
+     */
+    public void clear();
 
-	/**
-	 * 
-	 * @return the BlockSize to use in FileInterface operations
-	 */
-	public int getBlockSize();
+    /**
+     * 
+     * @return the BlockSize to use in FileInterface operations
+     */
+    public int getBlockSize();
 
-	/**
-	 * 
-	 * @return the configuration
-	 */
-	public FileParameterInterface getFileParameter();
+    /**
+     * 
+     * @return the configuration
+     */
+    public FileParameterInterface getFileParameter();
 
-	/**
-	 * 
-	 * @return the Restart
-	 */
-	public Restart getRestart();
+    /**
+     * 
+     * @return the Restart
+     */
+    public Restart getRestart();
 
-	/**
-	 * 
-	 * @return the extension to give to Unique File (STOU)
-	 */
-	public String getUniqueExtension();
+    /**
+     * 
+     * @return the extension to give to Unique File (STOU)
+     */
+    public String getUniqueExtension();
 }

@@ -25,24 +25,24 @@ package org.waarp.common.lru;
  * 
  */
 public class SoftReferenceSynchronizedLruCache<K, V> extends
-		SynchronizedLruCache<K, V> {
+        SynchronizedLruCache<K, V> {
 
-	public SoftReferenceSynchronizedLruCache(int capacity, long ttl,
-			int initialCapacity, float loadFactor) {
-		super(capacity, ttl, initialCapacity, loadFactor);
-	}
+    public SoftReferenceSynchronizedLruCache(int capacity, long ttl,
+            int initialCapacity, float loadFactor) {
+        super(capacity, ttl, initialCapacity, loadFactor);
+    }
 
-	public SoftReferenceSynchronizedLruCache(int capacity, long ttl,
-			int initialCapacity) {
-		super(capacity, ttl, initialCapacity);
-	}
+    public SoftReferenceSynchronizedLruCache(int capacity, long ttl,
+            int initialCapacity) {
+        super(capacity, ttl, initialCapacity);
+    }
 
-	public SoftReferenceSynchronizedLruCache(int capacity, long ttl) {
-		super(capacity, ttl);
-	}
+    public SoftReferenceSynchronizedLruCache(int capacity, long ttl) {
+        super(capacity, ttl);
+    }
 
-	@Override
-	protected InterfaceLruCacheEntry<V> createEntry(V value, long ttl) {
-		return new SoftReferenceCacheEntry<V>(value, ttl);
-	}
+    @Override
+    protected InterfaceLruCacheEntry<V> createEntry(V value, long ttl) {
+        return new SoftReferenceCacheEntry<V>(value, ttl);
+    }
 }
