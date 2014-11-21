@@ -22,7 +22,8 @@ import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import io.netty.handler.traffic.GlobalTrafficShapingHandler;
+import io.netty.handler.traffic.AbstractTrafficShapingHandler;
+
 import org.waarp.common.database.DbAdmin;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
@@ -63,7 +64,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
     private double percentageDecreaseRatio = 0.25;
     private long delay = 1000;
     private long limitLowBandwidth = LOWBANDWIDTH_DEFAULT;
-    private GlobalTrafficShapingHandler handler;
+    private AbstractTrafficShapingHandler handler;
     private ScheduledThreadPoolExecutor executor = null;
 
     private static class CurLimits {
@@ -119,7 +120,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
     public WaarpConstraintLimitHandler(long WAITFORNETOP2, long TIMEOUTCON2,
             boolean useJdkCpuLimit,
             double lowcpuLimit, double highcpuLimit, double percentageDecrease,
-            GlobalTrafficShapingHandler handler, long delay, long limitLowBandwidth) {
+            AbstractTrafficShapingHandler handler, long delay, long limitLowBandwidth) {
         this(WAITFORNETOP2, TIMEOUTCON2,
                 true, useJdkCpuLimit, 0, 0,
                 lowcpuLimit, highcpuLimit, percentageDecrease,
@@ -181,7 +182,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
             boolean useCpuLimit,
             boolean useJdKCpuLimit, double cpulimit, int channellimit,
             double lowcpuLimit, double highcpuLimit, double percentageDecrease,
-            GlobalTrafficShapingHandler handler, long delay, long limitLowBandwidth) {
+            AbstractTrafficShapingHandler handler, long delay, long limitLowBandwidth) {
         useCpuLimits = useCpuLimit;
         WAITFORNETOP = WAITFORNETOP2;
         TIMEOUTCON = TIMEOUTCON2;
@@ -414,7 +415,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
      * 
      * @param handler
      */
-    public void setHandler(GlobalTrafficShapingHandler handler) {
+    public void setHandler(AbstractTrafficShapingHandler handler) {
         this.handler = handler;
         if ((!constraintInactive) && this.handler != null && useBandwidthLimit) {
             if (executor != null) {
