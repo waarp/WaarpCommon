@@ -22,6 +22,7 @@ import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.netty.handler.traffic.AbstractTrafficShapingHandler;
 import org.jboss.netty.handler.traffic.GlobalTrafficShapingHandler;
 import org.waarp.common.database.DbAdmin;
 import org.waarp.common.logging.WaarpInternalLogger;
@@ -63,7 +64,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
     private double percentageDecreaseRatio = 0.25;
     private long delay = 1000;
     private long limitLowBandwidth = LOWBANDWIDTH_DEFAULT;
-    private GlobalTrafficShapingHandler handler;
+    private AbstractTrafficShapingHandler handler;
     private ScheduledThreadPoolExecutor executor = null;
 
     private static class CurLimits {
@@ -410,7 +411,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
      * 
      * @param handler
      */
-    public void setHandler(GlobalTrafficShapingHandler handler) {
+    public void setHandler(AbstractTrafficShapingHandler handler) {
         this.handler = handler;
         if ((!constraintInactive) && this.handler != null && useBandwidthLimit) {
             if (executor != null) {
