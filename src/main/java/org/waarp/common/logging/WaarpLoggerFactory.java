@@ -19,13 +19,13 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 /**
  * Creates an {@link WaarpLogger} or changes the default factory
  * implementation. This factory allows you to choose what logging framework
- * VITAM should use. The default factory is {@link Slf4JLoggerFactory}. If SLF4J
- * is not available, {@link Log4JLoggerFactory} is used. If Log4J is not available, {@link WaarpJdkLoggerFactory} is used. You can
+ * VITAM should use. The default factory is {@link WaarpSlf4JLoggerFactory}. If SLF4J
+ * is not available, {@link WaarpSlf4JLoggerFactory} is used. If Log4J is not available, {@link WaarpJdkLoggerFactory} is used. You can
  * change it to your preferred
  * logging framework before other VITAM classes are loaded:
  *
  * <pre>
- * {@link WaarpLoggerFactory}.setDefaultFactory(new {@link Log4JLoggerFactory}());
+ * {@link WaarpLoggerFactory}.setDefaultFactory(new {@link WaarpSlf4JLoggerFactory}());
  * </pre>
  *
  * Please note that the new default factory is effective only for the classes
