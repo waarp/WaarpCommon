@@ -366,11 +366,11 @@
 	          <additionalparam>
 	            -link http://docs.oracle.com/javase/7/docs/api/
 
-				-group "Waarp Common Command Authentication Session and File package" "org.waarp.common.command*:org.waarp.common.file*"
+				-group "Waarp Common Command Authentication Session and File package" "org.waarp.common.command*:org.waarp.common.file*:org.waarp.common.filemonitor*"
 				-group "Waarp Common Crypto package" "org.waarp.common.crypto*"
 				-group "Waarp Common Database package" "org.waarp.common.database*"
 				-group "Waarp Common CPU package" "org.waarp.common.cpu*"
-				-group "Waarp Common Utility package" "org.waarp.common.tar*:org.waarp.common.utility*:org.waarp.common.xml*:org.waarp.common.lru*:org.waarp.common.state*:org.waarp.common.role*"
+				-group "Waarp Common Utility package" "org.waarp.common.tar*:org.waarp.common.utility*:org.waarp.common.xml*:org.waarp.common.lru*:org.waarp.common.state*:org.waarp.common.role*:org.waarp.common.service*:org.waarp.common.transcode*"
 				-group "Waarp Common Logging and Future package" "org.waarp.common.exception*:org.waarp.common.future*:org.waarp.common.logging*"
 
 	            -sourceclasspath ${basedir}/target/classes

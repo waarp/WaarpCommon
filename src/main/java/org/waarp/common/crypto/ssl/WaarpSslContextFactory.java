@@ -246,8 +246,6 @@ public class WaarpSslContextFactory {
      *            True if in Server Mode, else False in Client mode
      * @param needClientAuth
      *            True if the client needs to be authenticated (only if serverMode is True)
-     * @param renegotiationEnable
-     *            True if you want to enable renegotiation (security issue CVE-2009-3555)
      * @param host
      *            Host for which a resume is allowed
      * @param port
