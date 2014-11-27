@@ -684,8 +684,8 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
 
     public long getCRC(String path) throws CommandAbstractException {
         File file = getTrueFile(path);
+        CheckedInputStream cis = null;
         try {
-            CheckedInputStream cis = null;
             try {
                 // Computer CRC32 checksum
                 cis = new CheckedInputStream(new FileInputStream(file),
@@ -697,13 +697,16 @@ public abstract class FilesystemBasedDirImpl extends AbstractDir {
             while (cis.read(buf) >= 0) {
             }
             long result = cis.getChecksum().getValue();
-            try {
-                cis.close();
-            } catch (IOException e) {
-            }
             return result;
         } catch (IOException e) {
             throw new Reply550Exception("Error while reading file: " + path);
+        } finally {
+            if (cis != null) {
+                try {
+                    cis.close();
+                } catch (IOException e) {
+                }
+            }
         }
     }
 
