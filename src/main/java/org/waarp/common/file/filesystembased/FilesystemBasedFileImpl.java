@@ -305,6 +305,15 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
         File file = getFileFromPath(currentFile);
         if (file.canRead()) {
             File newFile = getFileFromPath(path);
+            if (newFile.exists()) {
+                logger.warn("Target file already exists: "+newFile.getAbsolutePath());
+                return false;
+            }
+            if (newFile.getAbsolutePath().equals(file.getAbsolutePath())) {
+                // already in the right position
+                isReady = true;
+                return true;
+            }
             if (newFile.getParentFile().canWrite()) {
                 if (!file.renameTo(newFile)) {
                     FileOutputStream fileOutputStream = null;
@@ -612,18 +621,19 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
                 transfert += fileChannelOut.transferFrom(fileChannelIn, transfert, chunkSize);
             }
             fileChannelOut.force(true);
-            fileChannelIn.close();
-            fileChannelIn = null;
-            fileChannelOut.close();
         } catch (IOException e) {
             logger.error("Error during get:", e);
-            if (fileChannelIn != null) {
-                try {
-                    fileChannelIn.close();
-                } catch (IOException e1) {
-                }
-            }
             return false;
+        } finally {
+            try {
+                fileChannelOut.close();
+            } catch (IOException e) {
+            }
+            try {
+                fileChannelIn.close();
+            } catch (IOException e) {
+            }
+            fileChannelIn = null;
         }
         if (transfert == size) {
             position += size;
