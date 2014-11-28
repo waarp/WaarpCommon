@@ -156,7 +156,13 @@ public class FileConvert extends Thread {
             out = new FileOutputStream(destination);
             dstChannel = out.getChannel();
             long src = srcChannel.size();
-            long dst = dstChannel.transferFrom(srcChannel, 0, src);
+            if (src < 0) {
+                src = source.length();
+            }
+            long dst = 0;
+            while (dst < src) {
+                dst += dstChannel.transferFrom(srcChannel, dst, src);
+            }
             return (src == dst);
         } catch (IOException e) {
             logger.error("FileConvert copy back in error", e);
