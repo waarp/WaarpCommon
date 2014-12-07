@@ -369,6 +369,9 @@ public abstract class KeyObject {
      * @throws Exception
      */
     public byte[] decryptHexFile(File file) throws Exception {
+        if (file.length() > Integer.MAX_VALUE) {
+            throw new IOException("File too big to be decoded into an array of bytes");
+        }
         byte[] byteKeys = new byte[(int) file.length()];
         FileInputStream inputStream = null;
         DataInputStream dis = null;
