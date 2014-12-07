@@ -68,6 +68,11 @@ public class WaarpStringUtils {
     public static String readFileException(String filename) throws InvalidArgumentException,
             FileTransferException {
         File file = new File(filename);
+        // Check for size of file
+        if (file.length() > Integer.MAX_VALUE) {
+            throw new FileTransferException("File is too big for this convenience method (" + file.length()
+                    + " bytes).");
+        }
         char[] chars = new char[(int) file.length()];
         FileReader fileReader;
         try {
