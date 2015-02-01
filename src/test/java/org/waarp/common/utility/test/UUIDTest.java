@@ -28,20 +28,22 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.Assert.*;
 
 public class UUIDTest {
-    private static final char VERSION = 'd';
-    private static int NB = 5000000;
+    private static final int VERSION = (1 & 0x0F);
+    private static int NB = 1000000;
 
     @Test
     public void testStructure() {
         UUID id = new UUID();
         String str = id.toHex();
 
-        assertEquals(str.charAt(10), VERSION);
-        assertEquals(str.length(), 36);
+        assertEquals('0', str.charAt(0));
+        assertEquals('0', str.charAt(1));
+        assertEquals(40, str.length());
     }
 
     @Test
@@ -107,8 +109,11 @@ public class UUIDTest {
         UUID generated = new UUID();
         assertEquals(VERSION, generated.getVersion());
 
-        UUID parsed1 = new UUID("dc9c531160d0def10bcecc00014628614b89");
+        UUID parsed1 = new UUID("AKG8zkAvFAgAJ3vUswABS0W_baw=");
         assertEquals(VERSION, parsed1.getVersion());
+        UUID parsed2 = new UUID("00a1bcce402f140800277bd4b300014b45bf6dac");
+        assertEquals(VERSION, parsed2.getVersion());
+        assertEquals(parsed1, parsed2);
     }
 
     @Test
@@ -143,6 +148,58 @@ public class UUIDTest {
         assertEquals(mac[4], field[4]);
         assertEquals(mac[5], field[5]);
     }
+    
+    private void checkConsecutive(final UUID[] UUIDArray) {
+        final int n = UUIDArray.length;
+        int i = 1;
+        int largest = 0;
+        for (; i < n; i++) {
+            if (UUIDArray[i].getTimestamp() > UUIDArray[i - 1].getTimestamp()) {
+                int j = i + 1;
+                final long time = UUIDArray[i].getTimestamp();
+                for (; j < n; j++) {
+                    if (UUIDArray[i].compareTo(UUIDArray[j]) != -1) {
+                        for (int k = i; k <= j; k++) {
+                            System.out.println(k+"="+UUIDArray[k].getId()+":"+UUIDArray[k].getCounter()+":"+UUIDArray[k].getTimestamp()+":"+UUIDArray[k].getVersion()+":"+UUIDArray[k].getProcessId());
+                        }
+                    }
+                    assertEquals(-1, UUIDArray[i].compareTo(UUIDArray[j]));
+                    if (UUIDArray[j].getTimestamp() > time) {
+                        if (largest < j - i) {
+                            largest = j - i;
+                        }
+                        i = j;
+                        break;
+                    }
+                }
+            } else {
+                if (UUIDArray[i-1].compareTo(UUIDArray[i]) != -1) {
+                    for (int k = i-1; k <= i; k++) {
+                        System.out.println(k+"="+UUIDArray[k].getId()+":"+UUIDArray[k].getCounter()+":"+UUIDArray[k].getTimestamp()+":"+UUIDArray[k].getVersion()+":"+UUIDArray[k].getProcessId());
+                    }
+                }
+                assertEquals(-1, UUIDArray[i-1].compareTo(UUIDArray[i]));
+                int j = i + 1;
+                final long time = UUIDArray[i].getTimestamp();
+                for (; j < n; j++) {
+                    if (UUIDArray[i-1].compareTo(UUIDArray[j]) != -1) {
+                        for (int k = i-1; k <= j; k++) {
+                            System.out.println(k+"="+UUIDArray[k].getId()+":"+UUIDArray[k].getCounter()+":"+UUIDArray[k].getTimestamp()+":"+UUIDArray[k].getVersion()+":"+UUIDArray[k].getProcessId());
+                        }
+                    }
+                    assertEquals(-1, UUIDArray[i-1].compareTo(UUIDArray[j]));
+                    if (UUIDArray[j].getTimestamp() > time) {
+                        if (largest < j - i + 1) {
+                            largest = j - i + 1;
+                        }
+                        i = j;
+                        break;
+                    }
+                }
+            }
+        }
+        System.out.println(largest + " different consecutive elements");
+    }
 
     @Test
     public void testForDuplicates() {
@@ -151,34 +208,19 @@ public class UUIDTest {
         UUID[] uuidArray = new UUID[n];
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             uuidArray[i] = new UUID();
+        }
         long stop = System.currentTimeMillis();
         System.out.println("Time = " + (stop - start) + " so " + (n * 1000 / (stop - start)) + " Uuids/s");
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++) {
             uuids.add(uuidArray[i]);
+        }
 
         System.out.println("Create " + n + " and get: " + uuids.size());
         assertEquals(n, uuids.size());
-        int i = 1;
-        int largest = 0;
-        for (; i < n; i++) {
-            if (uuidArray[i].getTimestamp() > uuidArray[i - 1].getTimestamp()) {
-                int j = i + 1;
-                long time = uuidArray[i].getTimestamp();
-                for (; j < n; j++) {
-                    if (uuidArray[j].getTimestamp() > time) {
-                        if (largest < j - i) {
-                            largest = j - i;
-                            i = j;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        System.out.println(largest + " different consecutive elements");
+        checkConsecutive(uuidArray);
     }
 
     private static class Generator extends Thread {
@@ -209,13 +251,16 @@ public class UUIDTest {
         int n = NB;
         UUID[] uuids = new UUID[n];
 
+        final long start = System.currentTimeMillis();
         for (int i = 0; i < numThreads; i++) {
             threads[i] = new Generator(n / numThreads, uuids, i, numThreads);
             threads[i].start();
         }
 
-        for (int i = 0; i < numThreads; i++)
+        for (int i = 0; i < numThreads; i++) {
             threads[i].join();
+        }
+        final long stop = System.currentTimeMillis();
 
         Set<UUID> uuidSet = new HashSet<UUID>();
 
@@ -224,5 +269,13 @@ public class UUIDTest {
             uuidSet.add(uuids[i]);
 
         assertEquals(effectiveN, uuidSet.size());
+        uuidSet.clear();
+        System.out.println("TimeConcurrent = " + (stop - start) + " so " + (uuids.length * 1000 / (stop - start)) + " UUIDs/s");
+        final TreeSet<UUID> set = new TreeSet<UUID>();
+        for (int i = 0; i < uuids.length; i++) {
+            set.add(uuids[i]);
+        }
+        checkConsecutive(set.toArray(new UUID[0]));
+
     }
 }
