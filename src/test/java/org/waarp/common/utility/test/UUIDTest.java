@@ -141,7 +141,7 @@ public class UUIDTest {
         }
         UUID id = new UUID();
         byte[] field = id.getMacFragment();
-        assertEquals(mac[0] & 0x0F, field[0]);
+        assertEquals(mac[0], field[0]);
         assertEquals(mac[1], field[1]);
         assertEquals(mac[2], field[2]);
         assertEquals(mac[3], field[3]);
