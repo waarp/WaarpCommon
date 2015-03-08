@@ -5,6 +5,11 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+        <release version="1.2.28" date="2015-03-08" description="Fix release">
+            <action dev="Frederic Bregier" type="fix">Improve File copy and fix rare file size condition</action>
+            <action dev="Frederic Bregier" type="fix">Improve JsonHandler and UUID</action>
+            <action dev="Frederic Bregier" type="fix">Fix after upgrading dependencies</action>
+        </release>
         <release version="1.2.27" date="2014-12-01" description="Fix release">
             <action dev="Frederic Bregier" type="fix">Fix Database memory consumption with MySQL/MariaDB</action>
             <action dev="Frederic Bregier" type="fix">Optimize memory allocation during file writing operations</action>
