@@ -1,6 +1,5 @@
 package org.waarp.common.utility;
 
-import java.io.IOException;
 
 /**
  * <p>
