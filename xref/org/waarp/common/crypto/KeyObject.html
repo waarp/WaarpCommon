@@ -377,50 +377,53 @@
 <a class="jxr_linenumber" name="L369" href="#L369">369</a> <em class="jxr_javadoccomment">     * @throws Exception</em>
 <a class="jxr_linenumber" name="L370" href="#L370">370</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L371" href="#L371">371</a>     <strong class="jxr_keyword">public</strong> byte[] decryptHexFile(File file) <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>         byte[] byteKeys = <strong class="jxr_keyword">new</strong> byte[(<strong class="jxr_keyword">int</strong>) file.length()];
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>         FileInputStream inputStream = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>         DataInputStream dis = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>             inputStream = <strong class="jxr_keyword">new</strong> FileInputStream(file);
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>             dis = <strong class="jxr_keyword">new</strong> DataInputStream(inputStream);
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>             dis.readFully(byteKeys);
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>             dis.close();
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>             String skey = <strong class="jxr_keyword">new</strong> String(byteKeys, WaarpStringUtils.UTF8);
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>             <em class="jxr_comment">// decrypt it</em>
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>             byteKeys = decryptHexInBytes(skey);
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>             <strong class="jxr_keyword">return</strong> byteKeys;
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>                 <strong class="jxr_keyword">if</strong> (dis != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>                     dis.close();
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (inputStream != <strong class="jxr_keyword">null</strong>)
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>                     inputStream.close();
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>             } <strong class="jxr_keyword">catch</strong> (IOException e1) {
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>             }
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>             <strong class="jxr_keyword">throw</strong> e;
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>         }
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>     }
-<a class="jxr_linenumber" name="L395" href="#L395">395</a> 
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L397" href="#L397">397</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="L398" href="#L398">398</a> <em class="jxr_javadoccomment">     * @param encoded</em>
-<a class="jxr_linenumber" name="L399" href="#L399">399</a> <em class="jxr_javadoccomment">     * @return the array of bytes from encoded String (HEX)</em>
-<a class="jxr_linenumber" name="L400" href="#L400">400</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>     <strong class="jxr_keyword">public</strong> byte[] decodeHex(String encoded) {
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>         <strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getFromHex(encoded);
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>     }
-<a class="jxr_linenumber" name="L404" href="#L404">404</a> 
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L406" href="#L406">406</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="L407" href="#L407">407</a> <em class="jxr_javadoccomment">     * @param bytes</em>
-<a class="jxr_linenumber" name="L408" href="#L408">408</a> <em class="jxr_javadoccomment">     * @return The encoded array of bytes in HEX</em>
-<a class="jxr_linenumber" name="L409" href="#L409">409</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>     <strong class="jxr_keyword">public</strong> String encodeHex(byte[] bytes) {
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHex(bytes);
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>     }
-<a class="jxr_linenumber" name="L413" href="#L413">413</a> }
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>         <strong class="jxr_keyword">if</strong> (file.length() &gt; Integer.MAX_VALUE) {
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IOException(<span class="jxr_string">"File too big to be decoded into an array of bytes"</span>);
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>         }
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>         byte[] byteKeys = <strong class="jxr_keyword">new</strong> byte[(<strong class="jxr_keyword">int</strong>) file.length()];
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>         FileInputStream inputStream = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>         DataInputStream dis = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>             inputStream = <strong class="jxr_keyword">new</strong> FileInputStream(file);
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>             dis = <strong class="jxr_keyword">new</strong> DataInputStream(inputStream);
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>             dis.readFully(byteKeys);
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>             dis.close();
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>             String skey = <strong class="jxr_keyword">new</strong> String(byteKeys, WaarpStringUtils.UTF8);
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>             <em class="jxr_comment">// decrypt it</em>
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>             byteKeys = decryptHexInBytes(skey);
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>             <strong class="jxr_keyword">return</strong> byteKeys;
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>                 <strong class="jxr_keyword">if</strong> (dis != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>                     dis.close();
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (inputStream != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>                     inputStream.close();
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>             } <strong class="jxr_keyword">catch</strong> (IOException e1) {
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>             }
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>             <strong class="jxr_keyword">throw</strong> e;
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>         }
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>     }
+<a class="jxr_linenumber" name="L398" href="#L398">398</a> 
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L400" href="#L400">400</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L401" href="#L401">401</a> <em class="jxr_javadoccomment">     * @param encoded</em>
+<a class="jxr_linenumber" name="L402" href="#L402">402</a> <em class="jxr_javadoccomment">     * @return the array of bytes from encoded String (HEX)</em>
+<a class="jxr_linenumber" name="L403" href="#L403">403</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>     <strong class="jxr_keyword">public</strong> byte[] decodeHex(String encoded) {
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>         <strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getFromHex(encoded);
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>     }
+<a class="jxr_linenumber" name="L407" href="#L407">407</a> 
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L409" href="#L409">409</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L410" href="#L410">410</a> <em class="jxr_javadoccomment">     * @param bytes</em>
+<a class="jxr_linenumber" name="L411" href="#L411">411</a> <em class="jxr_javadoccomment">     * @return The encoded array of bytes in HEX</em>
+<a class="jxr_linenumber" name="L412" href="#L412">412</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>     <strong class="jxr_keyword">public</strong> String encodeHex(byte[] bytes) {
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">return</strong> FilesystemBasedDigest.getHex(bytes);
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>     }
+<a class="jxr_linenumber" name="L416" href="#L416">416</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2014 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
 </body>
 </html>

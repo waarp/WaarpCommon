@@ -633,146 +633,144 @@
 <a class="jxr_linenumber" name="L625" href="#L625">625</a>                     <strong class="jxr_keyword">return</strong> false;
 <a class="jxr_linenumber" name="L626" href="#L626">626</a>                 }
 <a class="jxr_linenumber" name="L627" href="#L627">627</a>             }
-<a class="jxr_linenumber" name="L628" href="#L628">628</a>             <strong class="jxr_keyword">int</strong> chunkSize = <strong class="jxr_keyword">this</strong>.session.getBlockSize();
-<a class="jxr_linenumber" name="L629" href="#L629">629</a>             <strong class="jxr_keyword">if</strong> (chunkSize &lt; 0) {
-<a class="jxr_linenumber" name="L630" href="#L630">630</a>                 chunkSize = 8192;
-<a class="jxr_linenumber" name="L631" href="#L631">631</a>             }
-<a class="jxr_linenumber" name="L632" href="#L632">632</a>             <strong class="jxr_keyword">while</strong> (transfert &lt; size) {
-<a class="jxr_linenumber" name="L633" href="#L633">633</a>                 transfert += fileChannelOut.transferFrom(fileChannelIn, transfert, chunkSize);
-<a class="jxr_linenumber" name="L634" href="#L634">634</a>             }
-<a class="jxr_linenumber" name="L635" href="#L635">635</a>             fileChannelOut.force(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L636" href="#L636">636</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L637" href="#L637">637</a>             logger.error(<span class="jxr_string">"Error during get:"</span>, e);
-<a class="jxr_linenumber" name="L638" href="#L638">638</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L639" href="#L639">639</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L640" href="#L640">640</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L641" href="#L641">641</a>                 fileChannelOut.close();
-<a class="jxr_linenumber" name="L642" href="#L642">642</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L643" href="#L643">643</a>             }
-<a class="jxr_linenumber" name="L644" href="#L644">644</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L645" href="#L645">645</a>                 fileChannelIn.close();
-<a class="jxr_linenumber" name="L646" href="#L646">646</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L647" href="#L647">647</a>             }
-<a class="jxr_linenumber" name="L648" href="#L648">648</a>             fileChannelIn = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L649" href="#L649">649</a>         }
-<a class="jxr_linenumber" name="L650" href="#L650">650</a>         <strong class="jxr_keyword">if</strong> (transfert == size) {
-<a class="jxr_linenumber" name="L651" href="#L651">651</a>             position += size;
-<a class="jxr_linenumber" name="L652" href="#L652">652</a>         }
-<a class="jxr_linenumber" name="L653" href="#L653">653</a>         <strong class="jxr_keyword">return</strong> transfert == size;
-<a class="jxr_linenumber" name="L654" href="#L654">654</a>     }
-<a class="jxr_linenumber" name="L655" href="#L655">655</a> 
-<a class="jxr_linenumber" name="L656" href="#L656">656</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L657" href="#L657">657</a> <em class="jxr_javadoccomment">     * Returns the FileChannel in In mode associated with the current file.</em>
-<a class="jxr_linenumber" name="L658" href="#L658">658</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="L659" href="#L659">659</a> <em class="jxr_javadoccomment">     * @return the FileChannel (IN mode)</em>
-<a class="jxr_linenumber" name="L660" href="#L660">660</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L661" href="#L661">661</a>     <strong class="jxr_keyword">protected</strong> FileChannel getFileChannel() {
-<a class="jxr_linenumber" name="L662" href="#L662">662</a>         <strong class="jxr_keyword">if</strong> (!isReady) {
-<a class="jxr_linenumber" name="L663" href="#L663">663</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L664" href="#L664">664</a>         }
-<a class="jxr_linenumber" name="L665" href="#L665">665</a>         File trueFile;
-<a class="jxr_linenumber" name="L666" href="#L666">666</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L667" href="#L667">667</a>             trueFile = getFileFromPath(currentFile);
-<a class="jxr_linenumber" name="L668" href="#L668">668</a>         } <strong class="jxr_keyword">catch</strong> (CommandAbstractException e1) {
-<a class="jxr_linenumber" name="L669" href="#L669">669</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L670" href="#L670">670</a>         }
-<a class="jxr_linenumber" name="L671" href="#L671">671</a>         FileChannel fileChannel = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L672" href="#L672">672</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L673" href="#L673">673</a>             @SuppressWarnings(<span class="jxr_string">"resource"</span>)
-<a class="jxr_linenumber" name="L674" href="#L674">674</a>             FileInputStream fileInputStream = <strong class="jxr_keyword">new</strong> FileInputStream(trueFile);
-<a class="jxr_linenumber" name="L675" href="#L675">675</a>             fileChannel = fileInputStream.getChannel();
-<a class="jxr_linenumber" name="L676" href="#L676">676</a>             <strong class="jxr_keyword">if</strong> (position != 0) {
-<a class="jxr_linenumber" name="L677" href="#L677">677</a>                 fileChannel = fileChannel.position(position);
-<a class="jxr_linenumber" name="L678" href="#L678">678</a>             }
-<a class="jxr_linenumber" name="L679" href="#L679">679</a>         } <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
-<a class="jxr_linenumber" name="L680" href="#L680">680</a>             logger.error(<span class="jxr_string">"File not found in getFileChannel:"</span>, e);
-<a class="jxr_linenumber" name="L681" href="#L681">681</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L682" href="#L682">682</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L683" href="#L683">683</a>             <strong class="jxr_keyword">if</strong> (fileChannel != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L684" href="#L684">684</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L685" href="#L685">685</a>                     fileChannel.close();
-<a class="jxr_linenumber" name="L686" href="#L686">686</a>                 } <strong class="jxr_keyword">catch</strong> (IOException e1) {
-<a class="jxr_linenumber" name="L687" href="#L687">687</a>                 }
-<a class="jxr_linenumber" name="L688" href="#L688">688</a>             }
-<a class="jxr_linenumber" name="L689" href="#L689">689</a>             logger.error(<span class="jxr_string">"Change position in getFileChannel:"</span>, e);
-<a class="jxr_linenumber" name="L690" href="#L690">690</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L691" href="#L691">691</a>         }
-<a class="jxr_linenumber" name="L692" href="#L692">692</a>         <strong class="jxr_keyword">return</strong> fileChannel;
-<a class="jxr_linenumber" name="L693" href="#L693">693</a>     }
-<a class="jxr_linenumber" name="L694" href="#L694">694</a> 
-<a class="jxr_linenumber" name="L695" href="#L695">695</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L696" href="#L696">696</a> <em class="jxr_javadoccomment">     * Returns the RandomAccessFile in Out mode associated with the current file.</em>
-<a class="jxr_linenumber" name="L697" href="#L697">697</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="L698" href="#L698">698</a> <em class="jxr_javadoccomment">     * @return the RandomAccessFile (OUT="rw")</em>
-<a class="jxr_linenumber" name="L699" href="#L699">699</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L700" href="#L700">700</a>     <strong class="jxr_keyword">protected</strong> RandomAccessFile getRandomFile() {
-<a class="jxr_linenumber" name="L701" href="#L701">701</a>         <strong class="jxr_keyword">if</strong> (!isReady) {
-<a class="jxr_linenumber" name="L702" href="#L702">702</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L703" href="#L703">703</a>         }
-<a class="jxr_linenumber" name="L704" href="#L704">704</a>         File trueFile;
-<a class="jxr_linenumber" name="L705" href="#L705">705</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L706" href="#L706">706</a>             trueFile = getFileFromPath(currentFile);
-<a class="jxr_linenumber" name="L707" href="#L707">707</a>         } <strong class="jxr_keyword">catch</strong> (CommandAbstractException e1) {
-<a class="jxr_linenumber" name="L708" href="#L708">708</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L709" href="#L709">709</a>         }
-<a class="jxr_linenumber" name="L710" href="#L710">710</a>         RandomAccessFile raf = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L711" href="#L711">711</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L712" href="#L712">712</a>             raf = <strong class="jxr_keyword">new</strong> RandomAccessFile(trueFile, <span class="jxr_string">"rw"</span>);
-<a class="jxr_linenumber" name="L713" href="#L713">713</a>             raf.seek(position);
-<a class="jxr_linenumber" name="L714" href="#L714">714</a>         } <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
-<a class="jxr_linenumber" name="L715" href="#L715">715</a>             logger.error(<span class="jxr_string">"File not found in getRandomFile:"</span>, e);
-<a class="jxr_linenumber" name="L716" href="#L716">716</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L717" href="#L717">717</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L718" href="#L718">718</a>             logger.error(<span class="jxr_string">"Change position in getRandomFile:"</span>, e);
-<a class="jxr_linenumber" name="L719" href="#L719">719</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L720" href="#L720">720</a>         }
-<a class="jxr_linenumber" name="L721" href="#L721">721</a>         <strong class="jxr_keyword">return</strong> raf;
-<a class="jxr_linenumber" name="L722" href="#L722">722</a>     }
-<a class="jxr_linenumber" name="L723" href="#L723">723</a> 
-<a class="jxr_linenumber" name="L724" href="#L724">724</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L725" href="#L725">725</a> <em class="jxr_javadoccomment">     * Returns the FileOutputStream in Out mode associated with the current file.</em>
-<a class="jxr_linenumber" name="L726" href="#L726">726</a> <em class="jxr_javadoccomment">     * </em>
-<a class="jxr_linenumber" name="L727" href="#L727">727</a> <em class="jxr_javadoccomment">     * @param append</em>
-<a class="jxr_linenumber" name="L728" href="#L728">728</a> <em class="jxr_javadoccomment">     *            True if the FileOutputStream should be in append mode</em>
-<a class="jxr_linenumber" name="L729" href="#L729">729</a> <em class="jxr_javadoccomment">     * @return the FileOutputStream (OUT)</em>
-<a class="jxr_linenumber" name="L730" href="#L730">730</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L731" href="#L731">731</a>     <strong class="jxr_keyword">protected</strong> FileOutputStream getFileOutputStream(<strong class="jxr_keyword">boolean</strong> append) {
-<a class="jxr_linenumber" name="L732" href="#L732">732</a>         <strong class="jxr_keyword">if</strong> (!isReady) {
-<a class="jxr_linenumber" name="L733" href="#L733">733</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L734" href="#L734">734</a>         }
-<a class="jxr_linenumber" name="L735" href="#L735">735</a>         File trueFile;
-<a class="jxr_linenumber" name="L736" href="#L736">736</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L737" href="#L737">737</a>             trueFile = getFileFromPath(currentFile);
-<a class="jxr_linenumber" name="L738" href="#L738">738</a>         } <strong class="jxr_keyword">catch</strong> (CommandAbstractException e1) {
-<a class="jxr_linenumber" name="L739" href="#L739">739</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L740" href="#L740">740</a>         }
-<a class="jxr_linenumber" name="L741" href="#L741">741</a>         <strong class="jxr_keyword">if</strong> (position &gt; 0) {
-<a class="jxr_linenumber" name="L742" href="#L742">742</a>             <strong class="jxr_keyword">if</strong> (trueFile.length() &lt; position) {
-<a class="jxr_linenumber" name="L743" href="#L743">743</a>                 logger.error(<span class="jxr_string">"Cannot Change position in getFileOutputStream: file is smaller than required position"</span>);
-<a class="jxr_linenumber" name="L744" href="#L744">744</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L745" href="#L745">745</a>             }
-<a class="jxr_linenumber" name="L746" href="#L746">746</a>             RandomAccessFile raf = getRandomFile();
-<a class="jxr_linenumber" name="L747" href="#L747">747</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L748" href="#L748">748</a>                 raf.setLength(position);
-<a class="jxr_linenumber" name="L749" href="#L749">749</a>                 raf.close();
-<a class="jxr_linenumber" name="L750" href="#L750">750</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L751" href="#L751">751</a>                 logger.error(<span class="jxr_string">"Change position in getFileOutputStream:"</span>, e);
-<a class="jxr_linenumber" name="L752" href="#L752">752</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L753" href="#L753">753</a>             }
-<a class="jxr_linenumber" name="L754" href="#L754">754</a>             logger.debug(<span class="jxr_string">"New size: "</span> + trueFile.length() + <span class="jxr_string">" : "</span> + position);
-<a class="jxr_linenumber" name="L755" href="#L755">755</a>         }
-<a class="jxr_linenumber" name="L756" href="#L756">756</a>         FileOutputStream fos = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L757" href="#L757">757</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L758" href="#L758">758</a>             fos = <strong class="jxr_keyword">new</strong> FileOutputStream(trueFile, append);
-<a class="jxr_linenumber" name="L759" href="#L759">759</a>         } <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
-<a class="jxr_linenumber" name="L760" href="#L760">760</a>             logger.error(<span class="jxr_string">"File not found in getRandomFile:"</span>, e);
-<a class="jxr_linenumber" name="L761" href="#L761">761</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L762" href="#L762">762</a>         }
-<a class="jxr_linenumber" name="L763" href="#L763">763</a>         <strong class="jxr_keyword">return</strong> fos;
-<a class="jxr_linenumber" name="L764" href="#L764">764</a>     }
-<a class="jxr_linenumber" name="L765" href="#L765">765</a> }
+<a class="jxr_linenumber" name="L628" href="#L628">628</a>             <strong class="jxr_keyword">long</strong> chunkSize = size;
+<a class="jxr_linenumber" name="L629" href="#L629">629</a>             <strong class="jxr_keyword">while</strong> (transfert &lt; size) {
+<a class="jxr_linenumber" name="L630" href="#L630">630</a>                 chunkSize = size - transfert;
+<a class="jxr_linenumber" name="L631" href="#L631">631</a>                 transfert += fileChannelOut.transferFrom(fileChannelIn, transfert, chunkSize);
+<a class="jxr_linenumber" name="L632" href="#L632">632</a>             }
+<a class="jxr_linenumber" name="L633" href="#L633">633</a>             fileChannelOut.force(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L634" href="#L634">634</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L635" href="#L635">635</a>             logger.error(<span class="jxr_string">"Error during get:"</span>, e);
+<a class="jxr_linenumber" name="L636" href="#L636">636</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L637" href="#L637">637</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L638" href="#L638">638</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L639" href="#L639">639</a>                 fileChannelOut.close();
+<a class="jxr_linenumber" name="L640" href="#L640">640</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L641" href="#L641">641</a>             }
+<a class="jxr_linenumber" name="L642" href="#L642">642</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L643" href="#L643">643</a>                 fileChannelIn.close();
+<a class="jxr_linenumber" name="L644" href="#L644">644</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L645" href="#L645">645</a>             }
+<a class="jxr_linenumber" name="L646" href="#L646">646</a>             fileChannelIn = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L647" href="#L647">647</a>         }
+<a class="jxr_linenumber" name="L648" href="#L648">648</a>         <strong class="jxr_keyword">if</strong> (transfert == size) {
+<a class="jxr_linenumber" name="L649" href="#L649">649</a>             position += size;
+<a class="jxr_linenumber" name="L650" href="#L650">650</a>         }
+<a class="jxr_linenumber" name="L651" href="#L651">651</a>         <strong class="jxr_keyword">return</strong> transfert == size;
+<a class="jxr_linenumber" name="L652" href="#L652">652</a>     }
+<a class="jxr_linenumber" name="L653" href="#L653">653</a> 
+<a class="jxr_linenumber" name="L654" href="#L654">654</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L655" href="#L655">655</a> <em class="jxr_javadoccomment">     * Returns the FileChannel in In mode associated with the current file.</em>
+<a class="jxr_linenumber" name="L656" href="#L656">656</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L657" href="#L657">657</a> <em class="jxr_javadoccomment">     * @return the FileChannel (IN mode)</em>
+<a class="jxr_linenumber" name="L658" href="#L658">658</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L659" href="#L659">659</a>     <strong class="jxr_keyword">protected</strong> FileChannel getFileChannel() {
+<a class="jxr_linenumber" name="L660" href="#L660">660</a>         <strong class="jxr_keyword">if</strong> (!isReady) {
+<a class="jxr_linenumber" name="L661" href="#L661">661</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L662" href="#L662">662</a>         }
+<a class="jxr_linenumber" name="L663" href="#L663">663</a>         File trueFile;
+<a class="jxr_linenumber" name="L664" href="#L664">664</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L665" href="#L665">665</a>             trueFile = getFileFromPath(currentFile);
+<a class="jxr_linenumber" name="L666" href="#L666">666</a>         } <strong class="jxr_keyword">catch</strong> (CommandAbstractException e1) {
+<a class="jxr_linenumber" name="L667" href="#L667">667</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L668" href="#L668">668</a>         }
+<a class="jxr_linenumber" name="L669" href="#L669">669</a>         FileChannel fileChannel = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L670" href="#L670">670</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L671" href="#L671">671</a>             @SuppressWarnings(<span class="jxr_string">"resource"</span>)
+<a class="jxr_linenumber" name="L672" href="#L672">672</a>             FileInputStream fileInputStream = <strong class="jxr_keyword">new</strong> FileInputStream(trueFile);
+<a class="jxr_linenumber" name="L673" href="#L673">673</a>             fileChannel = fileInputStream.getChannel();
+<a class="jxr_linenumber" name="L674" href="#L674">674</a>             <strong class="jxr_keyword">if</strong> (position != 0) {
+<a class="jxr_linenumber" name="L675" href="#L675">675</a>                 fileChannel = fileChannel.position(position);
+<a class="jxr_linenumber" name="L676" href="#L676">676</a>             }
+<a class="jxr_linenumber" name="L677" href="#L677">677</a>         } <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
+<a class="jxr_linenumber" name="L678" href="#L678">678</a>             logger.error(<span class="jxr_string">"File not found in getFileChannel:"</span>, e);
+<a class="jxr_linenumber" name="L679" href="#L679">679</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L680" href="#L680">680</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L681" href="#L681">681</a>             <strong class="jxr_keyword">if</strong> (fileChannel != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L682" href="#L682">682</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L683" href="#L683">683</a>                     fileChannel.close();
+<a class="jxr_linenumber" name="L684" href="#L684">684</a>                 } <strong class="jxr_keyword">catch</strong> (IOException e1) {
+<a class="jxr_linenumber" name="L685" href="#L685">685</a>                 }
+<a class="jxr_linenumber" name="L686" href="#L686">686</a>             }
+<a class="jxr_linenumber" name="L687" href="#L687">687</a>             logger.error(<span class="jxr_string">"Change position in getFileChannel:"</span>, e);
+<a class="jxr_linenumber" name="L688" href="#L688">688</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L689" href="#L689">689</a>         }
+<a class="jxr_linenumber" name="L690" href="#L690">690</a>         <strong class="jxr_keyword">return</strong> fileChannel;
+<a class="jxr_linenumber" name="L691" href="#L691">691</a>     }
+<a class="jxr_linenumber" name="L692" href="#L692">692</a> 
+<a class="jxr_linenumber" name="L693" href="#L693">693</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L694" href="#L694">694</a> <em class="jxr_javadoccomment">     * Returns the RandomAccessFile in Out mode associated with the current file.</em>
+<a class="jxr_linenumber" name="L695" href="#L695">695</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L696" href="#L696">696</a> <em class="jxr_javadoccomment">     * @return the RandomAccessFile (OUT="rw")</em>
+<a class="jxr_linenumber" name="L697" href="#L697">697</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L698" href="#L698">698</a>     <strong class="jxr_keyword">protected</strong> RandomAccessFile getRandomFile() {
+<a class="jxr_linenumber" name="L699" href="#L699">699</a>         <strong class="jxr_keyword">if</strong> (!isReady) {
+<a class="jxr_linenumber" name="L700" href="#L700">700</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L701" href="#L701">701</a>         }
+<a class="jxr_linenumber" name="L702" href="#L702">702</a>         File trueFile;
+<a class="jxr_linenumber" name="L703" href="#L703">703</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L704" href="#L704">704</a>             trueFile = getFileFromPath(currentFile);
+<a class="jxr_linenumber" name="L705" href="#L705">705</a>         } <strong class="jxr_keyword">catch</strong> (CommandAbstractException e1) {
+<a class="jxr_linenumber" name="L706" href="#L706">706</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L707" href="#L707">707</a>         }
+<a class="jxr_linenumber" name="L708" href="#L708">708</a>         RandomAccessFile raf = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L709" href="#L709">709</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L710" href="#L710">710</a>             raf = <strong class="jxr_keyword">new</strong> RandomAccessFile(trueFile, <span class="jxr_string">"rw"</span>);
+<a class="jxr_linenumber" name="L711" href="#L711">711</a>             raf.seek(position);
+<a class="jxr_linenumber" name="L712" href="#L712">712</a>         } <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
+<a class="jxr_linenumber" name="L713" href="#L713">713</a>             logger.error(<span class="jxr_string">"File not found in getRandomFile:"</span>, e);
+<a class="jxr_linenumber" name="L714" href="#L714">714</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L715" href="#L715">715</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L716" href="#L716">716</a>             logger.error(<span class="jxr_string">"Change position in getRandomFile:"</span>, e);
+<a class="jxr_linenumber" name="L717" href="#L717">717</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L718" href="#L718">718</a>         }
+<a class="jxr_linenumber" name="L719" href="#L719">719</a>         <strong class="jxr_keyword">return</strong> raf;
+<a class="jxr_linenumber" name="L720" href="#L720">720</a>     }
+<a class="jxr_linenumber" name="L721" href="#L721">721</a> 
+<a class="jxr_linenumber" name="L722" href="#L722">722</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L723" href="#L723">723</a> <em class="jxr_javadoccomment">     * Returns the FileOutputStream in Out mode associated with the current file.</em>
+<a class="jxr_linenumber" name="L724" href="#L724">724</a> <em class="jxr_javadoccomment">     * </em>
+<a class="jxr_linenumber" name="L725" href="#L725">725</a> <em class="jxr_javadoccomment">     * @param append</em>
+<a class="jxr_linenumber" name="L726" href="#L726">726</a> <em class="jxr_javadoccomment">     *            True if the FileOutputStream should be in append mode</em>
+<a class="jxr_linenumber" name="L727" href="#L727">727</a> <em class="jxr_javadoccomment">     * @return the FileOutputStream (OUT)</em>
+<a class="jxr_linenumber" name="L728" href="#L728">728</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L729" href="#L729">729</a>     <strong class="jxr_keyword">protected</strong> FileOutputStream getFileOutputStream(<strong class="jxr_keyword">boolean</strong> append) {
+<a class="jxr_linenumber" name="L730" href="#L730">730</a>         <strong class="jxr_keyword">if</strong> (!isReady) {
+<a class="jxr_linenumber" name="L731" href="#L731">731</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L732" href="#L732">732</a>         }
+<a class="jxr_linenumber" name="L733" href="#L733">733</a>         File trueFile;
+<a class="jxr_linenumber" name="L734" href="#L734">734</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L735" href="#L735">735</a>             trueFile = getFileFromPath(currentFile);
+<a class="jxr_linenumber" name="L736" href="#L736">736</a>         } <strong class="jxr_keyword">catch</strong> (CommandAbstractException e1) {
+<a class="jxr_linenumber" name="L737" href="#L737">737</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L738" href="#L738">738</a>         }
+<a class="jxr_linenumber" name="L739" href="#L739">739</a>         <strong class="jxr_keyword">if</strong> (position &gt; 0) {
+<a class="jxr_linenumber" name="L740" href="#L740">740</a>             <strong class="jxr_keyword">if</strong> (trueFile.length() &lt; position) {
+<a class="jxr_linenumber" name="L741" href="#L741">741</a>                 logger.error(<span class="jxr_string">"Cannot Change position in getFileOutputStream: file is smaller than required position"</span>);
+<a class="jxr_linenumber" name="L742" href="#L742">742</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L743" href="#L743">743</a>             }
+<a class="jxr_linenumber" name="L744" href="#L744">744</a>             RandomAccessFile raf = getRandomFile();
+<a class="jxr_linenumber" name="L745" href="#L745">745</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L746" href="#L746">746</a>                 raf.setLength(position);
+<a class="jxr_linenumber" name="L747" href="#L747">747</a>                 raf.close();
+<a class="jxr_linenumber" name="L748" href="#L748">748</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L749" href="#L749">749</a>                 logger.error(<span class="jxr_string">"Change position in getFileOutputStream:"</span>, e);
+<a class="jxr_linenumber" name="L750" href="#L750">750</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L751" href="#L751">751</a>             }
+<a class="jxr_linenumber" name="L752" href="#L752">752</a>             logger.debug(<span class="jxr_string">"New size: "</span> + trueFile.length() + <span class="jxr_string">" : "</span> + position);
+<a class="jxr_linenumber" name="L753" href="#L753">753</a>         }
+<a class="jxr_linenumber" name="L754" href="#L754">754</a>         FileOutputStream fos = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L755" href="#L755">755</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L756" href="#L756">756</a>             fos = <strong class="jxr_keyword">new</strong> FileOutputStream(trueFile, append);
+<a class="jxr_linenumber" name="L757" href="#L757">757</a>         } <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
+<a class="jxr_linenumber" name="L758" href="#L758">758</a>             logger.error(<span class="jxr_string">"File not found in getRandomFile:"</span>, e);
+<a class="jxr_linenumber" name="L759" href="#L759">759</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L760" href="#L760">760</a>         }
+<a class="jxr_linenumber" name="L761" href="#L761">761</a>         <strong class="jxr_keyword">return</strong> fos;
+<a class="jxr_linenumber" name="L762" href="#L762">762</a>     }
+<a class="jxr_linenumber" name="L763" href="#L763">763</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2014 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
 </body>
 </html>
