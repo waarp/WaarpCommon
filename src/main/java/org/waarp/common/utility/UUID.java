@@ -129,9 +129,10 @@ public final class UUID implements Comparable<UUID> {
         }
 
         // atomically
-        final long time = System.currentTimeMillis();
+        final long time;
         final int count;
         synchronized (MACHINE_ID_PATTERN) {
+            time = System.currentTimeMillis();
             if (lastTimeStamp != time) {
                 counter = RANDOM.nextInt(MAXSTART);
                 lastTimeStamp = time;
