@@ -625,11 +625,9 @@ public abstract class FilesystemBasedFileImpl extends AbstractFile {
                     return false;
                 }
             }
-            int chunkSize = this.session.getBlockSize();
-            if (chunkSize < 0) {
-                chunkSize = 8192;
-            }
+            long chunkSize = size;
             while (transfert < size) {
+                chunkSize = size - transfert;
                 transfert += fileChannelOut.transferFrom(fileChannelIn, transfert, chunkSize);
             }
             fileChannelOut.force(true);
