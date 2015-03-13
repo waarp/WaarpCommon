@@ -20,6 +20,7 @@
  */
 package org.waarp.common.json;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,6 +89,50 @@ public class JsonHandler {
     }
 
     /**
+     *
+     * @param file
+     * @return the jsonNode (ObjectNode or ArrayNode)
+     * @throws InvalidParseOperationException
+     */
+    public static final ObjectNode getFromFile(final File file) {
+        try {
+            return (ObjectNode) mapper.readTree(file);
+        } catch (final JsonProcessingException e) {
+            return null;
+        } catch (final IOException e) {
+            return null;
+        }
+    }
+    /**
+     *
+     * @param value
+     * @param clasz
+     * @return the object of type clasz
+     * @throws InvalidParseOperationException
+     */
+    public static final <T> T getFromString(final String value, final Class<T> clasz) {
+        try {
+            return mapper.readValue(value, clasz);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+    /**
+     *
+     * @param file 
+     * @param clasz
+     * @return the corresponding object
+     * @throws InvalidParseOperationException
+     */
+    public static final Object getFromFile(File file, Class<?> clasz) {
+        try {
+            return mapper.readValue(file, clasz);
+        } catch (final IOException e) {
+            return null;
+        }
+    }
+
+    /**
      * 
      * @param object
      * @return the Json representation of the object
@@ -97,6 +142,21 @@ public class JsonHandler {
             return mapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             return "{}";
+        }
+    }
+    /**
+     *
+     * @param object
+     * @param file 
+     * @return True if correctly written
+     * @throws InvalidParseOperationException
+     */
+    public static final boolean writeAsFile(final Object object, File file) {
+        try {
+            mapper.writeValue(file, object);
+            return true;
+        } catch (final IOException e) {
+            return false;
         }
     }
 
