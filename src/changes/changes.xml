@@ -5,6 +5,9 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+        <release version="1.2.30" date="2015-06-01" description="Fix release">
+            <action dev="Bruno Carlin" type="fix">Fix JSON getter including UPDATEDINFO</action>
+        </release>
         <release version="1.2.29" date="2015-05-25" description="Fix release">
             <action dev="Frederic Bregier" type="fix">Fix Oracle Issue with VARCHAR2 limit to 4000</action>
             <action dev="Frederic Bregier" type="fix">Fix after upgrading dependencies</action>
