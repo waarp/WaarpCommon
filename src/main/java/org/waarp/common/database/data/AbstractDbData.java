@@ -589,16 +589,13 @@ public abstract class AbstractDbData {
 
     /**
      * Create the equivalent object in Json (no database access)
-     * 
+     *
      * @return The ObjectNode Json equivalent
      */
     public ObjectNode getJson() {
         ObjectNode node = JsonHandler.createObjectNode();
         node.put(JSON_MODEL, this.getClass().getSimpleName());
         for (DbValue value : allFields) {
-            if (value.column.equalsIgnoreCase("UPDATEDINFO")) {
-                continue;
-            }
             switch (value.type) {
                 case Types.VARCHAR:
                 case Types.LONGVARCHAR:
