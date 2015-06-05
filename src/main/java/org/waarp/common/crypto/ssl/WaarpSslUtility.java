@@ -186,14 +186,18 @@ public class WaarpSslUtility {
      */
     public static ChannelFuture closingSslChannel(Channel channel) {
         if (channel.isConnected()) {
+            channel.setReadable(true);
             ChannelHandler handler = channel.getPipeline().getFirst();
             if (handler instanceof SslHandler) {
                 SslHandler sslHandler = (SslHandler) handler;
                 logger.debug("Found SslHandler and wait for Ssl.close()");
                 try {
                     sslHandler.close().await();
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {}
+                channel.setReadable(false);
                 channel.getPipeline().removeFirst();
+                channel.setReadable(true);
             }
             logger.debug("Close the channel and returns the ChannelFuture");
             return Channels.close(channel);

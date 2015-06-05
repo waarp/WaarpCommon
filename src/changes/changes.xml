@@ -5,6 +5,9 @@
 		<author email="waarp1 at free.fr">Frederic Bregier</author>
 	</properties>
 	<body>
+        <release version="1.2.31" date="2015-06-05" description="Fix release">
+            <action dev="Frederic Bregier" type="fix">Small fix for SSL in Gateway Ftp</action>
+        </release>
         <release version="1.2.30" date="2015-06-01" description="Fix release">
             <action dev="Bruno Carlin" type="fix">Fix JSON getter including UPDATEDINFO</action>
         </release>
