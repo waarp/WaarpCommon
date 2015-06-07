@@ -54,8 +54,8 @@ public abstract class DbModelMysql extends DbModelAbstract {
 
     public static final DbType type = DbType.MySQL;
 
-    protected static MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
-    protected static DbConnectionPool pool;
+    protected MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
+    protected DbConnectionPool pool;
 
     public DbType getDbType() {
         return type;

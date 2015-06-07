@@ -17,6 +17,9 @@
  */
 package org.waarp.common.database.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.waarp.common.database.DbAdmin;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 
@@ -33,9 +36,9 @@ public class DbModelFactory {
      */
     static public volatile boolean classLoaded = false;
     /**
-     * Database Model Object
+     * Database Model Object list
      */
-    public static DbModel dbModel = null;
+    public static List<DbModel> dbModels = new ArrayList<DbModel>();
 
     /**
      * Initialize the Database Model according to arguments.
@@ -47,10 +50,12 @@ public class DbModelFactory {
      * @param write
      * @throws WaarpDatabaseNoConnectionException
      */
+    @SuppressWarnings("unused")
     public static DbAdmin initialize(String dbdriver, String dbserver,
             String dbuser, String dbpasswd, boolean write)
             throws WaarpDatabaseNoConnectionException {
         DbType type = DbType.getFromDriver(dbdriver);
+        DbModel dbModel = null;
         switch (type) {
             case H2:
                 // dbModel = new DbModelH2(dbserver, dbuser, dbpasswd);
@@ -75,7 +80,8 @@ public class DbModelFactory {
             throw new WaarpDatabaseNoConnectionException(
                     "TypeDriver not allocated: " + type);
         }
-        return new DbAdmin(type, dbserver, dbuser, dbpasswd,
+        dbModels.add(dbModel);
+        return new DbAdmin(dbModel, dbserver, dbuser, dbpasswd,
                 write);
     }
 }

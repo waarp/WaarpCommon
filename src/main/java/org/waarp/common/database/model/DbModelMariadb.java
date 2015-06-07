@@ -53,8 +53,8 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 
     public static final DbType type = DbType.MariaDB;
 
-    protected static MySQLDataSource mysqlConnectionPoolDataSource;
-    protected static DbConnectionPool pool;
+    protected MySQLDataSource mysqlConnectionPoolDataSource;
+    protected DbConnectionPool pool;
 
     public DbType getDbType() {
         return type;

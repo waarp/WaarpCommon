@@ -50,7 +50,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
 
     public static final DbType type = DbType.H2;
 
-    protected static JdbcConnectionPool pool;
+    protected JdbcConnectionPool pool;
 
     public DbType getDbType() {
         return type;

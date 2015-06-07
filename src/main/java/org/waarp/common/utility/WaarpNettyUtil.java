@@ -19,6 +19,7 @@ package org.waarp.common.utility;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -51,6 +52,9 @@ public class WaarpNettyUtil {
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         bootstrap.option(ChannelOption.SO_RCVBUF, 1048576);
         bootstrap.option(ChannelOption.SO_SNDBUF, 1048576);
+        bootstrap.option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 10*65536);
+        bootstrap.option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 2*65536);
+        bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
     }
 
     /**
@@ -73,5 +77,8 @@ public class WaarpNettyUtil {
         bootstrap.childOption(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         bootstrap.childOption(ChannelOption.SO_RCVBUF, 1048576);
         bootstrap.childOption(ChannelOption.SO_SNDBUF, 1048576);
+        bootstrap.childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 10*65536);
+        bootstrap.childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 2*65536);
+        bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
     }
 }

@@ -53,8 +53,8 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
     public static final DbType type = DbType.Oracle;
 
-    protected static OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
-    protected static DbConnectionPool pool;
+    protected OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
+    protected DbConnectionPool pool;
 
     public DbType getDbType() {
         return type;
