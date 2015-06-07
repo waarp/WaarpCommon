@@ -17,7 +17,6 @@
  */
 package org.waarp.common.database;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,10 +26,12 @@ import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
+import org.waarp.common.database.model.DbModel;
 import org.waarp.common.database.model.DbModelFactory;
 import org.waarp.common.database.model.DbType;
-import org.waarp.common.logging.WaarpInternalLogger;
-import org.waarp.common.logging.WaarpInternalLoggerFactory;
+import org.waarp.common.database.model.EmptyDbModel;
+import org.waarp.common.logging.WaarpLogger;
+import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.utility.UUID;
 import org.waarp.common.utility.WaarpThreadFactory;
 
@@ -55,6 +56,11 @@ public class DbAdmin {
      * Database type
      */
     public DbType typeDriver;
+
+    /**
+     * DbModel
+     */
+    private DbModel dbModel = new EmptyDbModel();
 
     /**
      * DB Server
@@ -96,7 +102,7 @@ public class DbAdmin {
      */
     public void validConnection() throws WaarpDatabaseNoConnectionException {
         try {
-            DbModelFactory.dbModel.validConnection(session);
+            dbModel.validConnection(session);
         } catch (WaarpDatabaseNoConnectionException e) {
             session.isDisconnected = true;
             isConnected = false;
@@ -116,24 +122,25 @@ public class DbAdmin {
      * for specific driver when created). Also, don't know if two drivers at the same time (two
      * different DbSession) is allowed by JDBC.
      * 
-     * @param driver
+     * @param model
      * @param server
      * @param user
      * @param passwd
      * @throws WaarpDatabaseNoConnectionException
      */
-    public DbAdmin(DbType driver, String server, String user, String passwd)
+    public DbAdmin(DbModel model, String server, String user, String passwd)
             throws WaarpDatabaseNoConnectionException {
         this.server = server;
         this.user = user;
         this.passwd = passwd;
-        this.typeDriver = driver;
+        this.dbModel = model;
+        this.typeDriver = model.getDbType();
         if (typeDriver == null) {
             logger.error("Cannot find TypeDriver");
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot find database drive");
         }
-        session = new DbSession(this.server, this.user, this.passwd, false);
+        session = new DbSession(this, false);
         session.admin = this;
         isReadOnly = false;
         validConnection();
@@ -150,7 +157,7 @@ public class DbAdmin {
      * for specific driver when created). Also, don't know if two drivers at the same time (two
      * different DbSession) is allowed by JDBC.
      * 
-     * @param driver
+     * @param model
      * @param server
      * @param user
      * @param passwd
@@ -158,12 +165,13 @@ public class DbAdmin {
      * @throws WaarpDatabaseSqlException
      * @throws WaarpDatabaseNoConnectionException
      */
-    public DbAdmin(DbType driver, String server, String user, String passwd,
+    public DbAdmin(DbModel model, String server, String user, String passwd,
             boolean write) throws WaarpDatabaseNoConnectionException {
         this.server = server;
         this.user = user;
         this.passwd = passwd;
-        this.typeDriver = driver;
+        this.dbModel = model;
+        this.typeDriver = model.getDbType();
         if (typeDriver == null) {
             logger.error("Cannot find TypeDriver");
             throw new WaarpDatabaseNoConnectionException(
@@ -172,8 +180,7 @@ public class DbAdmin {
         if (write) {
             for (int i = 0; i < RETRYNB; i++) {
                 try {
-                    session = new DbSession(this.server, this.user,
-                            this.passwd, false);
+                    session = new DbSession(this, false);
                 } catch (WaarpDatabaseNoConnectionException e) {
                     logger.warn("Attempt of connection in error: " + i, e);
                     continue;
@@ -188,8 +195,7 @@ public class DbAdmin {
         } else {
             for (int i = 0; i < RETRYNB; i++) {
                 try {
-                    session = new DbSession(this.server, this.user,
-                            this.passwd, true);
+                    session = new DbSession(this, true);
                 } catch (WaarpDatabaseNoConnectionException e) {
                     logger.warn("Attempt of connection in error: " + i, e);
                     continue;
@@ -207,40 +213,6 @@ public class DbAdmin {
         logger.error("Cannot connect to Database!");
         throw new WaarpDatabaseNoConnectionException(
                 "Cannot connect to database");
-    }
-
-    /**
-     * Use a default server for basic connection. Later on, specific connection to database for the
-     * scheme that provides access to the table R66DbIndex for one specific Legacy could be done.
-     * 
-     * A this time, only one driver is possible! If a new driver is needed, then we need to create a
-     * new DbSession object. Be aware that DbSession.initialize should be call only once for each
-     * driver, whatever the number of DbSession objects that could be created (=> need a hashtable
-     * for specific driver when created). Also, don't know if two drivers at the same time (two
-     * different DbSession) is allowed by JDBC.<BR>
-     * 
-     * <B>This version use given connection. typeDriver must be set before !</B>
-     * 
-     * @param conn
-     * @param isread
-     * @throws WaarpDatabaseNoConnectionException
-     */
-    public DbAdmin(Connection conn, boolean isread)
-            throws WaarpDatabaseNoConnectionException {
-        server = null;
-        if (conn == null) {
-            session = null;
-            isConnected = false;
-            logger.error("Cannot Get a Connection from Datasource");
-            throw new WaarpDatabaseNoConnectionException(
-                    "Cannot Get a Connection from Datasource");
-        }
-        session = new DbSession(conn, isread);
-        session.admin = this;
-        isReadOnly = isread;
-        isConnected = true;
-        validConnection();
-        session.useConnection(); // default since this is the top connection
     }
 
     /**
@@ -302,6 +274,13 @@ public class DbAdmin {
         return passwd;
     }
 
+    /**
+     * @return the associated dbModel
+     */
+    public DbModel getDbModel() {
+        return dbModel;
+    }
+
     @Override
     public String toString() {
         return "Admin: " + typeDriver.name() + ":" + server + ":" + user + ":" + (passwd.length());
@@ -356,8 +335,10 @@ public class DbAdmin {
             } catch (SQLException e) {} catch (ConcurrentModificationException e) {}
         }
         listConnection.clear();
-        if (DbModelFactory.dbModel != null) {
-            DbModelFactory.dbModel.releaseResources();
+        for (DbModel dbModel : DbModelFactory.dbModels) {
+            if (dbModel != null) {
+                dbModel.releaseResources();
+            }
         }
         dbSessionTimer.stop();
     }

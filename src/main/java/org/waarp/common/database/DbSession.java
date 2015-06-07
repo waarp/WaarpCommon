@@ -30,6 +30,7 @@ import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.TimerTask;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
+import org.waarp.common.database.model.DbModel;
 import org.waarp.common.database.model.DbModelFactory;
 import org.waarp.common.logging.WaarpInternalLogger;
 import org.waarp.common.logging.WaarpInternalLoggerFactory;
@@ -96,48 +97,7 @@ public class DbSession {
         session.internalId = new UUID();
     }
 
-    /**
-     * Create a session and connect the current object to the connect object given as parameter.
-     * 
-     * The database access use auto commit.
-     * 
-     * If the initialize is not call before, call it with the default value.
-     * 
-     * @param connext
-     * @param isReadOnly
-     * @throws WaarpDatabaseNoConnectionException
-     */
-    public DbSession(Connection connext, boolean isReadOnly)
-            throws WaarpDatabaseNoConnectionException {
-        if (connext == null) {
-            logger.error("Cannot set a null connection");
-            throw new WaarpDatabaseNoConnectionException(
-                    "Cannot set a null Connection");
-        }
-        conn = connext;
-        try {
-            conn.setAutoCommit(true);
-            this.isReadOnly = isReadOnly;
-            conn.setReadOnly(this.isReadOnly);
-            isDisconnected = false;
-            setInternalId(this);
-        } catch (SQLException ex) {
-            // handle any errors
-            logger.error("Cannot set properties on connection!");
-            error(ex);
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException e) {}
-            }
-            conn = null;
-            isDisconnected = true;
-            throw new WaarpDatabaseNoConnectionException(
-                    "Cannot set properties on connection", ex);
-        }
-    }
-
-    private void initialize(String server, String user, String passwd, boolean isReadOnly,
+    private void initialize(DbModel dbModel, String server, String user, String passwd, boolean isReadOnly,
             boolean autoCommit) throws WaarpDatabaseNoConnectionException {
         if (!DbModelFactory.classLoaded) {
             throw new WaarpDatabaseNoConnectionException(
@@ -151,7 +111,7 @@ public class DbSession {
         }
         try {
             this.autoCommit = autoCommit;
-            conn = DbModelFactory.dbModel.getDbConnection(server, user, passwd);
+            conn = dbModel.getDbConnection(server, user, passwd);
             conn.setAutoCommit(this.autoCommit);
             this.isReadOnly = isReadOnly;
             conn.setReadOnly(this.isReadOnly);
@@ -177,28 +137,6 @@ public class DbSession {
     }
 
     /**
-     * Create a session and connect the current object to the server using the string with the form
-     * for mysql for instance jdbc:type://[host:port],[failoverhost:port]
-     * .../[database][?propertyName1][ =propertyValue1][&propertyName2][=propertyValue2]...
-     * 
-     * By default (if server = null) : "jdbc:mysql://localhost/r66 user=r66 password=r66"
-     * 
-     * The database access use auto commit.
-     * 
-     * If the initialize is not call before, call it with the default value.
-     * 
-     * @param server
-     * @param user
-     * @param passwd
-     * @param isReadOnly
-     * @throws WaarpDatabaseSqlException
-     */
-    public DbSession(String server, String user, String passwd,
-            boolean isReadOnly) throws WaarpDatabaseNoConnectionException {
-        initialize(server, user, passwd, isReadOnly, true);
-    }
-
-    /**
      * Create a session and connect the current object to the server using the DbAdmin object. The
      * database access use auto commit.
      * 
@@ -211,8 +149,8 @@ public class DbSession {
     public DbSession(DbAdmin admin, boolean isReadOnly)
             throws WaarpDatabaseNoConnectionException {
         try {
-            initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, true);
             this.admin = admin;
+            initialize(admin.getDbModel(), admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, true);
         } catch (NullPointerException ex) {
             // handle any errors
             isDisconnected = true;
@@ -229,29 +167,6 @@ public class DbSession {
     }
 
     /**
-     * Create a session and connect the current object to the server using the string with the form
-     * for mysql for instance jdbc:type://[host:port],[failoverhost:port]
-     * .../[database][?propertyName1][ =propertyValue1][&propertyName2][=propertyValue2]...
-     * 
-     * By default (if server = null) : "jdbc:mysql://localhost/r66 user=r66 password=r66"
-     * 
-     * 
-     * If the initialize is not call before, call it with the default value.
-     * 
-     * @param server
-     * @param user
-     * @param passwd
-     * @param isReadOnly
-     * @param autoCommit
-     * @throws WaarpDatabaseSqlException
-     */
-    public DbSession(String server, String user, String passwd,
-            boolean isReadOnly, boolean autoCommit)
-            throws WaarpDatabaseNoConnectionException {
-        initialize(server, user, passwd, isReadOnly, autoCommit);
-    }
-
-    /**
      * Create a session and connect the current object to the server using the DbAdmin object.
      * 
      * If the initialize is not call before, call it with the default value.
@@ -264,8 +179,8 @@ public class DbSession {
     public DbSession(DbAdmin admin, boolean isReadOnly, boolean autoCommit)
             throws WaarpDatabaseNoConnectionException {
         try {
-            initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
             this.admin = admin;
+            initialize(admin.getDbModel(), admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
         } catch (NullPointerException ex) {
             // handle any errors
             logger.error("Cannot create Connection:" + (admin == null), ex);
@@ -344,7 +259,7 @@ public class DbSession {
         synchronized (this) {
             if (isDisconnected) {
                 try {
-                    initialize(admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
+                    initialize(admin.getDbModel(), admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
                 } catch (WaarpDatabaseNoConnectionException e) {
                     logger.error("ThreadUsing: " + nbThread + " but not connected");
                     return;
@@ -447,7 +362,7 @@ public class DbSession {
             // ignore
         }
         logger.info("Current cached connection: "
-                + DbModelFactory.dbModel.currentNumberOfPooledConnections());
+                + admin.getDbModel().currentNumberOfPooledConnections());
     }
 
     /**
@@ -491,7 +406,7 @@ public class DbSession {
             }
         }
         logger.info("Current cached connection: "
-                + DbModelFactory.dbModel.currentNumberOfPooledConnections());
+                + admin.getDbModel().currentNumberOfPooledConnections());
     }
 
     /**
@@ -501,8 +416,8 @@ public class DbSession {
      */
     public void checkConnection() throws WaarpDatabaseNoConnectionException {
         try {
-            DbModelFactory.dbModel.validConnection(this);
-            isDisconnected = false;
+            admin.getDbModel().validConnection(this);
+            isDisActive = false;
             if (admin != null)
                 admin.isConnected = true;
         } catch (WaarpDatabaseNoConnectionException e) {
