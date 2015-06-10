@@ -113,12 +113,12 @@ public abstract class DbModelMysql extends DbModelAbstract {
      * @throws WaarpDatabaseNoConnectionException
      */
     protected DbModelMysql() throws WaarpDatabaseNoConnectionException {
-        if (DbModelFactory.classLoaded) {
+        if (DbModelFactory.classLoaded.contains(type.name())) {
             return;
         }
         try {
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-            DbModelFactory.classLoaded = true;
+            DbModelFactory.classLoaded.add(type.name());
         } catch (SQLException e) {
             // SQLException
             logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());

@@ -55,27 +55,27 @@ public class DbAdmin {
     /**
      * Database type
      */
-    public DbType typeDriver;
+    public final DbType typeDriver;
 
     /**
      * DbModel
      */
-    private DbModel dbModel = new EmptyDbModel();
+    private final DbModel dbModel;
 
     /**
      * DB Server
      */
-    private String server = null;
+    private final String server;
 
     /**
      * DB User
      */
-    private String user = null;
+    private final String user;
 
     /**
      * DB Password
      */
-    private String passwd = null;
+    private final String passwd;
 
     /**
      * Is this DB Admin connected
@@ -220,8 +220,13 @@ public class DbAdmin {
      */
     public DbAdmin() {
         // not true but to enable pseudo database functions
-        DbModelFactory.classLoaded = true;
         isActive = false;
+        typeDriver = DbType.none;
+        DbModelFactory.classLoaded.add(DbType.none.name());
+        dbModel = new EmptyDbModel();
+        server = null;
+        user = null;
+        passwd = null;
     }
 
     /**

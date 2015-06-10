@@ -18,7 +18,9 @@
 package org.waarp.common.database.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.waarp.common.database.DbAdmin;
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
@@ -34,7 +36,7 @@ public class DbModelFactory {
     /**
      * Info on JDBC Class is already loaded or not
      */
-    static public volatile boolean classLoaded = false;
+    static public Set<String> classLoaded = new HashSet<String>();
     /**
      * Database Model Object list
      */

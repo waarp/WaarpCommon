@@ -112,12 +112,12 @@ public abstract class DbModelMariadb extends DbModelAbstract {
      * @throws WaarpDatabaseNoConnectionException
      */
     protected DbModelMariadb() throws WaarpDatabaseNoConnectionException {
-        if (DbModelFactory.classLoaded) {
+        if (DbModelFactory.classLoaded.contains(type.name())) {
             return;
         }
         try {
             DriverManager.registerDriver(new org.mariadb.jdbc.Driver());
-            DbModelFactory.classLoaded = true;
+            DbModelFactory.classLoaded.add(type.name());
         } catch (SQLException e) {
             // SQLException
             logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());
