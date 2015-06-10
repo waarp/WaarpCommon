@@ -60,12 +60,12 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
      * @throws WaarpDatabaseNoConnectionException
      */
     public DbModelPostgresql() throws WaarpDatabaseNoConnectionException {
-        if (DbModelFactory.classLoaded) {
+        if (DbModelFactory.classLoaded.contains(type.name())) {
             return;
         }
         try {
             DriverManager.registerDriver(new org.postgresql.Driver());
-            DbModelFactory.classLoaded = true;
+            DbModelFactory.classLoaded.add(type.name());
         } catch (SQLException e) {
             // SQLException
             logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());

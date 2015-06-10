@@ -99,7 +99,7 @@ public class DbSession {
 
     private void initialize(DbModel dbModel, String server, String user, String passwd, boolean isReadOnly,
             boolean autoCommit) throws WaarpDatabaseNoConnectionException {
-        if (!DbModelFactory.classLoaded) {
+        if (!DbModelFactory.classLoaded.contains(dbModel.getDbType().name())) {
             throw new WaarpDatabaseNoConnectionException(
                     "DbAdmin not initialzed");
         }

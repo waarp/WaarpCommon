@@ -124,13 +124,13 @@ public abstract class DbModelOracle extends DbModelAbstract {
      * @throws WaarpDatabaseNoConnectionException
      */
     protected DbModelOracle() throws WaarpDatabaseNoConnectionException {
-        if (DbModelFactory.classLoaded) {
+        if (DbModelFactory.classLoaded.contains(type.name())) {
             return;
         }
         try {
             DriverManager
                     .registerDriver(new oracle.jdbc.OracleDriver());
-            DbModelFactory.classLoaded = true;
+            DbModelFactory.classLoaded.add(type.name());
         } catch (SQLException e) {
             // SQLException
             logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());
