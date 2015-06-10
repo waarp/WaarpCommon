@@ -38,6 +38,6 @@ public enum DbType {
         } else if (driver.contains("mariadb")) {
             return DbType.MariaDB;
         }
-        return null;
+        return none;
     }
 }

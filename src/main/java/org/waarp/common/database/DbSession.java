@@ -337,7 +337,7 @@ public class DbSession {
      * Force the close of the connection
      */
     public void forceDisconnect() {
-        if (this.internalId.equals(DbConstant.admin.session.internalId)) {
+        if (this.internalId.equals(admin.session.internalId)) {
             logger.debug("Closing internal db connection");
         }
         this.nbThread.set(0);
@@ -375,7 +375,7 @@ public class DbSession {
      * 
      */
     public void disconnect() {
-        if (this.internalId.equals(DbConstant.admin.session.internalId)) {
+        if (this.internalId.equals(admin.session.internalId)) {
             logger.debug("Closing internal db connection: " + nbThread.get());
         }
         if (conn == null || isDisActive) {
