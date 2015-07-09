@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.Writer;
 import java.util.List;
 
 import org.dom4j.Document;
@@ -146,9 +147,22 @@ public class XmlUtil {
         if (file.exists() && (!file.canWrite())) {
             throw new IOException("File is not writable: " + file.getPath());
         }
+
+        saveDocument(new FileWriter(file), document);
+    }
+
+    /**
+     * Save the document into the Writer outWriter
+     *
+     * @param outWriter
+     * @param document
+     * @throws IOException
+     */
+    static public void saveDocument(Writer outWriter, Document document)
+            throws IOException {
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setEncoding(WaarpStringUtils.UTF8.name());
-        XMLWriter writer = new XMLWriter(new FileWriter(file), format);
+        XMLWriter writer = new XMLWriter(outWriter, format);
         writer.write(document);
         writer.flush();
         writer.close();
