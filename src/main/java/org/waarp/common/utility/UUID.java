@@ -694,4 +694,31 @@ public final class UUID implements Comparable<UUID> {
         return ts < ts2 ? -1 : 1;
     }
 
+    /**
+     * Simply return a new UUID. If an argument is provided, 2 cases occur:</br>
+     * - length <= 3 = same as UUID(int)
+     * - length > 3 = same as checking the given UUID in String format
+     * @param args
+     */
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            UUID uuid = new UUID();
+            System.out.println(uuid.toString());
+            System.exit(0);
+        }
+        if (args[0].length() <= 3) {
+            int val = Integer.parseInt(args[0]);
+            UUID uuid = new UUID(val);
+            System.out.println(uuid.toString());
+            System.exit(0);
+        }
+        try {
+            new UUID(args[0]);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            System.exit(2);
+        }
+        System.out.println("ok");
+        System.exit(0);
+    }
 }

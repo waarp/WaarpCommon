@@ -53,8 +53,8 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
     public static final DbType type = DbType.Oracle;
 
-    protected static OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
-    protected static DbConnectionPool pool;
+    protected OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
+    protected DbConnectionPool pool;
 
     public DbType getDbType() {
         return type;
@@ -124,13 +124,13 @@ public abstract class DbModelOracle extends DbModelAbstract {
      * @throws WaarpDatabaseNoConnectionException
      */
     protected DbModelOracle() throws WaarpDatabaseNoConnectionException {
-        if (DbModelFactory.classLoaded) {
+        if (DbModelFactory.classLoaded.contains(type.name())) {
             return;
         }
         try {
             DriverManager
                     .registerDriver(new oracle.jdbc.OracleDriver());
-            DbModelFactory.classLoaded = true;
+            DbModelFactory.classLoaded.add(type.name());
         } catch (SQLException e) {
             // SQLException
             logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());

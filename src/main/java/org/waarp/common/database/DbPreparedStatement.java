@@ -78,6 +78,7 @@ public class DbPreparedStatement {
                     "PreparedStatement no session");
         }
         if (ls.isDisconnected) {
+            logger.debug("DisActive: "+ls.admin.getServer());
             ls.checkConnection();
         }
         this.ls = ls;
@@ -212,6 +213,7 @@ public class DbPreparedStatement {
             close();
         }
         if (ls.isDisconnected) {
+            logger.debug("Disconnected: "+ls.admin.getServer());
             ls.checkConnection();
         }
         try {
@@ -225,8 +227,8 @@ public class DbPreparedStatement {
                 request = requestarg;
                 isReady = true;
             } catch (SQLException e1) {
-                logger.error("SQL Exception createPreparedStatement:" +
-                        requestarg + " " + e.getMessage());
+                logger.error("SQL Exception createPreparedStatement from {}:" +
+                        requestarg + " " + e.getMessage(), ls.admin.getServer());
                 DbSession.error(e);
                 realClose();
                 preparedStatement = null;

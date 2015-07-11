@@ -50,7 +50,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
 
     public static final DbType type = DbType.H2;
 
-    protected static JdbcConnectionPool pool;
+    protected JdbcConnectionPool pool;
 
     public DbType getDbType() {
         return type;
@@ -80,12 +80,12 @@ public abstract class DbModelH2 extends DbModelAbstract {
      * @throws WaarpDatabaseNoConnectionException
      */
     protected DbModelH2() throws WaarpDatabaseNoConnectionException {
-        if (DbModelFactory.classLoaded) {
+        if (DbModelFactory.classLoaded.contains(type.name())) {
             return;
         }
         try {
             DriverManager.registerDriver(new org.h2.Driver());
-            DbModelFactory.classLoaded = true;
+            DbModelFactory.classLoaded.add(type.name());
         } catch (SQLException e) {
             // SQLException
             logger.error("Cannot register Driver " + type.name() + " " + e.getMessage());
