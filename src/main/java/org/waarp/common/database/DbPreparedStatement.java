@@ -77,7 +77,7 @@ public class DbPreparedStatement {
             throw new WaarpDatabaseNoConnectionException(
                     "PreparedStatement no session");
         }
-        if (ls.isDisActive) {
+        if (ls.isDisconnected) {
             logger.debug("DisActive: "+ls.admin.getServer());
             ls.checkConnection();
         }
@@ -212,8 +212,8 @@ public class DbPreparedStatement {
         if (rs != null) {
             close();
         }
-        if (ls.isDisActive) {
-            logger.debug("DisActive: "+ls.admin.getServer());
+        if (ls.isDisconnected) {
+            logger.debug("Disconnected: "+ls.admin.getServer());
             ls.checkConnection();
         }
         try {

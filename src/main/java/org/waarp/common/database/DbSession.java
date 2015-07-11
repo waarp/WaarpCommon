@@ -417,7 +417,7 @@ public class DbSession {
     public void checkConnection() throws WaarpDatabaseNoConnectionException {
         try {
             admin.getDbModel().validConnection(this);
-            isDisActive = false;
+            isDisconnected = false;
             if (admin != null)
                 admin.isConnected = true;
         } catch (WaarpDatabaseNoConnectionException e) {

@@ -30,8 +30,8 @@ import org.waarp.common.database.model.DbModel;
 import org.waarp.common.database.model.DbModelFactory;
 import org.waarp.common.database.model.DbType;
 import org.waarp.common.database.model.EmptyDbModel;
-import org.waarp.common.logging.WaarpLogger;
-import org.waarp.common.logging.WaarpLoggerFactory;
+import org.waarp.common.logging.WaarpInternalLogger;
+import org.waarp.common.logging.WaarpInternalLoggerFactory;
 import org.waarp.common.utility.UUID;
 import org.waarp.common.utility.WaarpThreadFactory;
 
@@ -81,6 +81,11 @@ public class DbAdmin {
      * Is this DB Admin connected
      */
     public boolean isConnected = false;
+
+    /**
+     * Is this DB Admin connected
+     */
+    public boolean isActive = false;
 
     /**
      * Is this DB Admin Read Only
