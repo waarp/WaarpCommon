@@ -58,7 +58,7 @@
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/waarp/common/database/model/DbType.html">DbType</a> type = DbType.H2;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> JdbcConnectionPool pool;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">protected</strong> JdbcConnectionPool pool;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/waarp/common/database/model/DbType.html">DbType</a> getDbType() {
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">return</strong> type;
@@ -88,12 +88,12 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">     * @throws WaarpDatabaseNoConnectionException</em>
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/waarp/common/database/model/DbModelH2.html">DbModelH2</a>() <strong class="jxr_keyword">throws</strong> WaarpDatabaseNoConnectionException {
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">if</strong> (DbModelFactory.classLoaded) {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">if</strong> (DbModelFactory.classLoaded.contains(type.name())) {
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>              <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>          }
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>              DriverManager.registerDriver(<strong class="jxr_keyword">new</strong> org.h2.Driver());
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>              DbModelFactory.classLoaded = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>              DbModelFactory.classLoaded.add(type.name());
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          } <strong class="jxr_keyword">catch</strong> (SQLException e) {
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>              <em class="jxr_comment">// SQLException</em>
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>              logger.error(<span class="jxr_string">"Cannot register Driver "</span> + type.name() + <span class="jxr_string">" "</span> + e.getMessage());

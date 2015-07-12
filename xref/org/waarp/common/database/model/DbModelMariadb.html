@@ -61,8 +61,8 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/waarp/common/database/model/DbType.html">DbType</a> type = DbType.MariaDB;
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> MySQLDataSource mysqlConnectionPoolDataSource;
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../org/waarp/common/database/DbConnectionPool.html">DbConnectionPool</a> pool;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">protected</strong> MySQLDataSource mysqlConnectionPoolDataSource;
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/waarp/common/database/DbConnectionPool.html">DbConnectionPool</a> pool;
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/waarp/common/database/model/DbType.html">DbType</a> getDbType() {
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">return</strong> type;
@@ -120,12 +120,12 @@
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * @throws WaarpDatabaseNoConnectionException</em>
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/waarp/common/database/model/DbModelMariadb.html">DbModelMariadb</a>() <strong class="jxr_keyword">throws</strong> WaarpDatabaseNoConnectionException {
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">if</strong> (DbModelFactory.classLoaded) {
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">if</strong> (DbModelFactory.classLoaded.contains(type.name())) {
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>             <strong class="jxr_keyword">return</strong>;
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>         }
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>             DriverManager.registerDriver(<strong class="jxr_keyword">new</strong> org.mariadb.jdbc.Driver());
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>             DbModelFactory.classLoaded = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>             DbModelFactory.classLoaded.add(type.name());
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         } <strong class="jxr_keyword">catch</strong> (SQLException e) {
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>             <em class="jxr_comment">// SQLException</em>
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>             logger.error(<span class="jxr_string">"Cannot register Driver "</span> + type.name() + <span class="jxr_string">" "</span> + e.getMessage());

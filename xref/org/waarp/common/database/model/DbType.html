@@ -32,7 +32,7 @@
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">public</strong> enum <a href="../../../../../org/waarp/common/database/model/DbType.html">DbType</a> {
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>      Oracle, MySQL, PostGreSQL, H2, MariaDB;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>      Oracle, MySQL, PostGreSQL, H2, MariaDB, none;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../org/waarp/common/database/model/DbType.html">DbType</a> getFromDriver(String driver) {
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>          <strong class="jxr_keyword">if</strong> (driver.contains(<span class="jxr_string">"oracle"</span>)) {
@@ -46,7 +46,7 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>          } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (driver.contains(<span class="jxr_string">"mariadb"</span>)) {
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>              <strong class="jxr_keyword">return</strong> DbType.MariaDB;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>          }
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">return</strong> none;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>      }
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  }
 </pre>
