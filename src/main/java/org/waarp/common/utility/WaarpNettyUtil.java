@@ -49,6 +49,7 @@ public class WaarpNettyUtil {
         bootstrap.option(ChannelOption.TCP_NODELAY, true);
         bootstrap.option(ChannelOption.SO_REUSEADDR, true);
         bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+        bootstrap.option(ChannelOption.SO_LINGER, 0);
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         bootstrap.option(ChannelOption.SO_RCVBUF, 1048576);
         bootstrap.option(ChannelOption.SO_SNDBUF, 1048576);
