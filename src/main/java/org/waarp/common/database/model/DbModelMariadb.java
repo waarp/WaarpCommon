@@ -74,7 +74,11 @@ public abstract class DbModelMariadb extends DbModelAbstract {
             throws WaarpDatabaseNoConnectionException {
         this();
         mysqlConnectionPoolDataSource = new MySQLDataSource();
-        mysqlConnectionPoolDataSource.setUrl(dbserver);
+        try {
+            mysqlConnectionPoolDataSource.setUrl(dbserver);
+        } catch (SQLException e) {
+            throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
+        }
         mysqlConnectionPoolDataSource.setUser(dbuser);
         mysqlConnectionPoolDataSource.setPassword(dbpasswd);
         // Create a pool with no limit
@@ -96,7 +100,11 @@ public abstract class DbModelMariadb extends DbModelAbstract {
             throws WaarpDatabaseNoConnectionException {
         this();
         mysqlConnectionPoolDataSource = new MySQLDataSource();
-        mysqlConnectionPoolDataSource.setUrl(dbserver);
+        try {
+            mysqlConnectionPoolDataSource.setUrl(dbserver);
+        } catch (SQLException e) {
+            throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
+        }
         mysqlConnectionPoolDataSource.setUser(dbuser);
         mysqlConnectionPoolDataSource.setPassword(dbpasswd);
         // Create a pool with no limit
