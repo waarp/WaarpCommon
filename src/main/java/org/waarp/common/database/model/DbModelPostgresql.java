@@ -46,7 +46,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
     private static final WaarpLogger logger = WaarpLoggerFactory
             .getLogger(DbModelPostgresql.class);
 
-    public static final DbType type = DbType.PostGreSQL;
+    private static final DbType type = DbType.PostGreSQL;
 
     protected Boolean useIsValid = null;
 
@@ -92,7 +92,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
             throws WaarpDatabaseNoConnectionException {
         if (useIsValid == null) {
             try {
-                DatabaseMetaData metadata = dbSession.conn.getMetaData();
+                DatabaseMetaData metadata = dbSession.getConn().getMetaData();
                 useIsValid = new Boolean(metadata.getDriverMajorVersion() >= 9
                         && metadata.getDatabaseMinorVersion() >= 2);
             } catch (SQLException e) {

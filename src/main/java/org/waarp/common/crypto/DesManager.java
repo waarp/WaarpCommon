@@ -25,10 +25,6 @@ package org.waarp.common.crypto;
 public class DesManager extends KeyManager {
     public static final DesManager desManager = new DesManager();
 
-    /*
-     * (non-Javadoc)
-     * @see atlas.cryptage.KeyManager#createKeyObject()
-     */
     @Override
     public KeyObject createKeyObject() {
         return new Des();

@@ -24,7 +24,7 @@ import java.lang.management.OperatingSystemMXBean;
  * @author bregier
  * 
  */
-public class CpuManagement implements CpuManagementInterface {
+class CpuManagement implements CpuManagementInterface {
     OperatingSystemMXBean osBean;
 
     /**

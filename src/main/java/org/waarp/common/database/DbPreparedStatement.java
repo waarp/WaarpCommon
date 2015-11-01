@@ -52,7 +52,7 @@ public class DbPreparedStatement {
     /**
      * Is this PreparedStatement ready
      */
-    public boolean isReady = false;
+    private boolean isReady = false;
 
     /**
      * The associated resultSet
@@ -77,14 +77,14 @@ public class DbPreparedStatement {
             throw new WaarpDatabaseNoConnectionException(
                     "PreparedStatement no session");
         }
-        if (ls.isDisActive) {
-            logger.debug("DisActive: "+ls.admin.getServer());
+        if (ls.isDisActive()) {
+            logger.debug("DisActive: "+ls.getAdmin().getServer());
             ls.checkConnection();
         }
         this.ls = ls;
         rs = null;
         preparedStatement = null;
-        isReady = false;
+        setReady(false);
     }
 
     /**
@@ -103,12 +103,12 @@ public class DbPreparedStatement {
             throw new WaarpDatabaseNoConnectionException(
                     "PreparedStatement no session");
         }
-        if (ls.isDisActive) {
+        if (ls.isDisActive()) {
             ls.checkConnection();
         }
         this.ls = ls;
         rs = null;
-        isReady = false;
+        setReady(false);
         preparedStatement = null;
         if (request == null) {
             logger.error("SQL Exception PreparedStatement no request");
@@ -116,21 +116,21 @@ public class DbPreparedStatement {
                     "PreparedStatement no request");
         }
         try {
-            preparedStatement = this.ls.conn.prepareStatement(request);
+            preparedStatement = this.ls.getConn().prepareStatement(request);
             this.request = request;
-            isReady = true;
+            setReady(true);
         } catch (SQLException e) {
             ls.checkConnection();
             try {
-                preparedStatement = this.ls.conn.prepareStatement(request);
+                preparedStatement = this.ls.getConn().prepareStatement(request);
                 this.request = request;
-                isReady = true;
+                setReady(true);
             } catch (SQLException e1) {
                 logger.error("SQL Exception PreparedStatement: " + request +
                         " " + e.getMessage());
                 DbSession.error(e);
                 preparedStatement = null;
-                isReady = false;
+                setReady(false);
                 throw new WaarpDatabaseSqlException(
                         "SQL Exception PreparedStatement", e);
             }
@@ -155,12 +155,12 @@ public class DbPreparedStatement {
             throw new WaarpDatabaseNoConnectionException(
                     "PreparedStatement no session");
         }
-        if (ls.isDisActive) {
+        if (ls.isDisActive()) {
             ls.checkConnection();
         }
         this.ls = ls;
         rs = null;
-        isReady = false;
+        setReady(false);
         preparedStatement = null;
         if (request == null) {
             logger.error("SQL Exception PreparedStatement no request");
@@ -168,23 +168,23 @@ public class DbPreparedStatement {
                     "PreparedStatement no request");
         }
         try {
-            preparedStatement = this.ls.conn.prepareStatement(request);
+            preparedStatement = this.ls.getConn().prepareStatement(request);
             this.request = request;
             this.preparedStatement.setFetchSize(nbFetch);
-            isReady = true;
+            setReady(true);
         } catch (SQLException e) {
             ls.checkConnection();
             try {
-                preparedStatement = this.ls.conn.prepareStatement(request);
+                preparedStatement = this.ls.getConn().prepareStatement(request);
                 this.request = request;
                 this.preparedStatement.setFetchSize(nbFetch);
-                isReady = true;
+                setReady(true);
             } catch (SQLException e1) {
                 logger.error("SQL Exception PreparedStatement: " + request +
                         " " + e.getMessage());
                 DbSession.error(e);
                 preparedStatement = null;
-                isReady = false;
+                setReady(false);
                 throw new WaarpDatabaseSqlException(
                         "SQL Exception PreparedStatement", e);
             }
@@ -212,27 +212,27 @@ public class DbPreparedStatement {
         if (rs != null) {
             close();
         }
-        if (ls.isDisActive) {
-            logger.debug("DisActive: "+ls.admin.getServer());
+        if (ls.isDisActive()) {
+            logger.debug("DisActive: "+ls.getAdmin().getServer());
             ls.checkConnection();
         }
         try {
-            preparedStatement = ls.conn.prepareStatement(requestarg);
+            preparedStatement = ls.getConn().prepareStatement(requestarg);
             request = requestarg;
-            isReady = true;
+            setReady(true);
         } catch (SQLException e) {
             ls.checkConnection();
             try {
-                preparedStatement = ls.conn.prepareStatement(requestarg);
+                preparedStatement = ls.getConn().prepareStatement(requestarg);
                 request = requestarg;
-                isReady = true;
+                setReady(true);
             } catch (SQLException e1) {
                 logger.error("SQL Exception createPreparedStatement from {}:" +
-                        requestarg + " " + e.getMessage(), ls.admin.getServer());
+                        requestarg + " " + e.getMessage(), ls.getAdmin().getServer());
                 DbSession.error(e);
                 realClose();
                 preparedStatement = null;
-                isReady = false;
+                setReady(false);
                 throw new WaarpDatabaseSqlException(
                         "SQL Exception createPreparedStatement: " + requestarg,
                         e);
@@ -270,7 +270,7 @@ public class DbPreparedStatement {
         if (rs != null) {
             close();
         }
-        if (ls.isDisActive) {
+        if (ls.isDisActive()) {
             ls.checkConnection();
             throw new WaarpDatabaseSqlException(
                     "Request cannot be executed since connection was recreated between: " +
@@ -307,7 +307,7 @@ public class DbPreparedStatement {
         if (rs != null) {
             close();
         }
-        if (ls.isDisActive) {
+        if (ls.isDisActive()) {
             ls.checkConnection();
             throw new WaarpDatabaseSqlException(
                     "Request cannot be executed since connection was recreated between:" +
@@ -349,7 +349,7 @@ public class DbPreparedStatement {
     public void realClose() {
         close();
         if (preparedStatement != null) {
-            if (ls.isDisActive) {
+            if (ls.isDisActive()) {
                 ls.checkConnectionNoException();
             }
             try {
@@ -359,7 +359,7 @@ public class DbPreparedStatement {
             }
             preparedStatement = null;
         }
-        isReady = false;
+        setReady(false);
     }
 
     /**
@@ -376,7 +376,7 @@ public class DbPreparedStatement {
             throw new WaarpDatabaseNoConnectionException(
                     "SQL ResultSet is Null into getNext");
         }
-        if (ls.isDisActive) {
+        if (ls.isDisActive()) {
             ls.checkConnection();
             throw new WaarpDatabaseSqlException(
                     "Request cannot be executed since connection was recreated between");
@@ -425,6 +425,20 @@ public class DbPreparedStatement {
      */
     public DbSession getDbSession() {
         return ls;
+    }
+
+    /**
+     * @return the isReady
+     */
+    public boolean isReady() {
+        return isReady;
+    }
+
+    /**
+     * @param isReady the isReady to set
+     */
+    private void setReady(boolean isReady) {
+        this.isReady = isReady;
     }
 
 }

@@ -24,7 +24,7 @@ import com.jezhumble.javasysmon.JavaSysMon;
  * @author bregier
  * 
  */
-public class CpuManagementSysmon implements CpuManagementInterface {
+class CpuManagementSysmon implements CpuManagementInterface {
     public static long delay = 1000;
 
     JavaSysMon sysMon;

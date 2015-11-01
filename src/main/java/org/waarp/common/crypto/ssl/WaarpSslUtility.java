@@ -248,9 +248,6 @@ public class WaarpSslUtility {
             this.setName("SSLTHREAD_" + this.getName());
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Thread#run()
-         */
         @Override
         public void run() {
             closingSslChannel(channel);

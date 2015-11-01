@@ -48,7 +48,7 @@ public abstract class DbModelH2 extends DbModelAbstract {
     private static final WaarpLogger logger = WaarpLoggerFactory
             .getLogger(DbModelH2.class);
 
-    public static final DbType type = DbType.H2;
+    private static final DbType type = DbType.H2;
 
     protected JdbcConnectionPool pool;
 

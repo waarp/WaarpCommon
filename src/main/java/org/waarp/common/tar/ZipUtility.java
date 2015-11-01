@@ -210,24 +210,30 @@ public class ZipUtility {
         List<String> result = new ArrayList<String>();
         InputStream inputStream = new FileInputStream(tarFile);
         ZipArchiveInputStream in = new ZipArchiveInputStream(inputStream);
-        ZipArchiveEntry entry = in.getNextZipEntry();
-        while (entry != null) {
-            if (entry.isDirectory()) {
+        try {
+            ZipArchiveEntry entry = in.getNextZipEntry();
+            while (entry != null) {
+                if (entry.isDirectory()) {
+                    entry = in.getNextZipEntry();
+                    continue;
+                }
+                File curfile = new File(directory, entry.getName());
+                File parent = curfile.getParentFile();
+                if (!parent.exists()) {
+                    parent.mkdirs();
+                }
+                OutputStream out = new FileOutputStream(curfile);
+                try {
+                    IOUtils.copy(in, out);
+                } finally {
+                    out.close();
+                }
+                result.add(entry.getName());
                 entry = in.getNextZipEntry();
-                continue;
             }
-            File curfile = new File(directory, entry.getName());
-            File parent = curfile.getParentFile();
-            if (!parent.exists()) {
-                parent.mkdirs();
-            }
-            OutputStream out = new FileOutputStream(curfile);
-            IOUtils.copy(in, out);
-            out.close();
-            result.add(entry.getName());
-            entry = in.getNextZipEntry();
+        } finally {
+            in.close();
         }
-        in.close();
         return result;
     }
 

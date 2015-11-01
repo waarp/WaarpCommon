@@ -33,7 +33,7 @@ public enum XmlType {
             Timestamp.class), STRING(String.class), XVAL(XmlValue.class),
     EMPTY(XmlType.class);
 
-    public Class<?> classType;
+    Class<?> classType;
 
     /**
      * @param classType

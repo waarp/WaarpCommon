@@ -55,7 +55,7 @@ public class DbAdmin {
     /**
      * Database type
      */
-    public final DbType typeDriver;
+    protected final DbType typeDriver;
 
     /**
      * DbModel
@@ -80,20 +80,59 @@ public class DbAdmin {
     /**
      * Is this DB Admin connected
      */
-    public boolean isActive = false;
+    private boolean isActive = false;
 
     /**
      * Is this DB Admin Read Only
      */
-    public boolean isReadOnly = false;
+    private boolean isReadOnly = false;
 
     /**
      * session is the Session object for all type of requests
      */
-    public DbSession session = null;
+    private DbSession session = null;
+    /**
+     * Number of HttpSession
+     */
+    private static int nbHttpSession = 0;
 
     protected static final Timer dbSessionTimer = new HashedWheelTimer(new WaarpThreadFactory("TimerClose"),
             50, TimeUnit.MILLISECONDS, 1024);
+
+    /**
+     * @return the session
+     */
+    public DbSession getSession() {
+        return session;
+    }
+
+    /**
+     * @param session the session to set
+     */
+    public void setSession(DbSession session) {
+        this.session = session;
+    }
+
+    /**
+     * @return True if the connection is ReadOnly
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    /**
+     * @return the isActive
+     */
+    public boolean isActive() {
+        return isActive;
+    }
+
+    /**
+     * @param isActive the isActive to set
+     */
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 
     /**
      * Validate connection
@@ -102,14 +141,14 @@ public class DbAdmin {
      */
     public void validConnection() throws WaarpDatabaseNoConnectionException {
         try {
-            dbModel.validConnection(session);
+            dbModel.validConnection(getSession());
         } catch (WaarpDatabaseNoConnectionException e) {
-            session.isDisActive = true;
-            isActive = false;
+            getSession().setDisActive(true);
+            setActive(false);
             throw e;
         }
-        session.isDisActive = false;
-        isActive = true;
+        getSession().setDisActive(false);
+        setActive(true);
     }
 
     /**
@@ -140,11 +179,11 @@ public class DbAdmin {
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot find database drive");
         }
-        session = new DbSession(this, false);
-        session.admin = this;
+        setSession(new DbSession(this, false));
+        getSession().setAdmin(this);
         isReadOnly = false;
         validConnection();
-        session.useConnection(); // default since this is the top connection
+        getSession().useConnection(); // default since this is the top connection
     }
 
     /**
@@ -180,36 +219,36 @@ public class DbAdmin {
         if (write) {
             for (int i = 0; i < RETRYNB; i++) {
                 try {
-                    session = new DbSession(this, false);
+                    setSession(new DbSession(this, false));
                 } catch (WaarpDatabaseNoConnectionException e) {
                     logger.warn("Attempt of connection in error: " + i, e);
                     continue;
                 }
                 isReadOnly = false;
-                session.admin = this;
+                getSession().setAdmin(this);
                 validConnection();
-                session.useConnection(); // default since this is the top
+                getSession().useConnection(); // default since this is the top
                                          // connection
                 return;
             }
         } else {
             for (int i = 0; i < RETRYNB; i++) {
                 try {
-                    session = new DbSession(this, true);
+                    setSession(new DbSession(this, true));
                 } catch (WaarpDatabaseNoConnectionException e) {
                     logger.warn("Attempt of connection in error: " + i, e);
                     continue;
                 }
                 isReadOnly = true;
-                session.admin = this;
+                getSession().setAdmin(this);
                 validConnection();
-                session.useConnection(); // default since this is the top
+                getSession().useConnection(); // default since this is the top
                                          // connection
                 return;
             }
         }
-        session = null;
-        isActive = false;
+        setSession(null);
+        setActive(false);
         logger.error("Cannot connect to Database!");
         throw new WaarpDatabaseNoConnectionException(
                 "Cannot connect to database");
@@ -220,7 +259,7 @@ public class DbAdmin {
      */
     public DbAdmin() {
         // not true but to enable pseudo database functions
-        isActive = false;
+        setActive(false);
         typeDriver = DbType.none;
         DbModelFactory.classLoaded.add(DbType.none.name());
         dbModel = new EmptyDbModel();
@@ -235,13 +274,13 @@ public class DbAdmin {
      * 
      */
     public void close() {
-        if (session != null) {
-            session.endUseConnection(); // default since this is the top
+        if (getSession() != null) {
+            getSession().endUseConnection(); // default since this is the top
                                         // connection
-            session.forceDisconnect();
-            session = null;
+            getSession().forceDisconnect();
+            setSession(null);
         }
-        isActive = false;
+        setActive(false);
     }
 
     /**
@@ -253,8 +292,8 @@ public class DbAdmin {
      */
     public void commit() throws WaarpDatabaseSqlException,
             WaarpDatabaseNoConnectionException {
-        if (session != null) {
-            session.commit();
+        if (getSession() != null) {
+            getSession().commit();
         }
     }
 
@@ -297,10 +336,23 @@ public class DbAdmin {
     private static ConcurrentHashMap<UUID, DbSession> listConnection = new ConcurrentHashMap<UUID, DbSession>();
 
     /**
-     * Number of HttpSession
+     * Increment nb of Http Connection
      */
-    public static int nbHttpSession = 0;
-
+    public static void incHttpSession() {
+        nbHttpSession++;
+    }
+    /**
+     * Decrement nb of Http Connection
+     */
+    public static void decHttpSession() {
+        nbHttpSession--;
+    }
+    /**
+     * @return the nb of Http Connection
+     */
+    public static int getHttpSession() {
+        return nbHttpSession;
+    }
     /**
      * Add a Connection into the list
      * 
@@ -334,9 +386,9 @@ public class DbAdmin {
      */
     public static void closeAllConnection() {
         for (DbSession session : listConnection.values()) {
-            logger.debug("Close (all) Db Conn: " + session.internalId);
+            logger.debug("Close (all) Db Conn: " + session.getInternalId());
             try {
-                session.conn.close();
+                session.getConn().close();
             } catch (SQLException e) {
             } catch (ConcurrentModificationException e) {
             }

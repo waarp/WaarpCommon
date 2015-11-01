@@ -45,24 +45,23 @@ public abstract class KeyManager {
 
     /**
      * Init the Manager from a list of filename Key, the key name is the basename minus the
-     * extension
+     * extension of the key's type
      * 
      * @param keys
-     * @param extension
      * @return the list of wrong keys
      */
-    public List<String> initFromList(List<String> keys, String extension) {
+    public List<String> initFromList(List<String> keys) {
         LinkedList<String> wrong = new LinkedList<String>();
         for (String filename : keys) {
             File file = new File(filename);
             if (file.canRead()) {
                 String basename = file.getName();
-                int lastpos = basename.lastIndexOf(extension);
+                int lastpos = basename.lastIndexOf('.');
                 if (lastpos <= 0) {
                     wrong.add(filename);
                     continue;
                 }
-                String firstname = basename.substring(0, lastpos - 1);
+                String firstname = basename.substring(0, lastpos);
                 int len = (int) file.length();
                 byte[] key = new byte[len];
                 FileInputStream inputStream = null;
@@ -109,12 +108,12 @@ public abstract class KeyManager {
         return wrong;
     }
 
-    public void saveToFiles(String extension) throws CryptoException, IOException {
+    public void saveToFiles() throws CryptoException, IOException {
         Enumeration<String> names = keysConcurrentHashMap.keys();
         while (names.hasMoreElements()) {
             String name = names.nextElement();
             KeyObject key = keysConcurrentHashMap.get(name);
-            key.saveSecretKey(new File(name + "." + extension));
+            key.saveSecretKey(new File(name + "." + key.getFileExtension()));
         }
     }
 

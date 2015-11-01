@@ -51,7 +51,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
     private static final WaarpLogger logger = WaarpLoggerFactory
             .getLogger(DbModelMariadb.class);
 
-    public static final DbType type = DbType.MariaDB;
+    private static final DbType type = DbType.MariaDB;
 
     protected MySQLDataSource mysqlConnectionPoolDataSource;
     protected DbConnectionPool pool;
@@ -357,7 +357,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
             DbPreparedStatement preparedStatement = new DbPreparedStatement(
                     dbSession);
             try {
-                dbSession.conn.setAutoCommit(false);
+                dbSession.getConn().setAutoCommit(false);
             } catch (SQLException e1) {
             }
             try {
@@ -389,7 +389,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
             return result;
         } finally {
             try {
-                dbSession.conn.setAutoCommit(true);
+                dbSession.getConn().setAutoCommit(true);
             } catch (SQLException e1) {
             }
             lock.unlock();

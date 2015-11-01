@@ -50,7 +50,7 @@ public class DynamicKeyObject extends KeyObject {
      * @author Frederic Bregier
      * 
      */
-    public enum INSTANCES {
+    public static enum INSTANCES {
         AES(128), // Min 128
         ARCFOUR(56), // No Max
         Blowfish(56), // No Max
@@ -72,7 +72,7 @@ public class DynamicKeyObject extends KeyObject {
      * @author Frederic Bregier
      * 
      */
-    public enum INSTANCESMAX {
+    public static enum INSTANCESMAX {
         AES(128), // Min 128
         ARCFOUR(128), // No Max
         Blowfish(128), // No Max
@@ -91,21 +91,21 @@ public class DynamicKeyObject extends KeyObject {
     /**
      * This value could be between 32 and 128 due to license limitation.
      */
-    public final int KEY_SIZE;
+    private final int KEY_SIZE;
     /**
      * Short name for the algorithm
      */
-    public final String ALGO;
+    private final String ALGO;
     /**
      * Could be the shortname again (default implementation in JVM) or the full name as
      * DES/ECB/PKCS5Padding
      */
-    public final String INSTANCE;
+    private final String INSTANCE;
     /**
      * The extension for the file to use when saving the key (note that an extra file as
      * extension.inf will be also saved for the extra information)
      */
-    public final String EXTENSION;
+    private final String EXTENSION;
 
     /**
      * @param kEYSIZE
@@ -158,31 +158,24 @@ public class DynamicKeyObject extends KeyObject {
         EXTENSION = eXTENSION;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.crypto.KeyObject#getAlgorithm()
-     */
     @Override
     public String getAlgorithm() {
         return ALGO;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.crypto.KeyObject#getInstance()
-     */
     @Override
     public String getInstance() {
         return INSTANCE;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.crypto.KeyObject#getKeySize()
-     */
     @Override
     public int getKeySize() {
         return KEY_SIZE;
+    }
+
+    @Override
+    public String getFileExtension() {
+        return EXTENSION;
     }
 
     /**

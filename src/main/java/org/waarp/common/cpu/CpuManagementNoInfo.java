@@ -23,12 +23,8 @@ package org.waarp.common.cpu;
  * @author Frederic Bregier
  * 
  */
-public class CpuManagementNoInfo implements CpuManagementInterface {
+class CpuManagementNoInfo implements CpuManagementInterface {
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.cpu.test.CpuManagementInterface#getLoadAverage()
-     */
     public double getLoadAverage() {
         return 0;
     }

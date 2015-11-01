@@ -36,11 +36,11 @@ public class DbModelFactory {
     /**
      * Info on JDBC Class is already loaded or not
      */
-    static public Set<String> classLoaded = new HashSet<String>();
+    static final public Set<String> classLoaded = new HashSet<String>();
     /**
      * Database Model Object list
      */
-    public static List<DbModel> dbModels = new ArrayList<DbModel>();
+    public static final List<DbModel> dbModels = new ArrayList<DbModel>();
 
     /**
      * Initialize the Database Model according to arguments.

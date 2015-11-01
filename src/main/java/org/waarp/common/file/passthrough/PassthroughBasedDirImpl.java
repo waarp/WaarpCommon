@@ -45,7 +45,7 @@ public abstract class PassthroughBasedDirImpl extends AbstractDir {
     /**
      * Factory for PassthroughFile
      */
-    public static PassthroughFileFactory factory = null;
+    protected static PassthroughFileFactory factory = null;
 
     /**
      * Passthrough object

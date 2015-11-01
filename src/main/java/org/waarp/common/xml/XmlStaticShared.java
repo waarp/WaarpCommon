@@ -27,7 +27,7 @@ import java.util.TimeZone;
  * @author Frederic Bregier
  * 
  */
-public class XmlStaticShared {
+class XmlStaticShared {
 
     protected static final TimeZone z = TimeZone.getTimeZone("GMT");
 

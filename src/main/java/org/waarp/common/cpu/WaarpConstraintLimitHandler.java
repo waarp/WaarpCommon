@@ -287,7 +287,7 @@ public abstract class WaarpConstraintLimitHandler implements Runnable {
             }
         }
         if (channelLimit > 0) {
-            int nb = DbAdmin.getNbConnection() - DbAdmin.nbHttpSession;
+            int nb = DbAdmin.getNbConnection() - DbAdmin.getHttpSession();
             if (channelLimit < nb) {
                 lastAlert = "Network Constraint: " + nb + " > " + channelLimit;
                 logger.debug(lastAlert);
