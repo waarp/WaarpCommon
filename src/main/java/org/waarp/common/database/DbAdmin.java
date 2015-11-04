@@ -420,6 +420,6 @@ public class DbAdmin {
      * @return True if this driver allows Thread Shared Connexion (concurrency usage)
      */
     public boolean isCompatibleWithThreadSharedConnexion() {
-        return (typeDriver != DbType.MariaDB && typeDriver != DbType.MySQL);
+        return (typeDriver != DbType.MariaDB && typeDriver != DbType.MySQL && typeDriver != DbType.Oracle);
     }
 }
