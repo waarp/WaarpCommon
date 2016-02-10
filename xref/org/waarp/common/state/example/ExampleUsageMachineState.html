@@ -56,8 +56,8 @@
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          <em class="jxr_comment">// First create a HashMap and fill it directly</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          ConcurrentHashMap&lt;ExampleEnumState, EnumSet&lt;ExampleEnumState&gt;&gt; stateMap =
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>                  <strong class="jxr_keyword">new</strong> ConcurrentHashMap&lt;ExampleEnumState, EnumSet&lt;ExampleEnumState&gt;&gt;();
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>          stateMap.put(ExampleTransition.tRUNNING.elt.state,
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>                  (EnumSet&lt;ExampleEnumState&gt;) ExampleTransition.tRUNNING.elt.set);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          stateMap.put(ExampleTransition.tRUNNING.elt.getState(),
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>                  (EnumSet&lt;ExampleEnumState&gt;) ExampleTransition.tRUNNING.elt.getSet());
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          <em class="jxr_comment">// Second create the MachineState with the right Map</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          MachineState&lt;ExampleEnumState&gt; machineState1 =
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/state/MachineState.html">MachineState</a>(ExampleEnumState.PAUSED, stateMap);
@@ -116,6 +116,6 @@
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2016 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
 </body>
 </html>

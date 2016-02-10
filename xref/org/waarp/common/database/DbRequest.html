@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * @throws WaarpDatabaseNoConnectionException</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/waarp/common/database/DbRequest.html">DbRequest</a>(<a href="../../../../org/waarp/common/database/DbSession.html">DbSession</a> ls) <strong class="jxr_keyword">throws</strong> WaarpDatabaseNoConnectionException {
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">if</strong> (ls.isDisActive) {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">if</strong> (ls.isDisActive()) {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>              ls.checkConnection();
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.ls = ls;
@@ -89,18 +89,18 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">if</strong> (ls == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/database/exception/WaarpDatabaseNoConnectionException.html">WaarpDatabaseNoConnectionException</a>(<span class="jxr_string">"No connection"</span>);
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          }
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">if</strong> (ls.conn == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          <strong class="jxr_keyword">if</strong> (ls.getConn() == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/database/exception/WaarpDatabaseNoConnectionException.html">WaarpDatabaseNoConnectionException</a>(<span class="jxr_string">"No connection"</span>);
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          }
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">if</strong> (ls.isDisActive) {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">if</strong> (ls.isDisActive()) {
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>              ls.checkConnection();
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          }
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">return</strong> ls.conn.createStatement();
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">return</strong> ls.getConn().createStatement();
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          } <strong class="jxr_keyword">catch</strong> (SQLException e) {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>              ls.checkConnection();
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>                  <strong class="jxr_keyword">return</strong> ls.conn.createStatement();
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>                  <strong class="jxr_keyword">return</strong> ls.getConn().createStatement();
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>              } <strong class="jxr_keyword">catch</strong> (SQLException e1) {
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>                  <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/database/exception/WaarpDatabaseSqlException.html">WaarpDatabaseSqlException</a>(
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>                          <span class="jxr_string">"Error while Create Statement"</span>, e);
@@ -269,7 +269,7 @@
 <a class="jxr_linenumber" name="L261" href="#L261">261</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/database/exception/WaarpDatabaseNoConnectionException.html">WaarpDatabaseNoConnectionException</a>(
 <a class="jxr_linenumber" name="L262" href="#L262">262</a>                     <span class="jxr_string">"SQL ResultSet is Null into getNext"</span>);
 <a class="jxr_linenumber" name="L263" href="#L263">263</a>         }
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>         <strong class="jxr_keyword">if</strong> (ls.isDisActive) {
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>         <strong class="jxr_keyword">if</strong> (ls.isDisActive()) {
 <a class="jxr_linenumber" name="L265" href="#L265">265</a>             ls.checkConnection();
 <a class="jxr_linenumber" name="L266" href="#L266">266</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/waarp/common/database/exception/WaarpDatabaseSqlException.html">WaarpDatabaseSqlException</a>(
 <a class="jxr_linenumber" name="L267" href="#L267">267</a>                     <span class="jxr_string">"Request cannot be executed since connection was recreated between"</span>);
@@ -310,6 +310,6 @@
 <a class="jxr_linenumber" name="L302" href="#L302">302</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2016 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
 </body>
 </html>

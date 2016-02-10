@@ -282,9 +282,20 @@
 <a class="jxr_linenumber" name="L274" href="#L274">274</a>         Arrays.fill(chars, fillChar);
 <a class="jxr_linenumber" name="L275" href="#L275">275</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(chars);
 <a class="jxr_linenumber" name="L276" href="#L276">276</a>     }
-<a class="jxr_linenumber" name="L277" href="#L277">277</a> }
+<a class="jxr_linenumber" name="L277" href="#L277">277</a> 
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L279" href="#L279">279</a> <em class="jxr_javadoccomment">     * Clean the String that could contain '\' or '\n', '\r' into something compatible with HTML</em>
+<a class="jxr_linenumber" name="L280" href="#L280">280</a> <em class="jxr_javadoccomment">     * @param json</em>
+<a class="jxr_linenumber" name="L281" href="#L281">281</a> <em class="jxr_javadoccomment">     * @return the cleaned String</em>
+<a class="jxr_linenumber" name="L282" href="#L282">282</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">static</strong> String cleanJsonForHtml(String json) {
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>         <strong class="jxr_keyword">return</strong> json.replaceAll(<span class="jxr_string">"([^&#92;&#92;&#92;&#92;])&#92;&#92;&#92;&#92;n"</span>, <span class="jxr_string">"$1"</span>).replaceAll(<span class="jxr_string">"([^&#92;&#92;&#92;&#92;])&#92;&#92;&#92;&#92;r"</span>, <span class="jxr_string">"$1"</span>)
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>                 .replaceAll(<span class="jxr_string">"([^&#92;&#92;&#92;&#92;])&#92;&#92;&#92;&#92;\&quot;"</span>, <span class="jxr_string">"$1"</span>)
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>                 .replace(<span class="jxr_string">"&#92;&#92;&#92;&#92;"</span>, <span class="jxr_string">"&#92;&#92;&#92;&#92;&#92;&#92;&#92;&#92;"</span>);
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>     }
+<a class="jxr_linenumber" name="L288" href="#L288">288</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2016 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
 </body>
 </html>

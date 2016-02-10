@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/waarp/common/logging/WaarpLogger.html">WaarpLogger</a> logger = <a href="../../../../../org/waarp/common/logging/WaarpLoggerFactory.html">WaarpLoggerFactory</a>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>              .getLogger(DbModelMysql.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/waarp/common/database/model/DbType.html">DbType</a> type = DbType.MySQL;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/waarp/common/database/model/DbType.html">DbType</a> type = DbType.MySQL;
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">protected</strong> MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/waarp/common/database/DbConnectionPool.html">DbConnectionPool</a> pool;
@@ -363,7 +363,7 @@
 <a class="jxr_linenumber" name="L355" href="#L355">355</a>             <a href="../../../../../org/waarp/common/database/DbPreparedStatement.html">DbPreparedStatement</a> preparedStatement = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/waarp/common/database/DbPreparedStatement.html">DbPreparedStatement</a>(
 <a class="jxr_linenumber" name="L356" href="#L356">356</a>                     dbSession);
 <a class="jxr_linenumber" name="L357" href="#L357">357</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>                 dbSession.conn.setAutoCommit(false);
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>                 dbSession.getConn().setAutoCommit(false);
 <a class="jxr_linenumber" name="L359" href="#L359">359</a>             } <strong class="jxr_keyword">catch</strong> (SQLException e1) {
 <a class="jxr_linenumber" name="L360" href="#L360">360</a>             }
 <a class="jxr_linenumber" name="L361" href="#L361">361</a>             <strong class="jxr_keyword">try</strong> {
@@ -395,7 +395,7 @@
 <a class="jxr_linenumber" name="L387" href="#L387">387</a>             <strong class="jxr_keyword">return</strong> result;
 <a class="jxr_linenumber" name="L388" href="#L388">388</a>         } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L389" href="#L389">389</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>                 dbSession.conn.setAutoCommit(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>                 dbSession.getConn().setAutoCommit(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L391" href="#L391">391</a>             } <strong class="jxr_keyword">catch</strong> (SQLException e1) {
 <a class="jxr_linenumber" name="L392" href="#L392">392</a>             }
 <a class="jxr_linenumber" name="L393" href="#L393">393</a>             lock.unlock();
@@ -416,6 +416,6 @@
 <a class="jxr_linenumber" name="L408" href="#L408">408</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2015 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2016 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
 </body>
 </html>
