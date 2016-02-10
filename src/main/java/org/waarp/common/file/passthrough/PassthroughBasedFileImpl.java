@@ -84,7 +84,7 @@ public abstract class PassthroughBasedFileImpl extends AbstractFile {
     /**
      * Factory for PassthroughFile
      */
-    public static PassthroughFileFactory factory = null;
+    protected static PassthroughFileFactory factory = null;
 
     /**
      * @param session

@@ -815,7 +815,7 @@ public class FileMonitor {
      * @author "Frederic Bregier"
      *
      */
-    public static class FileItem {
+    public static class FileItem implements Cloneable {
         public File file;
         public byte[] hash = null;
         public long lastTime = Long.MIN_VALUE;

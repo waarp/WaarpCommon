@@ -62,7 +62,7 @@ public class DbRequest {
      * @throws WaarpDatabaseNoConnectionException
      */
     public DbRequest(DbSession ls) throws WaarpDatabaseNoConnectionException {
-        if (ls.isDisActive) {
+        if (ls.isDisActive()) {
             ls.checkConnection();
         }
         this.ls = ls;
@@ -81,18 +81,18 @@ public class DbRequest {
         if (ls == null) {
             throw new WaarpDatabaseNoConnectionException("No connection");
         }
-        if (ls.conn == null) {
+        if (ls.getConn() == null) {
             throw new WaarpDatabaseNoConnectionException("No connection");
         }
-        if (ls.isDisActive) {
+        if (ls.isDisActive()) {
             ls.checkConnection();
         }
         try {
-            return ls.conn.createStatement();
+            return ls.getConn().createStatement();
         } catch (SQLException e) {
             ls.checkConnection();
             try {
-                return ls.conn.createStatement();
+                return ls.getConn().createStatement();
             } catch (SQLException e1) {
                 throw new WaarpDatabaseSqlException(
                         "Error while Create Statement", e);
@@ -261,7 +261,7 @@ public class DbRequest {
             throw new WaarpDatabaseNoConnectionException(
                     "SQL ResultSet is Null into getNext");
         }
-        if (ls.isDisActive) {
+        if (ls.isDisActive()) {
             ls.checkConnection();
             throw new WaarpDatabaseSqlException(
                     "Request cannot be executed since connection was recreated between");

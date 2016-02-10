@@ -58,10 +58,6 @@ public abstract class CommandAbstractException extends Exception {
                 (message != null ? message : "no specific message");
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Throwable#getMessage()
-     */
     @Override
     public String getMessage() {
         return toString();

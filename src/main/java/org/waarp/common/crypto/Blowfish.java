@@ -43,35 +43,28 @@ public class Blowfish extends KeyObject {
     /**
      * This value could be between 32 and 448. But it seems it is blocked up to 128.
      */
-    public final static int KEY_SIZE = 56; // [32..448]
-    public final static String ALGO = "Blowfish";
-    public final static String INSTANCE = "Blowfish";
+    private final static int KEY_SIZE = 56; // [32..448]
+    private final static String ALGO = "Blowfish";
+    private final static String INSTANCE = "Blowfish";
     public final static String EXTENSION = "blf";
 
-    /*
-     * (non-Javadoc)
-     * @see atlas.cryptage.KeyObject#getAlgorithm()
-     */
     @Override
     public String getAlgorithm() {
-        return "Blowfish";
+        return ALGO;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see atlas.cryptage.KeyObject#getInstance()
-     */
     @Override
     public String getInstance() {
-        return "Blowfish";
+        return INSTANCE;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see atlas.cryptage.KeyObject#getKeySize()
-     */
     @Override
     public int getKeySize() {
         return KEY_SIZE;
+    }
+
+    @Override
+    public String getFileExtension() {
+        return EXTENSION;
     }
 }

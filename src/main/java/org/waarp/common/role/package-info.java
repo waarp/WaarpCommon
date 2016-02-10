@@ -15,37 +15,9 @@
  * You should have received a copy of the GNU General Public License along with Waarp . If not, see
  * <http://www.gnu.org/licenses/>.
  */
-package org.waarp.common.xml;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
-
 /**
- * Static Shared values
- * 
+ * Package for Role management within Waarp products
  * @author Frederic Bregier
  * 
  */
-class XmlStaticShared {
-
-    protected static final TimeZone z = TimeZone.getTimeZone("GMT");
-
-    /** parser for Date */
-    protected static final DateFormat timeFormat = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss z");
-
-    /** parser for SQL Date */
-    protected static final DateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd z");
-
-    /** parser for Timestamp */
-    protected static final DateFormat timestampFormat = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss");
-    static {
-        timeFormat.setTimeZone(z);
-        dateFormat.setTimeZone(z);
-        timestampFormat.setTimeZone(z);
-    }
-
-}
+package org.waarp.common.role;

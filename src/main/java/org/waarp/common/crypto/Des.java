@@ -43,35 +43,28 @@ public class Des extends KeyObject {
     /**
      * This value could be between 32 and 128 due to license limitation.
      */
-    public final static int KEY_SIZE = 56; // [32..448]
-    public final static String ALGO = "DES";
-    public final static String INSTANCE = "DES/ECB/PKCS5Padding";
+    private final static int KEY_SIZE = 56; // [32..448]
+    private final static String ALGO = "DES";
+    private final static String INSTANCE = "DES/ECB/PKCS5Padding";
     public final static String EXTENSION = "des";
 
-    /*
-     * (non-Javadoc)
-     * @see atlas.cryptage.KeyObject#getAlgorithm()
-     */
     @Override
     public String getAlgorithm() {
         return ALGO;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see atlas.cryptage.KeyObject#getInstance()
-     */
     @Override
     public String getInstance() {
         return INSTANCE;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see atlas.cryptage.KeyObject#getKeySize()
-     */
     @Override
     public int getKeySize() {
         return KEY_SIZE;
+    }
+
+    @Override
+    public String getFileExtension() {
+        return EXTENSION;
     }
 }

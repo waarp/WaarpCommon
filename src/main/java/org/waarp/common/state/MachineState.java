@@ -89,7 +89,7 @@ public class MachineState<EnumState> {
      * @return the previous association if any
      */
     public EnumSet<?> addNewAssociation(Transition<EnumState> elt) {
-        return statemap.put(elt.state, elt.set);
+        return statemap.put(elt.getState(), elt.getSet());
     }
 
     /**

@@ -92,28 +92,16 @@ public class WaarpSecureTrustManagerFactory extends TrustManagerFactorySpi {
         return trustManager.clone();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see javax.net.ssl.TrustManagerFactorySpi#engineGetTrustManagers()
-     */
     @Override
     protected TrustManager[] engineGetTrustManagers() {
         return getTrustManagers();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see javax.net.ssl.TrustManagerFactorySpi#engineInit(java.security.KeyStore)
-     */
     @Override
     protected void engineInit(KeyStore arg0) {
         // Unused
     }
 
-    /*
-     * (non-Javadoc)
-     * @seejavax.net.ssl.TrustManagerFactorySpi#engineInit(javax.net.ssl. ManagerFactoryParameters)
-     */
     @Override
     protected void engineInit(ManagerFactoryParameters arg0) {
         // Unused

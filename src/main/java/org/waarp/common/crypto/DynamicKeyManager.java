@@ -43,16 +43,19 @@ public class DynamicKeyManager extends KeyManager {
     /**
      * Manager of Dynamic Key
      */
-    public static final DynamicKeyManager dynamicKeyManager = new DynamicKeyManager();
+    private static final DynamicKeyManager manager = new DynamicKeyManager();
     /**
      * Extra information file extension
      */
-    public static final String INFEXTENSION = ".inf";
-
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.crypto.KeyManager#createKeyObject()
+    private static final String INFEXTENSION = ".inf";
+    /**
+     * 
+     * @return the current KeyManager
      */
+    public static final KeyManager getInstance() {
+        return manager;
+    }
+
     @Override
     public KeyObject createKeyObject() {
         throw new InstantiationError(
@@ -60,18 +63,19 @@ public class DynamicKeyManager extends KeyManager {
     }
 
     @Override
-    public List<String> initFromList(List<String> keys, String extension) {
+    public List<String> initFromList(List<String> keys) {
         LinkedList<String> wrong = new LinkedList<String>();
         for (String filename : keys) {
             File file = new File(filename);
             if (file.canRead()) {
                 String basename = file.getName();
-                int lastpos = basename.lastIndexOf(extension);
+                int lastpos = basename.lastIndexOf('.');
                 if (lastpos <= 0) {
                     wrong.add(filename);
                     continue;
                 }
-                String firstname = basename.substring(0, lastpos - 1);
+                String firstname = basename.substring(0, lastpos);
+                String extension = basename.substring(lastpos + 1);
                 int len = (int) file.length();
                 byte[] key = new byte[len];
                 FileInputStream inputStream = null;
@@ -176,15 +180,15 @@ public class DynamicKeyManager extends KeyManager {
     }
 
     @Override
-    public void saveToFiles(String extension) throws CryptoException,
+    public void saveToFiles() throws CryptoException,
             IOException {
         Enumeration<String> names = keysConcurrentHashMap.keys();
         while (names.hasMoreElements()) {
             String name = names.nextElement();
             KeyObject key = keysConcurrentHashMap.get(name);
-            key.saveSecretKey(new File(name + "." + extension));
+            key.saveSecretKey(new File(name + "." + key.getFileExtension()));
             FileOutputStream outputStream = new FileOutputStream(new File(name +
-                    "." + extension + INFEXTENSION));
+                    "." + key.getFileExtension() + INFEXTENSION));
             try {
                 outputStream.write(key.getKeySize());
                 String algo = key.getAlgorithm();

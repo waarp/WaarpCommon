@@ -70,6 +70,7 @@ public class WaarpX509TrustManager implements X509TrustManager {
         throw new CryptoException("Cannot initialize the WaarpX509TrustManager");
     }
 
+    @Override
     public void checkClientTrusted(X509Certificate[] arg0, String arg1)
             throws CertificateException {
         if (defaultX509TrustManager == null) {
@@ -78,6 +79,7 @@ public class WaarpX509TrustManager implements X509TrustManager {
         defaultX509TrustManager.checkClientTrusted(arg0, arg1);
     }
 
+    @Override
     public void checkServerTrusted(X509Certificate[] arg0, String arg1)
             throws CertificateException {
         if (defaultX509TrustManager == null) {
@@ -86,6 +88,7 @@ public class WaarpX509TrustManager implements X509TrustManager {
         defaultX509TrustManager.checkServerTrusted(arg0, arg1);
     }
 
+    @Override
     public X509Certificate[] getAcceptedIssuers() {
         if (defaultX509TrustManager == null) {
             return new X509Certificate[0]; // none valid

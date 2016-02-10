@@ -89,16 +89,16 @@ public class AdaptativeJsonHandler {
     /**
      * Data Format Detector
      */
-    public static final DataFormatDetector detector = new DataFormatDetector(JsonCodec.getFactories())
+    private static final DataFormatDetector detector = new DataFormatDetector(JsonCodec.getFactories())
             .withMinimalMatch(MatchStrength.WEAK_MATCH)
             .withOptimalMatch(MatchStrength.SOLID_MATCH);
     /**
      * HashMap getting Codec from Factory name
      */
-    public static final HashMap<String, JsonCodec> factoryForName = JsonCodec.getHashMap();
+    private static final HashMap<String, JsonCodec> factoryForName = JsonCodec.getHashMap();
 
-    public ObjectMapper mapper;
-    public JsonCodec codec;
+    ObjectMapper mapper;
+    private JsonCodec codec;
 
     public AdaptativeJsonHandler(JsonCodec codec) {
         this.codec = codec;

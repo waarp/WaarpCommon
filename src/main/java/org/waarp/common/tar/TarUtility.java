@@ -214,24 +214,30 @@ public class TarUtility {
         List<String> result = new ArrayList<String>();
         InputStream inputStream = new FileInputStream(tarFile);
         TarArchiveInputStream in = new TarArchiveInputStream(inputStream);
-        TarArchiveEntry entry = in.getNextTarEntry();
-        while (entry != null) {
-            if (entry.isDirectory()) {
+        try {
+            TarArchiveEntry entry = in.getNextTarEntry();
+            while (entry != null) {
+                if (entry.isDirectory()) {
+                    entry = in.getNextTarEntry();
+                    continue;
+                }
+                File curfile = new File(directory, entry.getName());
+                File parent = curfile.getParentFile();
+                if (!parent.exists()) {
+                    parent.mkdirs();
+                }
+                OutputStream out = new FileOutputStream(curfile);
+                try {
+                    IOUtils.copy(in, out);
+                } finally {
+                    out.close();
+                }
+                result.add(entry.getName());
                 entry = in.getNextTarEntry();
-                continue;
             }
-            File curfile = new File(directory, entry.getName());
-            File parent = curfile.getParentFile();
-            if (!parent.exists()) {
-                parent.mkdirs();
-            }
-            OutputStream out = new FileOutputStream(curfile);
-            IOUtils.copy(in, out);
-            out.close();
-            result.add(entry.getName());
-            entry = in.getNextTarEntry();
+        } finally {
+            in.close();
         }
-        in.close();
         return result;
     }
 

@@ -56,47 +56,43 @@ public class DbSession {
     /**
      * DbAdmin referent object
      */
-    public DbAdmin admin = null;
+    private DbAdmin admin = null;
 
     /**
      * The internal connection
      */
-    public Connection conn = null;
+    private Connection conn = null;
 
     /**
      * Is this connection Read Only
      */
-    public boolean isReadOnly = true;
+    private boolean isReadOnly = true;
 
     /**
      * Is this session using AutoCommit (true by default)
      */
-    public boolean autoCommit = true;
+    private boolean autoCommit = true;
 
     /**
      * Internal Id
      */
-    public UUID internalId;
+    private UUID internalId;
 
     /**
      * Number of threads using this connection
      */
-    public AtomicInteger nbThread = new AtomicInteger(0);
+    private AtomicInteger nbThread = new AtomicInteger(0);
 
     /**
      * To be used when a local Channel is over
      */
-    public volatile boolean isDisActive = true;
+    private volatile boolean isDisActive = true;
 
     /**
      * List all DbPrepareStatement with long term usage to enable the recreation when the associated
      * connection is reopened
      */
     private final Set<DbPreparedStatement> listPreparedStatement = new ConcurrentSet<DbPreparedStatement>();
-
-    void setInternalId(DbSession session) {
-        session.internalId = new UUID();
-    }
 
     private void initialize(DbModel dbModel, String server, String user, String passwd, boolean isReadOnly,
             boolean autoCommit) throws WaarpDatabaseNoConnectionException {
@@ -105,34 +101,34 @@ public class DbSession {
                     "DbAdmin not initialzed");
         }
         if (server == null) {
-            conn = null;
+            setConn(null);
             logger.error("Cannot set a null Server");
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot set a null Server");
         }
         try {
-            this.autoCommit = autoCommit;
-            conn = dbModel.getDbConnection(server, user, passwd);
-            conn.setAutoCommit(this.autoCommit);
-            this.isReadOnly = isReadOnly;
-            conn.setReadOnly(this.isReadOnly);
-            setInternalId(this);
-            logger.debug("Open Db Conn: " + internalId);
-            DbAdmin.addConnection(internalId, this);
-            isDisActive = false;
+            this.setAutoCommit(autoCommit);
+            setConn(dbModel.getDbConnection(server, user, passwd));
+            getConn().setAutoCommit(this.isAutoCommit());
+            this.setReadOnly(isReadOnly);
+            getConn().setReadOnly(this.isReadOnly());
+            setInternalId(new UUID());
+            logger.debug("Open Db Conn: " + getInternalId());
+            DbAdmin.addConnection(getInternalId(), this);
+            setDisActive(false);
             checkConnection();
         } catch (SQLException ex) {
-            isDisActive = true;
+            setDisActive(true);
             // handle any errors
             logger.error("Cannot create Connection");
             error(ex);
-            if (conn != null) {
+            if (getConn() != null) {
                 try {
-                    conn.close();
+                    getConn().close();
                 } catch (SQLException e) {
                 }
             }
-            conn = null;
+            setConn(null);
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot create Connection", ex);
         }
@@ -151,19 +147,19 @@ public class DbSession {
     public DbSession(DbAdmin admin, boolean isReadOnly)
             throws WaarpDatabaseNoConnectionException {
         try {
-            this.admin = admin;
+            this.setAdmin(admin);
             initialize(admin.getDbModel(), admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, true);
         } catch (NullPointerException ex) {
             // handle any errors
-            isDisActive = true;
+            setDisActive(true);
             logger.error("Cannot create Connection:" + (admin == null), ex);
-            if (conn != null) {
+            if (getConn() != null) {
                 try {
-                    conn.close();
+                    getConn().close();
                 } catch (SQLException e) {
                 }
             }
-            conn = null;
+            setConn(null);
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot create Connection", ex);
         }
@@ -182,19 +178,19 @@ public class DbSession {
     public DbSession(DbAdmin admin, boolean isReadOnly, boolean autoCommit)
             throws WaarpDatabaseNoConnectionException {
         try {
-            this.admin = admin;
+            this.setAdmin(admin);
             initialize(admin.getDbModel(), admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
         } catch (NullPointerException ex) {
             // handle any errors
             logger.error("Cannot create Connection:" + (admin == null), ex);
-            isDisActive = true;
-            if (conn != null) {
+            setDisActive(true);
+            if (getConn() != null) {
                 try {
-                    conn.close();
+                    getConn().close();
                 } catch (SQLException e) {
                 }
             }
-            conn = null;
+            setConn(null);
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot create Connection", ex);
         }
@@ -208,22 +204,22 @@ public class DbSession {
      */
     public void setAutoCommit(boolean autoCommit)
             throws WaarpDatabaseNoConnectionException {
-        if (conn != null) {
+        if (getConn() != null) {
             this.autoCommit = autoCommit;
             try {
-                conn.setAutoCommit(autoCommit);
+                getConn().setAutoCommit(autoCommit);
             } catch (SQLException e) {
                 // handle any errors
                 logger.error("Cannot create Connection");
                 error(e);
-                if (conn != null) {
+                if (getConn() != null) {
                     try {
-                        conn.close();
+                        getConn().close();
                     } catch (SQLException e1) {
                     }
                 }
-                conn = null;
-                isDisActive = true;
+                setConn(null);
+                setDisActive(true);
                 throw new WaarpDatabaseNoConnectionException(
                         "Cannot create Connection", e);
             }
@@ -241,7 +237,7 @@ public class DbSession {
      * @param admin
      *            the admin to set
      */
-    public void setAdmin(DbAdmin admin) {
+    protected void setAdmin(DbAdmin admin) {
         this.admin = admin;
     }
 
@@ -262,9 +258,9 @@ public class DbSession {
     public void useConnection() {
         int val = nbThread.incrementAndGet();
         synchronized (this) {
-            if (isDisActive) {
+            if (isDisActive()) {
                 try {
-                    initialize(admin.getDbModel(), admin.getServer(), admin.getUser(), admin.getPasswd(), isReadOnly, autoCommit);
+                    initialize(getAdmin().getDbModel(), getAdmin().getServer(), getAdmin().getUser(), getAdmin().getPasswd(), isReadOnly(), isAutoCommit());
                 } catch (WaarpDatabaseNoConnectionException e) {
                     logger.error("ThreadUsing: " + nbThread + " but not connected");
                     return;
@@ -322,7 +318,7 @@ public class DbSession {
 
     @Override
     public int hashCode() {
-        return this.internalId.hashCode();
+        return this.getInternalId().hashCode();
 
     }
 
@@ -330,18 +326,18 @@ public class DbSession {
     public boolean equals(Object o) {
         if (o == null || !(o instanceof DbSession))
             return false;
-        return (this == o) || this.internalId.equals(((DbSession) o).internalId);
+        return (this == o) || this.getInternalId().equals(((DbSession) o).getInternalId());
     }
 
     /**
      * Force the close of the connection
      */
     public void forceDisconnect() {
-        if (this.internalId.equals(admin.session.internalId)) {
+        if (this.getInternalId().equals(getAdmin().getSession().getInternalId())) {
             logger.debug("Closing internal db connection");
         }
         this.nbThread.set(0);
-        if (conn == null) {
+        if (getConn() == null) {
             logger.debug("Connection already closed");
             return;
         }
@@ -352,13 +348,13 @@ public class DbSession {
         }
         logger.debug("DbConnection still in use: " + nbThread);
         removeLongTermPreparedStatements();
-        DbAdmin.removeConnection(internalId);
-        isDisActive = true;
+        DbAdmin.removeConnection(getInternalId());
+        setDisActive(true);
         try {
-            logger.debug("Fore close Db Conn: " + internalId);
-            if (conn != null) {
-                conn.close();
-                conn = null;
+            logger.debug("Fore close Db Conn: " + getInternalId());
+            if (getConn() != null) {
+                getConn().close();
+                setConn(null);
             }
         } catch (SQLException e) {
             logger.warn("Disconnection not OK");
@@ -367,7 +363,7 @@ public class DbSession {
             // ignore
         }
         logger.info("Current cached connection: "
-                + admin.getDbModel().currentNumberOfPooledConnections());
+                + getAdmin().getDbModel().currentNumberOfPooledConnections());
     }
 
     /**
@@ -375,10 +371,10 @@ public class DbSession {
      * 
      */
     public void disconnect() {
-        if (this.internalId.equals(admin.session.internalId)) {
+        if (this.getInternalId().equals(getAdmin().getSession().getInternalId())) {
             logger.debug("Closing internal db connection: " + nbThread.get());
         }
-        if (conn == null || isDisActive) {
+        if (getConn() == null || isDisActive()) {
             logger.debug("Connection already closed");
             return;
         }
@@ -395,13 +391,13 @@ public class DbSession {
         }
         synchronized (this) {
             removeLongTermPreparedStatements();
-            DbAdmin.removeConnection(internalId);
-            isDisActive = true;
+            DbAdmin.removeConnection(getInternalId());
+            setDisActive(true);
             try {
-                logger.debug("Close Db Conn: " + internalId);
-                if (conn != null) {
-                    conn.close();
-                    conn = null;
+                logger.debug("Close Db Conn: " + getInternalId());
+                if (getConn() != null) {
+                    getConn().close();
+                    setConn(null);
                 }
             } catch (SQLException e) {
                 logger.warn("Disconnection not OK");
@@ -411,7 +407,7 @@ public class DbSession {
             }
         }
         logger.info("Current cached connection: "
-                + admin.getDbModel().currentNumberOfPooledConnections());
+                + getAdmin().getDbModel().currentNumberOfPooledConnections());
     }
 
     /**
@@ -421,14 +417,14 @@ public class DbSession {
      */
     public void checkConnection() throws WaarpDatabaseNoConnectionException {
         try {
-            admin.getDbModel().validConnection(this);
-            isDisActive = false;
-            if (admin != null)
-                admin.isActive = true;
+            getAdmin().getDbModel().validConnection(this);
+            setDisActive(false);
+            if (getAdmin() != null)
+                getAdmin().setActive(true);
         } catch (WaarpDatabaseNoConnectionException e) {
-            isDisActive = true;
-            if (admin != null)
-                admin.isActive = false;
+            setDisActive(true);
+            if (getAdmin() != null)
+                getAdmin().setActive(false);
             throw e;
         }
     }
@@ -519,19 +515,19 @@ public class DbSession {
      */
     public void commit() throws WaarpDatabaseSqlException,
             WaarpDatabaseNoConnectionException {
-        if (conn == null) {
+        if (getConn() == null) {
             logger.warn("Cannot commit since connection is null");
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot commit since connection is null");
         }
-        if (this.autoCommit) {
+        if (this.isAutoCommit()) {
             return;
         }
-        if (isDisActive) {
+        if (isDisActive()) {
             checkConnection();
         }
         try {
-            conn.commit();
+            getConn().commit();
         } catch (SQLException e) {
             logger.error("Cannot Commit");
             error(e);
@@ -549,19 +545,19 @@ public class DbSession {
     public void rollback(Savepoint savepoint)
             throws WaarpDatabaseNoConnectionException,
             WaarpDatabaseSqlException {
-        if (conn == null) {
+        if (getConn() == null) {
             logger.warn("Cannot rollback since connection is null");
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot rollback since connection is null");
         }
-        if (isDisActive) {
+        if (isDisActive()) {
             checkConnection();
         }
         try {
             if (savepoint == null) {
-                conn.rollback();
+                getConn().rollback();
             } else {
-                conn.rollback(savepoint);
+                getConn().rollback(savepoint);
             }
         } catch (SQLException e) {
             logger.error("Cannot rollback");
@@ -579,16 +575,16 @@ public class DbSession {
      */
     public Savepoint savepoint() throws WaarpDatabaseNoConnectionException,
             WaarpDatabaseSqlException {
-        if (conn == null) {
+        if (getConn() == null) {
             logger.warn("Cannot savepoint since connection is null");
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot savepoint since connection is null");
         }
-        if (isDisActive) {
+        if (isDisActive()) {
             checkConnection();
         }
         try {
-            return conn.setSavepoint();
+            return getConn().setSavepoint();
         } catch (SQLException e) {
             logger.error("Cannot savepoint");
             error(e);
@@ -606,20 +602,83 @@ public class DbSession {
     public void releaseSavepoint(Savepoint savepoint)
             throws WaarpDatabaseNoConnectionException,
             WaarpDatabaseSqlException {
-        if (conn == null) {
+        if (getConn() == null) {
             logger.warn("Cannot release savepoint since connection is null");
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot release savepoint since connection is null");
         }
-        if (isDisActive) {
+        if (isDisActive()) {
             checkConnection();
         }
         try {
-            conn.releaseSavepoint(savepoint);
+            getConn().releaseSavepoint(savepoint);
         } catch (SQLException e) {
             logger.error("Cannot release savepoint");
             error(e);
             throw new WaarpDatabaseSqlException("Cannot release savepoint", e);
         }
+    }
+
+    /**
+     * @return the isReadOnly
+     */
+    public boolean isReadOnly() {
+        return isReadOnly;
+    }
+
+    /**
+     * @param isReadOnly the isReadOnly to set
+     */
+    public void setReadOnly(boolean isReadOnly) {
+        this.isReadOnly = isReadOnly;
+    }
+
+    /**
+     * @return the autoCommit
+     */
+    public boolean isAutoCommit() {
+        return autoCommit;
+    }
+
+    /**
+     * @return the conn
+     */
+    public Connection getConn() {
+        return conn;
+    }
+
+    /**
+     * @param conn the conn to set
+     */
+    public void setConn(Connection conn) {
+        this.conn = conn;
+    }
+
+    /**
+     * @return the internalId
+     */
+    public UUID getInternalId() {
+        return internalId;
+    }
+
+    /**
+     * @param internalId the internalId to set
+     */
+    private void setInternalId(UUID internalId) {
+        this.internalId = internalId;
+    }
+
+    /**
+     * @return the isDisActive
+     */
+    public boolean isDisActive() {
+        return isDisActive;
+    }
+
+    /**
+     * @param isDisActive the isDisActive to set
+     */
+    public void setDisActive(boolean isDisActive) {
+        this.isDisActive = isDisActive;
     }
 }

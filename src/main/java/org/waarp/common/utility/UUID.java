@@ -64,10 +64,6 @@ public final class UUID implements Comparable<UUID> {
      * Version to store (to check correctness if future algorithm)
      */
     private static final int VERSION = (1 & 0x0F);
-    /**
-     * Version to store (to check correctness if future algorithm)
-     */
-    private static final int JAVAVERSION = (0 & 0x0F);
     
     private static final Pattern MACHINE_ID_PATTERN = Pattern.compile("^(?:[0-9a-fA-F][:-]?){6,8}$");
     private static final int MACHINE_ID_LEN = 6;
@@ -181,7 +177,7 @@ public final class UUID implements Comparable<UUID> {
         this();
         if (on128bits) {
             uuid[0] = 0;
-            uuid[4] = JAVAVERSION; // Special Version 0 for compatibility with standard UUID
+            uuid[4] = VERSION; // Special Version 0 for compatibility with standard UUID
             uuid[7] = 0;
             uuid[8] = 0;
         }
@@ -197,7 +193,7 @@ public final class UUID implements Comparable<UUID> {
         uuid[1] = (byte) (mostSigBits >> 56);
         uuid[2] = (byte) (mostSigBits >> 48);
         uuid[3] = (byte) (mostSigBits >> 40);
-        uuid[4] = JAVAVERSION; // Special Version 0 for compatibility with standard UUID
+        uuid[4] = VERSION; // Special Version 0 for compatibility with standard UUID
         uuid[5] = (byte) (mostSigBits >> 32);
         uuid[6] = (byte) (mostSigBits >> 24);
         uuid[7] = 0;
@@ -246,7 +242,7 @@ public final class UUID implements Comparable<UUID> {
         if (bytes.length == UTILUUIDKEYSIZE) {
             uuid[0] = 0;
             System.arraycopy(bytes, 0, uuid, 1, 3);
-            uuid[4] = JAVAVERSION;
+            uuid[4] = VERSION;
             System.arraycopy(bytes, 3, uuid, 5, 2);
             uuid[7] = 0;
             uuid[8] = 0;

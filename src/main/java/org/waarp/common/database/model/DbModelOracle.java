@@ -51,7 +51,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
     private static final WaarpLogger logger = WaarpLoggerFactory
             .getLogger(DbModelOracle.class);
 
-    public static final DbType type = DbType.Oracle;
+    private static final DbType type = DbType.Oracle;
 
     protected OracleConnectionPoolDataSource oracleConnectionPoolDataSource;
     protected DbConnectionPool pool;

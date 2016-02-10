@@ -23,8 +23,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSessionContext;
 
-import io.netty.handler.ssl.SslHandler;
-
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
 
@@ -227,25 +225,6 @@ public class WaarpSslContextFactory {
      *            True if in Server Mode, else False in Client mode
      * @param needClientAuth
      *            True if the client needs to be authenticated (only if serverMode is True)
-     * @param renegotiationEnable
-     *            True if you want to enable renegotiation (security issue CVE-2009-3555).
-     *            This parameter is now ignored (always False)
-     * @return the sslhandler
-     */
-    @Deprecated
-    public SslHandler initInitializer(boolean serverMode,
-            boolean needClientAuth, boolean renegotiationEnable) {
-        return this.initInitializer(serverMode, needClientAuth);
-    }
-
-    /**
-     * To be called before adding as first entry in the Initializer as<br>
-     * pipeline.addLast("ssl", sslhandler);<br>
-     * 
-     * @param serverMode
-     *            True if in Server Mode, else False in Client mode
-     * @param needClientAuth
-     *            True if the client needs to be authenticated (only if serverMode is True)
      * @param host
      *            Host for which a resume is allowed
      * @param port
@@ -267,30 +246,6 @@ public class WaarpSslContextFactory {
         }
         WaarpSslHandler handler = new WaarpSslHandler(engine);
         return handler;
-    }
-
-    /**
-     * To be called before adding as first entry in the Initializer as<br>
-     * pipeline.addLast("ssl", sslhandler);<br>
-     * 
-     * @param serverMode
-     *            True if in Server Mode, else False in Client mode
-     * @param needClientAuth
-     *            True if the client needs to be authenticated (only if serverMode is True)
-     * @param renegotiationEnable
-     *            True if you want to enable renegotiation (security issue CVE-2009-3555).
-     *            This parameter is now ignored (always False)
-     * @param host
-     *            Host for which a resume is allowed
-     * @param port
-     *            port associated with the host for which a resume is allowed
-     * @return the sslhandler
-     */
-    @Deprecated
-    public SslHandler initInitializer(boolean serverMode,
-            boolean needClientAuth, boolean renegotiationEnable,
-            String host, int port) {
-        return this.initInitializer(serverMode, needClientAuth, host, port);
     }
 
     /**
