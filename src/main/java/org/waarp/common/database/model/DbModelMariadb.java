@@ -36,7 +36,7 @@ import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
 
-import org.mariadb.jdbc.MySQLDataSource;
+import org.mariadb.jdbc.MariaDbDataSource;
 
 /**
  * MariaDB Database Model implementation
@@ -51,9 +51,9 @@ public abstract class DbModelMariadb extends DbModelAbstract {
     private static final WaarpLogger logger = WaarpLoggerFactory
             .getLogger(DbModelMariadb.class);
 
-    public static final DbType type = DbType.MariaDB;
+    private static final DbType type = DbType.MariaDB;
 
-    protected MySQLDataSource mysqlConnectionPoolDataSource;
+    protected MariaDbDataSource mysqlConnectionPoolDataSource;
     protected DbConnectionPool pool;
 
     public DbType getDbType() {
@@ -73,7 +73,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
     public DbModelMariadb(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay)
             throws WaarpDatabaseNoConnectionException {
         this();
-        mysqlConnectionPoolDataSource = new MySQLDataSource();
+        mysqlConnectionPoolDataSource = new MariaDbDataSource();
         try {
             mysqlConnectionPoolDataSource.setUrl(dbserver);
         } catch (SQLException e) {
@@ -99,7 +99,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
     public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
             throws WaarpDatabaseNoConnectionException {
         this();
-        mysqlConnectionPoolDataSource = new MySQLDataSource();
+        mysqlConnectionPoolDataSource = new MariaDbDataSource();
         try {
             mysqlConnectionPoolDataSource.setUrl(dbserver);
         } catch (SQLException e) {
@@ -144,7 +144,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
                     return pool.getConnection();
                 } catch (SQLException e) {
                     // try to renew the pool
-                    mysqlConnectionPoolDataSource = new MySQLDataSource();
+                    mysqlConnectionPoolDataSource = new MariaDbDataSource();
                     mysqlConnectionPoolDataSource.setUrl(server);
                     mysqlConnectionPoolDataSource.setUser(user);
                     mysqlConnectionPoolDataSource.setPassword(passwd);
@@ -357,7 +357,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
             DbPreparedStatement preparedStatement = new DbPreparedStatement(
                     dbSession);
             try {
-                dbSession.conn.setAutoCommit(false);
+                dbSession.getConn().setAutoCommit(false);
             } catch (SQLException e1) {
             }
             try {
@@ -389,7 +389,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
             return result;
         } finally {
             try {
-                dbSession.conn.setAutoCommit(true);
+                dbSession.getConn().setAutoCommit(true);
             } catch (SQLException e1) {
             }
             lock.unlock();

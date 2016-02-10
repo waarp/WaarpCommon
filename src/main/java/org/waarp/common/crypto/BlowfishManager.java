@@ -23,12 +23,15 @@ package org.waarp.common.crypto;
  * @author frederic bregier
  */
 public class BlowfishManager extends KeyManager {
-    public static final BlowfishManager blowfishManager = new BlowfishManager();
-
-    /*
-     * (non-Javadoc)
-     * @see atlas.cryptage.KeyManager#createKeyObject()
+    static final BlowfishManager manager = new BlowfishManager();
+    /**
+     * 
+     * @return the current KeyManager
      */
+    public static final KeyManager getInstance() {
+        return manager;
+    }
+
     @Override
     public KeyObject createKeyObject() {
         return new Blowfish();

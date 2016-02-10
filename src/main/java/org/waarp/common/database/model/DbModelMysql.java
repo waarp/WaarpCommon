@@ -52,7 +52,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
     private static final WaarpLogger logger = WaarpLoggerFactory
             .getLogger(DbModelMysql.class);
 
-    public static final DbType type = DbType.MySQL;
+    private static final DbType type = DbType.MySQL;
 
     protected MysqlConnectionPoolDataSource mysqlConnectionPoolDataSource;
     protected DbConnectionPool pool;
@@ -355,7 +355,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
             DbPreparedStatement preparedStatement = new DbPreparedStatement(
                     dbSession);
             try {
-                dbSession.conn.setAutoCommit(false);
+                dbSession.getConn().setAutoCommit(false);
             } catch (SQLException e1) {
             }
             try {
@@ -387,7 +387,7 @@ public abstract class DbModelMysql extends DbModelAbstract {
             return result;
         } finally {
             try {
-                dbSession.conn.setAutoCommit(true);
+                dbSession.getConn().setAutoCommit(true);
             } catch (SQLException e1) {
             }
             lock.unlock();

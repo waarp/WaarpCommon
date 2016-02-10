@@ -93,6 +93,11 @@ public abstract class KeyObject {
     public abstract int getKeySize();
 
     /**
+     * 
+     * @return the filename extension to use for this kind of key
+     */
+    public abstract String getFileExtension();
+    /**
      * @return the key associated with this object
      */
     public Key getSecretKey() {

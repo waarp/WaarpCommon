@@ -156,7 +156,7 @@ public abstract class AbstractDbData {
                 dbSession);
         try {
             preparedStatement.createPrepareStatement("SELECT " +
-                    primaryKey[0].column + " FROM " + getTable() + " WHERE " +
+                    primaryKey[0].getColumn() + " FROM " + getTable() + " WHERE " +
                     getWherePrimaryKey());
             setPrimaryKey();
             setValues(preparedStatement, primaryKey);
@@ -321,102 +321,102 @@ public abstract class AbstractDbData {
         try {
             switch (value.type) {
                 case Types.VARCHAR:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.VARCHAR);
                         break;
                     }
-                    ps.setString(rank, (String) value.value);
+                    ps.setString(rank, (String) value.getValue());
                     break;
                 case Types.LONGVARCHAR:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.LONGVARCHAR);
                         break;
                     }
-                    ps.setString(rank, (String) value.value);
+                    ps.setString(rank, (String) value.getValue());
                     break;
                 case Types.BIT:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.BIT);
                         break;
                     }
-                    ps.setBoolean(rank, (Boolean) value.value);
+                    ps.setBoolean(rank, (Boolean) value.getValue());
                     break;
                 case Types.TINYINT:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.TINYINT);
                         break;
                     }
-                    ps.setByte(rank, (Byte) value.value);
+                    ps.setByte(rank, (Byte) value.getValue());
                     break;
                 case Types.SMALLINT:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.SMALLINT);
                         break;
                     }
-                    ps.setShort(rank, (Short) value.value);
+                    ps.setShort(rank, (Short) value.getValue());
                     break;
                 case Types.INTEGER:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.INTEGER);
                         break;
                     }
-                    ps.setInt(rank, (Integer) value.value);
+                    ps.setInt(rank, (Integer) value.getValue());
                     break;
                 case Types.BIGINT:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.BIGINT);
                         break;
                     }
-                    ps.setLong(rank, (Long) value.value);
+                    ps.setLong(rank, (Long) value.getValue());
                     break;
                 case Types.REAL:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.REAL);
                         break;
                     }
-                    ps.setFloat(rank, (Float) value.value);
+                    ps.setFloat(rank, (Float) value.getValue());
                     break;
                 case Types.DOUBLE:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.DOUBLE);
                         break;
                     }
-                    ps.setDouble(rank, (Double) value.value);
+                    ps.setDouble(rank, (Double) value.getValue());
                     break;
                 case Types.VARBINARY:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.VARBINARY);
                         break;
                     }
-                    ps.setBytes(rank, (byte[]) value.value);
+                    ps.setBytes(rank, (byte[]) value.getValue());
                     break;
                 case Types.DATE:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.DATE);
                         break;
                     }
-                    ps.setDate(rank, (Date) value.value);
+                    ps.setDate(rank, (Date) value.getValue());
                     break;
                 case Types.TIMESTAMP:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.TIMESTAMP);
                         break;
                     }
-                    ps.setTimestamp(rank, (Timestamp) value.value);
+                    ps.setTimestamp(rank, (Timestamp) value.getValue());
                     break;
                 case Types.CLOB:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.CLOB);
                         break;
                     }
-                    ps.setClob(rank, (Reader) value.value);
+                    ps.setClob(rank, (Reader) value.getValue());
                     break;
                 case Types.BLOB:
-                    if (value.value == null) {
+                    if (value.getValue() == null) {
                         ps.setNull(rank, Types.BLOB);
                         break;
                     }
-                    ps.setBlob(rank, (InputStream) value.value);
+                    ps.setBlob(rank, (InputStream) value.getValue());
                     break;
                 default:
                     throw new WaarpDatabaseSqlException("Type not supported: " +
@@ -476,55 +476,55 @@ public abstract class AbstractDbData {
         try {
             switch (value.type) {
                 case Types.VARCHAR:
-                    value.value = rs.getString(value.column);
+                    value.setValue(rs.getString(value.getColumn()));
                     break;
                 case Types.LONGVARCHAR:
-                    value.value = rs.getString(value.column);
+                    value.setValue(rs.getString(value.getColumn()));
                     break;
                 case Types.BIT:
-                    value.value = rs.getBoolean(value.column);
+                    value.setValue(rs.getBoolean(value.getColumn()));
                     break;
                 case Types.TINYINT:
-                    value.value = rs.getByte(value.column);
+                    value.setValue(rs.getByte(value.getColumn()));
                     break;
                 case Types.SMALLINT:
-                    value.value = rs.getShort(value.column);
+                    value.setValue(rs.getShort(value.getColumn()));
                     break;
                 case Types.INTEGER:
-                    value.value = rs.getInt(value.column);
+                    value.setValue(rs.getInt(value.getColumn()));
                     break;
                 case Types.BIGINT:
-                    value.value = rs.getLong(value.column);
+                    value.setValue(rs.getLong(value.getColumn()));
                     break;
                 case Types.REAL:
-                    value.value = rs.getFloat(value.column);
+                    value.setValue(rs.getFloat(value.getColumn()));
                     break;
                 case Types.DOUBLE:
-                    value.value = rs.getDouble(value.column);
+                    value.setValue(rs.getDouble(value.getColumn()));
                     break;
                 case Types.VARBINARY:
-                    value.value = rs.getBytes(value.column);
+                    value.setValue(rs.getBytes(value.getColumn()));
                     break;
                 case Types.DATE:
-                    value.value = rs.getDate(value.column);
+                    value.setValue(rs.getDate(value.getColumn()));
                     break;
                 case Types.TIMESTAMP:
-                    value.value = rs.getTimestamp(value.column);
+                    value.setValue(rs.getTimestamp(value.getColumn()));
                     break;
                 case Types.CLOB:
-                    value.value = rs.getClob(value.column).getCharacterStream();
+                    value.setValue(rs.getClob(value.getColumn()).getCharacterStream());
                     break;
                 case Types.BLOB:
-                    value.value = rs.getBlob(value.column).getBinaryStream();
+                    value.setValue(rs.getBlob(value.getColumn()).getBinaryStream());
                     break;
                 default:
                     throw new WaarpDatabaseSqlException("Type not supported: " +
-                            value.type + " for " + value.column);
+                            value.type + " for " + value.getColumn());
             }
         } catch (SQLException e) {
             DbSession.error(e);
             throw new WaarpDatabaseSqlException("Getting values in error: " +
-                    value.type + " for " + value.column, e);
+                    value.type + " for " + value.getColumn(), e);
         }
     }
 
@@ -599,42 +599,42 @@ public abstract class AbstractDbData {
             switch (value.type) {
                 case Types.VARCHAR:
                 case Types.LONGVARCHAR:
-                    node.put(value.column, (String) value.value);
+                    node.put(value.getColumn(), (String) value.getValue());
                     break;
                 case Types.BIT:
-                    node.put(value.column, (Boolean) value.value);
+                    node.put(value.getColumn(), (Boolean) value.getValue());
                     break;
                 case Types.TINYINT:
-                    node.put(value.column, (Byte) value.value);
+                    node.put(value.getColumn(), (Byte) value.getValue());
                     break;
                 case Types.SMALLINT:
-                    node.put(value.column, (Short) value.value);
+                    node.put(value.getColumn(), (Short) value.getValue());
                     break;
                 case Types.INTEGER:
-                    node.put(value.column, (Integer) value.value);
+                    node.put(value.getColumn(), (Integer) value.getValue());
                     break;
                 case Types.BIGINT:
-                    node.put(value.column, (Long) value.value);
+                    node.put(value.getColumn(), (Long) value.getValue());
                     break;
                 case Types.REAL:
-                    node.put(value.column, (Float) value.value);
+                    node.put(value.getColumn(), (Float) value.getValue());
                     break;
                 case Types.DOUBLE:
-                    node.put(value.column, (Double) value.value);
+                    node.put(value.getColumn(), (Double) value.getValue());
                     break;
                 case Types.VARBINARY:
-                    node.put(value.column, (byte[]) value.value);
+                    node.put(value.getColumn(), (byte[]) value.getValue());
                     break;
                 case Types.DATE:
-                    node.put(value.column, ((Date) value.value).getTime());
+                    node.put(value.getColumn(), ((Date) value.getValue()).getTime());
                     break;
                 case Types.TIMESTAMP:
-                    node.put(value.column, ((Timestamp) value.value).getTime());
+                    node.put(value.getColumn(), ((Timestamp) value.getValue()).getTime());
                     break;
                 case Types.CLOB:
                 case Types.BLOB:
                 default:
-                    node.put(value.column, "Unsupported type=" + value.type);
+                    node.put(value.getColumn(), "Unsupported type=" + value.type);
             }
         }
         return node;
@@ -654,10 +654,10 @@ public abstract class AbstractDbData {
             list = otherFields;
         }
         for (DbValue value : list) {
-            if (value.column.equalsIgnoreCase("UPDATEDINFO")) {
+            if (value.getColumn().equalsIgnoreCase("UPDATEDINFO")) {
                 continue;
             }
-            JsonNode item = node.get(value.column);
+            JsonNode item = node.get(value.getColumn());
             if (item != null && !item.isMissingNode() && !item.isNull()) {
                 isSaved = false;
                 switch (value.type) {

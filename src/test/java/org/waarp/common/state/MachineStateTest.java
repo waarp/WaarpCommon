@@ -35,8 +35,8 @@ public class MachineStateTest {
         // First create a HashMap and fill it directly
         ConcurrentHashMap<ExampleEnumState, EnumSet<ExampleEnumState>> stateMap =
                 new ConcurrentHashMap<ExampleEnumState, EnumSet<ExampleEnumState>>();
-        stateMap.put(ExampleTransition.tRUNNING.elt.state,
-                (EnumSet<ExampleEnumState>) ExampleTransition.tRUNNING.elt.set);
+        stateMap.put(ExampleTransition.tRUNNING.elt.getState(),
+                (EnumSet<ExampleEnumState>) ExampleTransition.tRUNNING.elt.getSet());
         // Second create the MachineState with the right Map
         MachineState<ExampleEnumState> machineState1 =
                 new MachineState(ExampleEnumState.PAUSED, stateMap);

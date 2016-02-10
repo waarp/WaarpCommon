@@ -106,10 +106,6 @@ public class DbDataModel extends AbstractDbData {
 
     protected static final String insertAllValues = " (?,?,?,?,?,?,?) ";
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.database.data.AbstractDbData#initObject()
-     */
     @Override
     protected void initObject() {
         primaryKey = new DbValue[] { new DbValue(hostid, Columns.HOSTID
@@ -156,49 +152,29 @@ public class DbDataModel extends AbstractDbData {
                 .getValue();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.database.data.AbstractDbData#getSelectAllFields()
-     */
     @Override
     protected String getSelectAllFields() {
         return selectAllFields;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.database.data.AbstractDbData#getTable()
-     */
     @Override
     protected String getTable() {
         return table;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.database.data.AbstractDbData#getInsertAllValues()
-     */
     @Override
     protected String getInsertAllValues() {
         return insertAllValues;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.database.data.AbstractDbData#getUpdateAllFields()
-     */
     @Override
     protected String getUpdateAllFields() {
         return updateAllFields;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.waarp.common.database.data.AbstractDbData#getWherePrimaryKey()
-     */
     @Override
     protected String getWherePrimaryKey() {
-        return primaryKey[0].column + " = ? ";
+        return primaryKey[0].getColumn() + " = ? ";
     }
 
     /**
@@ -247,10 +223,6 @@ public class DbDataModel extends AbstractDbData {
         select();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see openr66.database.data.AbstractDbData#delete()
-     */
     @Override
     public void delete() throws WaarpDatabaseException {
         if (dbSession == null) {
@@ -275,10 +247,6 @@ public class DbDataModel extends AbstractDbData {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see openr66.database.data.AbstractDbData#insert()
-     */
     @Override
     public void insert() throws WaarpDatabaseException {
         if (isSaved) {
@@ -305,10 +273,6 @@ public class DbDataModel extends AbstractDbData {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see openr66.database.data.AbstractDbData#exist()
-     */
     @Override
     public boolean exist() throws WaarpDatabaseException {
         if (dbSession == null) {
@@ -318,7 +282,7 @@ public class DbDataModel extends AbstractDbData {
                 dbSession);
         try {
             preparedStatement.createPrepareStatement("SELECT " +
-                    primaryKey[0].column + " FROM " + table + " WHERE " +
+                    primaryKey[0].getColumn() + " FROM " + table + " WHERE " +
                     getWherePrimaryKey());
             setPrimaryKey();
             setValues(preparedStatement, primaryKey);
@@ -329,10 +293,6 @@ public class DbDataModel extends AbstractDbData {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see openr66.database.data.AbstractDbData#select()
-     */
     @Override
     public void select() throws WaarpDatabaseException {
         if (dbSession == null) {
@@ -342,7 +302,7 @@ public class DbDataModel extends AbstractDbData {
             } else {
                 // copy info
                 for (int i = 0; i < allFields.length; i++) {
-                    allFields[i].value = conf.allFields[i].value;
+                    allFields[i].setValue(conf.allFields[i].getValue());
                 }
                 setFromArray();
                 isSaved = true;
@@ -370,10 +330,6 @@ public class DbDataModel extends AbstractDbData {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see openr66.database.data.AbstractDbData#update()
-     */
     @Override
     public void update() throws WaarpDatabaseException {
         if (isSaved) {
@@ -442,10 +398,6 @@ public class DbDataModel extends AbstractDbData {
         return prep;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see openr66.database.data.AbstractDbData#changeUpdatedInfo(UpdatedInfo)
-     */
     @Override
     public void changeUpdatedInfo(UpdatedInfo info) {
         if (updatedInfo != info.ordinal()) {

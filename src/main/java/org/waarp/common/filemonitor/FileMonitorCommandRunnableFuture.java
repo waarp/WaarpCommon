@@ -31,9 +31,9 @@ import org.waarp.common.filemonitor.FileMonitor.FileItem;
  *
  */
 public abstract class FileMonitorCommandRunnableFuture implements Runnable {
-    public FileItem fileItem;
+    private FileItem fileItem;
     private Thread currentThread;
-    public FileMonitor monitor;
+    private FileMonitor monitor;
 
     /**
 	 */
@@ -48,7 +48,7 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
      * @param fileItem
      */
     public FileMonitorCommandRunnableFuture(FileItem fileItem) {
-        this.fileItem = fileItem;
+        this.setFileItem(fileItem);
     }
 
     public void setFileItem(FileItem fileItem) {
@@ -58,8 +58,8 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
     @Override
     public void run() {
         currentThread = Thread.currentThread();
-        if (fileItem != null) {
-            run(fileItem);
+        if (getFileItem() != null) {
+            run(getFileItem());
         }
     }
 
@@ -78,31 +78,31 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
      *            the specialId associated with the task
      */
     protected void finalize(boolean status, long specialId) {
-        if (monitor != null) {
+        if (getMonitor() != null) {
             Date date = new Date();
-            if (date.after(monitor.nextDay)) {
+            if (date.after(getMonitor().nextDay)) {
                 // midnight is after last check
-                monitor.setNextDay();
-                monitor.todayok.set(0);
-                monitor.todayerror.set(0);
+                getMonitor().setNextDay();
+                getMonitor().todayok.set(0);
+                getMonitor().todayerror.set(0);
             }
         }
         if (status) {
-            fileItem.used = true;
+            getFileItem().used = true;
             // Keep the hash: fileItem.hash = null;
-            fileItem.specialId = specialId;
-            if (monitor != null) {
-                monitor.globalok.incrementAndGet();
-                monitor.todayok.incrementAndGet();
+            getFileItem().specialId = specialId;
+            if (getMonitor() != null) {
+                getMonitor().globalok.incrementAndGet();
+                getMonitor().todayok.incrementAndGet();
             }
         } else {
             // execution in error, will retry later on
-            fileItem.used = false;
-            fileItem.hash = null;
-            fileItem.specialId = specialId;
-            if (monitor != null) {
-                monitor.globalerror.incrementAndGet();
-                monitor.todayerror.incrementAndGet();
+            getFileItem().used = false;
+            getFileItem().hash = null;
+            getFileItem().specialId = specialId;
+            if (getMonitor() != null) {
+                getMonitor().globalerror.incrementAndGet();
+                getMonitor().todayerror.incrementAndGet();
             }
         }
     }
@@ -111,5 +111,19 @@ public abstract class FileMonitorCommandRunnableFuture implements Runnable {
         if (currentThread != null) {
             currentThread.interrupt();
         }
+    }
+
+    /**
+     * @return the fileItem
+     */
+    public FileItem getFileItem() {
+        return fileItem;
+    }
+
+    /**
+     * @return the monitor
+     */
+    public FileMonitor getMonitor() {
+        return monitor;
     }
 }

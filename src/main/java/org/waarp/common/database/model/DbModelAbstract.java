@@ -55,26 +55,26 @@ public abstract class DbModelAbstract implements DbModel {
             throws WaarpDatabaseNoConnectionException {
         DbAdmin admin = dbSession.getAdmin();
         if (admin == null) {
-            if (dbSession.autoCommit) {
+            if (dbSession.isAutoCommit()) {
                 admin = DbConstant.admin;
             } else {
                 admin = DbConstant.noCommitAdmin;
             }
         }
-        DbSession newdbSession = admin.session;
-        if (admin.isActive) {
-            newdbSession = new DbSession(admin, dbSession.isReadOnly);
+        DbSession newdbSession = admin.getSession();
+        if (admin.isActive()) {
+            newdbSession = new DbSession(admin, dbSession.isReadOnly());
         }
         try {
-            if (dbSession.conn != null) {
-                dbSession.conn.close();
+            if (dbSession.getConn() != null) {
+                dbSession.getConn().close();
             }
         } catch (SQLException e1) {
         } catch (ConcurrentModificationException e) {
         }
-        dbSession.conn = newdbSession.conn;
-        DbAdmin.addConnection(dbSession.internalId, dbSession);
-        DbAdmin.removeConnection(newdbSession.internalId);
+        dbSession.setConn(newdbSession.getConn());
+        DbAdmin.addConnection(dbSession.getInternalId(), dbSession);
+        DbAdmin.removeConnection(newdbSession.getInternalId());
         logger.warn("Database Connection lost: database connection reopened");
     }
 
@@ -85,40 +85,40 @@ public abstract class DbModelAbstract implements DbModel {
      */
     protected void closeInternalConnection(DbSession dbSession) {
         try {
-            if (dbSession.conn != null) {
-                dbSession.conn.close();
+            if (dbSession.getConn() != null) {
+                dbSession.getConn().close();
             }
         } catch (SQLException e1) {
         } catch (ConcurrentModificationException e) {
         }
-        dbSession.isDisActive = true;
-        if (dbSession.admin != null)
-            dbSession.admin.isActive = false;
-        DbAdmin.removeConnection(dbSession.internalId);
+        dbSession.setDisActive(true);
+        if (dbSession.getAdmin() != null)
+            dbSession.getAdmin().setActive(false);
+        DbAdmin.removeConnection(dbSession.getInternalId());
     }
 
     public void validConnection(DbSession dbSession)
             throws WaarpDatabaseNoConnectionException {
         // try to limit the number of check!
         synchronized (dbSession) {
-            if (dbSession.conn == null) {
+            if (dbSession.getConn() == null) {
                 throw new WaarpDatabaseNoConnectionException(
                         "Cannot connect to database");
             }
             try {
-                if (!dbSession.conn.isClosed()) {
-                    if (!dbSession.conn.isValid(DbConstant.VALIDTESTDURATION)) {
+                if (!dbSession.getConn().isClosed()) {
+                    if (!dbSession.getConn().isValid(DbConstant.VALIDTESTDURATION)) {
                         // Give a try by closing the current connection
                         throw new SQLException("Cannot connect to database");
                     }
                 }
-                dbSession.isDisActive = false;
-                if (dbSession.admin != null)
-                    dbSession.admin.isActive = true;
+                dbSession.setDisActive(false);
+                if (dbSession.getAdmin() != null)
+                    dbSession.getAdmin().setActive(true);
             } catch (SQLException e2) {
-                dbSession.isDisActive = true;
-                if (dbSession.admin != null)
-                    dbSession.admin.isActive = false;
+                dbSession.setDisActive(true);
+                if (dbSession.getAdmin() != null)
+                    dbSession.getAdmin().setActive(false);
                 // Might be unsupported so switch to SELECT 1 way
                 if (e2 instanceof org.postgresql.util.PSQLException) {
                     validConnectionSelect(dbSession);
@@ -132,7 +132,7 @@ public abstract class DbModelAbstract implements DbModel {
                         throw e;
                     }
                     try {
-                        if (!dbSession.conn.isValid(DbConstant.VALIDTESTDURATION)) {
+                        if (!dbSession.getConn().isValid(DbConstant.VALIDTESTDURATION)) {
                             // Not ignored
                             closeInternalConnection(dbSession);
                             throw new WaarpDatabaseNoConnectionException(
@@ -143,9 +143,9 @@ public abstract class DbModelAbstract implements DbModel {
                         throw new WaarpDatabaseNoConnectionException(
                                 "Cannot connect to database", e);
                     }
-                    dbSession.isDisActive = false;
-                    if (dbSession.admin != null)
-                        dbSession.admin.isActive = true;
+                    dbSession.setDisActive(false);
+                    if (dbSession.getAdmin() != null)
+                        dbSession.getAdmin().setActive(true);
                     dbSession.recreateLongTermPreparedStatements();
                     return;
                 } catch (WaarpDatabaseSqlException e1) {
@@ -164,7 +164,7 @@ public abstract class DbModelAbstract implements DbModel {
         synchronized (dbSession) {
             Statement stmt = null;
             try {
-                stmt = dbSession.conn.createStatement();
+                stmt = dbSession.getConn().createStatement();
                 if (stmt.execute(validConnectionString())) {
                     ResultSet set = stmt.getResultSet();
                     if (!set.next()) {
@@ -174,13 +174,13 @@ public abstract class DbModelAbstract implements DbModel {
                         throw new SQLException("Cannot connect to database");
                     }
                 }
-                dbSession.isDisActive = false;
-                if (dbSession.admin != null)
-                    dbSession.admin.isActive = true;
+                dbSession.setDisActive(false);
+                if (dbSession.getAdmin() != null)
+                    dbSession.getAdmin().setActive(true);
             } catch (SQLException e2) {
-                dbSession.isDisActive = true;
-                if (dbSession.admin != null)
-                    dbSession.admin.isActive = false;
+                dbSession.setDisActive(true);
+                if (dbSession.getAdmin() != null)
+                    dbSession.getAdmin().setActive(false);
                 try {
                     try {
                         recreateSession(dbSession);
@@ -197,7 +197,7 @@ public abstract class DbModelAbstract implements DbModel {
                         // ignore
                     }
                     try {
-                        stmt = dbSession.conn.createStatement();
+                        stmt = dbSession.getConn().createStatement();
                     } catch (SQLException e) {
                         // Not ignored
                         closeInternalConnection(dbSession);
@@ -230,9 +230,9 @@ public abstract class DbModelAbstract implements DbModel {
                         throw new WaarpDatabaseNoConnectionException(
                                 "Cannot connect to database", e);
                     }
-                    dbSession.isDisActive = false;
-                    if (dbSession.admin != null)
-                        dbSession.admin.isActive = true;
+                    dbSession.setDisActive(false);
+                    if (dbSession.getAdmin() != null)
+                        dbSession.getAdmin().setActive(true);
                     dbSession.recreateLongTermPreparedStatements();
                     return;
                 } catch (WaarpDatabaseSqlException e1) {

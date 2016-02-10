@@ -83,7 +83,7 @@ public abstract class WaarpShutdownHook extends Thread {
      */
     public static WaarpShutdownHook shutdownHook = null;
 
-    public ShutdownConfiguration shutdownConfiguration = null;
+    private ShutdownConfiguration shutdownConfiguration = null;
 
     public WaarpShutdownHook(ShutdownConfiguration configuration) {
         if (initialized) {

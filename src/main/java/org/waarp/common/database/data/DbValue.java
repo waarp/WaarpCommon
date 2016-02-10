@@ -43,169 +43,169 @@ public class DbValue {
     /**
      * Real value
      */
-    public Object value;
+    private Object value;
     /**
      * Data Type
      */
-    public int type;
+    int type;
     /**
      * Column name
      */
-    public String column;
+    private String column;
 
     public DbValue(String value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.VARCHAR;
     }
 
     public DbValue(String value, boolean LONG) {
-        this.value = value;
+        this.setValue(value);
         type = Types.LONGVARCHAR;
     }
 
     public DbValue(boolean value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.BIT;
     }
 
     public DbValue(byte value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.TINYINT;
     }
 
     public DbValue(short value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.SMALLINT;
     }
 
     public DbValue(int value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.INTEGER;
     }
 
     public DbValue(long value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.BIGINT;
     }
 
     public DbValue(float value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.REAL;
     }
 
     public DbValue(double value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.DOUBLE;
     }
 
     public DbValue(byte[] value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.VARBINARY;
     }
 
     public DbValue(Date value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.DATE;
     }
 
     public DbValue(Timestamp value) {
-        this.value = value;
+        this.setValue(value);
         type = Types.TIMESTAMP;
     }
 
     public DbValue(java.util.Date value) {
-        this.value = new Timestamp(value.getTime());
+        this.setValue(new Timestamp(value.getTime()));
         type = Types.TIMESTAMP;
     }
 
     public DbValue(String value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.VARCHAR;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(String value, String name, boolean LONG) {
-        this.value = value;
+        this.setValue(value);
         type = Types.LONGVARCHAR;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(boolean value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.BIT;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(byte value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.TINYINT;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(short value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.SMALLINT;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(int value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.INTEGER;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(long value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.BIGINT;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(float value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.REAL;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(double value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.DOUBLE;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(byte[] value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.VARBINARY;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(Date value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.DATE;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(Timestamp value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.TIMESTAMP;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(java.util.Date value, String name) {
-        this.value = new Timestamp(value.getTime());
+        this.setValue(new Timestamp(value.getTime()));
         type = Types.TIMESTAMP;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(Reader value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.CLOB;
-        column = name;
+        setColumn(name);
     }
 
     public DbValue(InputStream value, String name) {
-        this.value = value;
+        this.setValue(value);
         type = Types.BLOB;
-        column = name;
+        setColumn(name);
     }
 
     public void setValue(String value) {
@@ -264,6 +264,10 @@ public class DbValue {
         this.value = value;
     }
 
+    public void setValue(Object value) {
+        this.value = value;
+    }
+
     /**
      * 
      * @return the type in full string format
@@ -303,7 +307,7 @@ public class DbValue {
         }
     }
 
-    public Object getValue() throws WaarpDatabaseSqlException {
+    public Object getValue() throws IllegalAccessError {
         switch (type) {
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
@@ -321,7 +325,7 @@ public class DbValue {
             case Types.BLOB:
                 return value;
             default:
-                throw new WaarpDatabaseSqlException("Type unknown: " + type);
+                throw new IllegalAccessError("Type unknown: " + type);
         }
     }
 
@@ -329,30 +333,30 @@ public class DbValue {
         switch (type) {
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
-                return (String) value;
+                return (String) getValue();
             case Types.BIT:
-                return ((Boolean) value).toString();
+                return ((Boolean) getValue()).toString();
             case Types.TINYINT:
-                return ((Byte) value).toString();
+                return ((Byte) getValue()).toString();
             case Types.SMALLINT:
-                return ((Short) value).toString();
+                return ((Short) getValue()).toString();
             case Types.INTEGER:
-                return ((Integer) value).toString();
+                return ((Integer) getValue()).toString();
             case Types.BIGINT:
-                return ((Long) value).toString();
+                return ((Long) getValue()).toString();
             case Types.REAL:
-                return ((Float) value).toString();
+                return ((Float) getValue()).toString();
             case Types.DOUBLE:
-                return ((Double) value).toString();
+                return ((Double) getValue()).toString();
             case Types.VARBINARY:
-                return new String((byte[]) value, WaarpStringUtils.UTF8);
+                return new String((byte[]) getValue(), WaarpStringUtils.UTF8);
             case Types.DATE:
-                return ((Date) value).toString();
+                return ((Date) getValue()).toString();
             case Types.TIMESTAMP:
-                return ((Timestamp) value).toString();
+                return ((Timestamp) getValue()).toString();
             case Types.CLOB: {
                 StringBuilder sBuilder = new StringBuilder();
-                Reader reader = ((Reader) value);
+                Reader reader = ((Reader) getValue());
                 char[] cbuf = new char[4096];
                 int len;
                 try {
@@ -368,7 +372,7 @@ public class DbValue {
             }
             case Types.BLOB: {
                 StringBuilder sBuilder = new StringBuilder();
-                Reader reader = ((Reader) value);
+                Reader reader = ((Reader) getValue());
                 char[] cbuf = new char[4096];
                 int len;
                 try {
@@ -391,39 +395,39 @@ public class DbValue {
         switch (type) {
             case Types.VARCHAR:
             case Types.LONGVARCHAR:
-                value = svalue;
+                setValue(svalue);
                 break;
             case Types.BIT:
-                value = Boolean.parseBoolean(svalue);
+                setValue(Boolean.parseBoolean(svalue));
                 break;
             case Types.TINYINT:
-                value = Byte.parseByte(svalue);
+                setValue(Byte.parseByte(svalue));
                 break;
             case Types.SMALLINT:
-                value = Short.parseShort(svalue);
+                setValue(Short.parseShort(svalue));
                 break;
             case Types.INTEGER:
-                value = Integer.parseInt(svalue);
+                setValue(Integer.parseInt(svalue));
                 break;
             case Types.BIGINT:
-                value = Long.parseLong(svalue);
+                setValue(Long.parseLong(svalue));
                 break;
             case Types.REAL:
-                value = Float.parseFloat(svalue);
+                setValue(Float.parseFloat(svalue));
                 break;
             case Types.DOUBLE:
-                value = Double.parseDouble(svalue);
+                setValue(Double.parseDouble(svalue));
                 break;
             case Types.VARBINARY:
-                value = svalue.getBytes(WaarpStringUtils.UTF8);
+                setValue(svalue.getBytes(WaarpStringUtils.UTF8));
                 break;
             case Types.DATE:
                 try {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                    value = format.parse(svalue);
+                    setValue(format.parse(svalue));
                 } catch (ParseException e) {
                     try {
-                        value = DateFormat.getDateTimeInstance().parse(svalue);
+                        setValue(DateFormat.getDateTimeInstance().parse(svalue));
                     } catch (ParseException e1) {
                         throw new WaarpDatabaseSqlException("Error in Date: " + svalue, e);
                     }
@@ -432,10 +436,10 @@ public class DbValue {
             case Types.TIMESTAMP:
                 try {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-                    value = new Timestamp(format.parse(svalue).getTime());
+                    setValue(new Timestamp(format.parse(svalue).getTime()));
                 } catch (ParseException e) {
                     try {
-                        value = new Timestamp(DateFormat.getDateTimeInstance().parse(svalue).getTime());
+                        setValue(new Timestamp(DateFormat.getDateTimeInstance().parse(svalue).getTime()));
                     } catch (ParseException e1) {
                         throw new WaarpDatabaseSqlException("Error in Timestamp: " + svalue, e);
                     }
@@ -443,14 +447,14 @@ public class DbValue {
                 break;
             case Types.CLOB:
                 try {
-                    value = new InputStreamReader(new FileInputStream(svalue), WaarpStringUtils.UTF8);
+                    setValue(new InputStreamReader(new FileInputStream(svalue), WaarpStringUtils.UTF8));
                 } catch (FileNotFoundException e) {
                     throw new WaarpDatabaseSqlException("Error in CLOB: " + svalue, e);
                 }
                 break;
             case Types.BLOB:
                 try {
-                    value = new FileInputStream(svalue);
+                    setValue(new FileInputStream(svalue));
                 } catch (FileNotFoundException e) {
                     throw new WaarpDatabaseSqlException("Error in BLOB: " + svalue, e);
                 }
@@ -458,5 +462,19 @@ public class DbValue {
             default:
                 throw new WaarpDatabaseSqlException("Type unknown: " + type);
         }
+    }
+
+    /**
+     * @return the column
+     */
+    public String getColumn() {
+        return column;
+    }
+
+    /**
+     * @param column the column to set
+     */
+    private void setColumn(String column) {
+        this.column = column;
     }
 }
