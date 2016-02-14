@@ -58,7 +58,7 @@ public class EmptyDbModel implements DbModel {
 
     @Override
     public DbType getDbType() {
-        return null;
+        return DbType.none;
     }
 
     @Override

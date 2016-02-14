@@ -325,6 +325,13 @@ public class DbAdmin {
         return dbModel;
     }
 
+    /**
+     * @return the typeDriver
+     */
+    public DbType getTypeDriver() {
+        return typeDriver;
+    }
+
     @Override
     public String toString() {
         return "Admin: " + typeDriver.name() + ":" + server + ":" + user + ":" + (passwd.length());
@@ -420,6 +427,6 @@ public class DbAdmin {
      * @return True if this driver allows Thread Shared Connexion (concurrency usage)
      */
     public boolean isCompatibleWithThreadSharedConnexion() {
-        return (typeDriver != DbType.MariaDB && typeDriver != DbType.MySQL && typeDriver != DbType.Oracle);
+        return (typeDriver != DbType.MariaDB && typeDriver != DbType.MySQL && typeDriver != DbType.Oracle && typeDriver != DbType.none);
     }
 }
