@@ -46,6 +46,9 @@ public class XmlHash {
 
     public XmlHash(XmlValue value) {
         hashtable = new Hashtable<String, XmlValue>();
+        if (value == null) {
+            return;
+        }
         if (value.isMultiple()) {
             hashtable.put(value.getName(), value);
         } else if (value.isSubXml()) {
