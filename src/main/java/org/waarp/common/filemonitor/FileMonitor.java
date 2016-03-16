@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -353,8 +354,8 @@ public class FileMonitor {
         ConcurrentHashMap<String, FileItem> newFileItems =
                 new ConcurrentHashMap<String, FileMonitor.FileItem>();
         if (!lastFileItems.isEmpty()) {
-            removedFileItems = lastFileItems.keySet();
-            removedFileItems.removeAll(fileItems.keySet());
+            removedFileItems = ((Map) lastFileItems).keySet();
+            removedFileItems.removeAll(((Map) fileItems).keySet());
             for (Entry<String, FileItem> key : fileItems.entrySet()) {
                 if (!key.getValue().isStrictlySame(lastFileItems.get(key.getKey()))) {
                     newFileItems.put(key.getKey(), key.getValue());
