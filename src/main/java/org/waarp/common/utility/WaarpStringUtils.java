@@ -126,6 +126,9 @@ public class WaarpStringUtils {
      */
     public final static Timestamp fixDate(String date) {
         Timestamp tdate = null;
+        if (date == null) {
+            return tdate;
+        }
         String ndate = date.replaceAll("/|:|\\.| |-", "");
         if (!ndate.isEmpty()) {
             if (ndate.length() < 15) {
@@ -155,6 +158,9 @@ public class WaarpStringUtils {
      */
     public final static Timestamp fixDate(String date, Timestamp before) {
         Timestamp tdate = null;
+        if (date == null) {
+            return tdate;
+        }
         String ndate = date.replaceAll("/|:|\\.| |-", "");
         if (!ndate.isEmpty()) {
             if (ndate.length() < 15) {
