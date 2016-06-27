@@ -142,13 +142,13 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
     @Override
     public void releaseResources() {
-        try {
             if (pool != null) {
+        try {
                 pool.dispose();
-                pool = null;
-            }
         } catch (SQLException e) {
         }
+    }
+      pool = null;
     }
 
     @Override

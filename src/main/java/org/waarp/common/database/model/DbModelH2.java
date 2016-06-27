@@ -97,8 +97,10 @@ public abstract class DbModelH2 extends DbModelAbstract {
 
     @Override
     public void releaseResources() {
-        if (pool != null)
+      if (pool != null) {
             pool.dispose();
+    }
+      pool = null;
     }
 
     @Override
