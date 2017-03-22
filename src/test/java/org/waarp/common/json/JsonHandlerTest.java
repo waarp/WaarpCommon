@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -112,4 +113,17 @@ public class JsonHandlerTest {
         assertTrue(map != null);
     }
 
+    @Test
+    public void testGetFromStringBadFormat() {
+        String badFormat = "{\"foo\":\"bar\",\"baz\"";
+
+        assertNull("It should be null", JsonHandler.getFromString(badFormat));
+    }
+
+    @Test(expected = JsonProcessingException.class)
+    public void testGetFromStringExcBadFormat() throws JsonProcessingException {
+        String badFormat = "{\"foo\":\"bar\",\"baz\"";
+        
+        JsonHandler.getFromStringExc(badFormat);
+    }
 }
