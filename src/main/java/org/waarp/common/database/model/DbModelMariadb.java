@@ -169,8 +169,8 @@ public abstract class DbModelMariadb extends DbModelAbstract {
                 pool.dispose();
             } catch (SQLException e) {
             }
-            pool = null;
         }
+      pool = null;
     }
 
     protected static enum DBType {

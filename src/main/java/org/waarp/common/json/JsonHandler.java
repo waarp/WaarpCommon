@@ -74,7 +74,28 @@ public class JsonHandler {
     }
 
     /**
+     * Parses a string representation of a JSON object and returns 
+     * an ObjectNode.
+     * JSON Processing exceptions are kept.
      * 
+     * @param value
+     * @return the objectNode or null if an error occurs
+     * @throws JsonProcessingException
+     */
+    public static ObjectNode getFromStringExc(String value) throws JsonProcessingException {
+        try {
+            return (ObjectNode) mapper.readTree(value);
+        } catch (JsonProcessingException e) {
+            throw e;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Parses a string representation of a JSON object and returns 
+     * an ObjectNode, swallowing any processing exception.
+     *
      * @param value
      * @return the objectNode or null if an error occurs
      */

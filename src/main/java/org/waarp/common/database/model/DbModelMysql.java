@@ -130,11 +130,13 @@ public abstract class DbModelMysql extends DbModelAbstract {
 
     @Override
     public void releaseResources() {
+      if (pool != null) {
         try {
-            if (pool != null)
                 pool.dispose();
         } catch (SQLException e) {
         }
+    }
+      pool = null;
     }
 
     @Override
