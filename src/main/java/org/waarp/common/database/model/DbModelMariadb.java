@@ -36,7 +36,7 @@ import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
 
-import org.mariadb.jdbc.MariaDbDataSource;
+import org.mariadb.jdbc.MySQLDataSource;
 
 /**
  * MariaDB Database Model implementation
@@ -53,7 +53,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 
     private static final DbType type = DbType.MariaDB;
 
-    protected MariaDbDataSource mysqlConnectionPoolDataSource;
+    protected MySQLDataSource mysqlConnectionPoolDataSource;
     protected DbConnectionPool pool;
 
     public DbType getDbType() {
@@ -73,12 +73,12 @@ public abstract class DbModelMariadb extends DbModelAbstract {
     public DbModelMariadb(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay)
             throws WaarpDatabaseNoConnectionException {
         this();
-        mysqlConnectionPoolDataSource = new MariaDbDataSource();
-        try {
+        mysqlConnectionPoolDataSource = new MySQLDataSource();
+        // try {
             mysqlConnectionPoolDataSource.setUrl(dbserver);
-        } catch (SQLException e) {
-            throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
-        }
+        // } catch (SQLException e) {
+        //     throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
+        // }
         mysqlConnectionPoolDataSource.setUser(dbuser);
         mysqlConnectionPoolDataSource.setPassword(dbpasswd);
         // Create a pool with no limit
@@ -99,12 +99,12 @@ public abstract class DbModelMariadb extends DbModelAbstract {
     public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
             throws WaarpDatabaseNoConnectionException {
         this();
-        mysqlConnectionPoolDataSource = new MariaDbDataSource();
-        try {
+        mysqlConnectionPoolDataSource = new MySQLDataSource();
+        // try {
             mysqlConnectionPoolDataSource.setUrl(dbserver);
-        } catch (SQLException e) {
-            throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
-        }
+        // } catch (SQLException e) {
+        //     throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
+        // }
         mysqlConnectionPoolDataSource.setUser(dbuser);
         mysqlConnectionPoolDataSource.setPassword(dbpasswd);
         // Create a pool with no limit
@@ -144,7 +144,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
                     return pool.getConnection();
                 } catch (SQLException e) {
                     // try to renew the pool
-                    mysqlConnectionPoolDataSource = new MariaDbDataSource();
+                    mysqlConnectionPoolDataSource = new MySQLDataSource();
                     mysqlConnectionPoolDataSource.setUrl(server);
                     mysqlConnectionPoolDataSource.setUser(user);
                     mysqlConnectionPoolDataSource.setPassword(passwd);
