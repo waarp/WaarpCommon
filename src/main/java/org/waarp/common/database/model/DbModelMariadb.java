@@ -36,7 +36,7 @@ import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
 
-import org.mariadb.jdbc.MySQLDataSource;
+import org.mariadb.jdbc.MariaDbDataSource;
 
 /**
  * MariaDB Database Model implementation
@@ -53,7 +53,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 
     private static final DbType type = DbType.MariaDB;
 
-    protected MySQLDataSource mysqlConnectionPoolDataSource;
+    protected MariaDbDataSource mysqlConnectionPoolDataSource;
     protected DbConnectionPool pool;
 
     public DbType getDbType() {
@@ -73,16 +73,26 @@ public abstract class DbModelMariadb extends DbModelAbstract {
     public DbModelMariadb(String dbserver, String dbuser, String dbpasswd, Timer timer, long delay)
             throws WaarpDatabaseNoConnectionException {
         this();
-        mysqlConnectionPoolDataSource = new MySQLDataSource();
-        // try {
+        mysqlConnectionPoolDataSource = new MariaDbDataSource();
+        try {
             mysqlConnectionPoolDataSource.setUrl(dbserver);
-        // } catch (SQLException e) {
-        //     throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
-        // }
-        mysqlConnectionPoolDataSource.setUser(dbuser);
-        mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+        } catch (SQLException e) {
+            throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
+        }
+
+        try {
+            mysqlConnectionPoolDataSource.setUser(dbuser);
+            mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+        } catch (SQLException e) {
+            throw new WaarpDatabaseNoConnectionException("Wrong username or password", e);
+        }
         // Create a pool with no limit
-        pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
+        if (timer != null && delay != 0) {
+            pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
+        } else {
+            pool = new DbConnectionPool(mysqlConnectionPoolDataSource);
+        }
+            
         logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
                 + pool.getLoginTimeout()
                 + " ForceClose: " + pool.getTimeoutForceClose());
@@ -98,20 +108,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
      */
     public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
             throws WaarpDatabaseNoConnectionException {
-        this();
-        mysqlConnectionPoolDataSource = new MySQLDataSource();
-        // try {
-            mysqlConnectionPoolDataSource.setUrl(dbserver);
-        // } catch (SQLException e) {
-        //     throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
-        // }
-        mysqlConnectionPoolDataSource.setUser(dbuser);
-        mysqlConnectionPoolDataSource.setPassword(dbpasswd);
-        // Create a pool with no limit
-        pool = new DbConnectionPool(mysqlConnectionPoolDataSource);
-        logger.warn("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
-                + pool.getLoginTimeout()
-                + " ForceClose: " + pool.getTimeoutForceClose());
+        this(dbserver, dbuser, dbpasswd, (Timer) null, (long) 0);
     }
 
     /**
@@ -144,7 +141,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
                     return pool.getConnection();
                 } catch (SQLException e) {
                     // try to renew the pool
-                    mysqlConnectionPoolDataSource = new MySQLDataSource();
+                    mysqlConnectionPoolDataSource = new MariaDbDataSource();
                     mysqlConnectionPoolDataSource.setUrl(server);
                     mysqlConnectionPoolDataSource.setUser(user);
                     mysqlConnectionPoolDataSource.setPassword(passwd);
