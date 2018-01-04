@@ -79,10 +79,20 @@ public abstract class DbModelMariadb extends DbModelAbstract {
         } catch (SQLException e) {
             throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
         }
-        mysqlConnectionPoolDataSource.setUser(dbuser);
-        mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+
+        try {
+            mysqlConnectionPoolDataSource.setUser(dbuser);
+            mysqlConnectionPoolDataSource.setPassword(dbpasswd);
+        } catch (SQLException e) {
+            throw new WaarpDatabaseNoConnectionException("Wrong username or password", e);
+        }
         // Create a pool with no limit
-        pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
+        if (timer != null && delay != 0) {
+            pool = new DbConnectionPool(mysqlConnectionPoolDataSource, timer, delay);
+        } else {
+            pool = new DbConnectionPool(mysqlConnectionPoolDataSource);
+        }
+            
         logger.info("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
                 + pool.getLoginTimeout()
                 + " ForceClose: " + pool.getTimeoutForceClose());
@@ -98,20 +108,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
      */
     public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
             throws WaarpDatabaseNoConnectionException {
-        this();
-        mysqlConnectionPoolDataSource = new MariaDbDataSource();
-        try {
-            mysqlConnectionPoolDataSource.setUrl(dbserver);
-        } catch (SQLException e) {
-            throw new WaarpDatabaseNoConnectionException("Url setting is wrong", e);
-        }
-        mysqlConnectionPoolDataSource.setUser(dbuser);
-        mysqlConnectionPoolDataSource.setPassword(dbpasswd);
-        // Create a pool with no limit
-        pool = new DbConnectionPool(mysqlConnectionPoolDataSource);
-        logger.warn("Some info: MaxConn: " + pool.getMaxConnections() + " LogTimeout: "
-                + pool.getLoginTimeout()
-                + " ForceClose: " + pool.getTimeoutForceClose());
+        this(dbserver, dbuser, dbpasswd, (Timer) null, (long) 0);
     }
 
     /**
