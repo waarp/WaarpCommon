@@ -17,13 +17,17 @@
  */
 package org.waarp.common.database;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ConcurrentModificationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timer;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
 import org.waarp.common.database.exception.WaarpDatabaseNoConnectionException;
 import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 import org.waarp.common.database.model.DbModel;
@@ -36,11 +40,18 @@ import org.waarp.common.utility.UUID;
 import org.waarp.common.utility.WaarpThreadFactory;
 
 /**
- * Class for access to Database
+ * A wrapping of org.apache.commons.dbcp.BasicDataSource
+ * to store Database connection information
+ * and handle Datanase connection request.
+:w
+
  * 
  * @author Frederic Bregier
  * 
  */
+// TODO 4.0 add contructor DbAdmin(DbConfig config)
+// TODO 4.0 remove DbSession session
+// TODO 4.0 move connections from static to instanced
 public class DbAdmin {
     /**
      * Internal Logger
@@ -53,6 +64,11 @@ public class DbAdmin {
     public static long WAITFORNETOP = 100;
 
     /**
+     * The datasource for connection pooling
+     */
+    private BasicDataSource ds;
+
+    /**
      * Database type
      */
     protected final DbType typeDriver;
@@ -63,94 +79,140 @@ public class DbAdmin {
     private final DbModel dbModel;
 
     /**
-     * DB Server
+     * The connection url to be passed to the JDBC driver to establish a connection.
      */
     private final String server;
 
     /**
-     * DB User
+     * The connection username to be passed to the JDBC driver to establish a connection.
      */
     private final String user;
 
     /**
-     * DB Password
+     * The connection password to be passed to the JDBC driver to establish a connection.
      */
-    private final String passwd;
+    private final String password;
 
     /**
-     * Is this DB Admin connected
+     * The connection readOnly property.
      */
-    private boolean isActive = false;
-
-    /**
-     * Is this DB Admin Read Only
-     */
-    private boolean isReadOnly = false;
+    private boolean readOnly = false;
 
     /**
      * session is the Session object for all type of requests
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon.
      */
+    // TODO 4.0 remove
     private DbSession session = null;
+    
     /**
      * Number of HttpSession
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon.
      */
+    // TODO 4.0 remove
     private static int nbHttpSession = 0;
 
+    /**
+     * Number of HttpSession
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon.
+     */
+    // TODO 4,0 remove
     protected static final Timer dbSessionTimer = new HashedWheelTimer(new WaarpThreadFactory("TimerClose"),
             50, TimeUnit.MILLISECONDS, 1024);
 
     /**
      * @return the session
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * Use {@link #getConnection()} instead.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public DbSession getSession() {
-        return session;
+         return session;
+    }
+
+    public Connection getConnection() throws WaarpDatabaseNoConnectionException {
+	try {
+	    return ds.getConnection();
+	} catch (SQLException e) {
+	    throw new WaarpDatabaseNoConnectionException("Cannot access database", e);
+	}
     }
 
     /**
      * @param session the session to set
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
+    // TODO 4.0 remove
+    @Deprecated
     public void setSession(DbSession session) {
-        this.session = session;
+        // Do Nothing
     }
 
     /**
      * @return True if the connection is ReadOnly
      */
     public boolean isReadOnly() {
-        return isReadOnly;
+        return readOnly;
     }
 
     /**
-     * @return the isActive
+     * @return true
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * You should not use this function ask for a connection and catch errors instead.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public boolean isActive() {
-        return isActive;
+        return true;
     }
 
     /**
      * @param isActive the isActive to set
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * DBCP instegration set active to true.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public void setActive(boolean isActive) {
-        this.isActive = isActive;
+    	// Do Nothing
     }
 
     /**
      * Validate connection
      * 
-     * @throws WaarpDatabaseNoConnectionException
+     * @throws WaarpDatabaseNoConnectionException if a database access errors occurs
+     * 
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * Use {@link #validateConnection()} instead.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public void validConnection() throws WaarpDatabaseNoConnectionException {
-        try {
-            dbModel.validConnection(getSession());
-        } catch (WaarpDatabaseNoConnectionException e) {
-            getSession().setDisActive(true);
-            setActive(false);
-            throw e;
-        }
-        getSession().setDisActive(false);
-        setActive(true);
+    	validateConnection();
     }
 
+    /**
+     * Validate connection
+     * 
+     * @throws WaarpDatabaseNoConnectionException if a database access errors occurs
+     */
+    public void validateConnection() throws WaarpDatabaseNoConnectionException {
+    	try {
+	    ds.getConnection().close();
+	} catch (SQLException e) {
+	    throw new WaarpDatabaseNoConnectionException("Cannot access database", e);
+	}
+    }
+
+    // TODO NOW modify javadoc
     /**
      * Use a default server for basic connection. Later on, specific connection to database for the
      * scheme that provides access to the table R66DbIndex for one specific Legacy could be done.
@@ -164,28 +226,15 @@ public class DbAdmin {
      * @param model
      * @param server
      * @param user
-     * @param passwd
+     * @param password
      * @throws WaarpDatabaseNoConnectionException
      */
-    public DbAdmin(DbModel model, String server, String user, String passwd)
+    public DbAdmin(DbModel model, String server, String user, String password)
             throws WaarpDatabaseNoConnectionException {
-        this.server = server;
-        this.user = user;
-        this.passwd = passwd;
-        this.dbModel = model;
-        this.typeDriver = model.getDbType();
-        if (typeDriver == null) {
-            logger.error("Cannot find TypeDriver");
-            throw new WaarpDatabaseNoConnectionException(
-                    "Cannot find database drive");
-        }
-        setSession(new DbSession(this, false));
-        getSession().setAdmin(this);
-        isReadOnly = false;
-        validConnection();
-        getSession().useConnection(); // default since this is the top connection
+        this(model, server, user, password, true);
     }
 
+    // TODO NOW modify javadoc
     /**
      * Use a default server for basic connection. Later on, specific connection to database for the
      * scheme that provides access to the table R66DbIndex for one specific Legacy could be done.
@@ -199,16 +248,17 @@ public class DbAdmin {
      * @param model
      * @param server
      * @param user
-     * @param passwd
+     * @param password
      * @param write
      * @throws WaarpDatabaseSqlException
      * @throws WaarpDatabaseNoConnectionException
      */
-    public DbAdmin(DbModel model, String server, String user, String passwd,
+    // TODO 4.0 change param write to readOnly for better understanding
+    public DbAdmin(DbModel model, String server, String user, String password,
             boolean write) throws WaarpDatabaseNoConnectionException {
         this.server = server;
         this.user = user;
-        this.passwd = passwd;
+        this.password = password;
         this.dbModel = model;
         this.typeDriver = model.getDbType();
         if (typeDriver == null) {
@@ -216,71 +266,50 @@ public class DbAdmin {
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot find database driver");
         }
-        if (write) {
-            for (int i = 0; i < RETRYNB; i++) {
-                try {
-                    setSession(new DbSession(this, false));
-                } catch (WaarpDatabaseNoConnectionException e) {
-                    logger.warn("Attempt of connection in error: " + i, e);
-                    continue;
-                }
-                isReadOnly = false;
-                getSession().setAdmin(this);
-                validConnection();
-                getSession().useConnection(); // default since this is the top
-                                         // connection
-                return;
-            }
-        } else {
-            for (int i = 0; i < RETRYNB; i++) {
-                try {
-                    setSession(new DbSession(this, true));
-                } catch (WaarpDatabaseNoConnectionException e) {
-                    logger.warn("Attempt of connection in error: " + i, e);
-                    continue;
-                }
-                isReadOnly = true;
-                getSession().setAdmin(this);
-                validConnection();
-                getSession().useConnection(); // default since this is the top
-                                         // connection
-                return;
-            }
-        }
-        setSession(null);
-        setActive(false);
-        logger.error("Cannot connect to Database!");
-        throw new WaarpDatabaseNoConnectionException(
-                "Cannot connect to database");
+
+	ds = new BasicDataSource();
+	try {
+	    ds.setDriverClassName(DriverManager.getDriver(server).getClass().getName());
+	} catch (SQLException e) {
+            throw new WaarpDatabaseNoConnectionException(
+                    "Cannot find database driver");
+	}
+	ds.setUrl(this.server);
+	ds.setUsername(this.user);
+	ds.setPassword(this.password);
+	
+	ds.setDefaultAutoCommit(true);
+	ds.setDefaultReadOnly(!write);
+	readOnly = !write;
+
+	validateConnection();
+	this.session = new DbSession(this, readOnly); 
     }
 
+    // TODO NOW modify javadoc
     /**
      * Empty constructor for no Database support (very thin client)
      */
     public DbAdmin() {
-        // not true but to enable pseudo database functions
-        setActive(false);
-        typeDriver = DbType.none;
-        DbModelFactory.classLoaded.add(DbType.none.name());
-        dbModel = new EmptyDbModel();
         server = null;
         user = null;
-        passwd = null;
+        password = null;
+        dbModel = new EmptyDbModel();
+        typeDriver = DbType.none;
+        DbModelFactory.classLoaded.add(DbType.none.name());
     }
 
     /**
-     * Close the underlying session. Can be call even for connection given from the constructor
-     * DbAdmin(Connection, boolean).
-     * 
+     * Closes and releases all registered connections and connection pool
      */
+    // TODO 4.0 rework (connections is instantiated)
     public void close() {
-        if (getSession() != null) {
-            getSession().endUseConnection(); // default since this is the top
-                                        // connection
-            getSession().forceDisconnect();
-            setSession(null);
-        }
-        setActive(false);
+	DbAdmin.closeAllConnection();
+	try {
+	    ds.close();
+	} catch (SQLException e) {
+	    logger.debug("Cannot properly close the database connection pool", e);
+	}
     }
 
     /**
@@ -288,8 +317,11 @@ public class DbAdmin {
      * 
      * @throws WaarpDatabaseNoConnectionException
      * @throws WaarpDatabaseSqlException
-     * 
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * Create a new DbSession and commit it.
      */
+    @Deprecated
     public void commit() throws WaarpDatabaseSqlException,
             WaarpDatabaseNoConnectionException {
         if (getSession() != null) {
@@ -298,24 +330,36 @@ public class DbAdmin {
     }
 
     /**
-     * @return the server
+     * @return the JDBC connection url property
      */
     public String getServer() {
         return server;
     }
 
     /**
-     * @return the user
+     * @return the JDBC connection username property
      */
     public String getUser() {
         return user;
     }
 
     /**
-     * @return the passwd
+     * @return the JDBC connection password property
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * Use {@link #getPassword()} instead.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public String getPasswd() {
-        return passwd;
+        return password;
+    }
+
+    /**
+     * @return the JDBC connection password property
+     */
+    public String getPassword() {
+        return password;
     }
 
     /**
@@ -334,74 +378,148 @@ public class DbAdmin {
 
     @Override
     public String toString() {
-        return "Admin: " + typeDriver.name() + ":" + server + ":" + user + ":" + (passwd.length());
+        return "Admin: " + typeDriver.name() + ":" + server + ":" + user + ":" + (password.length());
     }
 
     /**
      * List all Connection to enable the close call on them
      */
-    private static ConcurrentHashMap<UUID, DbSession> listConnection = new ConcurrentHashMap<UUID, DbSession>();
+    // TODO 4.0 move from static to instanciated
+    private static ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<UUID, Connection>();
 
     /**
      * Increment nb of Http Connection
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
+    // TODO 4.0 remove
+    @Deprecated
     public static void incHttpSession() {
         nbHttpSession++;
     }
     /**
      * Decrement nb of Http Connection
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
+    // TODO 4.0 remove
+    @Deprecated
     public static void decHttpSession() {
         nbHttpSession--;
     }
     /**
      * @return the nb of Http Connection
+     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
+    // TODO 4.0 remove
+    @Deprecated
     public static int getHttpSession() {
         return nbHttpSession;
     }
+
     /**
      * Add a Connection into the list
      * 
      * @param id
      * @param session
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * use {@link #addConnection(UUID id, Connection con)} instead.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public static void addConnection(UUID id, DbSession session) {
-        listConnection.put(id, session);
+	DbAdmin.staticAddConnection(id, session.getConn());
+    }
+
+    /**
+     * Add a Connection into the list
+     * 
+     * @param id
+     * @param connection
+     * 
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * use {@link #addConnection(UUID id, Connection con)} instead.
+     */
+    // TODO 4.0 remove
+    @Deprecated
+    public static void staticAddConnection(UUID id, Connection con) {
+        connections.put(id, con);
+    }
+
+    /**
+     * Add a Connection into the list
+     * 
+     * @param id
+     * @param connection
+     */
+    // TODO 4.0 rework (connections is instantiated)
+    public void addConnection(UUID id, Connection con) {
+        DbAdmin.staticAddConnection(id, con);
     }
 
     /**
      * Remove a Connection from the list
      * 
-     * @param id
-     *            Id of the connection
+     * @param id Id of the connection
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * Use {@link #deleteConnection(UUID id)} instead.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public static void removeConnection(UUID id) {
-        listConnection.remove(id);
+	Connection con = connections.get(id);
+	try {
+	    con.close();
+	} catch (SQLException e) {
+	    logger.debug("Cannot properly close database connection: " + id, e);
+	}
+	connections.remove(id);
     }
 
     /**
-     * 
-     * @return the number of connection (so number of network channels)
+     * Remove a Connection from the list
+     *
+     * @param id Id of the connection
+     * @deprecated This will be renamed removeConnection(UUID id) when static removeConnection(UUID id) is removed
      */
+    // TODO 4.0 rework (connections is instantianted)
+    public void closeConnection(UUID id) {
+	Connection con = DbAdmin.connections.get(id);
+	try {
+	    con.close();
+	} catch (SQLException e) {
+	    logger.debug("Cannot properly close database connection: " + id, e);
+	}
+	DbAdmin.connections.remove(id);
+    }
+
+    /**
+     * @return the number of connection (so number of network channels)
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     */
+    // TODO 4.0 remove
+    @Deprecated
     public static int getNbConnection() {
-        return listConnection.size() - 1;
+        return connections.size() - 1;
     }
 
     /**
      * Close all database connections
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * Use {@link #close()} instead.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public static void closeAllConnection() {
-        for (DbSession session : listConnection.values()) {
-            logger.debug("Close (all) Db Conn: " + session.getInternalId());
-            try {
-                session.getConn().close();
-            } catch (SQLException e) {
-            } catch (ConcurrentModificationException e) {
-            }
-        }
-        listConnection.clear();
-        for (DbModel dbModel : DbModelFactory.dbModels) {
+        for (UUID id : connections.keySet()) {
+            removeConnection(id);
+	}
+	connections.clear();
+	for (DbModel dbModel : DbModelFactory.dbModels) {
             if (dbModel != null) {
                 dbModel.releaseResources();
             }
@@ -411,22 +529,23 @@ public class DbAdmin {
 
     /**
      * Check all database connections and try to reopen them if disActive
+     *
+     * @deprecated This will be removed in a future version of WaarpCommon. 
+     * Use {@link #validateConnection()} instead.
      */
+    // TODO 4.0 remove
+    @Deprecated
     public static void checkAllConnections() {
-        for (DbSession session : listConnection.values()) {
-            try {
-                session.checkConnection();
-            } catch (WaarpDatabaseNoConnectionException e) {
-                logger.error("Database Connection cannot be reinitialized");
-            }
-        }
+    	//Do Nothing
     }
 
     /**
-     * 
      * @return True if this driver allows Thread Shared Connexion (concurrency usage)
      */
     public boolean isCompatibleWithThreadSharedConnexion() {
-        return (typeDriver != DbType.MariaDB && typeDriver != DbType.MySQL && typeDriver != DbType.Oracle && typeDriver != DbType.none);
+        return typeDriver != DbType.MariaDB && 
+		typeDriver != DbType.MySQL && 
+		typeDriver != DbType.Oracle && 
+		typeDriver != DbType.none;
     }
 }
