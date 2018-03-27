@@ -129,7 +129,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
         }
         try {
             DriverManager
-                    .registerDriver(new oracle.jdbc.OracleDriver());
+                    .registerDriver(new oracle.jdbc.driver.OracleDriver());
             DbModelFactory.classLoaded.add(type.name());
         } catch (SQLException e) {
             // SQLException
@@ -366,7 +366,13 @@ public abstract class DbModelOracle extends DbModelAbstract {
     }
 
     @Override
+    @Deprecated
     protected String validConnectionString() {
+        return "select 1 from dual";
+    }
+
+    @Override
+    public  String getValidationQuery() {
         return "select 1 from dual";
     }
 

@@ -89,6 +89,10 @@ public interface DbModel {
     public long nextSequence(DbSession dbSession)
             throws WaarpDatabaseNoConnectionException, WaarpDatabaseSqlException,
             WaarpDatabaseNoDataException;
+    /**
+     * @return the validation query associated with the DbModel
+     */
+    public String getValidationQuery();
 
     /**
      * Validate connection

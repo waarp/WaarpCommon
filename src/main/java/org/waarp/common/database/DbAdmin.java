@@ -43,15 +43,12 @@ import org.waarp.common.utility.WaarpThreadFactory;
  * A wrapping of org.apache.commons.dbcp.BasicDataSource
  * to store Database connection information
  * and handle Datanase connection request.
-:w
-
  * 
  * @author Frederic Bregier
  * 
- */
-// TODO 4.0 add contructor DbAdmin(DbConfig config)
-// TODO 4.0 remove DbSession session
-// TODO 4.0 move connections from static to instanced
+ * @deprecated Will be removed for a proper ConnectionFactory in a future version of WaarpCommon
+ */ 
+// TODO 4.0 remove
 public class DbAdmin {
     /**
      * Internal Logger
@@ -100,44 +97,35 @@ public class DbAdmin {
 
     /**
      * session is the Session object for all type of requests
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon.
      */
-    // TODO 4.0 remove
     private DbSession session = null;
     
     /**
      * Number of HttpSession
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon.
      */
-    // TODO 4.0 remove
     private static int nbHttpSession = 0;
 
     /**
      * Number of HttpSession
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon.
      */
-    // TODO 4,0 remove
     protected static final Timer dbSessionTimer = new HashedWheelTimer(new WaarpThreadFactory("TimerClose"),
             50, TimeUnit.MILLISECONDS, 1024);
 
     /**
      * @return the session
      *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
-     * Use {@link #getConnection()} instead.
+     * @deprecated Use {@link #getConnection()} instead.
      */
-    // TODO 4.0 remove
     @Deprecated
     public DbSession getSession() {
          return session;
     }
 
-    public Connection getConnection() throws WaarpDatabaseNoConnectionException {
+    public Connection getConnection(UUID id) throws WaarpDatabaseNoConnectionException {
 	try {
-	    return ds.getConnection();
+	    Connection con = ds.getConnection();
+	    DbAdmin.addConnection(id, con);
+	    return con;
 	} catch (SQLException e) {
 	    throw new WaarpDatabaseNoConnectionException("Cannot access database", e);
 	}
@@ -145,10 +133,7 @@ public class DbAdmin {
 
     /**
      * @param session the session to set
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
-    // TODO 4.0 remove
     @Deprecated
     public void setSession(DbSession session) {
         // Do Nothing
@@ -164,10 +149,8 @@ public class DbAdmin {
     /**
      * @return true
      *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
-     * You should not use this function ask for a connection and catch errors instead.
+     * @deprecated You should not use this function ask for a connection and catch errors instead.
      */
-    // TODO 4.0 remove
     @Deprecated
     public boolean isActive() {
         return true;
@@ -179,7 +162,6 @@ public class DbAdmin {
      * @deprecated This will be removed in a future version of WaarpCommon. 
      * DBCP instegration set active to true.
      */
-    // TODO 4.0 remove
     @Deprecated
     public void setActive(boolean isActive) {
     	// Do Nothing
@@ -190,10 +172,8 @@ public class DbAdmin {
      * 
      * @throws WaarpDatabaseNoConnectionException if a database access errors occurs
      * 
-     * @deprecated This will be removed in a future version of WaarpCommon. 
-     * Use {@link #validateConnection()} instead.
+     * @deprecated Use {@link #validateConnection()} instead.
      */
-    // TODO 4.0 remove
     @Deprecated
     public void validConnection() throws WaarpDatabaseNoConnectionException {
     	validateConnection();
@@ -212,7 +192,6 @@ public class DbAdmin {
 	}
     }
 
-    // TODO NOW modify javadoc
     /**
      * Use a default server for basic connection. Later on, specific connection to database for the
      * scheme that provides access to the table R66DbIndex for one specific Legacy could be done.
@@ -234,7 +213,6 @@ public class DbAdmin {
         this(model, server, user, password, true);
     }
 
-    // TODO NOW modify javadoc
     /**
      * Use a default server for basic connection. Later on, specific connection to database for the
      * scheme that provides access to the table R66DbIndex for one specific Legacy could be done.
@@ -253,7 +231,6 @@ public class DbAdmin {
      * @throws WaarpDatabaseSqlException
      * @throws WaarpDatabaseNoConnectionException
      */
-    // TODO 4.0 change param write to readOnly for better understanding
     public DbAdmin(DbModel model, String server, String user, String password,
             boolean write) throws WaarpDatabaseNoConnectionException {
         this.server = server;
@@ -280,13 +257,13 @@ public class DbAdmin {
 	
 	ds.setDefaultAutoCommit(true);
 	ds.setDefaultReadOnly(!write);
+	ds.setValidationQuery(this.dbModel.getValidationQuery());
 	readOnly = !write;
 
 	validateConnection();
 	this.session = new DbSession(this, readOnly); 
     }
 
-    // TODO NOW modify javadoc
     /**
      * Empty constructor for no Database support (very thin client)
      */
@@ -302,8 +279,8 @@ public class DbAdmin {
     /**
      * Closes and releases all registered connections and connection pool
      */
-    // TODO 4.0 rework (connections is instantiated)
     public void close() {
+	logger.info("DBAdmin closing");
 	DbAdmin.closeAllConnection();
 	try {
 	    ds.close();
@@ -318,10 +295,7 @@ public class DbAdmin {
      * @throws WaarpDatabaseNoConnectionException
      * @throws WaarpDatabaseSqlException
      *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
-     * Create a new DbSession and commit it.
      */
-    @Deprecated
     public void commit() throws WaarpDatabaseSqlException,
             WaarpDatabaseNoConnectionException {
         if (getSession() != null) {
@@ -346,10 +320,8 @@ public class DbAdmin {
     /**
      * @return the JDBC connection password property
      *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
-     * Use {@link #getPassword()} instead.
+     * @deprecated Use {@link #getPassword()} instead.
      */
-    // TODO 4.0 remove
     @Deprecated
     public String getPasswd() {
         return password;
@@ -384,35 +356,23 @@ public class DbAdmin {
     /**
      * List all Connection to enable the close call on them
      */
-    // TODO 4.0 move from static to instanciated
     private static ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<UUID, Connection>();
 
     /**
      * Increment nb of Http Connection
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
-    // TODO 4.0 remove
-    @Deprecated
     public static void incHttpSession() {
         nbHttpSession++;
     }
     /**
      * Decrement nb of Http Connection
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
-    // TODO 4.0 remove
-    @Deprecated
     public static void decHttpSession() {
         nbHttpSession--;
     }
     /**
      * @return the nb of Http Connection
-     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
-    // TODO 4.0 remove
-    @Deprecated
     public static int getHttpSession() {
         return nbHttpSession;
     }
@@ -422,14 +382,13 @@ public class DbAdmin {
      * 
      * @param id
      * @param session
-     *
      * @deprecated This will be removed in a future version of WaarpCommon. 
+     *
      * use {@link #addConnection(UUID id, Connection con)} instead.
      */
-    // TODO 4.0 remove
     @Deprecated
     public static void addConnection(UUID id, DbSession session) {
-	DbAdmin.staticAddConnection(id, session.getConn());
+	DbAdmin.addConnection(id, session.getConn());
     }
 
     /**
@@ -437,38 +396,18 @@ public class DbAdmin {
      * 
      * @param id
      * @param connection
-     * 
-     * @deprecated This will be removed in a future version of WaarpCommon. 
-     * use {@link #addConnection(UUID id, Connection con)} instead.
      */
-    // TODO 4.0 remove
-    @Deprecated
-    public static void staticAddConnection(UUID id, Connection con) {
+    public static void addConnection(UUID id, Connection con) {
         connections.put(id, con);
-    }
-
-    /**
-     * Add a Connection into the list
-     * 
-     * @param id
-     * @param connection
-     */
-    // TODO 4.0 rework (connections is instantiated)
-    public void addConnection(UUID id, Connection con) {
-        DbAdmin.staticAddConnection(id, con);
     }
 
     /**
      * Remove a Connection from the list
      * 
      * @param id Id of the connection
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
-     * Use {@link #deleteConnection(UUID id)} instead.
      */
-    // TODO 4.0 remove
-    @Deprecated
     public static void removeConnection(UUID id) {
+	logger.info("Remove connection " + id);
 	Connection con = connections.get(id);
 	try {
 	    con.close();
@@ -479,29 +418,8 @@ public class DbAdmin {
     }
 
     /**
-     * Remove a Connection from the list
-     *
-     * @param id Id of the connection
-     * @deprecated This will be renamed removeConnection(UUID id) when static removeConnection(UUID id) is removed
-     */
-    // TODO 4.0 rework (connections is instantianted)
-    public void closeConnection(UUID id) {
-	Connection con = DbAdmin.connections.get(id);
-	try {
-	    con.close();
-	} catch (SQLException e) {
-	    logger.debug("Cannot properly close database connection: " + id, e);
-	}
-	DbAdmin.connections.remove(id);
-    }
-
-    /**
      * @return the number of connection (so number of network channels)
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon. 
      */
-    // TODO 4.0 remove
-    @Deprecated
     public static int getNbConnection() {
         return connections.size() - 1;
     }
@@ -512,7 +430,6 @@ public class DbAdmin {
      * @deprecated This will be removed in a future version of WaarpCommon. 
      * Use {@link #close()} instead.
      */
-    // TODO 4.0 remove
     @Deprecated
     public static void closeAllConnection() {
         for (UUID id : connections.keySet()) {

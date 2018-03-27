@@ -45,9 +45,10 @@ import org.waarp.common.utility.UUID;
  * to better support PreparedStatement handling.
  * 
  * @author Frederic Bregier
+ * 
+ * @deprecated Will be remove in a future verison of WaarpCommon
  */
 
-//TODO 4.0 remove
 public class DbSession {
     /**
      * Internal Logger
@@ -92,7 +93,6 @@ public class DbSession {
      */
     private volatile boolean isDisActive = true;
 
-    // TODO NOW rework
     /**
      * List all DbPrepareStatement with long term usage to enable the recreation when the associated
      * connection is reopened
@@ -111,14 +111,13 @@ public class DbSession {
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot set a null Server");
         }
+        setInternalId(new UUID());
         try {
+            logger.debug("Open Db Conn: " + getInternalId());
+            setConn(admin.getConnection(getInternalId()));
             this.setAutoCommit(autoCommit);
-            setConn(admin.getConnection());
             this.setReadOnly(isReadOnly);
             getConn().setReadOnly(this.isReadOnly());
-            setInternalId(new UUID());
-            logger.debug("Open Db Conn: " + getInternalId());
-            DbAdmin.addConnection(getInternalId(), this);
             setDisActive(false);
             checkConnection();
         } catch (SQLException ex) {
@@ -138,7 +137,6 @@ public class DbSession {
         }
     }
 
-    // TODO NOW rework
     /**
      * Create a session and connect the current object to the server using the DbAdmin object. The
      * database access use auto commit.
@@ -170,7 +168,6 @@ public class DbSession {
         }
     }
 
-    // TODO NOW rework
     /**
      * Create a session and connect the current object to the server using the DbAdmin object.
      * 
@@ -202,7 +199,28 @@ public class DbSession {
         }
     }
 
-    // TODO NOW rework
+    public synchronized void renewConnection() 
+            throws WaarpDatabaseNoConnectionException {
+        try {
+            if (con != null) {
+                if(con.isClosed()) {
+		    logger.debug("Session is closed. Will be renewed.");
+		} else {
+		    logger.debug("Session is valid.");
+		    return;
+		}
+            }
+        } catch (SQLException e) {
+	     logger.info("Session is invalid. Will try to renew.");
+	}
+        setConn(admin.getConnection(internalId));
+	try {
+	    recreateLongTermPreparedStatements();
+	} catch (WaarpDatabaseSqlException e) {
+	    logger.warn("Error recreating prepared statements.", e);
+	}
+    }
+
     /**
      * Change the autocommit feature
      * 
@@ -242,10 +260,7 @@ public class DbSession {
 
     /**
      * @param admin the admin to set
-     * 
-     * @deprecated This will be remove in a future version of WaarpCommon.
      */
-    @Deprecated
     protected void setAdmin(DbAdmin admin) {
         this.admin = admin;
     }
@@ -254,10 +269,7 @@ public class DbSession {
      * Print the error from SQLException
      * 
      * @param ex
-     *
-     * @deprecated This will be remove in a future version of WaarpCommon.
      */
-    @Deprecated
     public static void error(SQLException ex) {
         // handle any errors
         logger.error("SQLException: " + ex.getMessage() + " SQLState: " +
@@ -266,10 +278,7 @@ public class DbSession {
 
     /**
      * To be called when a client will start to use this DbSession (once by client)
-     * 
-     * @deprecated This will be remove in a future version of WaarpCommon.
      */
-    @Deprecated
     public void useConnection() {
         int val = nbThread.incrementAndGet();
         synchronized (this) {
@@ -317,7 +326,6 @@ public class DbSession {
         }
     }
 
-    // TODO NOW rework
     /**
      * To disconnect in asynchronous way the DbSession
      * 
@@ -353,7 +361,6 @@ public class DbSession {
         return (this == o) || this.getInternalId().equals(((DbSession) o).getInternalId());
     }
 
-    // TODO NOW rework
     /**
      * Force the close of the connection
      *
@@ -395,7 +402,6 @@ public class DbSession {
                 + getAdmin().getDbModel().currentNumberOfPooledConnections());
     }
 
-    // TODO NOW rework
     /**
      * Close the connection
      * 
@@ -448,8 +454,7 @@ public class DbSession {
      * 
      * @throws WaarpDatabaseNoConnectionException
      *
-     * @deprecated This will be remove in a future version of WaarpCommon.
-     * DBCP integration set active to true
+     * @deprecated DBCP integration set active to true
      */
     @Deprecated
     public void checkConnection() throws WaarpDatabaseNoConnectionException {
@@ -459,15 +464,13 @@ public class DbSession {
     /**
      * @return True if the connection was successfully reconnected
      *
-     * @deprecated This will be remove in a future version of WaarpCommon.
-     * DBCP integration set active to true
+     * @deprecated DBCP integration set active to true
      */
     @Deprecated
     public boolean checkConnectionNoException() {
         return true;
     }
 
-    // TODO NOW rework
     /**
      * Add a Long Term PreparedStatement
      * 
@@ -477,7 +480,6 @@ public class DbSession {
         this.listPreparedStatement.add(longterm);
     }
 
-    // TODO NOW rework
     /**
      * Due to a reconnection, recreate all associated long term PreparedStatements
      * 
@@ -513,7 +515,6 @@ public class DbSession {
         }
     }
 
-    // TODO NOW rework
     /**
      * Remove all Long Term PreparedStatements (closing connection)
      */
@@ -526,7 +527,6 @@ public class DbSession {
         listPreparedStatement.clear();
     }
 
-    // TODO NOW rework
     /**
      * Remove one Long Term PreparedStatement
      * 
@@ -536,7 +536,6 @@ public class DbSession {
         listPreparedStatement.remove(longterm);
     }
 
-    // TODO NOW rework
     /**
      * Commit everything
      * 
@@ -565,7 +564,6 @@ public class DbSession {
         }
     }
 
-    // TODO NOW rework
     /**
      * Rollback from the savepoint or the last set if null
      * 
@@ -597,7 +595,6 @@ public class DbSession {
         }
     }
 
-    // TODO NOW rework
     /**
      * Make a savepoint
      * 
@@ -624,7 +621,6 @@ public class DbSession {
         }
     }
 
-    // TODO NOW rework
     /**
      * Release the savepoint
      * 
@@ -669,8 +665,7 @@ public class DbSession {
     /**
      * @return the autoCommit
      *
-     * @deprecated This will be removed in a future version of WaarpCommon.
-     * DBCP integration set autocommit to false.
+     * @deprecated DBCP integration set autocommit to false.
      */
     @Deprecated
     public boolean isAutoCommit() {
@@ -680,8 +675,7 @@ public class DbSession {
     /**
      * @return the con
      *
-     * @deprecated This will be removed in a future version of WaarpCommon.
-     * Use {@link #getConnection()} instead.
+     * @deprecated Use {@link #getConnection()} instead.
      */
     @Deprecated
     public Connection getConn() {
@@ -704,10 +698,7 @@ public class DbSession {
 
     /**
      * @param internalId the internalId to set
-     *
-     * @deprecated This will be removed in a future version of WaarpCommon.
      */
-    @Deprecated
     private void setInternalId(UUID internalId) {
         this.internalId = internalId;
     }
@@ -715,10 +706,8 @@ public class DbSession {
     /**
      * @return the isDisActive
      *
-     * @deprecated This will be removed in a future version of WaarpCommon.
-     * DBCP integration set active to true.
+     * @deprecated DBCP integration set active to true.
      */
-    @Deprecated
     public boolean isDisActive() {
         return false;
     }
@@ -726,8 +715,7 @@ public class DbSession {
     /**
      * @param isDisActive the isDisActive to set
      *
-     * @deprecated This will be removed in a future version of WaarpCommon.
-     * DBCP integration set active to true.
+     * @deprecated DBCP integration set active to true.
      */
     @Deprecated
     public void setDisActive(boolean isDisActive) {
