@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ConcurrentModificationException;
 
@@ -53,29 +54,7 @@ public abstract class DbModelAbstract implements DbModel {
      */
     private void recreateSession(DbSession dbSession)
             throws WaarpDatabaseNoConnectionException {
-        DbAdmin admin = dbSession.getAdmin();
-        if (admin == null) {
-            if (dbSession.isAutoCommit()) {
-                admin = DbConstant.admin;
-            } else {
-                admin = DbConstant.noCommitAdmin;
-            }
-        }
-        DbSession newdbSession = admin.getSession();
-        if (admin.isActive()) {
-            newdbSession = new DbSession(admin, dbSession.isReadOnly());
-        }
-        try {
-            if (dbSession.getConn() != null) {
-                dbSession.getConn().close();
-            }
-        } catch (SQLException e1) {
-        } catch (ConcurrentModificationException e) {
-        }
-        dbSession.setConn(newdbSession.getConn());
-        DbAdmin.addConnection(dbSession.getInternalId(), dbSession);
-        DbAdmin.removeConnection(newdbSession.getInternalId());
-        logger.warn("Database Connection lost: database connection reopened");
+        dbSession.renewConnection();
     }
 
     /**
@@ -97,159 +76,39 @@ public abstract class DbModelAbstract implements DbModel {
         DbAdmin.removeConnection(dbSession.getInternalId());
     }
 
+    public String getValidationQuery(){
+         return "select 1";
+    }
+
     public void validConnection(DbSession dbSession)
             throws WaarpDatabaseNoConnectionException {
         // try to limit the number of check!
         synchronized (dbSession) {
-            if (dbSession.getConn() == null) {
-                throw new WaarpDatabaseNoConnectionException(
-                        "Cannot connect to database");
+	    //Check if connection is valid
+            if (dbSession.getConn() != null) {
+		try {
+		     Statement stm = dbSession.getConn().createStatement();
+		     stm.execute(getValidationQuery());
+		     stm.close();
+		     return;
+		} catch (SQLTimeoutException e) {
+                    logger.warn("Session " + dbSession.getInternalId() + 
+                            " timed out on validation. DB may be busy.");
+		    return;
+		} catch (SQLException e) {
+                    logger.warn("Session " + dbSession.getInternalId() + 
+                            " failed validation. Will renew its connection.");
+		}
             }
-            try {
-                if (!dbSession.getConn().isClosed()) {
-                    if (!dbSession.getConn().isValid(DbConstant.VALIDTESTDURATION)) {
-                        // Give a try by closing the current connection
-                        throw new SQLException("Cannot connect to database");
-                    }
-                }
-                dbSession.setDisActive(false);
-                if (dbSession.getAdmin() != null)
-                    dbSession.getAdmin().setActive(true);
-            } catch (SQLException e2) {
-                dbSession.setDisActive(true);
-                if (dbSession.getAdmin() != null)
-                    dbSession.getAdmin().setActive(false);
-                // Might be unsupported so switch to SELECT 1 way
-                if (e2 instanceof org.postgresql.util.PSQLException) {
-                    validConnectionSelect(dbSession);
-                    return;
-                }
-                try {
-                    try {
-                        recreateSession(dbSession);
-                    } catch (WaarpDatabaseNoConnectionException e) {
-                        closeInternalConnection(dbSession);
-                        throw e;
-                    }
-                    try {
-                        if (!dbSession.getConn().isValid(DbConstant.VALIDTESTDURATION)) {
-                            // Not ignored
-                            closeInternalConnection(dbSession);
-                            throw new WaarpDatabaseNoConnectionException(
-                                    "Cannot connect to database", e2);
-                        }
-                    } catch (SQLException e) {
-                        closeInternalConnection(dbSession);
-                        throw new WaarpDatabaseNoConnectionException(
-                                "Cannot connect to database", e);
-                    }
-                    dbSession.setDisActive(false);
-                    if (dbSession.getAdmin() != null)
-                        dbSession.getAdmin().setActive(true);
-                    dbSession.recreateLongTermPreparedStatements();
-                    return;
-                } catch (WaarpDatabaseSqlException e1) {
-                    // ignore and will send a No Connection error
-                }
-                closeInternalConnection(dbSession);
-                throw new WaarpDatabaseNoConnectionException(
-                        "Cannot connect to database", e2);
-            }
+	    logger.debug("Will renew Session " + dbSession.getInternalId() +
+			    " connection.");
+	    dbSession.renewConnection();
         }
     }
 
     protected void validConnectionSelect(DbSession dbSession)
             throws WaarpDatabaseNoConnectionException {
-        // try to limit the number of check!
-        synchronized (dbSession) {
-            Statement stmt = null;
-            try {
-                stmt = dbSession.getConn().createStatement();
-                if (stmt.execute(validConnectionString())) {
-                    ResultSet set = stmt.getResultSet();
-                    if (!set.next()) {
-                        stmt.close();
-                        stmt = null;
-                        // Give a try by closing the current connection
-                        throw new SQLException("Cannot connect to database");
-                    }
-                }
-                dbSession.setDisActive(false);
-                if (dbSession.getAdmin() != null)
-                    dbSession.getAdmin().setActive(true);
-            } catch (SQLException e2) {
-                dbSession.setDisActive(true);
-                if (dbSession.getAdmin() != null)
-                    dbSession.getAdmin().setActive(false);
-                try {
-                    try {
-                        recreateSession(dbSession);
-                    } catch (WaarpDatabaseNoConnectionException e) {
-                        closeInternalConnection(dbSession);
-                        throw e;
-                    }
-                    try {
-                        if (stmt != null) {
-                            stmt.close();
-                            stmt = null;
-                        }
-                    } catch (SQLException e) {
-                        // ignore
-                    }
-                    try {
-                        stmt = dbSession.getConn().createStatement();
-                    } catch (SQLException e) {
-                        // Not ignored
-                        closeInternalConnection(dbSession);
-                        throw new WaarpDatabaseNoConnectionException(
-                                "Cannot connect to database", e);
-                    }
-                    try {
-                        if (stmt.execute(validConnectionString())) {
-                            ResultSet set = stmt.getResultSet();
-                            if (!set.next()) {
-                                if (stmt != null) {
-                                    stmt.close();
-                                    stmt = null;
-                                }
-                                closeInternalConnection(dbSession);
-                                throw new WaarpDatabaseNoConnectionException(
-                                        "Cannot connect to database");
-                            }
-                        }
-                    } catch (SQLException e) {
-                        // not ignored
-                        try {
-                            if (stmt != null) {
-                                stmt.close();
-                                stmt = null;
-                            }
-                        } catch (SQLException e1) {
-                        }
-                        closeInternalConnection(dbSession);
-                        throw new WaarpDatabaseNoConnectionException(
-                                "Cannot connect to database", e);
-                    }
-                    dbSession.setDisActive(false);
-                    if (dbSession.getAdmin() != null)
-                        dbSession.getAdmin().setActive(true);
-                    dbSession.recreateLongTermPreparedStatements();
-                    return;
-                } catch (WaarpDatabaseSqlException e1) {
-                    // ignore and will send a No Connection error
-                }
-                closeInternalConnection(dbSession);
-                throw new WaarpDatabaseNoConnectionException(
-                        "Cannot connect to database", e2);
-            } finally {
-                if (stmt != null) {
-                    try {
-                        stmt.close();
-                    } catch (SQLException e) {
-                    }
-                }
-            }
-        }
+        validConnection(dbSession);
     }
 
     /**
