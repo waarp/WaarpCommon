@@ -463,7 +463,7 @@ public final class UUID implements Comparable<UUID> {
      * 
      * @return the mac address if possible, else random values
      */
-    private static byte[] macAddress() {
+    public static byte[] macAddress() {
         try {
             byte[] machineId = null;
             String customMachineId = SystemPropertyUtil.get("org.waarp.machineId");
