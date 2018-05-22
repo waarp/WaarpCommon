@@ -132,12 +132,7 @@ public class UUIDTest {
 
     @Test
     public void testMacAddressField() throws Exception {
-        /*
-	 * This test is void: 
-	 * NetworkInterface...getHardwareAddress and UUID.macAddress() have different results
-	 */
-	/*
-        byte[] mac = NetworkInterface.getNetworkInterfaces().nextElement().getHardwareAddress();
+        byte[] mac = UUID.macAddress();
 
         // if the machine is not connected to a network it has no active MAC address
         if (mac == null || mac.length < 6) {
@@ -153,7 +148,6 @@ public class UUIDTest {
         assertEquals(mac[3], field[3]);
         assertEquals(mac[4], field[4]);
         assertEquals(mac[5], field[5]);
-	*/
     }
     
     private void checkConsecutive(final UUID[] UUIDArray) {
