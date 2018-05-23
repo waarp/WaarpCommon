@@ -132,13 +132,14 @@ public class UUIDTest {
 
     @Test
     public void testMacAddressField() throws Exception {
-        byte[] mac = NetworkInterface.getNetworkInterfaces().nextElement().getHardwareAddress();
+        byte[] mac = UUID.macAddress();
 
         // if the machine is not connected to a network it has no active MAC address
         if (mac == null || mac.length < 6) {
             mac = UUID.getRandom(6);
             UUID.setMAC(mac);
         }
+
         UUID id = new UUID();
         byte[] field = id.getMacFragment();
         assertEquals(mac[0], field[0]);
