@@ -48,7 +48,6 @@ import org.waarp.common.utility.WaarpThreadFactory;
  * 
  * @deprecated Will be removed for a proper ConnectionFactory in a future version of WaarpCommon
  */ 
-// TODO 4.0 remove
 public class DbAdmin {
     /**
      * Internal Logger
@@ -450,7 +449,6 @@ public class DbAdmin {
      * @deprecated This will be removed in a future version of WaarpCommon. 
      * Use {@link #validateConnection()} instead.
      */
-    // TODO 4.0 remove
     @Deprecated
     public static void checkAllConnections() {
     	//Do Nothing
