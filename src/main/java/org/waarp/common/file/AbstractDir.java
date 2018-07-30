@@ -19,6 +19,8 @@ package org.waarp.common.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ import org.waarp.common.command.exception.Reply553Exception;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
 import org.waarp.common.utility.DetectionUtils;
+import org.waarp.common.utility.WaarpStringUtils;
 
 /**
  * Abstract Main Implementation of Directory
@@ -105,7 +108,38 @@ public abstract class AbstractDir implements DirInterface {
      * @return the normalized path
      */
     public static String normalizePath(String path) {
-        return path.replace('\\', SEPARATORCHAR).replace("//", "/");
+        return path.replace('\\', SEPARATORCHAR);
+    }
+
+    /**
+     * Convert the URI representation of a file path to a simple path.
+     * 
+     * If the path is not an URI, this method does nothing.
+     * 
+     * @param path
+     * @return the normalized path
+     */
+    public static String pathFromURI(String path) {
+
+        if (path.startsWith("file://")) {
+            int charToRemove = 7;
+
+            if (path.charAt(7) == '/' && path.charAt(9) == ':') {
+                charToRemove++; 
+            }
+
+            path = path.substring(charToRemove);
+            if (path.contains("%")) {
+                try {
+                    path = URLDecoder.decode(path, WaarpStringUtils.UTF8.name());
+                } catch (UnsupportedEncodingException e) {
+                    logger.warn("Cannot convert filename to UTF-8: " + path);
+                } catch (IllegalArgumentException e) {
+                    // ignore: it was propably not url-encoded!
+                }
+            }
+        }
+        return path;
     }
 
     /**
