@@ -31,6 +31,7 @@ import org.waarp.common.logging.WaarpLoggerFactory;
  * 
  * @author Frederic Bregier
  * 
+ * @deprecated Will be removed in a futur version of WaarCommon 
  */
 public class DbPreparedStatement {
     /**
