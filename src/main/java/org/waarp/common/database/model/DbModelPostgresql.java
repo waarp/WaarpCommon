@@ -87,30 +87,6 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
          */
     }
 
-    @Override
-    public void validConnection(DbSession dbSession)
-            throws WaarpDatabaseNoConnectionException {
-        if (useIsValid == null) {
-            try {
-                DatabaseMetaData metadata = dbSession.getConn().getMetaData();
-                useIsValid = new Boolean(metadata.getDriverMajorVersion() >= 9
-                        && metadata.getDatabaseMinorVersion() >= 2);
-            } catch (SQLException e) {
-                // SQLException
-                logger.error("Cannot get Metadata " + type.name() + " " + e.getMessage());
-                DbSession.error(e);
-                throw new WaarpDatabaseNoConnectionException(
-                        "Cannot get Metadata:" + type.name(), e);
-            }
-        }
-        if (useIsValid) {
-            super.validConnection(dbSession);
-            return;
-        }
-        // to prevent bug with isValid() not yet implemented in release 9.1-902 April 2012 but in 9.2-1000
-        validConnectionSelect(dbSession);
-    }
-
     protected static enum DBType {
         CHAR(Types.CHAR, " CHAR(3) "),
         VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
