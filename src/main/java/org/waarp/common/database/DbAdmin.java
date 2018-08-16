@@ -20,6 +20,7 @@ package org.waarp.common.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -53,7 +54,7 @@ public class DbAdmin {
      * Internal Logger
      */
     private static final WaarpLogger logger = WaarpLoggerFactory
-            .getLogger(DbAdmin.class);
+        .getLogger(DbAdmin.class);
 
     public static int RETRYNB = 3;
 
@@ -98,7 +99,7 @@ public class DbAdmin {
      * session is the Session object for all type of requests
      */
     private DbSession session = null;
-    
+
     /**
      * Number of HttpSession
      */
@@ -117,17 +118,17 @@ public class DbAdmin {
      */
     @Deprecated
     public DbSession getSession() {
-         return session;
+        return session;
     }
 
     public Connection getConnection(UUID id) throws WaarpDatabaseNoConnectionException {
-	try {
-	    Connection con = ds.getConnection();
-	    DbAdmin.addConnection(id, con);
-	    return con;
-	} catch (SQLException e) {
-	    throw new WaarpDatabaseNoConnectionException("Cannot access database", e);
-	}
+        try {
+            Connection con = ds.getConnection();
+            DbAdmin.addConnection(id, con);
+            return con;
+        } catch (SQLException e) {
+            throw new WaarpDatabaseNoConnectionException("Cannot access database", e);
+        }
     }
 
     /**
@@ -163,7 +164,7 @@ public class DbAdmin {
      */
     @Deprecated
     public void setActive(boolean isActive) {
-    	// Do Nothing
+        // Do Nothing
     }
 
     /**
@@ -175,7 +176,7 @@ public class DbAdmin {
      */
     @Deprecated
     public void validConnection() throws WaarpDatabaseNoConnectionException {
-    	validateConnection();
+        validateConnection();
     }
 
     /**
@@ -184,11 +185,11 @@ public class DbAdmin {
      * @throws WaarpDatabaseNoConnectionException if a database access errors occurs
      */
     public void validateConnection() throws WaarpDatabaseNoConnectionException {
-    	try {
-	    ds.getConnection().close();
-	} catch (SQLException e) {
-	    throw new WaarpDatabaseNoConnectionException("Cannot access database", e);
-	}
+        try {
+            ds.getConnection().close();
+        } catch (SQLException e) {
+            throw new WaarpDatabaseNoConnectionException("Cannot access database", e);
+        }
     }
 
     /**
@@ -209,7 +210,7 @@ public class DbAdmin {
      */
     public DbAdmin(DbModel model, String server, String user, String password)
             throws WaarpDatabaseNoConnectionException {
-        this(model, server, user, password, true);
+            this(model, server, user, password, true);
     }
 
     /**
@@ -243,24 +244,24 @@ public class DbAdmin {
                     "Cannot find database driver");
         }
 
-	ds = new BasicDataSource();
-	try {
-	    ds.setDriverClassName(DriverManager.getDriver(server).getClass().getName());
-	} catch (SQLException e) {
+        ds = new BasicDataSource();
+        try {
+            ds.setDriverClassName(DriverManager.getDriver(server).getClass().getName());
+        } catch (SQLException e) {
             throw new WaarpDatabaseNoConnectionException(
                     "Cannot find database driver");
-	}
-	ds.setUrl(this.server);
-	ds.setUsername(this.user);
-	ds.setPassword(this.password);
-	
-	ds.setDefaultAutoCommit(true);
-	ds.setDefaultReadOnly(!write);
-	ds.setValidationQuery(this.dbModel.getValidationQuery());
-	readOnly = !write;
+        }
+        ds.setUrl(this.server);
+        ds.setUsername(this.user);
+        ds.setPassword(this.password);
 
-	validateConnection();
-	this.session = new DbSession(this, readOnly); 
+        ds.setDefaultAutoCommit(true);
+        ds.setDefaultReadOnly(!write);
+        ds.setValidationQuery(this.dbModel.getValidationQuery());
+        readOnly = !write;
+
+        validateConnection();
+        this.session = new DbSession(this, readOnly); 
     }
 
     /**
@@ -279,13 +280,13 @@ public class DbAdmin {
      * Closes and releases all registered connections and connection pool
      */
     public void close() {
-	logger.info("DBAdmin closing");
-	DbAdmin.closeAllConnection();
-	try {
-	    ds.close();
-	} catch (SQLException e) {
-	    logger.debug("Cannot properly close the database connection pool", e);
-	}
+        logger.info("DBAdmin closing");
+        DbAdmin.closeAllConnection();
+        try {
+            ds.close();
+        } catch (SQLException e) {
+            logger.debug("Cannot properly close the database connection pool", e);
+        }
     }
 
     /**
@@ -296,10 +297,10 @@ public class DbAdmin {
      *
      */
     public void commit() throws WaarpDatabaseSqlException,
-            WaarpDatabaseNoConnectionException {
-        if (getSession() != null) {
-            getSession().commit();
-        }
+           WaarpDatabaseNoConnectionException {
+               if (getSession() != null) {
+                   getSession().commit();
+               }
     }
 
     /**
@@ -387,7 +388,7 @@ public class DbAdmin {
      */
     @Deprecated
     public static void addConnection(UUID id, DbSession session) {
-	DbAdmin.addConnection(id, session.getConn());
+        DbAdmin.addConnection(id, session.getConn());
     }
 
     /**
@@ -406,14 +407,14 @@ public class DbAdmin {
      * @param id Id of the connection
      */
     public static void removeConnection(UUID id) {
-	logger.info("Remove connection " + id);
-	Connection con = connections.get(id);
-	try {
-	    con.close();
-	} catch (SQLException e) {
-	    logger.debug("Cannot properly close database connection: " + id, e);
-	}
-	connections.remove(id);
+        logger.info("Remove connection " + id);
+        Connection con = connections.get(id);
+        try {
+            con.close();
+        } catch (SQLException e) {
+            logger.debug("Cannot properly close database connection: " + id, e);
+        }
+        connections.remove(id);
     }
 
     /**
@@ -431,11 +432,14 @@ public class DbAdmin {
      */
     @Deprecated
     public static void closeAllConnection() {
-        for (UUID id : connections.keySet()) {
-            removeConnection(id);
-	}
-	connections.clear();
-	for (DbModel dbModel : DbModelFactory.dbModels) {
+        //TODO Change to Set<Connection> = connections.keySet() 
+        //when jdk6 support is dropped
+        Enumeration<UUID> cons = connections.keys(); 
+        while (cons.hasMoreElements()) {
+            removeConnection(cons.nextElement());
+        }
+        connections.clear();
+        for (DbModel dbModel : DbModelFactory.dbModels) {
             if (dbModel != null) {
                 dbModel.releaseResources();
             }
@@ -451,7 +455,7 @@ public class DbAdmin {
      */
     @Deprecated
     public static void checkAllConnections() {
-    	//Do Nothing
+        //Do Nothing
     }
 
     /**
@@ -459,8 +463,8 @@ public class DbAdmin {
      */
     public boolean isCompatibleWithThreadSharedConnexion() {
         return typeDriver != DbType.MariaDB && 
-		typeDriver != DbType.MySQL && 
-		typeDriver != DbType.Oracle && 
-		typeDriver != DbType.none;
+            typeDriver != DbType.MySQL && 
+            typeDriver != DbType.Oracle && 
+            typeDriver != DbType.none;
     }
 }
