@@ -542,7 +542,7 @@ public class FileMonitor {
         // now check that all existing items are still valid
         List<FileItem> todel = new LinkedList<FileItem>();
         for (FileItem item : fileItems.values()) {
-            if (item.file.isFile()) {
+            if (item.file != null && item.file.isFile()) {
                 continue;
             }
             todel.add(item);
