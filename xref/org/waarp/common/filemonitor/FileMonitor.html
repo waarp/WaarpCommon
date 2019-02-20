@@ -550,7 +550,7 @@
 <a class="jxr_linenumber" name="L542" href="#L542">542</a>         <em class="jxr_comment">// now check that all existing items are still valid</em>
 <a class="jxr_linenumber" name="L543" href="#L543">543</a>         List&lt;FileItem&gt; todel = <strong class="jxr_keyword">new</strong> LinkedList&lt;FileItem&gt;();
 <a class="jxr_linenumber" name="L544" href="#L544">544</a>         <strong class="jxr_keyword">for</strong> (FileItem item : fileItems.values()) {
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>             <strong class="jxr_keyword">if</strong> (item.file.isFile()) {
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>             <strong class="jxr_keyword">if</strong> (item.file != <strong class="jxr_keyword">null</strong> &amp;&amp; item.file.isFile()) {
 <a class="jxr_linenumber" name="L546" href="#L546">546</a>                 <strong class="jxr_keyword">continue</strong>;
 <a class="jxr_linenumber" name="L547" href="#L547">547</a>             }
 <a class="jxr_linenumber" name="L548" href="#L548">548</a>             todel.add(item);
@@ -923,6 +923,6 @@
 <a class="jxr_linenumber" name="L915" href="#L915">915</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2009&#x2013;2018 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2009&#x2013;2019 <a href="http://www.waarp.it">Waarp</a>. All rights reserved.</div>
 </body>
 </html>
