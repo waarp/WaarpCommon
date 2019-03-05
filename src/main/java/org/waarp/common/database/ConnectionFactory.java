@@ -1,5 +1,6 @@
 package org.waarp.common.database;
 
+import java.lang.UnsupportedOperationException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,6 +17,9 @@ import org.waarp.common.database.properties.PostgreSQLProperties;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
 
+/**
+ * A singleton wrapper of Datasource to get database connection object
+ */
 public class ConnectionFactory {
 
     /**
@@ -23,6 +27,11 @@ public class ConnectionFactory {
      */
     private static final WaarpLogger logger = WaarpLoggerFactory
         .getLogger(ConnectionFactory.class);
+
+    /**
+     * The singleton instance
+     */
+    private static ConnectionFactory instance;
 
     /**
      * DbModel
@@ -49,7 +58,14 @@ public class ConnectionFactory {
      */
     private BasicDataSource ds;
 
-    public static DbProperties propertiesFor(String server) {
+    /**
+     * @param server the connection url of the database
+     * @return the DbProperties Object associated with the requested URL
+     * @throws UnsupportedOperationException if the requested database 
+     * is not supported
+     */
+    protected static DbProperties propertiesFor(String server) 
+            throws UnsupportedOperationException {
         if(server.contains(H2Properties.getProtocolID())) {
             return new H2Properties();
         } else if(server.contains(MariaDBProperties.getProtocolID())) {
@@ -61,11 +77,38 @@ public class ConnectionFactory {
         } else if(server.contains(PostgreSQLProperties.getProtocolID())) {
             return new PostgreSQLProperties();
         } else {
-            return null;
+            throw new UnsupportedOperationException(
+                "The requested database is not supported");
         }
     }
 
+    /**
+     * Initialize the ConnectionFactory 
+     * @throws UnsupportedOperationException if the requested database 
+     * is not supported
+     * @throws SQLException if a error occurs while connecting to the database
+     */
+    public static void initialize(String server, String user, String password) 
+            throws SQLException, UnsupportedOperationException {
+        if (instance == null) {
+             instance = new ConnectionFactory(propertiesFor(server), server, 
+                 user, password);
+        }
+    }
 
+    /**
+     * @return the initialized ConnectionFactory or
+     * null if the ConnectionFactory is not initialized
+     */
+    public static ConnectionFactory getInstance() {
+        return instance;
+    }
+
+    /**
+     * @return a connection to the Database
+     * @throws SQLException if the ConnectionPool is not initialized 
+     * or if an error occurs while accessing the database
+     */
     public Connection getConnection() throws SQLException {
         if (ds == null) {
             throw new SQLException("ConnectionFactory is not inialized.");
@@ -84,22 +127,22 @@ public class ConnectionFactory {
      * @param user
      * @param password
      */
-    public ConnectionFactory(DbProperties properties, String server, String user, String password) 
+    private ConnectionFactory(DbProperties properties, String server, String user, String password) 
             throws SQLException {
-            this.server = server;
-            this.user = user;
-            this.password = password;
-            this.properties = properties;
+        this.server = server;
+        this.user = user;
+        this.password = password;
+        this.properties = properties;
 
-            ds = new BasicDataSource();
+        ds = new BasicDataSource();
 
-            ds.setDriverClassName(properties.getDriverName());
-            ds.setUrl(this.server);
-            ds.setUsername(this.user);
-            ds.setPassword(this.password);
-            ds.setDefaultAutoCommit(true);
-            ds.setDefaultReadOnly(true);
-            ds.setValidationQuery(this.properties.getValidationQuery());
+        ds.setDriverClassName(this.properties.getDriverName());
+        ds.setUrl(this.server);
+        ds.setUsername(this.user);
+        ds.setPassword(this.password);
+        ds.setDefaultAutoCommit(true);
+        ds.setDefaultReadOnly(true);
+        ds.setValidationQuery(this.properties.getValidationQuery());
     }
 
     /**
