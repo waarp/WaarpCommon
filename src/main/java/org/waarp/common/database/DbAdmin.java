@@ -124,13 +124,16 @@ public class DbAdmin {
      * @return the isActive
      */
     public boolean isActive() {
-        return isActive;
+        return true;
     }
 
     /**
      * @param isActive the isActive to set
      */
     public void setActive(boolean isActive) {
+        if (!isActive) {
+            logger.debug(Thread.currentThread().getStackTrace().toString());
+        }
         this.isActive = isActive;
     }
 
