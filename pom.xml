@@ -56,33 +56,131 @@
   		</snapshots>
 	</repository>
   </repositories>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <attach-distribution>false</attach-distribution>
+    <filtermodule>**</filtermodule>
+
+    <rs-api.version>2.0</rs-api.version>
+    <netty.version>4.1.33.Final</netty.version>
+    <slf4j.version>1.7.25</slf4j.version>
+    <findbugs.version>2.0.1</findbugs.version>
+    <beanutils.version>1.8.3</beanutils.version>
+    <junit.version>4.11</junit.version>
+    <logback.version>1.2.3</logback.version>
+    <gson.version>2.2.4</gson.version>
+  </properties>
+
   <dependencies>
+    <!-- JDBC dependencies -->
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.197</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+      <version>1.7.4</version>
+      <optional>true</optional>
+      <exclusions>
+        <exclusion>
+          <artifactId>jna</artifactId>
+          <groupId>net.java.dev.jna</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.47</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>Oracle</groupId>
+      <artifactId>ojdbc6</artifactId>
+      <version>6</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.2.5.jre6</version>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Logging dependencies -->
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.3</version>
+      <version>${logback.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.2.3</version>
+      <version>${logback.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
-    	<groupId>commons-io</groupId>
-    	<artifactId>commons-io</artifactId>
-    	<version>2.6</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
     </dependency>
+
+    <!-- Netty dependencies -->
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>${netty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-buffer</artifactId>
+      <version>${netty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-codec-http</artifactId>
+      <version>${netty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-handler</artifactId>
+      <version>${netty.version}</version>
+    </dependency>
+
+    <!-- Waarp dependencies -->
     <dependency>
       <groupId>Waarp</groupId>
       <artifactId>WaarpDigest</artifactId>
       <version>3.0.5</version>
     </dependency>
+
     <dependency>
-    	<groupId>org.slf4j</groupId>
-    	<artifactId>slf4j-api</artifactId>
-    	<version>1.7.25</version>
+    	<groupId>commons-io</groupId>
+    	<artifactId>commons-io</artifactId>
+    	<version>2.6</version>
+    </dependency>
+
+    <!-- Others dependencies -->
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>${findbugs.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils-core</artifactId>
+      <version>${beanutils.version}</version>
     </dependency>
     <dependency>
     	<groupId>jaxen</groupId>
@@ -134,37 +232,19 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>${rs-api.version}</version>
+    </dependency>
+    <dependency>
     	<groupId>org.apache.commons</groupId>
     	<artifactId>commons-compress</artifactId>
     	<version>1.18</version>
     </dependency>
     <dependency>
-    	<groupId>commons-dbcp</groupId>
-    	<artifactId>commons-dbcp</artifactId>
-    	<version>1.4</version>
-    </dependency>
-    <dependency>
     	<groupId>org.apache.commons</groupId>
     	<artifactId>commons-pool2</artifactId>
     	<version>2.6.0</version>
-    </dependency>
-    <dependency>
-    	<groupId>Oracle</groupId>
-    	<artifactId>ojdbc6</artifactId>
-    	<version>6</version>
-	    <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>1.4.197</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-    	<groupId>mysql</groupId>
-    	<artifactId>mysql-connector-java</artifactId>
-      <version>5.1.47</version>
-    	<optional>true</optional>
     </dependency>
     <dependency>
     	<groupId>commons-daemon</groupId>
@@ -183,61 +263,41 @@
     	<version>2.7.9.4</version>
     </dependency>
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.7.9</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-smile-provider</artifactId>
+      <version>2.7.9</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.7.9</version>
+    </dependency>
+    <dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+      <version>3.24.1-GA</version>
+    </dependency>
+
+    <!-- Testing dependencies -->
+    <dependency>
     	<groupId>junit</groupId>
     	<artifactId>junit</artifactId>
     	<version>4.12</version>
     	<scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.postgresql</groupId>
-    	<artifactId>postgresql</artifactId>
-    	<version>42.2.5.jre6</version>
-    	<optional>true</optional>
-    </dependency>
-    <dependency>
-    	<groupId>org.mariadb.jdbc</groupId>
-    	<artifactId>mariadb-java-client</artifactId>
-    	<version>1.7.4</version>
-    	<optional>true</optional>
-    	<exclusions>
-    	    <exclusion>
-    	        <artifactId>jna</artifactId>
-    	        <groupId>net.java.dev.jna</groupId>
-    	    </exclusion>
-    	</exclusions>
-    </dependency>
-    <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>2.7.9</version>
-    </dependency>
-    <dependency>
-    	<groupId>com.fasterxml.jackson.jaxrs</groupId>
-    	<artifactId>jackson-jaxrs-smile-provider</artifactId>
-    	<version>2.7.9</version>
-    	<optional>true</optional>
-    </dependency>
-    <dependency>
-    	<groupId>com.fasterxml.jackson.core</groupId>
-    	<artifactId>jackson-core</artifactId>
-    	<version>2.7.9</version>
-    </dependency>
-    <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-all</artifactId>
-        <version>4.1.33.Final</version>
-    </dependency>
-    <dependency>
-        <groupId>org.javassist</groupId>
-        <artifactId>javassist</artifactId>
-        <version>3.24.1-GA</version>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
-  <properties>
-  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	<attach-distribution>false</attach-distribution>
-    <filtermodule>**</filtermodule>
-  </properties>
   <build>
     <plugins>
       <plugin>

@@ -281,6 +281,9 @@ public class DbAdmin {
      */
     public void close() {
         logger.info("DBAdmin closing");
+        if (ds == null) {
+            return;
+        }
         DbAdmin.closeAllConnection();
         try {
             ds.close();

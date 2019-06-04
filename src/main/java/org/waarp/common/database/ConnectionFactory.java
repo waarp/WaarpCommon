@@ -1,21 +1,12 @@
 package org.waarp.common.database;
 
-import java.lang.UnsupportedOperationException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 import org.apache.commons.dbcp.BasicDataSource;
-
-import org.waarp.common.database.properties.DbProperties;
-import org.waarp.common.database.properties.H2Properties;
-import org.waarp.common.database.properties.MariaDBProperties;
-import org.waarp.common.database.properties.MySQLProperties;
-import org.waarp.common.database.properties.OracleProperties;
-import org.waarp.common.database.properties.PostgreSQLProperties;
-
+import org.waarp.common.database.properties.*;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * A singleton wrapper of Datasource to get database connection object
@@ -110,6 +101,7 @@ public class ConnectionFactory {
      * or if an error occurs while accessing the database
      */
     public Connection getConnection() throws SQLException {
+        logger.debug("Active: {}, Idle: {}", ds.getNumActive(), ds.getNumIdle());
         if (ds == null) {
             throw new SQLException("ConnectionFactory is not inialized.");
         }
@@ -127,8 +119,8 @@ public class ConnectionFactory {
      * @param user
      * @param password
      */
-    private ConnectionFactory(DbProperties properties, String server, String user, String password) 
-            throws SQLException {
+    private ConnectionFactory(DbProperties properties, String server,
+                          String user, String password) throws SQLException {
         this.server = server;
         this.user = user;
         this.password = password;
@@ -141,8 +133,10 @@ public class ConnectionFactory {
         ds.setUsername(this.user);
         ds.setPassword(this.password);
         ds.setDefaultAutoCommit(true);
-        ds.setDefaultReadOnly(true);
+        ds.setDefaultReadOnly(false);
         ds.setValidationQuery(this.properties.getValidationQuery());
+        ds.setMaxActive(1000);
+        ds.setMaxActive(10000);
     }
 
     /**
