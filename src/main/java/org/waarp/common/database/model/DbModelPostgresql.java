@@ -87,7 +87,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
          */
     }
 
-    protected static enum DBType {
+    protected enum DBType {
         CHAR(Types.CHAR, " CHAR(3) "),
         VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
         NVARCHAR(Types.NVARCHAR, " VARCHAR(8096) "),
@@ -107,7 +107,7 @@ public abstract class DbModelPostgresql extends DbModelAbstract {
 
         public String constructor;
 
-        private DBType(int type, String constructor) {
+        DBType(int type, String constructor) {
             this.type = type;
             this.constructor = constructor;
         }

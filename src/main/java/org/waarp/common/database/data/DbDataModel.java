@@ -34,7 +34,7 @@ import org.waarp.common.database.exception.WaarpDatabaseSqlException;
  * 
  */
 public class DbDataModel extends AbstractDbData {
-    public static enum Columns {
+    public enum Columns {
         READGLOBALLIMIT,
         WRITEGLOBALLIMIT,
         READSESSIONLIMIT,

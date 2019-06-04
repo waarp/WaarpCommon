@@ -52,10 +52,10 @@ public class ConnectionFactory {
     /**
      * @param server the connection url of the database
      * @return the DbProperties Object associated with the requested URL
-     * @throws UnsupportedOperationException if the requested database 
+     * @throws UnsupportedOperationException if the requested database
      * is not supported
      */
-    protected static DbProperties propertiesFor(String server) 
+    protected static DbProperties propertiesFor(String server)
             throws UnsupportedOperationException {
         if(server.contains(H2Properties.getProtocolID())) {
             return new H2Properties();
@@ -74,15 +74,15 @@ public class ConnectionFactory {
     }
 
     /**
-     * Initialize the ConnectionFactory 
-     * @throws UnsupportedOperationException if the requested database 
+     * Initialize the ConnectionFactory
+     * @throws UnsupportedOperationException if the requested database
      * is not supported
      * @throws SQLException if a error occurs while connecting to the database
      */
-    public static void initialize(String server, String user, String password) 
+    public static void initialize(String server, String user, String password)
             throws SQLException, UnsupportedOperationException {
         if (instance == null) {
-             instance = new ConnectionFactory(propertiesFor(server), server, 
+             instance = new ConnectionFactory(propertiesFor(server), server,
                  user, password);
         }
     }
@@ -97,11 +97,11 @@ public class ConnectionFactory {
 
     /**
      * @return a connection to the Database
-     * @throws SQLException if the ConnectionPool is not initialized 
+     * @throws SQLException if the ConnectionPool is not initialized
      * or if an error occurs while accessing the database
      */
     public Connection getConnection() throws SQLException {
-        logger.debug("Active: {}, Idle: {}", ds.getNumActive(), ds.getNumIdle());
+        logger.trace("Active: {}, Idle: {}", ds.getNumActive(), ds.getNumIdle());
         if (ds == null) {
             throw new SQLException("ConnectionFactory is not inialized.");
         }

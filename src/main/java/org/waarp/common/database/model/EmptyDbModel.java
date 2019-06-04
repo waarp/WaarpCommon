@@ -76,11 +76,6 @@ public class EmptyDbModel implements DbModel {
     }
 
     @Override
-    public String getValidationQuery() {
-        return "";
-    }
-
-    @Override
     public void validConnection(DbSession dbSession) throws WaarpDatabaseNoConnectionException {
     }
 

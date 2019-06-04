@@ -1,17 +1,17 @@
 /**
  * This file is part of Waarp Project.
- * 
+ *
  * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the
  * COPYRIGHT.txt in the distribution for a full listing of individual contributors.
- * 
+ *
  * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of
  * the GNU General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with Waarp . If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -27,16 +27,16 @@ import org.waarp.common.database.exception.WaarpDatabaseSqlException;
 
 /**
  * Interface for Database Model
- * 
+ *
  * This class is an interface for special functions that needs special implementations according to
  * the database model used.
- * 
+ *
  * @author Frederic Bregier
- * 
+ *
  */
 public interface DbModel {
     /**
-     * 
+     *
      * @param server
      * @param user
      * @param passwd
@@ -52,20 +52,20 @@ public interface DbModel {
     public void releaseResources();
 
     /**
-     * 
+     *
      * @return the number of Pooled Connections if any
      */
     public int currentNumberOfPooledConnections();
 
     /**
-     * 
+     *
      * @return the current DbType used
      */
     public DbType getDbType();
 
     /**
      * Create all necessary tables into the database
-     * 
+     *
      * @param session
      *            SQL session
      * @throws WaarpDatabaseNoConnectionException
@@ -74,7 +74,7 @@ public interface DbModel {
 
     /**
      * Reset the sequence (example)
-     * 
+     *
      * @param session
      *            SQL session
      * @throws WaarpDatabaseNoConnectionException
@@ -89,14 +89,10 @@ public interface DbModel {
     public long nextSequence(DbSession dbSession)
             throws WaarpDatabaseNoConnectionException, WaarpDatabaseSqlException,
             WaarpDatabaseNoDataException;
-    /**
-     * @return the validation query associated with the DbModel
-     */
-    public String getValidationQuery();
 
     /**
      * Validate connection
-     * 
+     *
      * @param dbSession
      * @throws WaarpDatabaseNoConnectionException
      */
@@ -106,10 +102,10 @@ public interface DbModel {
      * Add a limit on the request to get the "limit" first rows. Note that it must be compatible to
      * add the "limit" condition.<br>
      * <b>DO NOT CHANGE (add) ANYTHING to the request</b><br>
-     * 
+     *
      * On Oracle: select allfield from (request) where rownnum <= limit<br>
      * On others: request LIMIT limit<br>
-     * 
+     *
      * @param allfields
      *            string representing the equivalent to "*" in "select *" but more precisely as
      *            "field1, field2" in "select field1, field2"
@@ -121,7 +117,7 @@ public interface DbModel {
 
     /**
      * Upgrade Database from version
-     * 
+     *
      * @param session
      * @param version
      * @return True if the Database is upgraded
@@ -131,7 +127,7 @@ public interface DbModel {
 
     /**
      * Check if Database is ok from version
-     * 
+     *
      * @param session
      * @param version
      * @param tryFix

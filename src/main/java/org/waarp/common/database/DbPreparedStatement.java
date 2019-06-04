@@ -30,8 +30,6 @@ import org.waarp.common.logging.WaarpLoggerFactory;
  * Class to handle PrepareStatement
  * 
  * @author Frederic Bregier
- * 
- * @deprecated Will be removed in a futur version of WaarCommon 
  */
 public class DbPreparedStatement {
     /**

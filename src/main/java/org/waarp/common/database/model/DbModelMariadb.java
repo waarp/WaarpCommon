@@ -108,7 +108,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
      */
     public DbModelMariadb(String dbserver, String dbuser, String dbpasswd)
             throws WaarpDatabaseNoConnectionException {
-        this(dbserver, dbuser, dbpasswd, (Timer) null, (long) 0);
+        this(dbserver, dbuser, dbpasswd, null, (long) 0);
     }
 
     /**
@@ -170,7 +170,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
       pool = null;
     }
 
-    protected static enum DBType {
+    protected enum DBType {
         CHAR(Types.CHAR, " CHAR(3) "),
         VARCHAR(Types.VARCHAR, " VARCHAR(8096) "),
         /**
@@ -193,7 +193,7 @@ public abstract class DbModelMariadb extends DbModelAbstract {
 
         public String constructor;
 
-        private DBType(int type, String constructor) {
+        DBType(int type, String constructor) {
             this.type = type;
             this.constructor = constructor;
         }
