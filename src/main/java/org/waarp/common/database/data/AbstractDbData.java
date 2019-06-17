@@ -112,8 +112,16 @@ public abstract class AbstractDbData {
      *
      * @param dbSession
      */
+    @Deprecated
     public AbstractDbData(DbSession dbSession) {
         this.dbSession = dbSession;
+        initObject();
+    }
+    /**
+     * Abstract constructor to set the DbSession to use
+     */
+    public AbstractDbData() {
+        this.dbSession = null;
         initObject();
     }
 
