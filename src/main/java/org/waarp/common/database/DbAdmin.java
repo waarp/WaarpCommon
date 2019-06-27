@@ -41,6 +41,7 @@ import org.waarp.common.utility.WaarpThreadFactory;
  * @author Frederic Bregier
  *
  */
+@Deprecated
 public class DbAdmin {
     /**
      * Internal Logger
@@ -123,6 +124,7 @@ public class DbAdmin {
     /**
      * @return the isActive
      */
+    @Deprecated
     public boolean isActive() {
         return true;
     }
@@ -130,12 +132,8 @@ public class DbAdmin {
     /**
      * @param isActive the isActive to set
      */
-    public void setActive(boolean isActive) {
-        if (!isActive) {
-            logger.debug(Thread.currentThread().getStackTrace().toString());
-        }
-        this.isActive = isActive;
-    }
+    @Deprecated
+    public void setActive(boolean isActive) {}
 
     /**
      * Validate connection
@@ -147,11 +145,9 @@ public class DbAdmin {
             dbModel.validConnection(getSession());
         } catch (WaarpDatabaseNoConnectionException e) {
             getSession().setDisActive(true);
-            setActive(false);
             throw e;
         }
         getSession().setDisActive(false);
-        setActive(true);
     }
 
     /**
@@ -251,7 +247,6 @@ public class DbAdmin {
             }
         }
         setSession(null);
-        setActive(false);
         logger.error("Cannot connect to Database!");
         throw new WaarpDatabaseNoConnectionException(
                 "Cannot connect to database");
@@ -262,7 +257,6 @@ public class DbAdmin {
      */
     public DbAdmin() {
         // not true but to enable pseudo database functions
-        setActive(false);
         typeDriver = DbType.none;
         DbModelFactory.classLoaded.add(DbType.none.name());
         dbModel = new EmptyDbModel();
@@ -283,7 +277,6 @@ public class DbAdmin {
             getSession().forceDisconnect();
             setSession(null);
         }
-        setActive(false);
     }
 
     /**
