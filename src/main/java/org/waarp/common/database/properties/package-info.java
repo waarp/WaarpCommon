@@ -4,5 +4,4 @@
  * @apiviz.landmark
  * @apiviz.uses {@link org.waarp.common.database}
  */
-package org.waarp.common.database.model;
-
+package org.waarp.common.database.properties;
