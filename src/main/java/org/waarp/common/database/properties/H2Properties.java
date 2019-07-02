@@ -1,5 +1,7 @@
 package org.waarp.common.database.properties;
 
+import java.sql.Connection;
+
 /**
  * H2 Database Model
  */
@@ -8,7 +10,7 @@ public class H2Properties extends DbProperties {
 
     private final String DRIVER_NAME = "org.h2.Driver";
     private final String VALIDATION_QUERY = "select 1";
-	
+
     public H2Properties() {
     }
 
@@ -24,5 +26,11 @@ public class H2Properties extends DbProperties {
     @Override
     public String getValidationQuery() {
         return VALIDATION_QUERY;
+    }
+
+    @Override
+    public int getMaximumConnections(Connection connection) {
+        //TODO
+        return 10;
     }
 }

@@ -44,6 +44,12 @@ public class ConnectionFactory {
      */
     private final String password;
 
+    private final boolean autocommit = true;
+
+    private final boolean readonly = false;
+
+    private int maxconnections = 50;
+
     /**
      * The datasource for connection pooling
      */
@@ -128,15 +134,29 @@ public class ConnectionFactory {
 
         ds = new BasicDataSource();
 
+        // Initialise DataSource
         ds.setDriverClassName(this.properties.getDriverName());
         ds.setUrl(this.server);
         ds.setUsername(this.user);
         ds.setPassword(this.password);
-        ds.setDefaultAutoCommit(true);
-        ds.setDefaultReadOnly(false);
+        ds.setDefaultAutoCommit(autocommit);
+        ds.setDefaultReadOnly(readonly);
         ds.setValidationQuery(this.properties.getValidationQuery());
-        ds.setMaxActive(1000);
-        ds.setMaxActive(10000);
+
+        // Get maximum connections
+        Connection con = null;
+        try {
+            con = getConnection();
+            maxconnections = properties.getMaximumConnections(con);
+        } catch (SQLException e) {
+            logger.warn(
+                    "Cannot fetch maximum connection allowed from database", e);
+        } finally {
+            con.close();
+        }
+        ds.setMaxActive(maxconnections);
+        ds.setMaxIdle(maxconnections);
+        logger.info(this.toString());
     }
 
     /**
@@ -177,5 +197,21 @@ public class ConnectionFactory {
      */
     public DbProperties getProperties() {
         return properties;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Datapool:");
+        sb.append(this.server);
+        sb.append(", with user:");
+        sb.append(this.user);
+        sb.append(", AutoCommit:");
+        sb.append(this.autocommit);
+        sb.append(", DefaultReadOnly:");
+        sb.append(this.readonly);
+        sb.append(", max connecions:");
+        sb.append(this.maxconnections);
+
+        return sb.toString();
     }
 }
