@@ -152,10 +152,9 @@ public final class NettyHttpService {
 
   /**
    * Starts the HTTP service.
-   *
-   * @throws Exception if the service failed to started
+ * @throws Throwable 
    */
-  public synchronized void start() throws Exception {
+  public synchronized void start() throws Throwable {
     if (state == State.RUNNING) {
       LOG.debug("Ignore start() call on HTTP service {} since it has already been started.", serviceName);
       return;
@@ -195,7 +194,7 @@ public final class NettyHttpService {
       } catch (Throwable t2) {
       }
       state = State.FAILED;
-      throw (Exception) t;
+      throw t;
     }
   }
 
@@ -216,10 +215,9 @@ public final class NettyHttpService {
   /**
    * Stops the HTTP service gracefully and release all resources. Same as calling {@link #stop(long, long, TimeUnit)}
    * with {@code 0} second quiet period and {@code 5} seconds timeout.
-   *
-   * @throws Exception if there is exception raised during shutdown.
+ * @throws Throwable 
    */
-  public void stop() throws Exception {
+  public void stop() throws Throwable {
     stop(0, 5, TimeUnit.SECONDS);
   }
 
@@ -231,9 +229,9 @@ public final class NettyHttpService {
    *                    {@linkplain EventExecutorGroup#shutdown()}
    *                    regardless if a task was submitted during the quiet period
    * @param unit        the unit of {@code quietPeriod} and {@code timeout}
-   * @throws Exception if there is exception raised during shutdown.
+ * @throws Throwable 
    */
-  public synchronized void stop(long quietPeriod, long timeout, TimeUnit unit) throws Exception {
+  public synchronized void stop(long quietPeriod, long timeout, TimeUnit unit) throws Throwable {
     if (state == State.STOPPED) {
       LOG.debug("Ignore stop() call on HTTP service {} since it has already been stopped.", serviceName);
       return;
@@ -254,7 +252,7 @@ public final class NettyHttpService {
       }
     } catch (Throwable t) {
       state = State.FAILED;
-      throw (Exception) t;
+      throw t;
     }
     state = State.STOPPED;
     LOG.debug("Stopped HTTP Service {} on address {}", serviceName, bindAddress);
@@ -383,7 +381,6 @@ public final class NettyHttpService {
       } catch (Exception e) {
         if (ex == null) {
           ex = e;
-        } else {
         }
       }
     }

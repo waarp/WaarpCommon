@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nullable;
 
@@ -105,7 +104,7 @@ final class BasicHttpResponder extends AbstractHttpResponder {
   }
 
   @Override
-  public void sendFile(File file, HttpHeaders headers) throws IOException {
+  public void sendFile(File file, HttpHeaders headers) throws Throwable {
     HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
     addContentTypeIfMissing(response.headers().add(headers), OCTET_STREAM_TYPE);
 
@@ -137,7 +136,7 @@ final class BasicHttpResponder extends AbstractHttpResponder {
         raf.close();
       } catch (IOException ex) {
       }
-      throw (IOException) t;
+      throw t;
     }
   }
 
@@ -151,8 +150,7 @@ final class BasicHttpResponder extends AbstractHttpResponder {
       // Response with error and close the connection
       sendContent(
         HttpResponseStatus.INTERNAL_SERVER_ERROR,
-        Unpooled.copiedBuffer("Failed to determined content length. Cause: " + t.getMessage(),
-                Charset.forName("UTF-8")),
+        Unpooled.copiedBuffer("Failed to determined content length. Cause: " + t.getMessage(), InternalUtil.UTF_8),
         new DefaultHttpHeaders()
           .set(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE)
           .set(HttpHeaderNames.CONTENT_TYPE, "text/plain; charset=utf-8"));

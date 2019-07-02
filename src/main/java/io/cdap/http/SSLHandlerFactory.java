@@ -75,7 +75,6 @@ public class SSLHandlerFactory {
       is = new FileInputStream(keyStore);
       KeyStore ks = KeyStore.getInstance("JKS");
       ks.load(is, keyStorePassword.toCharArray());
-      is.close();
       return ks;
     } finally {
       if (is != null) {
