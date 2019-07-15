@@ -1,21 +1,12 @@
 package org.waarp.common.database;
 
-import java.lang.UnsupportedOperationException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 import org.apache.commons.dbcp.BasicDataSource;
-
-import org.waarp.common.database.properties.DbProperties;
-import org.waarp.common.database.properties.H2Properties;
-import org.waarp.common.database.properties.MariaDBProperties;
-import org.waarp.common.database.properties.MySQLProperties;
-import org.waarp.common.database.properties.OracleProperties;
-import org.waarp.common.database.properties.PostgreSQLProperties;
-
+import org.waarp.common.database.properties.*;
 import org.waarp.common.logging.WaarpLogger;
 import org.waarp.common.logging.WaarpLoggerFactory;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * A singleton wrapper of Datasource to get database connection object
@@ -53,6 +44,12 @@ public class ConnectionFactory {
      */
     private final String password;
 
+    private final boolean autocommit = true;
+
+    private final boolean readonly = false;
+
+    private int maxconnections = 50;
+
     /**
      * The datasource for connection pooling
      */
@@ -61,10 +58,10 @@ public class ConnectionFactory {
     /**
      * @param server the connection url of the database
      * @return the DbProperties Object associated with the requested URL
-     * @throws UnsupportedOperationException if the requested database 
+     * @throws UnsupportedOperationException if the requested database
      * is not supported
      */
-    protected static DbProperties propertiesFor(String server) 
+    protected static DbProperties propertiesFor(String server)
             throws UnsupportedOperationException {
         if(server.contains(H2Properties.getProtocolID())) {
             return new H2Properties();
@@ -83,15 +80,15 @@ public class ConnectionFactory {
     }
 
     /**
-     * Initialize the ConnectionFactory 
-     * @throws UnsupportedOperationException if the requested database 
+     * Initialize the ConnectionFactory
+     * @throws UnsupportedOperationException if the requested database
      * is not supported
      * @throws SQLException if a error occurs while connecting to the database
      */
-    public static void initialize(String server, String user, String password) 
+    public static void initialize(String server, String user, String password)
             throws SQLException, UnsupportedOperationException {
         if (instance == null) {
-             instance = new ConnectionFactory(propertiesFor(server), server, 
+             instance = new ConnectionFactory(propertiesFor(server), server,
                  user, password);
         }
     }
@@ -106,10 +103,11 @@ public class ConnectionFactory {
 
     /**
      * @return a connection to the Database
-     * @throws SQLException if the ConnectionPool is not initialized 
+     * @throws SQLException if the ConnectionPool is not initialized
      * or if an error occurs while accessing the database
      */
     public Connection getConnection() throws SQLException {
+        logger.trace("Active: {}, Idle: {}", ds.getNumActive(), ds.getNumIdle());
         if (ds == null) {
             throw new SQLException("ConnectionFactory is not inialized.");
         }
@@ -127,8 +125,8 @@ public class ConnectionFactory {
      * @param user
      * @param password
      */
-    private ConnectionFactory(DbProperties properties, String server, String user, String password) 
-            throws SQLException {
+    private ConnectionFactory(DbProperties properties, String server,
+                          String user, String password) throws SQLException {
         this.server = server;
         this.user = user;
         this.password = password;
@@ -136,13 +134,29 @@ public class ConnectionFactory {
 
         ds = new BasicDataSource();
 
+        // Initialise DataSource
         ds.setDriverClassName(this.properties.getDriverName());
         ds.setUrl(this.server);
         ds.setUsername(this.user);
         ds.setPassword(this.password);
-        ds.setDefaultAutoCommit(true);
-        ds.setDefaultReadOnly(true);
+        ds.setDefaultAutoCommit(autocommit);
+        ds.setDefaultReadOnly(readonly);
         ds.setValidationQuery(this.properties.getValidationQuery());
+
+        // Get maximum connections
+        Connection con = null;
+        try {
+            con = getConnection();
+            maxconnections = properties.getMaximumConnections(con);
+        } catch (SQLException e) {
+            logger.warn(
+                    "Cannot fetch maximum connection allowed from database", e);
+        } finally {
+            con.close();
+        }
+        ds.setMaxActive(maxconnections);
+        ds.setMaxIdle(maxconnections);
+        logger.info(this.toString());
     }
 
     /**
@@ -183,5 +197,21 @@ public class ConnectionFactory {
      */
     public DbProperties getProperties() {
         return properties;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Datapool:");
+        sb.append(this.server);
+        sb.append(", with user:");
+        sb.append(this.user);
+        sb.append(", AutoCommit:");
+        sb.append(this.autocommit);
+        sb.append(", DefaultReadOnly:");
+        sb.append(this.readonly);
+        sb.append(", max connecions:");
+        sb.append(this.maxconnections);
+
+        return sb.toString();
     }
 }

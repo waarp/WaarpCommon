@@ -1,17 +1,17 @@
 /**
  * This file is part of Waarp Project.
- * 
+ *
  * Copyright 2009, Frederic Bregier, and individual contributors by the @author tags. See the
  * COPYRIGHT.txt in the distribution for a full listing of individual contributors.
- * 
+ *
  * All Waarp Project is free software: you can redistribute it and/or modify it under the terms of
  * the GNU General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * Waarp is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with Waarp . If not, see
  * <http://www.gnu.org/licenses/>.
  */
@@ -41,24 +41,24 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * Abstract database table implementation without explicit COMMIT.<br>
  * <br>
- * 
+ *
  * If the connection is in autocommit, this is the right abstract to extend.<br>
  * If the connection is not in autocommit, one could use this implementation to explicitly commit
  * when needed.
- * 
+ *
  * @author Frederic Bregier
- * 
+ *
  */
 public abstract class AbstractDbData {
     public static final String JSON_MODEL = "@model";
 
     /**
      * UpdatedInfo status
-     * 
+     *
      * @author Frederic Bregier
-     * 
+     *
      */
-    public static enum UpdatedInfo {
+    public enum UpdatedInfo {
         /**
          * Unknown run status
          */
@@ -86,7 +86,7 @@ public abstract class AbstractDbData {
         /**
          * All done run status
          */
-        DONE;
+        DONE
     }
 
     /**
@@ -109,11 +109,19 @@ public abstract class AbstractDbData {
 
     /**
      * Abstract constructor to set the DbSession to use
-     * 
+     *
      * @param dbSession
      */
+    @Deprecated
     public AbstractDbData(DbSession dbSession) {
         this.dbSession = dbSession;
+        initObject();
+    }
+    /**
+     * Abstract constructor to set the DbSession to use
+     */
+    public AbstractDbData() {
+        this.dbSession = null;
         initObject();
     }
 
@@ -124,7 +132,7 @@ public abstract class AbstractDbData {
     protected abstract void initObject();
 
     /**
-     * 
+     *
      * @return The Where condition on Primary Key
      */
     protected abstract String getWherePrimaryKey();
@@ -144,7 +152,7 @@ public abstract class AbstractDbData {
 
     /**
      * Test the existence of the current object
-     * 
+     *
      * @return True if the object exists
      * @throws WaarpDatabaseException
      */
@@ -169,7 +177,7 @@ public abstract class AbstractDbData {
 
     /**
      * Select object from table
-     * 
+     *
      * @throws WaarpDatabaseException
      */
     public void select() throws WaarpDatabaseException {
@@ -199,7 +207,7 @@ public abstract class AbstractDbData {
 
     /**
      * Insert object into table
-     * 
+     *
      * @throws WaarpDatabaseException
      */
     public void insert() throws WaarpDatabaseException {
@@ -229,7 +237,7 @@ public abstract class AbstractDbData {
 
     /**
      * Update object to table
-     * 
+     *
      * @throws WaarpDatabaseException
      */
     public void update() throws WaarpDatabaseException {
@@ -264,7 +272,7 @@ public abstract class AbstractDbData {
 
     /**
      * Delete object from table
-     * 
+     *
      * @throws WaarpDatabaseException
      */
     public void delete() throws WaarpDatabaseException {
@@ -290,7 +298,7 @@ public abstract class AbstractDbData {
 
     /**
      * Change UpdatedInfo status
-     * 
+     *
      * @param info
      */
     public abstract void changeUpdatedInfo(UpdatedInfo info);
@@ -302,14 +310,14 @@ public abstract class AbstractDbData {
 
     /**
      * Internal function to retrieve data from Array to pull data from database
-     * 
+     *
      * @throws WaarpDatabaseSqlException
      */
     protected abstract void setFromArray() throws WaarpDatabaseSqlException;
 
     /**
      * Set Value into PreparedStatement
-     * 
+     *
      * @param ps
      * @param value
      * @param rank
@@ -434,7 +442,7 @@ public abstract class AbstractDbData {
 
     /**
      * Set one value to a DbPreparedStatement
-     * 
+     *
      * @param preparedStatement
      * @param value
      * @throws WaarpDatabaseNoConnectionException
@@ -448,7 +456,7 @@ public abstract class AbstractDbData {
 
     /**
      * Set several values to a DbPreparedStatement
-     * 
+     *
      * @param preparedStatement
      * @param values
      * @throws WaarpDatabaseNoConnectionException
@@ -466,7 +474,7 @@ public abstract class AbstractDbData {
 
     /**
      * Get one value into DbValue from ResultSet
-     * 
+     *
      * @param rs
      * @param value
      * @throws WaarpDatabaseSqlException
@@ -530,7 +538,7 @@ public abstract class AbstractDbData {
 
     /**
      * Get one value into DbValue from DbPreparedStatement
-     * 
+     *
      * @param preparedStatement
      * @param value
      * @throws WaarpDatabaseNoConnectionException
@@ -544,7 +552,7 @@ public abstract class AbstractDbData {
 
     /**
      * Get several values into DbValue from DbPreparedStatement
-     * 
+     *
      * @param preparedStatement
      * @param values
      * @throws WaarpDatabaseNoConnectionException
@@ -561,7 +569,7 @@ public abstract class AbstractDbData {
 
     /**
      * Get Values from PreparedStatement
-     * 
+     *
      * @param preparedStatement
      * @return True if OK, else False
      */
@@ -579,7 +587,7 @@ public abstract class AbstractDbData {
     }
 
     /**
-     * 
+     *
      * @return the runner as Json
      */
     public String asJson() {
@@ -642,7 +650,7 @@ public abstract class AbstractDbData {
 
     /**
      * Set the values from the Json node to the current object (no database access)
-     * 
+     *
      * @param node
      * @param ignorePrimaryKey
      *            True will ignore primaryKey from Json

@@ -185,7 +185,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
         }
     }
 
-    protected static enum DBType {
+    protected enum DBType {
         CHAR(Types.CHAR, " CHAR(3) "),
         VARCHAR(Types.VARCHAR, " VARCHAR2(4000) "),
         NVARCHAR(Types.NVARCHAR, " VARCHAR2(1000) "),
@@ -205,7 +205,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
 
         public String constructor;
 
-        private DBType(int type, String constructor) {
+        DBType(int type, String constructor) {
             this.type = type;
             this.constructor = constructor;
         }
@@ -366,13 +366,7 @@ public abstract class DbModelOracle extends DbModelAbstract {
     }
 
     @Override
-    @Deprecated
     protected String validConnectionString() {
-        return "select 1 from dual";
-    }
-
-    @Override
-    public  String getValidationQuery() {
         return "select 1 from dual";
     }
 

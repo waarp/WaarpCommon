@@ -510,6 +510,13 @@ public class WaarpSecureKeyStore {
     }
 
     /**
+     * @return the KeyStore Filename
+     */
+    public String getKeyStoreFilename() {
+        return keyStoreFilename;
+    }
+
+    /**
      * @return the secureTrustManagerFactory
      */
     public WaarpSecureTrustManagerFactory getSecureTrustManagerFactory() {
