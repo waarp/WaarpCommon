@@ -1,3 +1,5 @@
+io.cdap.http
+io.cdap.http.internal
 org.waarp.common
 org.waarp.common.command
 org.waarp.common.command.exception
@@ -8,6 +10,7 @@ org.waarp.common.database
 org.waarp.common.database.data
 org.waarp.common.database.exception
 org.waarp.common.database.model
+org.waarp.common.database.properties
 org.waarp.common.exception
 org.waarp.common.file
 org.waarp.common.file.filesystembased
